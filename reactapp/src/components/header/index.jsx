@@ -151,6 +151,7 @@ const useStyles = makeStyles({
   },
   desktopMenu: {
     marginTop: '2rem',
+    flexWrap: 'wrap',
     display: 'none',
     '@media (min-width: 960px)': {
       display: 'flex'
@@ -245,6 +246,8 @@ function DesktopMenu({ user }) {
             <Link to={url}>{getLabelForMenuItem(label)}</Link>
           </div>
         ))}
+
+      <TwitterFollowButton screenName="VRCArena" />
     </div>
   )
 }
