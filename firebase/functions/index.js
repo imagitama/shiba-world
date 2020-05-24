@@ -37,7 +37,7 @@ exports.onAssetCreated = functions.firestore
   .onCreate((doc) => {
     const docData = doc.data()
     if (isNotApproved(docData)) {
-      return
+      return 0
     }
     insertDocIntoIndex(doc, docData)
   })
@@ -47,7 +47,7 @@ exports.onAssetUpdated = functions.firestore
   .onUpdate(({ after: doc }) => {
     const docData = doc.data()
     if (isNotApproved(docData)) {
-      return
+      return 0
     }
     insertDocIntoIndex(doc, docData)
   })
