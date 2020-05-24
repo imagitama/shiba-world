@@ -17,7 +17,8 @@ export const CollectionNames = {
   Users: 'users',
   Assets: 'assets',
   Comments: 'comments',
-  Notices: 'notices'
+  Notices: 'notices',
+  History: 'history'
 }
 
 export const AssetFieldNames = {
@@ -29,6 +30,10 @@ export const AssetFieldNames = {
 
 export const CommentFieldNames = {
   parent: 'parent'
+}
+
+export const HistoryFieldNames = {
+  createdAt: 'createdAt'
 }
 
 function getWhereClausesAsString(whereClauses) {
@@ -77,7 +82,8 @@ const getDataFromReference = async record => {
   const result = await record.get()
   return {
     ...result.data(),
-    id: record.id
+    id: record.id,
+    refPath: result.ref.path
   }
 }
 

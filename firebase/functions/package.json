@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "algoliasearch": "^4.2.0",
+    "deep-diff": "^1.0.2",
     "firebase-admin": "^8.10.0",
     "firebase-functions": "^3.6.1"
   },
