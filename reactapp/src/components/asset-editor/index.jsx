@@ -9,6 +9,8 @@ import shortid from 'shortid'
 import Markdown from 'react-markdown'
 import FileUploader from '../file-uploader'
 import tagList from '../../tags'
+import ThumbnailUploader from '../thumbnail-uploader'
+import Heading from '../heading'
 
 const Hint = ({ children }) => (
   <div style={{ fontSize: '80%', color: 'grey' }}>{children}</div>
@@ -136,6 +138,7 @@ export default ({
   const [doesHavePermission, setDoesHavePermission] = useState(false)
   const [showAdvancedFileUrls, setShowAdvancedFileUrls] = useState(false)
   const [showMarkdownPreview, setShowMarkdownPreview] = useState(false)
+  const [showThumbnailUrlInput, setShowThumbnailUrlInput] = useState(false)
 
   const onFieldChange = (fieldName, newVal) => {
     setFieldData({
@@ -151,26 +154,12 @@ export default ({
     onSubmit(fieldData)
   }
 
+  const onThumbnailUploaded = url => onFieldChange('thumbnailUrl', url)
+
   return (
     <>
-      <p>
-        <strong>Welcome to the asset and tutorial uploader!</strong>
-      </p>
-      <p>When uploading an asset please keep these in mind:</p>
-      <ul>
-        <li>your thumbnail should be a 300x300 png</li>
-        <li>
-          take photos of the asset on the species (front and back photo is best)
-        </li>
-        <li>
-          try and include the transform (x, y, z, rotation) of the asset to help
-          others
-        </li>
-        <li>
-          mention if you are the author or not - we do not steal assets here!
-        </li>
-      </ul>
       <form>
+        <Heading variant="h2">Basics</Heading>
         <FormField
           label="Title"
           value={fieldData.title}
@@ -212,21 +201,36 @@ export default ({
             <Markdown source={fieldData.description} />
           </div>
         )}
-        <FormField
-          label="Thumbnail URL"
-          value={fieldData.thumbnailUrl}
-          hint={`Use the file upload below (it gives you a URL you can paste in here).
+
+        <Heading variant="h2">Thumbnail</Heading>
+
+        {showThumbnailUrlInput === false && (
+          <ThumbnailUploader
+            directoryPath="asset-thumbnails"
+            filePrefix={shortid.generate()}
+            onUploaded={onThumbnailUploaded}
+          />
+        )}
+
+        {showThumbnailUrlInput === false && (
+          <Button
+            style={{ marginBottom: '0.5rem' }}
+            onClick={() => setShowThumbnailUrlInput(true)}>
+            Enter thumbnail URL yourself
+          </Button>
+        )}
+        {showThumbnailUrlInput && (
+          <FormField
+            label="Thumbnail"
+            value={fieldData.thumbnailUrl}
+            hint={`Use the file upload below (it gives you a URL you can paste in here).
 
 Please crop your thumbnails to something like 300x300 (automatic cropping coming soon)`}
-          onChange={newVal => onFieldChange('thumbnailUrl', newVal)}
-        />
-        <FormField
-          label="Is adult content"
-          type={formFieldType.checkbox}
-          value={fieldData.isAdult}
-          hint={`If enabled it is hidden for everyone except logged in users who have opted-in.`}
-          onChange={newVal => onFieldChange('isAdult', newVal)}
-        />
+            onChange={newVal => onFieldChange('thumbnailUrl', newVal)}
+          />
+        )}
+
+        <Heading variant="h2">Tags</Heading>
         <FormField
           label="Tags"
           value={fieldData.tags.join('\n')}
@@ -246,6 +250,8 @@ Note: Your asset can belong to multiple categories but the primary category shou
           multiline
           rows={10}
         />
+
+        <Heading variant="h2">Files</Heading>
         <FileAttacher
           fileUrls={fieldData.fileUrls}
           onFileAttached={fileUrl =>
@@ -278,6 +284,18 @@ Note: Your asset can belong to multiple categories but the primary category shou
             rows={10}
           />
         )}
+
+        <Heading variant="h2">Additional settings</Heading>
+
+        <FormField
+          label="Is adult content"
+          type={formFieldType.checkbox}
+          value={fieldData.isAdult}
+          hint={`If enabled it is hidden for everyone except logged in users who have opted-in.`}
+          onChange={newVal => onFieldChange('isAdult', newVal)}
+        />
+
+        <Heading variant="h2">Upload</Heading>
         <FormField
           label="I have permission to upload this asset"
           type="checkbox"

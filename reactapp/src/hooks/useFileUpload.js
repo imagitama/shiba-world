@@ -3,7 +3,7 @@ import firebase from 'firebase/app'
 import 'firebase/storage'
 
 export default () => {
-  const [isUploading, setIsUploading] = useState(false)
+  const [isUploading, setIsUploading] = useState(null)
   const [percentageDone, setPercentageDone] = useState(0)
   const [isSuccess, setIsSuccess] = useState(false)
   const [, setIsErrored] = useState(false)
@@ -45,18 +45,18 @@ export default () => {
 
           reject(error)
         },
-        function() {
-          setIsUploading(false)
-          setIsSuccess(true)
-          setIsErrored(false)
+        async () => {
+          try {
+            const url = await uploadTask.snapshot.ref.getDownloadURL()
 
-          uploadTask.snapshot.ref
-            .getDownloadURL()
-            .then(url => {
-              setDownloadUrl(url)
-              resolve(url)
-            })
-            .catch(reject)
+            setIsUploading(false)
+            setIsSuccess(true)
+            setIsErrored(false)
+            setDownloadUrl(url)
+            resolve(url)
+          } catch (err) {
+            reject(err)
+          }
         }
       )
     })

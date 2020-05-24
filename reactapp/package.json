@@ -29,6 +29,7 @@
     "react-dom": "16.8.6",
     "react-firebaseui": "^3.1.2",
     "react-helmet": "^6.0.0",
+    "react-image-crop": "^8.6.2",
     "react-markdown": "^4.3.1",
     "react-redux": "^7.2.0",
     "react-redux-firebase": "^3.0.0-alpha.12",
