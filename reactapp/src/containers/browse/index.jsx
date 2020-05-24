@@ -80,6 +80,7 @@ function TagBrowser({ assets, filterOutTag }) {
   return (
     <>
       <Heading variant="h2">Popular Tags</Heading>
+      {!assets.length && 'None'}
       {assets
         .reduce((allTags, { tags }) => allTags.concat(tags), [])
         .sort()

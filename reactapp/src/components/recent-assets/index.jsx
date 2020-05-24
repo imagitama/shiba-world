@@ -13,7 +13,10 @@ export default () => {
   // Do not include nsfw filter as we need another firestore index
   const [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.Assets,
-    [[AssetFieldNames.isAdult, Operators.EQUALS, false]],
+    [
+      [AssetFieldNames.isAdult, Operators.EQUALS, false],
+      [AssetFieldNames.isApproved, Operators.EQUALS, true]
+    ],
     10,
     [AssetFieldNames.createdAt, OrderDirections.DESC]
   )

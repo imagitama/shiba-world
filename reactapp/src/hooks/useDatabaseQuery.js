@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { firestore } from 'firebase/app'
 import { useRef } from 'react'
+import { inDevelopment } from '../environment'
 
 export const Operators = {
   EQUALS: '==',
@@ -15,7 +16,8 @@ export const OrderDirections = {
 export const CollectionNames = {
   Users: 'users',
   Assets: 'assets',
-  Comments: 'comments'
+  Comments: 'comments',
+  Notices: 'notices'
 }
 
 export const AssetFieldNames = {
@@ -30,15 +32,23 @@ export const CommentFieldNames = {
 }
 
 function getWhereClausesAsString(whereClauses) {
-  if (!whereClauses) {
-    return ''
+  if (whereClauses === undefined) {
+    return 'undefined'
+  }
+  if (whereClauses === false) {
+    return 'false'
   }
   if (getIsGettingSingleRecord(whereClauses)) {
     return whereClauses
   }
+  if (Array.isArray(whereClauses)) {
+    return whereClauses
+      .map(
+        ([fieldName, operator, value]) => `[${fieldName},${operator},${value}]`
+      )
+      .join(',')
+  }
   return whereClauses
-    .map(([fieldName, operator, value]) => `${fieldName}.${operator}.${value}`)
-    .join(',')
 }
 
 function getIsGettingSingleRecord(whereClauses) {
@@ -101,20 +111,6 @@ async function formatRawDocs(docs) {
   return Promise.all(docsWithDates.map(mapReferences))
 }
 
-// function validateWhereClauses(whereClauses) {
-//   if (!whereClauses) {
-//     throw new Error('No where clauses provided!')
-//   }
-
-//   if (!(typeof whereClauses !== 'string')) {
-//     if (!(whereClauses instanceof Array)) {
-//       throw new Error(
-//         `Where clauses must be an id (string) or array of field,operator,value but got: ${typeof whereClauses}`
-//       )
-//     }
-//   }
-// }
-
 function getOrderByAsString(orderBy) {
   if (!orderBy) {
     return ''
@@ -134,13 +130,15 @@ export default (
   const [isErrored, setIsErrored] = useState(false)
   const unsubscribeFromSnapshotRef = useRef()
 
-  // validateWhereClauses(whereClauses)
-
   const whereClausesAsString = getWhereClausesAsString(whereClauses)
   const orderByAsString = getOrderByAsString(orderBy)
 
   async function doIt() {
     try {
+      if (inDevelopment()) {
+        console.debug('useDatabaseQuery', collectionName, whereClausesAsString)
+      }
+
       setIsLoading(true)
       setIsErrored(false)
 
@@ -198,6 +196,12 @@ export default (
   }
 
   useEffect(() => {
+    console.log('useEffect', [
+      collectionName,
+      whereClausesAsString,
+      orderByAsString
+    ])
+
     if (whereClauses === false) {
       setIsLoading(false)
       return

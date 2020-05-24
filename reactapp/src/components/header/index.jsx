@@ -95,7 +95,7 @@ const useStyles = makeStyles({
   header: {
     padding: '1rem 1rem',
     borderBottom: '1px solid #260b36',
-    marginBottom: '4rem',
+    marginBottom: '2rem',
     background: 'linear-gradient(20deg, #6e4a9e, #240b36)',
     '@media (min-width: 600px)': {
       padding: '2rem 2rem'
