@@ -34,7 +34,9 @@ Alternatively you can use the more optimized "Corpse Shiba" that is also availab
 They were originally a [RimWorld mod](https://rimworldbase.com/avali-mod/) but have since been made into a VRChat avatar and is very popular amongst players.
 
 Useful links:
-- [The Official Avali Wiki](https://avali.fandom.com/wiki/The_Official_Avali_Wiki)`,
+- [The Official Avali Wiki](https://avali.fandom.com/wiki/The_Official_Avali_Wiki)
+- [Reverse Avali Download](https://vrcmods.com/item/5305)
+- [Avali 1.1 Download](https://vrcmods.com/item/3457)`,
     thumbnailUrl: avaliImageUrl
   },
   [species.BestBoi]: {
