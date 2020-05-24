@@ -3,7 +3,8 @@ import { inDevelopment } from './environment'
 const categories = {
   ROUTING: 'Routing',
   AUTH: 'Auth',
-  LISTS: 'Lists'
+  ASSETS: 'Assets',
+  APP: 'App'
 }
 
 export const actions = {
@@ -26,7 +27,9 @@ export const actions = {
   COMMENT_ON_ASSET: 'CommentOnAsset',
 
   // ACCOUNT
-  TOGGLE_ENABLED_ADULT_CONTENT: 'ToggleEnabledAdultContent'
+  TOGGLE_ENABLED_ADULT_CONTENT: 'ToggleEnabledAdultContent',
+
+  HIDE_NOTICE: 'HideNotice'
 }
 
 const actionDetails = {
@@ -66,19 +69,15 @@ const actionDetails = {
     category: categories.LISTS
   },
 
-  // LISTS
+  // ASSETS
 
-  [actions.CREATE_LIST]: {
-    category: categories.LISTS
+  [actions.COMMENT_ON_ASSET]: {
+    category: categories.ASSETS
   },
-  [actions.EDIT_LIST]: {
-    category: categories.LISTS
-  },
-  [actions.COMMENT_ON_LIST]: {
-    category: categories.LISTS
-  },
-  [actions.VOTE_ON_LIST]: {
-    category: categories.LISTS
+
+  // OTHER - APP
+  [actions.HIDE_NOTICE]: {
+    category: categories.APP
   }
 }
 

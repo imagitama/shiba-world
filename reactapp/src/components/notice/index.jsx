@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import { writeStorage } from '@rehooks/local-storage'
 import CloseIcon from '@material-ui/icons/Close'
 import useStorage, { keys } from '../../hooks/useStorage'
+import { trackAction, actions } from '../../analytics'
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -30,8 +31,13 @@ const useStyles = makeStyles(theme => ({
 export default ({ id, title, message }) => {
   const classes = useStyles()
   const [hiddenNotices] = useStorage(keys.hiddenNotices, [])
-  const onHideBtnClick = () =>
+  const onHideBtnClick = () => {
     writeStorage(keys.hiddenNotices, hiddenNotices.concat([id]))
+
+    trackAction(actions.HIDE_NOTICE, {
+      id
+    })
+  }
 
   if (hiddenNotices.includes(id)) {
     return null
