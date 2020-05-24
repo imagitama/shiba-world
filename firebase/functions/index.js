@@ -39,7 +39,7 @@ exports.onAssetCreated = functions.firestore
     if (isNotApproved(docData)) {
       return 0
     }
-    insertDocIntoIndex(doc, docData)
+    return insertDocIntoIndex(doc, docData)
   })
 
 exports.onAssetUpdated = functions.firestore
@@ -49,13 +49,13 @@ exports.onAssetUpdated = functions.firestore
     if (isNotApproved(docData)) {
       return 0
     }
-    insertDocIntoIndex(doc, docData)
+    return insertDocIntoIndex(doc, docData)
   })
 
 exports.onUserSignup = functions.auth.user().onCreate((user) => {
   const { uid } = user
 
-  db.collection('users').doc(uid).set({
+  return db.collection('users').doc(uid).set({
     isAdmin: false,
     isEditor: false,
     username: '',
