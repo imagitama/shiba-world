@@ -17,8 +17,8 @@ export default () => {
 
   return (
     <div>
-      {results.map(({ id, ...notice }) => (
-        <Notice key={id} {...notice} />
+      {results.map(notice => (
+        <Notice key={notice.id} {...notice} />
       ))}
     </div>
   )

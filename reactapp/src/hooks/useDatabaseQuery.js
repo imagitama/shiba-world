@@ -196,12 +196,6 @@ export default (
   }
 
   useEffect(() => {
-    console.log('useEffect', [
-      collectionName,
-      whereClausesAsString,
-      orderByAsString
-    ])
-
     if (whereClauses === false) {
       setIsLoading(false)
       return
