@@ -11,6 +11,7 @@ const client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_ADMIN_KEY)
 
 admin.initializeApp()
 const db = admin.firestore()
+db.settings({ ignoreUndefinedProperties: true })
 
 function convertDocToAlgoliaRecord(docId, doc) {
   return {
@@ -48,11 +49,7 @@ function recursiveMap({ kind, path, lhs, rhs, item, index }) {
     path,
     lhs,
     rhs,
-  }
-
-  // Firestore does not let us store as undefined so check for it
-  if (index || index === 0) {
-    newItem.index = index
+    index,
   }
 
   // Firestore does not let us store as undefined so check for it

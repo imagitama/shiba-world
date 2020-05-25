@@ -39,6 +39,15 @@ function getMessageForItem(kind, path, lhs, rhs, item) {
   return `${path.join('.')} "${lhs}" ${getKindAsReadable(kind)} "${rhs}"`
 }
 
+function stringify(val) {
+  if (typeof val === 'object') {
+    if (val.id) {
+      return val.id
+    }
+  }
+  return JSON.stringify(val)
+}
+
 function HistoryData({ data }) {
   if (data.diff) {
     return (
@@ -51,7 +60,17 @@ function HistoryData({ data }) {
       </ul>
     )
   }
-  return JSON.stringify(data)
+  if (data.fields) {
+    return (
+      <ul>
+        {Object.entries(data.fields).map(([key, val]) => (
+          <li key={key}>
+            {key} = {stringify(val)}
+          </li>
+        ))}
+      </ul>
+    )
+  }
 }
 
 function ParentLabel({ parent }) {
