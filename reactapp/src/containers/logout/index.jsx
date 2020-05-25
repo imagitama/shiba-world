@@ -1,22 +1,27 @@
 import React, { useEffect } from 'react'
-import { logout, loggedInUserId } from '../../firebase'
+import { logout } from '../../firebase'
 import * as routes from '../../routes'
 import { trackAction, actions } from '../../analytics'
+import useUserRecord from '../../hooks/useUserRecord'
 
-const Logout = ({ history: { push } }) => {
+export default ({ history: { push } }) => {
+  const [isLoading, isErrored, user] = useUserRecord()
+
   useEffect(() => {
-    const oldLoggedInUserId = loggedInUserId
+    if (isLoading || isErrored || !user) {
+      return
+    }
+
+    const oldLoggedInUserId = user.id
 
     logout()
 
     trackAction(actions.LOGOUT, {
-      userId: oldLoggedInUserId.uid
+      userId: oldLoggedInUserId
     })
 
     setTimeout(() => push(routes.home), 1500)
-  }, [push])
+  }, [isLoading, isErrored, user])
 
   return <>You are now logged out. Redirecting you to homepage...</>
 }
-
-export default Logout
