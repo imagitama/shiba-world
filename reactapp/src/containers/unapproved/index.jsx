@@ -92,10 +92,14 @@ function AssetsTable({ assets }) {
 }
 
 function UnapprovedAssets() {
-  const [isLoading, isErrored, results] = useDatabaseQuery(
+  let [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.Assets,
     [[AssetFieldNames.isApproved, Operators.EQUALS, false]]
   )
+
+  results = results
+    ? results.filter(({ isDeleted }) => isDeleted !== true)
+    : null
 
   if (isLoading) {
     return <LoadingIndicator />

@@ -25,7 +25,8 @@ export const AssetFieldNames = {
   isAdult: 'isAdult',
   isApproved: 'isApproved',
   tags: 'tags',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  isDeleted: 'isDeleted'
 }
 
 export const CommentFieldNames = {

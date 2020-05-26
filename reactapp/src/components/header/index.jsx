@@ -31,9 +31,12 @@ import useDatabaseQuery, {
 
 // Use a component here to avoid unnecessary hook calls for non-editors
 function UnapprovedMenuItemLabel() {
-  const [, , results] = useDatabaseQuery(CollectionNames.Assets, [
+  let [, , results] = useDatabaseQuery(CollectionNames.Assets, [
     [AssetFieldNames.isApproved, Operators.EQUALS, false]
   ])
+  results = results
+    ? results.filter(({ isDeleted }) => isDeleted !== true)
+    : null
   return `Unapproved (${results ? results.length : '-'})`
 }
 
