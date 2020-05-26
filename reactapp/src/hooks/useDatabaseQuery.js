@@ -36,6 +36,11 @@ export const HistoryFieldNames = {
   createdAt: 'createdAt'
 }
 
+export const NoticesFieldNames = {
+  order: 'order',
+  createdAt: 'createdAt'
+}
+
 function getWhereClausesAsString(whereClauses) {
   if (whereClauses === undefined) {
     return 'undefined'

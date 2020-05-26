@@ -1,10 +1,17 @@
 import React from 'react'
-import useDatabaseQuery, { CollectionNames } from '../../hooks/useDatabaseQuery'
+import useDatabaseQuery, {
+  CollectionNames,
+  NoticesFieldNames,
+  OrderDirections
+} from '../../hooks/useDatabaseQuery'
 import Notice from '../notice'
 
 export default () => {
   const [isLoading, isErrored, results] = useDatabaseQuery(
-    CollectionNames.Notices
+    CollectionNames.Notices,
+    undefined,
+    100,
+    [NoticesFieldNames.order, OrderDirections.ASC]
   )
 
   if (isErrored) {
