@@ -121,7 +121,6 @@ const MainContent = () => {
               'All available assets are shown here so that you can browse them. Click an asset to view more info about it and to download the files.'
           }}
         /> */}
-        <Redirect from={routes.browseAssets} to={routes.home} />
         {/* <RouteWithMeta
           exact
           path={routes.browseWithVar}
@@ -136,6 +135,7 @@ const MainContent = () => {
           from={routes.browseWithVar.replace(':tagName', ':speciesName')}
           to={routes.viewSpeciesWithVar}
         />
+        <Redirect from={routes.browseAssets} to={routes.home} />
         <RouteWithMeta
           exact
           path={routes.createAsset}
