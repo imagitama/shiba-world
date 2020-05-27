@@ -8,9 +8,10 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import shortid from 'shortid'
 import Markdown from 'react-markdown'
 import FileUploader from '../file-uploader'
-import tagList from '../../tags'
 import ThumbnailUploader from '../thumbnail-uploader'
 import Heading from '../heading'
+import { AssetCategories } from '../../hooks/useDatabaseQuery'
+import { species as speciesTags } from '../../tags'
 
 const Hint = ({ children }) => (
   <div style={{ fontSize: '80%', color: 'grey' }}>{children}</div>
@@ -106,6 +107,12 @@ const isFormValid = (formFields, doesHavePermission) => {
   if (!formFields.description) {
     return false
   }
+  if (!formFields.species.length) {
+    return false
+  }
+  if (!formFields.category) {
+    return false
+  }
   if (!formFields.thumbnailUrl) {
     return false
   }
@@ -120,6 +127,8 @@ export default ({
   asset: {
     title,
     description,
+    species = [],
+    category,
     tags = [],
     thumbnailUrl,
     fileUrls = [],
@@ -130,6 +139,8 @@ export default ({
   const [fieldData, setFieldData] = useState({
     title,
     description,
+    species,
+    category,
     tags,
     fileUrls,
     thumbnailUrl,
@@ -230,21 +241,42 @@ Please crop your thumbnails to something like 300x300 (automatic cropping coming
           />
         )}
 
+        <Heading variant="h2">Species</Heading>
+        <FormField
+          label="Species"
+          value={fieldData.species.join('\n')}
+          hint={`What species your asset is for. Type one species per line.
+
+Can be left blank and it will not show up at all.
+
+Include all species to list for all. In future there might be an "all" checkbox.
+          
+Available species: ${Object.values(speciesTags).join(', ')}
+
+In future there will be checkboxes!`}
+          onChange={newVal => onFieldChange('species', newVal)}
+          convertToValidField={text => text.split('\n')}
+          multiline
+          rows={10}
+        />
+
+        <Heading variant="h2">Category</Heading>
+        <FormField
+          label="Category"
+          value={fieldData.category}
+          hint={`What kind of asset it is.
+            
+Type in one of these: ${Object.values(AssetCategories).join(', ')}
+
+In future there will be a dropdown menu!`}
+          onChange={newVal => onFieldChange('category', newVal)}
+        />
+
         <Heading variant="h2">Tags</Heading>
         <FormField
           label="Tags"
           value={fieldData.tags.join('\n')}
-          hint={`A list of tags (one per line) to describe your asset.
-
-Used for categories. Categories: ${Object.values(tagList).join(', ')}.
-
-The first tag should be your category.
-
-The second tag should be the primary one - eg. "clothing" or "collar" or whatever.
-
-Other tags can then be listed.
-
-Note: Your asset can belong to multiple categories but the primary category should be 1st.`}
+          hint={'Help users find your assets using filters and searching.'}
           onChange={newVal => onFieldChange('tags', newVal)}
           convertToValidField={text => text.split('\n')}
           multiline

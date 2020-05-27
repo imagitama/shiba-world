@@ -50,17 +50,11 @@ export default function AssetItem({
   showPrimaryTag = true
 }) {
   const classes = useStyles()
-  const primaryTag = getPrimaryTag(tags)
 
   return (
     <Card className={classes.root}>
       <CardActionArea>
         <Link to={routes.viewAssetWithVar.replace(':assetId', id)}>
-          {primaryTag && showPrimaryTag && (
-            <div className={classes.primaryTag}>
-              <TagChip tagName={getPrimaryTag(tags)} isFilled={false} />
-            </div>
-          )}
           <CardMedia
             className={classes.media}
             image={thumbnailUrl}

@@ -46,14 +46,6 @@ const navItems = [
     url: routes.home
   },
   {
-    label: 'Assets',
-    url: routes.browseAssets
-  },
-  {
-    label: 'Tutorials',
-    url: routes.browseTutorials
-  },
-  {
     label: 'Upload',
     url: routes.createAsset,
     requiresAuth: true

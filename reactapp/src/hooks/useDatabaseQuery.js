@@ -26,7 +26,16 @@ export const AssetFieldNames = {
   isApproved: 'isApproved',
   tags: 'tags',
   createdAt: 'createdAt',
-  isDeleted: 'isDeleted'
+  isDeleted: 'isDeleted',
+  category: 'category',
+  species: 'species'
+}
+
+export const AssetCategories = {
+  accessory: 'accessory',
+  animation: 'animation',
+  tutorial: 'tutorial',
+  avatar: 'avatar'
 }
 
 export const CommentFieldNames = {

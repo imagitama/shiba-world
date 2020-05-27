@@ -1,9 +1,6 @@
 export const home = '/'
 export const login = '/login'
 export const logout = '/logout'
-export const browseAssets = '/browse'
-export const browseTutorials = '/browse/tutorial'
-export const browseWithVar = '/browse/:tagName'
 export const createAsset = '/assets/create'
 export const editAssetWithVar = '/assets/:assetId/edit'
 export const viewAssetWithVar = '/assets/:assetId'
@@ -13,3 +10,11 @@ export const privacyPolicy = '/privacy-policy'
 export const signUp = '/sign-up'
 export const contributors = '/contributors'
 export const unapproved = '/unapproved'
+
+export const viewSpeciesWithVar = '/species/:speciesName'
+export const viewSpeciesCategoryWithVar = '/species/:speciesName/:categoryName'
+
+// Outdated routes
+export const browseAssets = '/browse'
+export const browseTutorials = '/browse/tutorial'
+export const browseWithVar = '/browse/:tagName'

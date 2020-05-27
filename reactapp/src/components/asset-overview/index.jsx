@@ -19,6 +19,8 @@ import TagChip from '../tag-chip'
 import useUserRecord from '../../hooks/useUserRecord'
 import Heading from '../heading'
 import Button from '../button'
+import speciesMeta from '../../species-meta'
+import { AssetCategories } from '../../hooks/useDatabaseQuery'
 
 const isUrlAnImage = url =>
   url.indexOf('png') >= 0 || url.indexOf('jpg') >= 0 || url.indexOf('jpeg') >= 0
@@ -137,6 +139,17 @@ function getDescriptionForHtmlMeta(desc) {
   return newDesc
 }
 
+function getSpeciesDisplayNameBySpeciesName(speciesName) {
+  if (!speciesMeta[speciesName]) {
+    throw new Error(`Unknown species name ${speciesName}`)
+  }
+  return speciesMeta[speciesName].name
+}
+
+function getCategoryDisplayName(category) {
+  return `${category.substr(0, 1).toUpperCase()}${category.substr(1)}`
+}
+
 export default ({ assetId, small = false }) => {
   const [isLoading, isErrored, result] = useDatabase('assets', assetId)
   const classes = useStyles()
@@ -158,6 +171,8 @@ export default ({ assetId, small = false }) => {
     id,
     title,
     description,
+    category,
+    species,
     createdAt,
     createdBy,
     tags,
@@ -198,6 +213,21 @@ export default ({ assetId, small = false }) => {
           {title}
         </Link>
       </Heading>
+      {species && category && (
+        <Heading variant="h2">
+          <Link
+            to={routes.viewSpeciesWithVar.replace(':speciesName', species[0])}>
+            {getSpeciesDisplayNameBySpeciesName(species[0])}
+          </Link>
+          {' - '}
+          <Link
+            to={routes.viewSpeciesCategoryWithVar
+              .replace(':speciesName', species[0])
+              .replace(':categoryName', category)}>
+            {getCategoryDisplayName(category)}
+          </Link>
+        </Heading>
+      )}
       <div className={classes.description}>
         <Markdown source={description} />
       </div>
@@ -207,7 +237,6 @@ export default ({ assetId, small = false }) => {
           .filter(filterOnlyNonImageUrl)
           .filter(fileUrl => fileUrl !== thumbnailUrl)}
       />
-
       <Heading variant="h2">Images</Heading>
       <FileList
         fileUrls={fileUrls

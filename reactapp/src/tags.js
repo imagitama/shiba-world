@@ -1,3 +1,4 @@
+// TODO: move out of here
 export const species = {
   Shiba: 'shiba',
   Avali: 'avali',
@@ -9,11 +10,14 @@ export const species = {
   otherSpecies: 'other-species'
 }
 
-export const common = {
-  tutorial: 'tutorial'
+export const categories = {
+  accessory: 'accessory',
+  animation: 'animation',
+  tutorial: 'tutorial',
+  avatar: 'avatar'
 }
 
 export default {
   ...species,
-  ...common
+  ...categories
 }

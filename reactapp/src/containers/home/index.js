@@ -14,6 +14,7 @@ import Heading from '../../components/heading'
 import * as routes from '../../routes'
 import speciesMeta from '../../species-meta'
 import useSearchTerm from '../../hooks/useSearchTerm'
+import { AssetCategories } from '../../hooks/useDatabaseQuery'
 
 const useSpeciesStyles = makeStyles({
   root: {
@@ -27,7 +28,7 @@ const useSpeciesStyles = makeStyles({
 
 const Species = ({ name, title, description, imageUrl }) => {
   const classes = useSpeciesStyles()
-  const url = routes.browseWithVar.replace(':tagName', name)
+  const url = routes.viewSpeciesWithVar.replace(':speciesName', name)
 
   return (
     <Card className={classes.root}>
@@ -86,8 +87,14 @@ export default () => {
   return (
     <>
       <SpeciesBrowser />
-      <Heading variant="h2">Recent Assets</Heading>
-      <RecentAssets />
+      <Heading variant="h2">Recent Accessories</Heading>
+      <RecentAssets limit={5} categoryName={AssetCategories.accessory} />
+      <Heading variant="h2">Recent Animations</Heading>
+      <RecentAssets limit={5} categoryName={AssetCategories.animation} />
+      <Heading variant="h2">Recent Tutorials</Heading>
+      <RecentAssets limit={5} categoryName={AssetCategories.tutorial} />
+      <Heading variant="h2">Recent Avatars</Heading>
+      <RecentAssets limit={5} categoryName={AssetCategories.avatar} />
     </>
   )
 }

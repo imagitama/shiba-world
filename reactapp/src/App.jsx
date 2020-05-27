@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route, Switch } from 'react-router-dom'
+import { Route, Switch, Redirect } from 'react-router-dom'
 import { Container } from '@material-ui/core'
 import { Helmet } from 'react-helmet'
 
@@ -9,7 +9,6 @@ import Home from './containers/home'
 import Login from './containers/login'
 import SignUp from './containers/signup'
 import Logout from './containers/logout'
-import BrowseAssets from './containers/browse'
 import CreateAsset from './containers/create-asset'
 import EditAsset from './containers/edit-asset'
 import ViewAsset from './containers/view-asset'
@@ -19,6 +18,9 @@ import PrivacyPolicy from './containers/privacy-policy'
 import Contributors from './containers/contributors'
 import Unapproved from './containers/unapproved'
 import ErrorContainer from './containers/error'
+
+import ViewSpecies from './containers/view-species'
+import ViewSpeciesCategory from './containers/view-species-category'
 
 import PageHeader from './components/header'
 import PageFooter from './components/footer'
@@ -46,6 +48,12 @@ const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
     />
   )
 }
+
+// function RouteWithRedirect({ old, new }) {
+//   return (
+//     <Route exact path={old} component={props => <Redirect />} />
+//   )
+// }
 
 const MainContent = () => {
   const searchTerm = useSearchTerm()
@@ -103,7 +111,7 @@ const MainContent = () => {
               'Visit this page to automatically log out of your account.'
           }}
         />
-        <RouteWithMeta
+        {/* <RouteWithMeta
           exact
           path={routes.browseAssets}
           component={BrowseAssets}
@@ -112,8 +120,9 @@ const MainContent = () => {
             description:
               'All available assets are shown here so that you can browse them. Click an asset to view more info about it and to download the files.'
           }}
-        />
-        <RouteWithMeta
+        /> */}
+        <Redirect from={routes.browseAssets} to={routes.home} />
+        {/* <RouteWithMeta
           exact
           path={routes.browseWithVar}
           component={BrowseAssets}
@@ -122,6 +131,10 @@ const MainContent = () => {
             description:
               'The assets and tutorials that users have uploaded except filtered by a specific tag name.'
           }}
+        /> */}
+        <Redirect
+          from={routes.browseWithVar.replace(':tagName', ':speciesName')}
+          to={routes.viewSpeciesWithVar}
         />
         <RouteWithMeta
           exact
@@ -199,6 +212,12 @@ const MainContent = () => {
             title: 'Unapproved assets',
             description: ''
           }}
+        />
+        <Route exact path={routes.viewSpeciesWithVar} component={ViewSpecies} />
+        <Route
+          exact
+          path={routes.viewSpeciesCategoryWithVar}
+          component={ViewSpeciesCategory}
         />
         <Route
           component={() => (
