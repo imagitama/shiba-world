@@ -5,6 +5,8 @@ import FormControl from '@material-ui/core/FormControl'
 import Button from '@material-ui/core/Button'
 import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
+import Select from '@material-ui/core/Select'
+import MenuItem from '@material-ui/core/MenuItem'
 import shortid from 'shortid'
 import Markdown from 'react-markdown'
 import FileUploader from '../file-uploader'
@@ -19,7 +21,8 @@ const Hint = ({ children }) => (
 
 const formFieldType = {
   text: 'text',
-  checkbox: 'checkbox'
+  checkbox: 'checkbox',
+  dropdown: 'dropdown'
 }
 
 const FormField = ({
@@ -28,6 +31,7 @@ const FormField = ({
   value,
   hint,
   convertToValidField,
+  options,
   onChange,
   ...textFieldProps
 }) => (
@@ -46,6 +50,24 @@ const FormField = ({
           }
           {...textFieldProps}
         />
+      ) : type === formFieldType.dropdown ? (
+        <Select
+          label={label}
+          value={value}
+          onChange={event =>
+            onChange(
+              convertToValidField
+                ? convertToValidField(event.target.value)
+                : event.target.value
+            )
+          }
+          {...textFieldProps}>
+          {options.map(option => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </Select>
       ) : (
         <FormControlLabel
           control={
@@ -244,31 +266,21 @@ Please crop your thumbnails to something like 300x300 (automatic cropping coming
         <Heading variant="h2">Species</Heading>
         <FormField
           label="Species"
-          value={fieldData.species.join('\n')}
-          hint={`What species your asset is for. Type one species per line.
-
-Can be left blank and it will not show up at all.
-
-Include all species to list for all. In future there might be an "all" checkbox.
-          
-Available species: ${Object.values(speciesTags).join(', ')}
-
-In future there will be checkboxes!`}
+          type={formFieldType.dropdown}
+          multiple
+          options={Object.values(speciesTags)}
+          value={fieldData.species}
+          hint={`What species your asset is for. You can select multiple.`}
           onChange={newVal => onFieldChange('species', newVal)}
-          convertToValidField={text => text.split('\n')}
-          multiline
-          rows={10}
         />
 
         <Heading variant="h2">Category</Heading>
         <FormField
           label="Category"
           value={fieldData.category}
-          hint={`What kind of asset it is.
-            
-Type in one of these: ${Object.values(AssetCategories).join(', ')}
-
-In future there will be a dropdown menu!`}
+          type={formFieldType.dropdown}
+          options={Object.values(AssetCategories)}
+          hint={`What kind of asset it is.`}
           onChange={newVal => onFieldChange('category', newVal)}
         />
 
