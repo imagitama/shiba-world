@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import ReactCrop from 'react-image-crop'
@@ -12,6 +12,8 @@ const useStyles = makeStyles({
   }
 })
 
+const thumbnailWidthAndHeight = 300
+
 function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
   const [cropX, setCropX] = useState(0)
   const [cropY, setCropY] = useState(0)
@@ -22,6 +24,20 @@ function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
   const [uploadedUrl, setUploadedUrl] = useState(null)
   const imageRef = useRef()
   const selectedFileRef = useRef()
+  const [croppedImagePreviewUrl, setCroppedImagePreviewUrl] = useState('')
+
+  useEffect(() => {
+    async function main() {
+      try {
+        const canvas = await cropImageElementAndGetCanvas()
+        const url = canvas.toDataURL('image/jpeg')
+        setCroppedImagePreviewUrl(url)
+      } catch (err) {
+        console.error('Failed to generate cropped image preview url', err)
+      }
+    }
+    main()
+  }, [cropX, cropY, width, height])
 
   const onFileChange = files => {
     const reader = new FileReader()
@@ -41,38 +57,61 @@ function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
     setUploadedUrl(null)
   }
 
-  const onSubmitBtnClick = async () => {
-    try {
+  const cropImageElementAndGetCanvas = async () => {
+    return new Promise(resolve => {
       const canvas = document.createElement('canvas')
-      canvas.width = 300
-      canvas.height = 300
+      canvas.width = thumbnailWidthAndHeight
+      canvas.height = thumbnailWidthAndHeight
+
+      const image = imageRef.current
+      const scaleX = image.naturalWidth / image.width
+      const scaleY = image.naturalHeight / image.height
+
       const ctx = canvas.getContext('2d')
       ctx.drawImage(
-        imageRef.current,
-        cropX,
-        cropY,
-        width,
-        height,
+        image,
+        cropX * scaleX,
+        cropY * scaleY,
+        width * scaleX,
+        height * scaleY,
         0,
         0,
-        300,
-        300
+        thumbnailWidthAndHeight,
+        thumbnailWidthAndHeight
+      )
+      resolve(canvas)
+    })
+  }
+
+  const cropImageElementAndGetBlob = async (asJpeg = false) => {
+    const canvas = await cropImageElementAndGetCanvas()
+
+    return new Promise(resolve => {
+      // PNG is way slower to use JPEG for previews
+      if (asJpeg) {
+        canvas.toBlob(resolve, 'image/jpeg', 1)
+      } else {
+        canvas.toBlob(resolve)
+      }
+    })
+  }
+
+  const onPerformCropBtnClick = async () => {
+    try {
+      const blob = await cropImageElementAndGetBlob()
+
+      const filename = `${filePrefix ? `${filePrefix}___` : ''}${
+        selectedFileRef.current.name
+      }`
+      const fileToUpload = new File([blob], filename)
+
+      const uploadedUrl = await upload(
+        fileToUpload,
+        `${directoryPath}/${filename}`
       )
 
-      canvas.toBlob(async blob => {
-        const filename = `${filePrefix ? `${filePrefix}___` : ''}${
-          selectedFileRef.current.name
-        }`
-        const fileToUpload = new File([blob], filename)
-
-        const uploadedUrl = await upload(
-          fileToUpload,
-          `${directoryPath}/${filename}`
-        )
-
-        setUploadedUrl(uploadedUrl)
-        onUploaded(uploadedUrl)
-      })
+      setUploadedUrl(uploadedUrl)
+      onUploaded(uploadedUrl)
     } catch (err) {
       console.error(err)
     }
@@ -83,8 +122,8 @@ function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
       <>
         <img
           src={uploadedUrl}
-          width="300"
-          height="300"
+          width={thumbnailWidthAndHeight}
+          height={thumbnailWidthAndHeight}
           alt="Uploaded preview"
         />
         <Button onClick={onCancelBtnClick} color="default">
@@ -103,7 +142,10 @@ function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
       <>
         <p>Please follow this guide for a good thumbnail:</p>
         <ul>
-          <li>300px by 300px (an option to crop will appear)</li>
+          <li>
+            {thumbnailWidthAndHeight}px by {thumbnailWidthAndHeight}px (an
+            option to crop will appear)
+          </li>
           <li>file type PNG</li>
         </ul>
         <input
@@ -134,17 +176,25 @@ function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
         crop={{
           x: cropX,
           y: cropY,
-          width,
-          height,
+          width: width ? width : undefined,
+          height: height ? height : 100,
           aspect: 1,
-          locked: true,
-          unit: 'px'
+          lock: true,
+          unit: width && height ? 'px' : '%'
         }}
       />
+      Output:
+      <img
+        src={croppedImagePreviewUrl}
+        width={thumbnailWidthAndHeight}
+        height={thumbnailWidthAndHeight}
+        alt="Uploaded preview"
+      />
+      <br />
       <Button onClick={onCancelBtnClick} color="default">
         Cancel
       </Button>
-      <Button onClick={onSubmitBtnClick}>Submit</Button>
+      <Button onClick={onPerformCropBtnClick}>Submit</Button>
     </>
   )
 }
