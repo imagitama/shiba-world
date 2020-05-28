@@ -13,8 +13,10 @@ import RecentAssets from '../../components/recent-assets'
 import Heading from '../../components/heading'
 import * as routes from '../../routes'
 import speciesMeta from '../../species-meta'
+import categoryMeta from '../../category-meta'
 import useSearchTerm from '../../hooks/useSearchTerm'
 import { AssetCategories } from '../../hooks/useDatabaseQuery'
+import { categories } from '../../tags'
 
 const useSpeciesStyles = makeStyles({
   root: {
@@ -77,6 +79,10 @@ const SpeciesBrowser = () => (
   </>
 )
 
+function RecentAssetDescription({ categoryName }) {
+  return <p>{categoryMeta[categoryName].shortDescription}</p>
+}
+
 export default () => {
   const searchTerm = useSearchTerm()
 
@@ -88,12 +94,16 @@ export default () => {
     <>
       <SpeciesBrowser />
       <Heading variant="h2">Recent Accessories</Heading>
+      <RecentAssetDescription categoryName={AssetCategories.accessory} />
       <RecentAssets limit={5} categoryName={AssetCategories.accessory} />
       <Heading variant="h2">Recent Animations</Heading>
+      <RecentAssetDescription categoryName={AssetCategories.animation} />
       <RecentAssets limit={5} categoryName={AssetCategories.animation} />
       <Heading variant="h2">Recent Tutorials</Heading>
+      <RecentAssetDescription categoryName={AssetCategories.tutorial} />
       <RecentAssets limit={5} categoryName={AssetCategories.tutorial} />
       <Heading variant="h2">Recent Avatars</Heading>
+      <RecentAssetDescription categoryName={AssetCategories.avatar} />
       <RecentAssets limit={5} categoryName={AssetCategories.avatar} />
     </>
   )

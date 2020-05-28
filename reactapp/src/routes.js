@@ -13,6 +13,7 @@ export const unapproved = '/unapproved'
 
 export const viewSpeciesWithVar = '/species/:speciesName'
 export const viewSpeciesCategoryWithVar = '/species/:speciesName/:categoryName'
+export const viewCategoryWithVar = '/category/:categoryName'
 
 // Outdated routes
 export const browseAssets = '/browse'

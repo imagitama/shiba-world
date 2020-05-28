@@ -18,6 +18,7 @@ import PrivacyPolicy from './containers/privacy-policy'
 import Contributors from './containers/contributors'
 import Unapproved from './containers/unapproved'
 import ErrorContainer from './containers/error'
+import ViewCategory from './containers/view-category'
 
 import ViewSpecies from './containers/view-species'
 import ViewSpeciesCategory from './containers/view-species-category'
@@ -218,6 +219,11 @@ const MainContent = () => {
           exact
           path={routes.viewSpeciesCategoryWithVar}
           component={ViewSpeciesCategory}
+        />
+        <Route
+          exact
+          path={routes.viewCategoryWithVar}
+          component={ViewCategory}
         />
         <Route
           component={() => (
