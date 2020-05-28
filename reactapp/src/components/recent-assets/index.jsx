@@ -59,12 +59,14 @@ export default ({ speciesName, limit = 10, categoryName }) => {
     <>
       <AssetResults assets={results} />
       {speciesName && categoryName ? (
-        <Link
-          to={routes.viewSpeciesCategoryWithVar
-            .replace(':speciesName', speciesName)
-            .replace(':categoryName', categoryName)}>
-          <Button>View More</Button>
-        </Link>
+        <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+          <Link
+            to={routes.viewSpeciesCategoryWithVar
+              .replace(':speciesName', speciesName)
+              .replace(':categoryName', categoryName)}>
+            <Button>View More</Button>
+          </Link>
+        </div>
       ) : (
         'Click a species above to find more'
       )}

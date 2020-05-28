@@ -56,24 +56,41 @@ export default ({
         <Markdown>{getDescriptionForSpeciesName(speciesName)}</Markdown>
       </Paper>
       <Heading variant="h2">Recent Accessories</Heading>
+      <p>
+        Prefabs, models, textures and other accessories for your avatar. Most
+        accessories should have instructions for attaching them.
+      </p>
       <RecentAssets
         speciesName={speciesName}
         limit={5}
         categoryName={AssetCategories.accessory}
       />
       <Heading variant="h2">Recent Animations</Heading>
+      <p>
+        Make your avatar dance, wave or run on the spot using one of these
+        pre-made animations.
+      </p>
       <RecentAssets
         speciesName={speciesName}
         limit={5}
         categoryName={AssetCategories.animation}
       />
       <Heading variant="h2">Recent Tutorials</Heading>
+      <p>
+        Learn how to use software such as Unity, Blender or Substance Painter.
+        Learn how to make changes to your avatar or build worlds.
+      </p>
       <RecentAssets
         speciesName={speciesName}
         limit={5}
         categoryName={AssetCategories.tutorial}
       />
-      <Heading variant="h2">Recent Avatars</Heading>
+      <Heading variant="h2">Avatar Showcase</Heading>
+      <p>
+        Custom avatars built using the base model for this species. Use it to
+        showcase your work with photos or link to public worlds where you can
+        clone the avatar.
+      </p>
       <RecentAssets
         speciesName={speciesName}
         limit={5}

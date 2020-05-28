@@ -12,7 +12,8 @@ import tags from '../../tags'
 import useDatabaseQuery, {
   Operators,
   CollectionNames,
-  AssetFieldNames
+  AssetFieldNames,
+  AssetCategories
 } from '../../hooks/useDatabaseQuery'
 import Heading from '../../components/heading'
 import TagChip from '../../components/tag-chip'
@@ -32,12 +33,13 @@ function getShortDescriptionForSpeciesName(speciesName) {
   return getSpeciesByName(speciesName).shortDescription
 }
 
-function getDescriptionForSpeciesName(speciesName) {
-  return getSpeciesByName(speciesName).description
-}
-
 function getCategoryDisplayName(category) {
-  return `${category.substr(0, 1).toUpperCase()}${category.substr(1)}`
+  switch (category) {
+    case AssetCategories.avatar:
+      return 'Avatar Showcase'
+    default:
+      return `${category.substr(0, 1).toUpperCase()}${category.substr(1)}`
+  }
 }
 
 const useStyles = makeStyles({
