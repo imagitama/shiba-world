@@ -14,8 +14,7 @@ const useStyles = makeStyles(theme => ({
     position: 'relative'
   },
   message: {
-    marginTop: theme.spacing(1),
-    fontSize: '80%'
+    marginTop: theme.spacing(1)
   },
   hideBtn: {
     position: 'absolute',
