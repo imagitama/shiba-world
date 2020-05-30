@@ -10,6 +10,7 @@ import AdultContentToggle from '../../components/adult-content-toggle'
 import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'
 import NoPermissionMessage from '../../components/no-permission-message'
+import DarkModeToggle from '../../components/darkmode-toggle'
 
 const MyAccount = ({ auth }) => {
   const [isLoading, isErrored, user] = useDatabase(
@@ -37,6 +38,8 @@ const MyAccount = ({ auth }) => {
       <UsernameEditor userId={user.id} record={user} />
       <Heading variant="h2">Profile settings</Heading>
       <AdultContentToggle />
+      <br />
+      <DarkModeToggle />
     </>
   )
 }

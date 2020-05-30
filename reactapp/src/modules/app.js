@@ -1,13 +1,16 @@
 import { trackAction, actions } from '../analytics'
+import { keys } from '../hooks/useStorage'
 
 const initialState = {
   isMenuOpen: false,
-  searchTerm: ''
+  searchTerm: '',
+  darkModeEnabled: localStorage.getItem(keys.darkModeEnabled) === 'true'
 }
 
 const OPEN_MENU = 'OPEN_MENU'
 const CLOSE_MENU = 'CLOSE_MENU'
 const CHANGE_SEARCH_TERM = 'CHANGE_SEARCH_TERM'
+const TOGGLE_DARK_MODE = 'TOGGLE_DARK_MODE'
 
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -27,6 +30,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         searchTerm: action.payload.searchTerm
+      }
+
+    case TOGGLE_DARK_MODE:
+      return {
+        ...state,
+        darkModeEnabled: !state.darkModeEnabled
       }
 
     default:
@@ -66,5 +75,11 @@ export const changeSearchTerm = searchTerm => dispatch => {
 
   trackAction(actions.CHANGE_SEARCH_TERM, {
     searchTerm
+  })
+}
+
+export const toggleDarkMode = () => dispatch => {
+  dispatch({
+    type: TOGGLE_DARK_MODE
   })
 }

@@ -1,9 +1,13 @@
 import React from 'react'
 import { Route, Switch, Redirect } from 'react-router-dom'
-import { Container } from '@material-ui/core'
+import Container from '@material-ui/core/Container'
+import ThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
+import CssBaseline from '@material-ui/core/CssBaseline'
 import { Helmet } from 'react-helmet'
+import { useSelector } from 'react-redux'
 
 import * as routes from './routes'
+import { lightTheme, darkTheme } from './themes'
 
 import Home from './containers/home'
 import Login from './containers/login'
@@ -107,26 +111,6 @@ const MainContent = () => {
               'Visit this page to automatically log out of your account.'
           }}
         />
-        {/* <RouteWithMeta
-          exact
-          path={routes.browseAssets}
-          component={BrowseAssets}
-          meta={{
-            title: 'Browse all of the assets that users have uploaded',
-            description:
-              'All available assets are shown here so that you can browse them. Click an asset to view more info about it and to download the files.'
-          }}
-        /> */}
-        {/* <RouteWithMeta
-          exact
-          path={routes.browseWithVar}
-          component={BrowseAssets}
-          meta={{
-            title: 'Browse the assets and tutorials by tag name',
-            description:
-              'The assets and tutorials that users have uploaded except filtered by a specific tag name.'
-          }}
-        /> */}
         <Redirect
           from={routes.browseWithVar.replace(':tagName', ':speciesName')}
           to={routes.viewSpeciesWithVar}
@@ -231,15 +215,21 @@ const MainContent = () => {
   )
 }
 
-export default () => (
-  <>
-    <PageHeader />
-    <main className="main">
-      <Container maxWidth="lg">
-        <Notices />
-        <MainContent />
-      </Container>
-    </main>
-    <PageFooter />
-  </>
-)
+export default () => {
+  const { darkModeEnabled } = useSelector(({ app: { darkModeEnabled } }) => ({
+    darkModeEnabled
+  }))
+  return (
+    <ThemeProvider theme={darkModeEnabled ? darkTheme : lightTheme}>
+      <CssBaseline />
+      <PageHeader />
+      <main className="main">
+        <Container maxWidth="lg">
+          <Notices />
+          <MainContent />
+        </Container>
+      </main>
+      <PageFooter />
+    </ThemeProvider>
+  )
+}

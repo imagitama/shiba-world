@@ -31,7 +31,8 @@ export const actions = {
   // ACCOUNT
   TOGGLE_ENABLED_ADULT_CONTENT: 'ToggleEnabledAdultContent',
 
-  HIDE_NOTICE: 'HideNotice'
+  HIDE_NOTICE: 'HideNotice',
+  TOGGLE_DARK_MODE: 'ToggleDarkMode'
 }
 
 const actionDetails = {
@@ -85,6 +86,9 @@ const actionDetails = {
 
   // OTHER - APP
   [actions.HIDE_NOTICE]: {
+    category: categories.APP
+  },
+  [actions.TOGGLE_DARK_MODE]: {
     category: categories.APP
   }
 }
