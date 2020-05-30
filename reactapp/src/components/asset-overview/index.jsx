@@ -202,6 +202,14 @@ export default ({ assetId, small = false }) => {
     modifiedBy
   } = result
 
+  const downloadUrls = fileUrls
+    .filter(filterOnlyNonImageUrl)
+    .filter(fileUrl => fileUrl !== thumbnailUrl)
+
+  const imageUrls = fileUrls
+    .filter(filterOnlyImagesUrl)
+    .filter(fileUrl => fileUrl !== thumbnailUrl)
+
   return (
     <div className={classes.root}>
       <Helmet>
@@ -253,20 +261,20 @@ export default ({ assetId, small = false }) => {
       <div className={classes.description}>
         <Markdown source={description} />
       </div>
-      <Heading variant="h2">Files</Heading>
-      <FileList
-        assetId={id}
-        fileUrls={fileUrls
-          .filter(filterOnlyNonImageUrl)
-          .filter(fileUrl => fileUrl !== thumbnailUrl)}
-      />
-      <Heading variant="h2">Images</Heading>
-      <FileList
-        assetId={id}
-        fileUrls={fileUrls
-          .filter(filterOnlyImagesUrl)
-          .filter(fileUrl => fileUrl !== thumbnailUrl)}
-      />
+
+      {downloadUrls.length ? (
+        <>
+          <Heading variant="h2">Files</Heading>
+          <FileList assetId={id} fileUrls={downloadUrls} />
+        </>
+      ) : null}
+
+      {imageUrls.length ? (
+        <>
+          <Heading variant="h2">Images</Heading>
+          <FileList assetId={id} fileUrls={imageUrls} />
+        </>
+      ) : null}
       <Heading variant="h2">Meta</Heading>
       <div>
         {tags
