@@ -18,7 +18,8 @@ export const CollectionNames = {
   Assets: 'assets',
   Comments: 'comments',
   Notices: 'notices',
-  History: 'history'
+  History: 'history',
+  Endorsements: 'endorsements'
 }
 
 export const AssetFieldNames = {
@@ -49,6 +50,11 @@ export const HistoryFieldNames = {
 export const NoticesFieldNames = {
   order: 'order',
   createdAt: 'createdAt'
+}
+
+export const EndorsementFieldNames = {
+  asset: 'asset',
+  createdBy: 'createdBy'
 }
 
 function getWhereClausesAsString(whereClauses) {

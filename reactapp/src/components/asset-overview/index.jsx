@@ -11,16 +11,13 @@ import ErrorMessage from '../../components/error-message'
 import FormattedDate from '../formatted-date'
 import CommentList from '../comment-list'
 import AddCommentForm from '../add-comment-form'
-// import VotesList from '../votes-list'
-// import AddVoteForm from '../add-vote-form'
-// import FeatureListButton from '../feature-list-button'
+import EndorseAssetButton from '../endorse-asset-button'
 import * as routes from '../../routes'
 import TagChip from '../tag-chip'
 import useUserRecord from '../../hooks/useUserRecord'
 import Heading from '../heading'
 import Button from '../button'
 import speciesMeta from '../../species-meta'
-import { AssetCategories } from '../../hooks/useDatabaseQuery'
 
 const isUrlAnImage = url =>
   url.indexOf('png') >= 0 || url.indexOf('jpg') >= 0 || url.indexOf('jpeg') >= 0
@@ -66,6 +63,9 @@ const FileResult = ({ url }) => {
 }
 
 const useStyles = makeStyles({
+  root: {
+    position: 'relative'
+  },
   description: {
     fontSize: '90%',
     margin: '1rem 0',
@@ -79,6 +79,11 @@ const useStyles = makeStyles({
     '& a': {
       color: 'inherit'
     }
+  },
+  controls: {
+    position: 'absolute',
+    top: 0,
+    right: 0
   }
 })
 
@@ -184,7 +189,7 @@ export default ({ assetId, small = false }) => {
   } = result
 
   return (
-    <>
+    <div className={classes.root}>
       <Helmet>
         <title>
           {title} | Uploaded by {createdBy.username} | VRCArena
@@ -208,6 +213,9 @@ export default ({ assetId, small = false }) => {
       </Helmet>
       {isApproved === false && <NotApprovedMessage />}
       <img src={thumbnailUrl} height={300} alt="The thumbnail for the asset." />
+      <div className={classes.controls}>
+        <EndorseAssetButton assetId={id} />
+      </div>
       <Heading variant="h1">
         <Link to={routes.viewAssetWithVar.replace(':assetId', assetId)}>
           {title}
@@ -273,6 +281,6 @@ export default ({ assetId, small = false }) => {
       <Heading variant="h2">Comments</Heading>
       <CommentList assetId={assetId} />
       <AddCommentForm assetId={assetId} />
-    </>
+    </div>
   )
 }
