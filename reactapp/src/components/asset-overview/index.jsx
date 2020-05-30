@@ -83,9 +83,12 @@ const useStyles = makeStyles({
   root: {
     position: 'relative'
   },
+  subtitle: {
+    marginTop: '0.5rem'
+  },
   description: {
     fontSize: '90%',
-    margin: '1rem 0',
+    margin: '2rem 0 1rem',
     '& A': { textDecoration: 'underline' }
   },
   notApprovedMessage: {
@@ -252,7 +255,7 @@ export default ({ assetId, small = false }) => {
         </Link>
       </Heading>
       {species && category && (
-        <Heading variant="h2">
+        <Heading className={classes.subtitle} variant="h2">
           <Link
             to={routes.viewSpeciesWithVar.replace(':speciesName', species[0])}>
             {getSpeciesDisplayNameBySpeciesName(species[0])}

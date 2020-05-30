@@ -30,7 +30,7 @@ const SearchBar = ({ searchTerm, changeSearchTerm }) => {
     <Paper className={classes.root}>
       <InputBase
         className={classes.input}
-        placeholder={`Search keywords eg. "shiba", "collar", "hair", "brown"`}
+        placeholder={`Search everything eg. "shiba collar"`}
         autoFocus={true}
         autoComplete="false"
         onChange={event => changeSearchTerm(event.target.value)}

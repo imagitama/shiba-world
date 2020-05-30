@@ -19,7 +19,7 @@ import Heading from '../heading'
 import Button from '../button'
 
 const useStyles = makeStyles({
-  hint: { fontSize: '80%', color: 'grey' },
+  hint: { color: 'grey', marginTop: '0.5rem' },
   formFieldRoot: { padding: '2rem' },
   fileAttacherItem: { margin: '0 0 1rem 0', padding: '2rem' },
   fileAttacherUploader: { padding: '2rem' },

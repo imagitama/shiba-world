@@ -126,7 +126,7 @@ const useStyles = makeStyles({
     marginBottom: '2rem',
     background: 'linear-gradient(20deg, #6e4a9e, #240b36)',
     '@media (min-width: 600px)': {
-      padding: '2rem 2rem'
+      padding: '2rem 2rem 1rem'
     }
   },
   gridColSearchbar: {
@@ -170,7 +170,8 @@ const useStyles = makeStyles({
   menuItemLink: {
     display: 'block',
     width: '100%',
-    height: '100%'
+    height: '100%',
+    color: 'inherit'
   },
   drawer: {
     '@media (min-width: 960px)': {

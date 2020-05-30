@@ -6,6 +6,7 @@ import firebase from 'firebase/app'
 import * as Sentry from '@sentry/browser'
 import { createMuiTheme } from '@material-ui/core/styles'
 import ThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
+import CssBaseline from '@material-ui/core/CssBaseline'
 import { loggedInUserId } from './firebase'
 import ReactReduxFirebaseProvider from 'react-redux-firebase/lib/ReactReduxFirebaseProvider'
 import store, { history } from './store'
@@ -13,10 +14,6 @@ import App from './App'
 import { trackAction, actions } from './analytics'
 import { inDevelopment } from './environment'
 import { changeSearchTerm } from './modules/app'
-
-import 'sanitize.css/sanitize.css'
-import './assets/css/theme.css'
-import './assets/css/mana.min.css'
 
 if (!inDevelopment()) {
   Sentry.init({
@@ -42,17 +39,35 @@ const rrfProps = {
   dispatch: store.dispatch
 }
 
+const colorBrand = '#6e4a9e'
+
 const theme = createMuiTheme({
   palette: {
     primary: {
       light: '#875DC6',
-      main: '#6e4a9e',
+      main: colorBrand,
       dark: '#49326B'
     },
     secondary: {
       light: '#5C1B96',
       main: '#461470',
       dark: '#240b36'
+    },
+    background: {
+      default: 'hsl(25, 1%, 90%)'
+    }
+  },
+  overrides: {
+    MuiCssBaseline: {
+      '@global': {
+        html: {
+          WebkitFontSmoothing: 'auto'
+        },
+        a: {
+          color: colorBrand,
+          textDecoration: 'none'
+        }
+      }
     }
   }
 })
@@ -62,6 +77,7 @@ render(
     <ConnectedRouter history={history}>
       <ReactReduxFirebaseProvider {...rrfProps}>
         <ThemeProvider theme={theme}>
+          <CssBaseline />
           <App />
         </ThemeProvider>
       </ReactReduxFirebaseProvider>
