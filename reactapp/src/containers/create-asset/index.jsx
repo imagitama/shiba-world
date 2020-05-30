@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import Button from '@material-ui/core/Button'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useDatabaseDocument from '../../hooks/useDatabaseDocument'
+import { CollectionNames } from '../../hooks/useDatabaseQuery'
 import withAuthProfile from '../../hocs/withAuthProfile'
 import AssetEditor from '../../components/asset-editor'
 import withRedirectOnNotAuth from '../../hocs/withRedirectOnNotAuth'
@@ -11,11 +10,12 @@ import SuccessMessage from '../../components/success-message'
 import { scrollToTop } from '../../utils'
 import * as routes from '../../routes'
 import Heading from '../../components/heading'
+import Button from '../../components/button'
 
 const CreateAsset = ({ auth }) => {
-  const [isSaving, isSuccess, save] = useDatabaseSave('assets')
+  const [isSaving, isSuccess, save] = useDatabaseSave(CollectionNames.Assets)
   const userId = auth.uid
-  const [userDocument] = useDatabaseDocument('users', userId)
+  const [userDocument] = useDatabaseDocument(CollectionNames.Users, userId)
   const [newDocumentId, setNewDocumentId] = useState(null)
 
   if (isSaving) {
@@ -26,9 +26,10 @@ const CreateAsset = ({ auth }) => {
     return (
       <SuccessMessage>
         Asset created successfully <br />
-        <Link to={routes.viewAssetWithVar.replace(':assetId', newDocumentId)}>
-          <Button variant="contained">View Asset</Button>
-        </Link>
+        <Button
+          url={routes.viewAssetWithVar.replace(':assetId', newDocumentId)}>
+          View Asset
+        </Button>
       </SuccessMessage>
     )
   }
@@ -49,7 +50,7 @@ const CreateAsset = ({ auth }) => {
             })
             setNewDocumentId(docId)
           } catch (err) {
-            console.error(err)
+            console.error('Failed to create asset', newFields, err)
           }
         }}
       />

@@ -4,7 +4,6 @@ import useDatabaseQuery, {
   Operators,
   CollectionNames,
   AssetFieldNames,
-  AssetCategories,
   OrderDirections
 } from '../../hooks/useDatabaseQuery'
 import LoadingIndicator from '../loading-indicator'

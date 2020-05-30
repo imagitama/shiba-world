@@ -1,15 +1,20 @@
 import React, { useState } from 'react'
 import TextField from '@material-ui/core/TextField'
-import Button from '@material-ui/core/Button'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
+import { CollectionNames } from '../../hooks/useDatabaseQuery'
 import { trackAction, actions } from '../../analytics'
+import Button from '../button'
 
-const UsernameEditor = ({ userId }) => {
+// TODO: Grab from useUserRecord
+export default ({ userId }) => {
   if (!userId) {
     return 'Need user ID to edit their username'
   }
 
-  const [isSaving, isSuccessOrFail, save] = useDatabaseSave('users', userId)
+  const [isSaving, isSuccessOrFail, save] = useDatabaseSave(
+    CollectionNames.Users,
+    userId
+  )
   const [fieldValue, setFieldValue] = useState('')
 
   if (isSaving) {
@@ -46,5 +51,3 @@ const UsernameEditor = ({ userId }) => {
     </>
   )
 }
-
-export default UsernameEditor

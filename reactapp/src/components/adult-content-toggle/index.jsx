@@ -8,15 +8,16 @@ import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { trackAction, actions } from '../../analytics'
+import { CollectionNames } from '../../hooks/useDatabaseQuery'
 
 export default withAuthProfile(({ auth }) => {
   const userId = auth.uid
   const [isLoading, isErrored, user, forceRefreshUser] = useDatabase(
-    'users',
+    CollectionNames.Users,
     userId
   )
   const [isSaving, hasSavingSucceededOrFailed, save] = useDatabaseSave(
-    'users',
+    CollectionNames.Users,
     userId
   )
 

@@ -6,6 +6,7 @@ import Markdown from 'react-markdown'
 import Heading from '../heading'
 import FormattedDate from '../formatted-date'
 import Button from '../button'
+import AssetThumbnail from '../asset-thumbnail'
 import * as routes from '../../routes'
 
 const useStyles = makeStyles({
@@ -40,7 +41,7 @@ export default ({
   const readMoreUrl = routes.viewAssetWithVar.replace(':assetId', id)
   return (
     <Paper className={classes.root}>
-      <img height="200" src={thumbnailUrl} alt="Thumbnail for article" />
+      <AssetThumbnail url={thumbnailUrl} />
       <Heading variant="h2" className={classes.heading}>
         <Link to={readMoreUrl}>{title}</Link>
       </Heading>

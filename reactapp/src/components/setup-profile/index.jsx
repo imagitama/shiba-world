@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import TextField from '@material-ui/core/TextField'
 import FormControl from '@material-ui/core/FormControl'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
+import { CollectionNames } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import ErrorMessage from '../error-message'
@@ -9,13 +10,14 @@ import SuccessMessage from '../success-message'
 import LoadingIndicator from '../loading-indicator'
 import Button from '../button'
 import Heading from '../heading'
+import BodyText from '../body-text'
 
 export default () => {
   const uid = useFirebaseUserId()
   const [, , user] = useUserRecord()
   const userId = user ? user.id : null
   const [isCreating, isCreateSuccessOrFail, create] = useDatabaseSave(
-    'users',
+    CollectionNames.Users,
     userId
   )
   const [fieldValue, setFieldValue] = useState('')
@@ -51,7 +53,7 @@ export default () => {
   return (
     <>
       <Heading variant="h1">Welcome to VRCArena</Heading>
-      <p>Before you can continue please set up your profile:</p>
+      <BodyText>Before you can continue please set up your profile:</BodyText>
       <FormControl>
         <TextField
           value={fieldValue}
@@ -60,11 +62,19 @@ export default () => {
         />
       </FormControl>
       <Button
-        onClick={() =>
-          create({
-            username: fieldValue
-          })
-        }>
+        onClick={async () => {
+          try {
+            await create({
+              username: fieldValue
+            })
+          } catch (err) {
+            console.error(
+              'Failed to setup profile',
+              { username: fieldValue },
+              err
+            )
+          }
+        }}>
         Save
       </Button>
     </>

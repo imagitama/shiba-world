@@ -7,7 +7,6 @@ import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Paper from '@material-ui/core/Paper'
-import Button from '@material-ui/core/Button'
 import useUserRecord from '../../hooks/useUserRecord'
 import useDatabaseQuery, {
   CollectionNames,
@@ -20,6 +19,7 @@ import ErrorMessage from '../../components/error-message'
 import NoPermissionMessage from '../../components/no-permission-message'
 import * as routes from '../../routes'
 import Heading from '../../components/heading'
+import Button from '../../components/button'
 
 const useStyles = makeStyles({
   table: {
@@ -51,11 +51,7 @@ function ApproveButton({ assetId }) {
     return 'Failed to approve'
   }
 
-  return (
-    <Button variant="contained" onClick={approve}>
-      Approve
-    </Button>
-  )
+  return <Button onClick={approve}>Approve</Button>
 }
 
 function AssetsTable({ assets }) {

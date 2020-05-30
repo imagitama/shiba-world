@@ -2,15 +2,20 @@ import React from 'react'
 import withRedirectOnNotAuth from '../../hocs/withRedirectOnNotAuth'
 import withAuthProfile from '../../hocs/withAuthProfile'
 import useDatabase from '../../hooks/useDatabase'
+import { CollectionNames } from '../../hooks/useDatabaseQuery'
 import LoadingIndicator from '../../components/loading-indicator'
 import ErrorMessage from '../../components/error-message'
-import CreateProfileForm from '../../components/create-profile-form'
 import UsernameEditor from '../../components/username-editor'
 import AdultContentToggle from '../../components/adult-content-toggle'
 import Heading from '../../components/heading'
+import BodyText from '../../components/body-text'
+import NoPermissionMessage from '../../components/no-permission-message'
 
 const MyAccount = ({ auth }) => {
-  const [isLoading, isErrored, user] = useDatabase('users', auth.uid)
+  const [isLoading, isErrored, user] = useDatabase(
+    CollectionNames.Users,
+    auth.uid
+  )
 
   if (isLoading) {
     return <LoadingIndicator />
@@ -21,24 +26,13 @@ const MyAccount = ({ auth }) => {
   }
 
   if (!user) {
-    return (
-      <>
-        <Heading variant="h1">Welcome to VRCArena</Heading>
-        <p>
-          Thanks for signing up. Before you can start uploading assets and
-          interacting with the site, you need a profile.
-        </p>
-        <p>Enter your profile info to get started:</p>
-        <CreateProfileForm userId={auth.uid} />
-        <p>Once done you can start uploading assets from the main menu.</p>
-      </>
-    )
+    return <NoPermissionMessage />
   }
 
   return (
     <>
       <Heading variant="h1">Your Account</Heading>
-      <p>Hi, {user.username}!</p>
+      <BodyText>Hi, {user.username}!</BodyText>
       <Heading variant="h2">Change your name</Heading>
       <UsernameEditor userId={user.id} record={user} />
       <Heading variant="h2">Profile settings</Heading>

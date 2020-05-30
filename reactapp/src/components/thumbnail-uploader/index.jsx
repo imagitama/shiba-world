@@ -5,6 +5,7 @@ import ReactCrop from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
 import Button from '../button'
 import useFileUpload from '../../hooks/useFileUpload'
+import BodyText from '../body-text'
 
 const useStyles = makeStyles({
   root: {
@@ -140,14 +141,9 @@ function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
   if (!imageSrc) {
     return (
       <>
-        <p>Please follow this guide for a good thumbnail:</p>
-        <ul>
-          <li>
-            {thumbnailWidthAndHeight}px by {thumbnailWidthAndHeight}px (an
-            option to crop will appear)
-          </li>
-          <li>file type PNG</li>
-        </ul>
+        <BodyText>
+          Select a file and you will be able to crop it to 300x300
+        </BodyText>
         <input
           type="file"
           onChange={event => onFileChange(event.target.files)}

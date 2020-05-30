@@ -7,11 +7,12 @@ import LoginForm from '../../components/login-form'
 import withRedirectOnAuth from '../../hocs/withRedirectOnAuth'
 import { trackAction, actions } from '../../analytics'
 import Heading from '../../components/heading'
+import BodyText from '../../components/body-text'
 
 const Login = ({ push }) => (
   <>
     <Heading variant="h1">Login</Heading>
-    <p>Enter your details below to login.</p>
+    <BodyText>Enter your details below to login.</BodyText>
     <LoginForm
       onSuccess={auth => {
         trackAction(actions.LOGIN, {
@@ -21,10 +22,10 @@ const Login = ({ push }) => (
         push(routes.home)
       }}
     />
-    <p>
+    <BodyText>
       You can read our <Link to={routes.privacyPolicy}>Privacy Policy</Link>{' '}
       here.
-    </p>
+    </BodyText>
   </>
 )
 

@@ -25,7 +25,7 @@ const useStyles = makeStyles({
 
 export default ({ assetId }) => {
   if (!assetId) {
-    throw new Error('No asset ID provided')
+    throw new Error('Cannot render add comment form: no asset ID provided')
   }
 
   const [textFieldValue, setTextFieldValue] = useState('')

@@ -7,6 +7,10 @@ const useStyles = makeStyles(() => ({
   progress: {
     display: 'block',
     margin: '0 auto'
+  },
+  message: {
+    marginTop: '1rem',
+    textAlign: 'center'
   }
 }))
 
@@ -15,7 +19,7 @@ function LoadingIndicator({ message = '' }) {
   return (
     <>
       <CircularProgress className={classes.progress} color="secondary" />
-      {message && <Message>{message}</Message>}
+      {message && <div className={classes.message}>{message}</div>}
     </>
   )
 }

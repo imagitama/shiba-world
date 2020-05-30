@@ -1,14 +1,11 @@
 import React from 'react'
-import Paper from '@material-ui/core/Paper'
-import { makeStyles } from '@material-ui/core/styles'
-import Markdown from 'react-markdown'
 import { Helmet } from 'react-helmet'
 import useUserRecord from '../../hooks/useUserRecord'
 import LoadingIndicator from '../../components/loading-indicator'
 import AssetResults from '../../components/asset-results'
 import speciesMeta from '../../species-meta'
+import categoriesMeta from '../../category-meta'
 import ErrorMessage from '../../components/error-message'
-import tags from '../../tags'
 import useDatabaseQuery, {
   Operators,
   CollectionNames,
@@ -16,7 +13,7 @@ import useDatabaseQuery, {
   AssetCategories
 } from '../../hooks/useDatabaseQuery'
 import Heading from '../../components/heading'
-import TagChip from '../../components/tag-chip'
+import BodyText from '../../components/body-text'
 
 function getSpeciesByName(speciesName) {
   if (!speciesMeta[speciesName]) {
@@ -25,28 +22,26 @@ function getSpeciesByName(speciesName) {
   return speciesMeta[speciesName]
 }
 
+function getCategoryByName(categoryName) {
+  if (!categoriesMeta[categoryName]) {
+    throw new Error(
+      `Cannot get category by name. It does not exist: ${categoryName}`
+    )
+  }
+  return categoriesMeta[categoryName]
+}
+
 function getNameForSpeciesName(speciesName) {
   return getSpeciesByName(speciesName).name
 }
 
-function getShortDescriptionForSpeciesName(speciesName) {
-  return getSpeciesByName(speciesName).shortDescription
+function getCategoryDisplayName(categoryName) {
+  return getCategoryByName(categoryName).name
 }
 
-function getCategoryDisplayName(category) {
-  switch (category) {
-    case AssetCategories.avatar:
-      return 'Avatar Showcase'
-    default:
-      return `${category.substr(0, 1).toUpperCase()}${category.substr(1)}`
-  }
+function getShortDescriptionForCategoryName(categoryName) {
+  return getCategoryByName(categoryName).shortDescription
 }
-
-const useStyles = makeStyles({
-  description: {
-    padding: '1rem'
-  }
-})
 
 function Assets({ speciesName, categoryName }) {
   const [, , user] = useUserRecord()
@@ -72,7 +67,7 @@ function Assets({ speciesName, categoryName }) {
   )
 
   if (isLoading) {
-    return <LoadingIndicator />
+    return <LoadingIndicator message="Loading assets..." />
   }
 
   if (isErrored) {
@@ -96,22 +91,19 @@ export default ({
     params: { speciesName, categoryName }
   }
 }) => {
-  const classes = useStyles()
+  const desc = getShortDescriptionForCategoryName(categoryName)
   return (
     <>
       <Helmet>
         <title>
-          {getCategoryDisplayName(categoryName)} |{' '}
-          {getNameForSpeciesName(speciesName)} | One of the species with
-          accessories, animations, tutorials and avatars. | VRCArena
+          {getCategoryDisplayName(categoryName)} -{' '}
+          {getNameForSpeciesName(speciesName)} | {desc} | VRCArena
         </title>
-        <meta
-          name="description"
-          content={getShortDescriptionForSpeciesName(speciesName)}
-        />
+        <meta name="description" content={desc} />
       </Helmet>
       <Heading variant="h1">{getNameForSpeciesName(speciesName)}</Heading>
       <Heading variant="h2">{getCategoryDisplayName(categoryName)}</Heading>
+      <BodyText>{desc}</BodyText>
       <Assets speciesName={speciesName} categoryName={categoryName} />
     </>
   )

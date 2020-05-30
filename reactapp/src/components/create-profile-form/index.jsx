@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
 import TextField from '@material-ui/core/TextField'
-import Button from '@material-ui/core/Button'
+import { FormControl } from '@material-ui/core'
+
 import useDatabaseSave from '../../hooks/useDatabaseSave'
+import { CollectionNames } from '../../hooks/useDatabaseQuery'
+
 import ErrorMessage from '../error-message'
 import SuccessMessage from '../success-message'
 import LoadingIndicator from '../loading-indicator'
-import { FormControl } from '@material-ui/core'
+import Button from '../button'
 
 const CreateProfileForm = ({ userId }) => {
   if (!userId) {
@@ -13,7 +16,7 @@ const CreateProfileForm = ({ userId }) => {
   }
 
   const [isCreating, isCreateSuccessOrFail, create] = useDatabaseSave(
-    'users',
+    CollectionNames.Users,
     userId
   )
   const [fieldValue, setFieldValue] = useState('')

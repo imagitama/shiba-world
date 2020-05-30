@@ -8,10 +8,10 @@ import ErrorMessage from '../../components/error-message'
 import useDatabaseQuery, {
   Operators,
   CollectionNames,
-  AssetFieldNames,
-  AssetCategories
+  AssetFieldNames
 } from '../../hooks/useDatabaseQuery'
 import Heading from '../../components/heading'
+import BodyText from '../../components/body-text'
 
 function getDisplayNameByCategoryName(categoryName) {
   return categoryMeta[categoryName].name
@@ -82,7 +82,7 @@ export default ({
       <Heading variant="h1">
         {getDisplayNameByCategoryName(categoryName)}
       </Heading>
-      <p>{getDescriptionByCategoryName(categoryName)}</p>
+      <BodyText>{getDescriptionByCategoryName(categoryName)}</BodyText>
       <Assets categoryName={categoryName} />
     </>
   )

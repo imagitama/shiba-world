@@ -1,12 +1,15 @@
 import React from 'react'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import useAlgoliaSearch, { Indexes } from '../../hooks/useAlgoliaSearch'
 import useUserRecord from '../../hooks/useUserRecord'
 import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
 import SearchResult from '../search-result'
 
-const SearchResults = ({ searchTerm }) => {
+export default () => {
+  const { searchTerm } = useSelector(({ app: { searchTerm } }) => ({
+    searchTerm
+  }))
   const [, , user] = useUserRecord()
 
   const [isLoading, isErrored, hits] = useAlgoliaSearch(
@@ -16,7 +19,7 @@ const SearchResults = ({ searchTerm }) => {
   )
 
   if (isLoading || !hits) {
-    return <LoadingIndicator />
+    return <LoadingIndicator message="Searching..." />
   }
 
   if (isErrored) {
@@ -24,7 +27,7 @@ const SearchResults = ({ searchTerm }) => {
   }
 
   if (!hits.length) {
-    return <p>No assets found matching your search term</p>
+    return 'Nothing found matching your search term'
   }
 
   return (
@@ -35,7 +38,3 @@ const SearchResults = ({ searchTerm }) => {
     </>
   )
 }
-
-const mapStateToProps = ({ app: { searchTerm } }) => ({ searchTerm })
-
-export default connect(mapStateToProps)(SearchResults)

@@ -4,6 +4,7 @@ import LoadingIndicator from '../components/loading-indicator'
 import NoPermissionMessage from '../components/no-permission-message'
 import ErrorMessage from '../components/error-message'
 import useDatabase from '../hooks/useDatabase'
+import { CollectionNames } from '../hooks/useDatabaseQuery'
 
 const mapStateToProps = ({ firebase: { auth } }) => ({ auth })
 
@@ -30,7 +31,10 @@ export default (Component, whichFlagName, showMustLoginMessage = true) =>
       }
     }
 
-    const [isLoading, isErrored, user] = useDatabase('users', auth.uid)
+    const [isLoading, isErrored, user] = useDatabase(
+      CollectionNames.Users,
+      auth.uid
+    )
 
     if (isLoading) {
       return <LoadingIndicator />

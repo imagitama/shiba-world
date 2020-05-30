@@ -7,17 +7,18 @@ import LoginForm from '../../components/login-form'
 import withRedirectOnAuth from '../../hocs/withRedirectOnAuth'
 import { trackAction, actions } from '../../analytics'
 import Heading from '../../components/heading'
+import BodyText from '../../components/body-text'
 
 const Login = ({ push }) => (
   <>
     <Heading variant="h1">Sign Up</Heading>
-    <p>Enter your details below to create a new account.</p>
-    <p>
+    <BodyText>Enter your details below to create a new account.</BodyText>
+    <BodyText>
       <strong>
         Please note that we do not use your first and last name anywhere on the
         site but it is stored. You will set a username after you sign up.
       </strong>
-    </p>
+    </BodyText>
     <LoginForm
       onSuccess={auth => {
         trackAction(actions.SIGNUP, {
@@ -27,10 +28,10 @@ const Login = ({ push }) => (
         push(routes.myAccount)
       }}
     />
-    <p>
+    <BodyText>
       You can read our <Link to={routes.privacyPolicy}>Privacy Policy</Link>{' '}
       here.
-    </p>
+    </BodyText>
   </>
 )
 

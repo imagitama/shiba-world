@@ -32,8 +32,6 @@ import SetupProfile from './components/setup-profile'
 import useSearchTerm from './hooks/useSearchTerm'
 import Notices from './components/notices'
 
-import LoadingIndicator from './components/loading-indicator'
-
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
   return (
     <Route

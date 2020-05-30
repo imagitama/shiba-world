@@ -4,14 +4,17 @@ import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
-import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
 import useDatabase from '../../hooks/useDatabase'
+import { CollectionNames } from '../../hooks/useDatabaseQuery'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
+import Button from '../../components/button'
+import LoadingIndicator from '../../components/loading-indicator'
+import ErrorMessage from '../../components/error-message'
 
 const ToggleFieldButton = ({ userId, fieldName, currentValue }) => {
   const [isSaving, didSaveFailOrSucceed, save] = useDatabaseSave(
-    'users',
+    CollectionNames.Users,
     userId
   )
 
@@ -27,11 +30,15 @@ const ToggleFieldButton = ({ userId, fieldName, currentValue }) => {
         ? 'Failed to save'
         : ''}
       <Button
-        onClick={() =>
-          save({
-            [fieldName]: !currentValue
-          })
-        }>
+        onClick={async () => {
+          try {
+            await save({
+              [fieldName]: !currentValue
+            })
+          } catch (err) {
+            console.error('Failed to toggle field', { userId, fieldName }, err)
+          }
+        }}>
         Toggle
       </Button>
     </>
@@ -39,14 +46,16 @@ const ToggleFieldButton = ({ userId, fieldName, currentValue }) => {
 }
 
 const AdminUserManagement = () => {
-  const [isLoadingRecord, didLoadingRecordFail, users] = useDatabase('users')
+  const [isLoadingRecord, didLoadingRecordFail, users] = useDatabase(
+    CollectionNames.Users
+  )
 
   if (isLoadingRecord) {
-    return 'Loading users...'
+    return <LoadingIndicator>Loading users...</LoadingIndicator>
   }
 
   if (didLoadingRecordFail) {
-    return 'Failed to load users. Please try again'
+    return <ErrorMessage>ailed to load users. Please try again</ErrorMessage>
   }
 
   if (!users.length) {

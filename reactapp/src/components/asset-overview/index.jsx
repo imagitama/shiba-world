@@ -5,18 +5,23 @@ import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper'
 import { Helmet } from 'react-helmet'
+
 import useDatabase from '../../hooks/useDatabase'
-import LoadingIndicator from '../../components/loading-indicator'
-import ErrorMessage from '../../components/error-message'
+import { CollectionNames } from '../../hooks/useDatabaseQuery'
+import useUserRecord from '../../hooks/useUserRecord'
+
+import LoadingIndicator from '../loading-indicator'
+import ErrorMessage from '../error-message'
 import FormattedDate from '../formatted-date'
 import CommentList from '../comment-list'
 import AddCommentForm from '../add-comment-form'
 import EndorseAssetButton from '../endorse-asset-button'
-import * as routes from '../../routes'
 import TagChip from '../tag-chip'
-import useUserRecord from '../../hooks/useUserRecord'
 import Heading from '../heading'
 import Button from '../button'
+import AssetThumbnail from '../asset-thumbnail'
+
+import * as routes from '../../routes'
 import speciesMeta from '../../species-meta'
 import { trackAction, actions } from '../../analytics'
 
@@ -170,7 +175,10 @@ function getCategoryDisplayName(category) {
 }
 
 export default ({ assetId, small = false }) => {
-  const [isLoading, isErrored, result] = useDatabase('assets', assetId)
+  const [isLoading, isErrored, result] = useDatabase(
+    CollectionNames.Assets,
+    assetId
+  )
   const classes = useStyles()
   const [, , user] = useUserRecord()
 
@@ -234,7 +242,7 @@ export default ({ assetId, small = false }) => {
         <meta property="og:site_name" content="VRCArena" />
       </Helmet>
       {isApproved === false && <NotApprovedMessage />}
-      <img src={thumbnailUrl} height={300} alt="The thumbnail for the asset." />
+      <AssetThumbnail url={thumbnailUrl} />
       <div className={classes.controls}>
         <EndorseAssetButton assetId={id} />
       </div>

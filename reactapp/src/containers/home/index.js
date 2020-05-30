@@ -7,28 +7,31 @@ import CardActionArea from '@material-ui/core/CardActionArea'
 import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
 import CardMedia from '@material-ui/core/CardMedia'
-import Button from '@material-ui/core/Button'
 
 import RecentAssets from '../../components/recent-assets'
 import Heading from '../../components/heading'
+import BodyText from '../../components/body-text'
+import Button from '../../components/button'
+
 import * as routes from '../../routes'
 import speciesMeta from '../../species-meta'
 import categoryMeta from '../../category-meta'
 import useSearchTerm from '../../hooks/useSearchTerm'
 import { AssetCategories } from '../../hooks/useDatabaseQuery'
 
-const useSpeciesStyles = makeStyles({
+const useStyles = makeStyles({
   root: {
     width: 250,
     margin: '0.5rem'
   },
   media: {
     height: 250
-  }
+  },
+  speciesBrowser: { marginTop: '0.5rem', display: 'flex', flexWrap: 'wrap' }
 })
 
 const Species = ({ name, title, description, imageUrl }) => {
-  const classes = useSpeciesStyles()
+  const classes = useStyles()
   const url = routes.viewSpeciesWithVar.replace(':speciesName', name)
 
   return (
@@ -50,19 +53,14 @@ const Species = ({ name, title, description, imageUrl }) => {
           </CardContent>
         </Link>
       </CardActionArea>
-      <CardActions>
-        <Button size="small" color="primary">
-          <Link to={url}>Browse</Link>
-        </Button>
-      </CardActions>
     </Card>
   )
 }
 
-const SpeciesBrowser = () => (
-  <>
-    <Heading variant="h2">Species</Heading>
-    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+const SpeciesBrowser = () => {
+  const classes = useStyles()
+  return (
+    <div className={classes.speciesBrowser}>
       {Object.entries(speciesMeta).map(
         ([name, { name: title, shortDescription, thumbnailUrl }]) => (
           <Species
@@ -75,11 +73,11 @@ const SpeciesBrowser = () => (
         )
       )}
     </div>
-  </>
-)
+  )
+}
 
 function RecentAssetDescription({ categoryName }) {
-  return <p>{categoryMeta[categoryName].shortDescription}</p>
+  return <BodyText>{categoryMeta[categoryName].shortDescription}</BodyText>
 }
 
 export default () => {
@@ -91,6 +89,10 @@ export default () => {
 
   return (
     <>
+      <Heading variant="h2">Species</Heading>
+      <BodyText>
+        Select a species to browse their assets, tutorials, avatars and news.
+      </BodyText>
       <SpeciesBrowser />
       <Heading variant="h2">Recent News</Heading>
       <RecentAssetDescription categoryName={AssetCategories.article} />

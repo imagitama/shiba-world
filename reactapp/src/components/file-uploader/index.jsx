@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
-import Button from '@material-ui/core/Button'
 import { DropzoneArea } from 'material-ui-dropzone'
 import useFileUpload from '../../hooks/useFileUpload'
+import Button from '../button'
 
 export default ({ directoryPath = '', filePrefix = '', onDownloadUrl }) => {
   const uploadedFileRef = useRef()
@@ -30,38 +30,26 @@ export default ({ directoryPath = '', filePrefix = '', onDownloadUrl }) => {
     }
   }
 
-  // const onUploadAnotherClick = () => {
-  //   uploadedFileRef.current = null
-  // }
-
   if (uploadedFileRef.current && isUploading) {
     return `Uploading ${percentageDone}%`
   }
-
-  // if (uploadedFileRef.current && isSuccess) {
-  //   return (
-  //     <>
-  //       Asset uploaded successfully.{' '}
-  //       <Button onClick={onUploadAnotherClick}>Upload Another</Button>
-  //     </>
-  //   )
-  // }
 
   return (
     <>
       <DropzoneArea
         onChange={onDropzoneAreaChange}
         filesLimit={1}
-        // acceptedFiles={['*/*']}
-        // acceptedFiles={['image/jpg, image/jpeg, image/png']}
         maxFileSize={500 * 1000 * 1000} // 500mb
       />
       Upload images (jpg, png, etc.) and ZIP files. Max 500mb. RAR, FBX and
       unitypackage not supported (use ZIP)
       <br />
-      <Button variant="contained" onClick={onUploadClick}>
-        Upload
-      </Button>
+      <strong>
+        Please wait a few seconds after the file is uploaded for it to appear in
+        the list above.
+      </strong>
+      <br />
+      <Button onClick={onUploadClick}>Upload</Button>
     </>
   )
 }

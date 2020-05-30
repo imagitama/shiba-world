@@ -11,6 +11,7 @@ import LoadingIndicator from '../../components/loading-indicator'
 import ErrorMessage from '../../components/error-message'
 import Article from '../../components/article'
 import Heading from '../../components/heading'
+import BodyText from '../../components/body-text'
 import categoryMeta from '../../category-meta'
 
 function Articles() {
@@ -68,7 +69,7 @@ export default () => {
         <meta name="description" content={desc} />
       </Helmet>
       <Heading variant="h1">{title}</Heading>
-      <p>{desc}</p>
+      <BodyText>{desc}</BodyText>
       <Articles />
     </div>
   )

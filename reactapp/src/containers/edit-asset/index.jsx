@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import Button from '@material-ui/core/Button'
 import AssetEditor from '../../components/asset-editor'
 import withRedirectOnNotAuth from '../../hocs/withRedirectOnNotAuth'
 import useDatabase from '../../hooks/useDatabase'
@@ -11,12 +10,17 @@ import SuccessMessage from '../../components/success-message'
 import { scrollToTop } from '../../utils'
 import * as routes from '../../routes'
 import Heading from '../../components/heading'
+import Button from '../../components/button'
+import { CollectionNames } from '../../hooks/useDatabaseQuery'
 
 const EditAsset = ({ match: { params } }) => {
-  const [isLoading, isErrored, asset] = useDatabase('assets', params.assetId)
+  const [isLoading, isErrored, asset] = useDatabase(
+    CollectionNames.Assets,
+    params.assetId
+  )
   const [newFields, setNewFields] = useState()
   const [isSaving, wasSaveSuccessOrFail, save] = useDatabaseSave(
-    'assets',
+    CollectionNames.Assets,
     params.assetId
   )
 
@@ -27,14 +31,16 @@ const EditAsset = ({ match: { params } }) => {
         <SuccessMessage>
           Save success
           <br />
-          <Link
-            to={routes.viewAssetWithVar.replace(':assetId', params.assetId)}>
-            <Button variant="contained">View Asset</Button>
-          </Link>
+          <Button
+            url={routes.viewAssetWithVar.replace(':assetId', params.assetId)}>
+            View Asset
+          </Button>
         </SuccessMessage>
       )}
       {isLoading || isSaving ? (
-        <LoadingIndicator />
+        <LoadingIndicator
+          message={isSaving ? 'Saving...' : isLoading ? 'Loading...' : ''}
+        />
       ) : isErrored || !asset ? (
         <ErrorMessage>Failed to load the asset for editing</ErrorMessage>
       ) : wasSaveSuccessOrFail === false ? (

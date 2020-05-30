@@ -7,12 +7,11 @@ import CardContent from '@material-ui/core/CardContent'
 import CardMedia from '@material-ui/core/CardMedia'
 import Typography from '@material-ui/core/Typography'
 import * as routes from '../../routes'
-import TagChip from '../tag-chip'
 
 const useStyles = makeStyles({
   root: {
     width: 200,
-    margin: '1rem',
+    margin: '0.5rem',
     position: 'relative'
   },
   media: {
@@ -35,19 +34,8 @@ function truncateTextAndAddEllipsis(text) {
   return text.length >= 100 ? `${text.slice(0, 100)}...` : text
 }
 
-function getPrimaryTag(tags) {
-  if (!tags) {
-    return null
-  }
-  if (tags.length >= 2) {
-    return tags[1]
-  }
-  return tags[0]
-}
-
 export default function AssetItem({
-  asset: { id, title, description, thumbnailUrl, tags },
-  showPrimaryTag = true
+  asset: { id, title, description, thumbnailUrl }
 }) {
   const classes = useStyles()
 
