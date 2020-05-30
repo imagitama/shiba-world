@@ -28,6 +28,10 @@ function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
   const [croppedImagePreviewUrl, setCroppedImagePreviewUrl] = useState('')
 
   useEffect(() => {
+    if (!imageRef.current) {
+      return
+    }
+
     async function main() {
       try {
         const canvas = await cropImageElementAndGetCanvas()

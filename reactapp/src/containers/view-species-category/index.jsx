@@ -9,8 +9,7 @@ import ErrorMessage from '../../components/error-message'
 import useDatabaseQuery, {
   Operators,
   CollectionNames,
-  AssetFieldNames,
-  AssetCategories
+  AssetFieldNames
 } from '../../hooks/useDatabaseQuery'
 import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'

@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
 import AssetEditor from '../../components/asset-editor'
 import withRedirectOnNotAuth from '../../hocs/withRedirectOnNotAuth'
 import useDatabase from '../../hooks/useDatabase'

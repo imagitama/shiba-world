@@ -1,5 +1,5 @@
 import React from 'react'
-import { connect, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import useAlgoliaSearch, { Indexes } from '../../hooks/useAlgoliaSearch'
 import useUserRecord from '../../hooks/useUserRecord'
 import LoadingIndicator from '../loading-indicator'
