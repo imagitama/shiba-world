@@ -26,7 +26,8 @@ import useUserRecord from '../../hooks/useUserRecord'
 import useDatabaseQuery, {
   CollectionNames,
   AssetFieldNames,
-  Operators
+  Operators,
+  AssetCategories
 } from '../../hooks/useDatabaseQuery'
 
 // Use a component here to avoid unnecessary hook calls for non-editors
@@ -44,6 +45,34 @@ const navItems = [
   {
     label: 'Home',
     url: routes.home
+  },
+  {
+    label: 'Accessories',
+    url: routes.viewCategoryWithVar.replace(
+      ':categoryName',
+      AssetCategories.accessory
+    )
+  },
+  {
+    label: 'Animations',
+    url: routes.viewCategoryWithVar.replace(
+      ':categoryName',
+      AssetCategories.animation
+    )
+  },
+  {
+    label: 'Tutorials',
+    url: routes.viewCategoryWithVar.replace(
+      ':categoryName',
+      AssetCategories.tutorial
+    )
+  },
+  {
+    label: 'Avatars',
+    url: routes.viewCategoryWithVar.replace(
+      ':categoryName',
+      AssetCategories.avatar
+    )
   },
   {
     label: 'Upload',
@@ -70,10 +99,10 @@ const navItems = [
     url: routes.logout,
     requiresAuth: true
   },
-  {
-    label: 'Contributors',
-    url: routes.contributors
-  },
+  // {
+  //   label: 'Contributors',
+  //   url: routes.contributors
+  // },
   {
     label: UnapprovedMenuItemLabel,
     url: routes.unapproved,
