@@ -4,6 +4,8 @@ import { Provider } from 'react-redux'
 import { ConnectedRouter } from 'connected-react-router'
 import firebase from 'firebase/app'
 import * as Sentry from '@sentry/browser'
+import { createMuiTheme } from '@material-ui/core/styles'
+import ThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
 import { loggedInUserId } from './firebase'
 import ReactReduxFirebaseProvider from 'react-redux-firebase/lib/ReactReduxFirebaseProvider'
 import store, { history } from './store'
@@ -40,11 +42,28 @@ const rrfProps = {
   dispatch: store.dispatch
 }
 
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      light: '#875DC6',
+      main: '#6e4a9e',
+      dark: '#49326B'
+    },
+    secondary: {
+      light: '#5C1B96',
+      main: '#461470',
+      dark: '#240b36'
+    }
+  }
+})
+
 render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
       <ReactReduxFirebaseProvider {...rrfProps}>
-        <App />
+        <ThemeProvider theme={theme}>
+          <App />
+        </ThemeProvider>
       </ReactReduxFirebaseProvider>
     </ConnectedRouter>
   </Provider>,
