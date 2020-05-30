@@ -22,11 +22,11 @@ const useStyles = makeStyles({
   })
 })
 
-export default ({ children, variant }) => {
+export default ({ children, variant, className = '' }) => {
   const classes = useStyles({ variant })
 
   return (
-    <Typography variant={variant} className={classes.heading}>
+    <Typography variant={variant} className={`${classes.heading} ${className}`}>
       {children}
     </Typography>
   )

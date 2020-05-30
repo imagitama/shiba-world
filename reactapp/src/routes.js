@@ -10,10 +10,10 @@ export const privacyPolicy = '/privacy-policy'
 export const signUp = '/sign-up'
 export const contributors = '/contributors'
 export const unapproved = '/unapproved'
-
 export const viewSpeciesWithVar = '/species/:speciesName'
 export const viewSpeciesCategoryWithVar = '/species/:speciesName/:categoryName'
 export const viewCategoryWithVar = '/category/:categoryName'
+export const news = '/news'
 
 // Outdated routes
 export const browseAssets = '/browse'

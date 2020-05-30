@@ -7,6 +7,7 @@ import speciesMeta from '../../species-meta'
 import Heading from '../../components/heading'
 import RecentAssets from '../../components/recent-assets'
 import { AssetCategories } from '../../hooks/useDatabaseQuery'
+import categoryMeta from '../../category-meta'
 
 function getSpeciesByName(speciesName) {
   if (!speciesMeta[speciesName]) {
@@ -25,6 +26,10 @@ function getShortDescriptionForSpeciesName(speciesName) {
 
 function getDescriptionForSpeciesName(speciesName) {
   return getSpeciesByName(speciesName).description
+}
+
+function RecentAssetDescription({ categoryName }) {
+  return <p>{categoryMeta[categoryName].shortDescription}</p>
 }
 
 const useStyles = makeStyles({
@@ -55,42 +60,36 @@ export default ({
       <Paper className={classes.description}>
         <Markdown>{getDescriptionForSpeciesName(speciesName)}</Markdown>
       </Paper>
+      <Heading variant="h2">News</Heading>
+      <RecentAssetDescription categoryName={AssetCategories.article} />
+      <RecentAssets
+        speciesName={speciesName}
+        limit={5}
+        categoryName={AssetCategories.article}
+      />
       <Heading variant="h2">Recent Accessories</Heading>
-      <p>
-        Prefabs, models, textures and other accessories for your avatar. Most
-        accessories should have instructions for attaching them.
-      </p>
+      <RecentAssetDescription categoryName={AssetCategories.accessory} />
       <RecentAssets
         speciesName={speciesName}
         limit={5}
         categoryName={AssetCategories.accessory}
       />
       <Heading variant="h2">Recent Animations</Heading>
-      <p>
-        Make your avatar dance, wave or run on the spot using one of these
-        pre-made animations.
-      </p>
+      <RecentAssetDescription categoryName={AssetCategories.animation} />
       <RecentAssets
         speciesName={speciesName}
         limit={5}
         categoryName={AssetCategories.animation}
       />
       <Heading variant="h2">Recent Tutorials</Heading>
-      <p>
-        Learn how to use software such as Unity, Blender or Substance Painter.
-        Learn how to make changes to your avatar or build worlds.
-      </p>
+      <RecentAssetDescription categoryName={AssetCategories.tutorial} />
       <RecentAssets
         speciesName={speciesName}
         limit={5}
         categoryName={AssetCategories.tutorial}
       />
       <Heading variant="h2">Avatar Showcase</Heading>
-      <p>
-        Custom avatars built using the base model for this species. Use it to
-        showcase your work with photos or link to public worlds where you can
-        clone the avatar.
-      </p>
+      <RecentAssetDescription categoryName={AssetCategories.avatar} />
       <RecentAssets
         speciesName={speciesName}
         limit={5}

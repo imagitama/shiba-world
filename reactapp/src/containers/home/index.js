@@ -16,7 +16,6 @@ import speciesMeta from '../../species-meta'
 import categoryMeta from '../../category-meta'
 import useSearchTerm from '../../hooks/useSearchTerm'
 import { AssetCategories } from '../../hooks/useDatabaseQuery'
-import { categories } from '../../tags'
 
 const useSpeciesStyles = makeStyles({
   root: {
@@ -93,6 +92,9 @@ export default () => {
   return (
     <>
       <SpeciesBrowser />
+      <Heading variant="h2">Recent News</Heading>
+      <RecentAssetDescription categoryName={AssetCategories.article} />
+      <RecentAssets limit={5} categoryName={AssetCategories.article} />
       <Heading variant="h2">Recent Accessories</Heading>
       <RecentAssetDescription categoryName={AssetCategories.accessory} />
       <RecentAssets limit={5} categoryName={AssetCategories.accessory} />

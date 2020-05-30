@@ -47,6 +47,10 @@ const navItems = [
     url: routes.home
   },
   {
+    label: 'News',
+    url: routes.news
+  },
+  {
     label: 'Accessories',
     url: routes.viewCategoryWithVar.replace(
       ':categoryName',

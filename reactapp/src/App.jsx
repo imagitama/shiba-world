@@ -19,6 +19,7 @@ import Contributors from './containers/contributors'
 import Unapproved from './containers/unapproved'
 import ErrorContainer from './containers/error'
 import ViewCategory from './containers/view-category'
+import News from './containers/news'
 
 import ViewSpecies from './containers/view-species'
 import ViewSpeciesCategory from './containers/view-species-category'
@@ -225,6 +226,7 @@ const MainContent = () => {
           path={routes.viewCategoryWithVar}
           component={ViewCategory}
         />
+        <Route exact path={routes.news} component={News} />
         <Route
           component={() => (
             <ErrorContainer code={404} message="Page not found" />

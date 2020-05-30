@@ -36,7 +36,8 @@ export const AssetCategories = {
   accessory: 'accessory',
   animation: 'animation',
   tutorial: 'tutorial',
-  avatar: 'avatar'
+  avatar: 'avatar',
+  article: 'article'
 }
 
 export const CommentFieldNames = {
