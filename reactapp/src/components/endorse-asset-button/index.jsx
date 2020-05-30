@@ -9,6 +9,7 @@ import useDatabaseQuery, {
 } from '../../hooks/useDatabaseQuery'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useDatabaseDocument from '../../hooks/useDatabaseDocument'
+import { trackAction, actions } from '../../analytics'
 
 const useStyles = makeStyles({
   loggedOutBtn: {
@@ -36,11 +37,20 @@ export default ({ assetId }) => {
   )
   const classes = useStyles()
 
-  const onSaveBtnClick = () => {
-    save({
-      asset: assetDocument,
-      createdBy: userDocument
-    })
+  const onSaveBtnClick = async () => {
+    try {
+      await save({
+        asset: assetDocument,
+        createdBy: userDocument
+      })
+
+      trackAction(actions.ENDORSE_ASSET, {
+        assetId,
+        userId: user && user.id
+      })
+    } catch (err) {
+      console.error('Failed to save endorsement', err)
+    }
   }
 
   if (isLoadingUser || isFetchingEndorsements || isSaving) {
