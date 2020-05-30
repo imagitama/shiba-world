@@ -18,6 +18,7 @@ import useUserRecord from '../../hooks/useUserRecord'
 import Heading from '../heading'
 import Button from '../button'
 import speciesMeta from '../../species-meta'
+import { trackAction, actions } from '../../analytics'
 
 const isUrlAnImage = url =>
   url.indexOf('png') >= 0 || url.indexOf('jpg') >= 0 || url.indexOf('jpeg') >= 0
@@ -43,8 +44,15 @@ const getFilenameFromUrl = url =>
     .split('___')
     .pop()
 
-const FileResult = ({ url }) => {
+const FileResult = ({ assetId, url }) => {
   const classes = useStyles()
+
+  const onDownloadBtnClick = () =>
+    trackAction(actions.DOWNLOAD_ASSET_FILE, {
+      assetId,
+      url
+    })
+
   return (
     <Paper style={{ padding: '1rem', marginBottom: '1rem' }}>
       {getFilenameFromUrl(url)}
@@ -53,7 +61,11 @@ const FileResult = ({ url }) => {
         <FileResultThumbnail url={url} />
       ) : (
         <Button className={classes.downloadButton}>
-          <a href={url} target="_blank" rel="noopener noreferrer">
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={onDownloadBtnClick}>
             Download
           </a>
         </Button>
@@ -126,11 +138,13 @@ function canEditAsset(currentUser, createdBy) {
   return false
 }
 
-function FileList({ fileUrls }) {
+function FileList({ assetId, fileUrls }) {
   if (!fileUrls.length) {
     return 'None found'
   }
-  return fileUrls.map(fileUrl => <FileResult key={fileUrl} url={fileUrl} />)
+  return fileUrls.map(fileUrl => (
+    <FileResult key={fileUrl} assetId={assetId} url={fileUrl} />
+  ))
 }
 
 function getDescriptionForHtmlMeta(desc) {
@@ -241,12 +255,14 @@ export default ({ assetId, small = false }) => {
       </div>
       <Heading variant="h2">Files</Heading>
       <FileList
+        assetId={id}
         fileUrls={fileUrls
           .filter(filterOnlyNonImageUrl)
           .filter(fileUrl => fileUrl !== thumbnailUrl)}
       />
       <Heading variant="h2">Images</Heading>
       <FileList
+        assetId={id}
         fileUrls={fileUrls
           .filter(filterOnlyImagesUrl)
           .filter(fileUrl => fileUrl !== thumbnailUrl)}

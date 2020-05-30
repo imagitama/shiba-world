@@ -25,6 +25,7 @@ export const actions = {
 
   // ASSETS
   COMMENT_ON_ASSET: 'CommentOnAsset',
+  DOWNLOAD_ASSET_FILE: 'DownloadAssetFile',
 
   // ACCOUNT
   TOGGLE_ENABLED_ADULT_CONTENT: 'ToggleEnabledAdultContent',
@@ -72,6 +73,9 @@ const actionDetails = {
   // ASSETS
 
   [actions.COMMENT_ON_ASSET]: {
+    category: categories.ASSETS
+  },
+  [actions.DOWNLOAD_ASSET_FILE]: {
     category: categories.ASSETS
   },
 
