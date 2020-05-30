@@ -1,4 +1,5 @@
 import React from 'react'
+import { Helmet } from 'react-helmet'
 import useDatabaseQuery, {
   CollectionNames,
   AssetCategories,
@@ -10,6 +11,7 @@ import LoadingIndicator from '../../components/loading-indicator'
 import ErrorMessage from '../../components/error-message'
 import Article from '../../components/article'
 import Heading from '../../components/heading'
+import categoryMeta from '../../category-meta'
 
 function Articles() {
   const [, , user] = useUserRecord()
@@ -55,10 +57,18 @@ function Articles() {
 }
 
 export default () => {
+  const title = categoryMeta[AssetCategories.article].name
+  const desc = categoryMeta[AssetCategories.article].shortDescription
   return (
     <div>
-      <Heading variant="h1">News</Heading>
-      <p>Headlines for VRChat.</p>
+      <Helmet>
+        <title>
+          {title} | {desc} | VRCArena
+        </title>
+        <meta name="description" content={desc} />
+      </Helmet>
+      <Heading variant="h1">{title}</Heading>
+      <p>{desc}</p>
       <Articles />
     </div>
   )
