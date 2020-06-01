@@ -40,6 +40,10 @@ export const AssetCategories = {
   article: 'article'
 }
 
+export const UserFieldNames = {
+  username: 'username'
+}
+
 export const CommentFieldNames = {
   parent: 'parent'
 }
@@ -126,12 +130,12 @@ const mapReferences = async doc => {
   return newDoc
 }
 
-async function formatRawDoc(doc) {
+export async function formatRawDoc(doc) {
   const formattedDocs = await formatRawDocs([doc])
   return formattedDocs[0]
 }
 
-async function formatRawDocs(docs) {
+export async function formatRawDocs(docs) {
   const docsWithDates = docs
     .map(doc => ({ ...doc.data(), id: doc.id }))
     .map(mapDates)

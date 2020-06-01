@@ -48,6 +48,7 @@ export default ({ userId }) => {
         }}>
         Change Name
       </Button>
+      {}
     </>
   )
 }

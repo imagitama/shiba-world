@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux'
 
 import * as routes from './routes'
 import { lightTheme, darkTheme } from './themes'
+import { UserFieldNames } from './hooks/useDatabaseQuery'
 
 import Home from './containers/home'
 import Login from './containers/login'
@@ -35,6 +36,7 @@ import useUserRecord from './hooks/useUserRecord'
 import SetupProfile from './components/setup-profile'
 import useSearchTerm from './hooks/useSearchTerm'
 import Notices from './components/notices'
+import useIsLoggedIn from './hooks/useIsLoggedIn'
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
   return (
@@ -57,13 +59,14 @@ const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
 
 const MainContent = () => {
   const searchTerm = useSearchTerm()
-  const [, , user] = useUserRecord()
+  const isLoggedIn = useIsLoggedIn()
+  const [, , username] = useUserRecord(UserFieldNames.username)
 
   if (searchTerm) {
     return <SearchResults />
   }
 
-  if (user && !user.username) {
+  if (isLoggedIn && !username) {
     return <SetupProfile />
   }
 
@@ -216,9 +219,9 @@ const MainContent = () => {
 }
 
 export default () => {
-  const { darkModeEnabled } = useSelector(({ app: { darkModeEnabled } }) => ({
-    darkModeEnabled
-  }))
+  const darkModeEnabled = useSelector(
+    ({ app: { darkModeEnabled } }) => darkModeEnabled
+  )
   return (
     <ThemeProvider theme={darkModeEnabled ? darkTheme : lightTheme}>
       <CssBaseline />

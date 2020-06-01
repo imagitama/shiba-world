@@ -1,12 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { TwitterFollowButton } from 'react-twitter-embed'
-import {
-  openMenu as openMenuAction,
-  closeMenu as closeMenuAction
-} from '../../modules/app'
 import { makeStyles } from '@material-ui/core/styles'
 import {
   Grid,
@@ -29,6 +24,7 @@ import useDatabaseQuery, {
   Operators,
   AssetCategories
 } from '../../hooks/useDatabaseQuery'
+import { openMenu, closeMenu } from '../../modules/app'
 
 // Use a component here to avoid unnecessary hook calls for non-editors
 function UnapprovedMenuItemLabel() {
@@ -226,15 +222,20 @@ function getLabelForMenuItem(Label) {
   return <Label />
 }
 
-const DrawerContainer = ({ user, isMenuOpen, closeMenu }) => {
+const DrawerContainer = () => {
   const classes = useStyles()
+  const [, , user] = useUserRecord()
+  const { isMenuOpen } = useSelector(({ app }) => app)
+  const dispatch = useDispatch()
+
+  const dispatchCloseMenu = () => dispatch(closeMenu())
 
   return (
     <Drawer
       className={classes.drawer}
       anchor="right"
       open={isMenuOpen}
-      onClose={() => closeMenu()}>
+      onClose={dispatchCloseMenu}>
       <MenuList className={classes.menuList}>
         <MenuItem>VRC Arena</MenuItem>
       </MenuList>
@@ -243,7 +244,7 @@ const DrawerContainer = ({ user, isMenuOpen, closeMenu }) => {
         {navItems
           .filter(navItem => canShowMenuItem(navItem, user))
           .map(({ label, url }) => (
-            <MenuItem button key={url} onClick={() => closeMenu()}>
+            <MenuItem button key={url} onClick={dispatchCloseMenu}>
               <NavigationLink
                 className={classes.menuListLink}
                 color="primary"
@@ -264,8 +265,10 @@ const DrawerContainer = ({ user, isMenuOpen, closeMenu }) => {
   )
 }
 
-function DesktopMenu({ user }) {
+function DesktopMenu() {
   const classes = useStyles()
+  const [, , user] = useUserRecord()
+
   return (
     <div className={classes.desktopMenu}>
       {navItems
@@ -281,9 +284,11 @@ function DesktopMenu({ user }) {
   )
 }
 
-const PageHeader = ({ isMenuOpen, openMenu, closeMenu }) => {
+export default () => {
   const classes = useStyles()
-  const [, , user] = useUserRecord()
+  const dispatch = useDispatch()
+
+  const dispatchOpenMenu = () => dispatch(openMenu())
 
   return (
     <header className={classes.header}>
@@ -305,36 +310,38 @@ const PageHeader = ({ isMenuOpen, openMenu, closeMenu }) => {
         <Grid item xs={4} align="right">
           <Button
             className={classes.menuToggleButton}
-            onClick={() => openMenu()}>
+            onClick={dispatchOpenMenu}>
             <MenuIcon className={classes.menuToggleIcon} />
             <span hidden>Menu</span>
           </Button>
         </Grid>
       </Grid>
       <DrawerContainer
-        user={user}
-        closeMenu={closeMenu}
-        isMenuOpen={isMenuOpen}
+      // user={user}
+      // closeMenu={closeMenu}
+      // isMenuOpen={isMenuOpen}
       />
-      <DesktopMenu user={user} />
+      <DesktopMenu
+      // user={user}
+      />
     </header>
   )
 }
 
-const mapStateToProps = ({ app: { isMenuOpen } }) => ({
-  isMenuOpen
-})
+// const mapStateToProps = ({ app: { isMenuOpen } }) => ({
+//   isMenuOpen
+// })
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      openMenu: openMenuAction,
-      closeMenu: closeMenuAction
-    },
-    dispatch
-  )
+// const mapDispatchToProps = dispatch =>
+//   bindActionCreators(
+//     {
+//       openMenu: openMenuAction,
+//       closeMenu: closeMenuAction
+//     },
+//     dispatch
+//   )
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(PageHeader)
+// export default connect(
+//   mapStateToProps,
+//   mapDispatchToProps
+// )(PageHeader)
