@@ -25,6 +25,7 @@ import useDatabaseQuery, {
   AssetCategories
 } from '../../hooks/useDatabaseQuery'
 import { openMenu, closeMenu } from '../../modules/app'
+import { ReactComponent as Logo } from '../../assets/images/logo.svg'
 
 // Use a component here to avoid unnecessary hook calls for non-editors
 function UnapprovedMenuItemLabel() {
@@ -131,17 +132,14 @@ const useStyles = makeStyles({
     }
   },
   logo: {
-    fontSize: '1.5rem',
-    fontWeight: '600',
-    lineHeight: '1.2',
-    textDecoration: 'none !important',
-    color: 'white',
-    display: 'block',
-    padding: '1rem',
-    textTransform: 'uppercase',
-    '@media (min-width: 960px)': {
-      padding: '1rem 0'
-    }
+    '@media (max-width: 959px)': {
+      padding: '1rem 0 0'
+    },
+    '& path': {
+      fill: '#FFF'
+    },
+    height: '150px',
+    width: 'auto'
   },
   menuToggleButton: {
     '@media (min-width: 960px)': {
@@ -295,7 +293,7 @@ export default () => {
       <Grid container>
         <Grid item xs={8} md={4} lg={4} align="left">
           <Link to={routes.home} className={classes.logo}>
-            VRC Arena
+            <Logo className={classes.logo} />
           </Link>
         </Grid>
         <Grid
