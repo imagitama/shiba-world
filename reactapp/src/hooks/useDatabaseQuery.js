@@ -41,7 +41,8 @@ export const AssetCategories = {
 }
 
 export const UserFieldNames = {
-  username: 'username'
+  username: 'username',
+  enabledAdultContent: 'enabledAdultContent'
 }
 
 export const CommentFieldNames = {

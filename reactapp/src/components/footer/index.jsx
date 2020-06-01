@@ -1,10 +1,11 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
-import withAuthProfile from '../../hocs/withAuthProfile'
 import * as routes from '../../routes'
+import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
-const PageFooter = ({ auth }) => {
+export default () => {
+  const uid = useFirebaseUserId()
   const useStyles = makeStyles({
     footer: {
       margin: '3rem 0 0 0',
@@ -17,8 +18,8 @@ const PageFooter = ({ auth }) => {
 
   return (
     <footer className={classes.footer} align="right" color="">
-      {!auth.isLoaded ? null : auth.uid ? (
-        <span title={auth.uid}>You are logged in</span>
+      {uid ? (
+        <span title={uid}>You are logged in</span>
       ) : (
         'You are not logged in'
       )}
@@ -28,5 +29,3 @@ const PageFooter = ({ auth }) => {
     </footer>
   )
 }
-
-export default withAuthProfile(PageFooter)

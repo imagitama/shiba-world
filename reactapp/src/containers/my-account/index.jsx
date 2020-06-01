@@ -1,8 +1,5 @@
 import React from 'react'
-import withRedirectOnNotAuth from '../../hocs/withRedirectOnNotAuth'
-import withAuthProfile from '../../hocs/withAuthProfile'
-import useDatabase from '../../hooks/useDatabase'
-import { CollectionNames } from '../../hooks/useDatabaseQuery'
+import useUserRecord from '../../hooks/useUserRecord'
 import LoadingIndicator from '../../components/loading-indicator'
 import ErrorMessage from '../../components/error-message'
 import UsernameEditor from '../../components/username-editor'
@@ -12,11 +9,8 @@ import BodyText from '../../components/body-text'
 import NoPermissionMessage from '../../components/no-permission-message'
 import DarkModeToggle from '../../components/darkmode-toggle'
 
-const MyAccount = ({ auth }) => {
-  const [isLoading, isErrored, user] = useDatabase(
-    CollectionNames.Users,
-    auth.uid
-  )
+export default () => {
+  const [isLoading, isErrored, user] = useUserRecord()
 
   if (isLoading) {
     return <LoadingIndicator />
@@ -35,7 +29,7 @@ const MyAccount = ({ auth }) => {
       <Heading variant="h1">Your Account</Heading>
       <BodyText>Hi, {user.username}!</BodyText>
       <Heading variant="h2">Change your name</Heading>
-      <UsernameEditor userId={user.id} record={user} />
+      <UsernameEditor />
       <Heading variant="h2">Profile settings</Heading>
       <AdultContentToggle />
       <br />
@@ -43,5 +37,3 @@ const MyAccount = ({ auth }) => {
     </>
   )
 }
-
-export default withRedirectOnNotAuth(withAuthProfile(MyAccount))

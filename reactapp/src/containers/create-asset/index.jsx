@@ -1,28 +1,53 @@
 import React, { useState } from 'react'
+
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useDatabaseDocument from '../../hooks/useDatabaseDocument'
 import { CollectionNames } from '../../hooks/useDatabaseQuery'
-import withAuthProfile from '../../hocs/withAuthProfile'
+import useUserRecord from '../../hooks/useUserRecord'
+
 import AssetEditor from '../../components/asset-editor'
-import withRedirectOnNotAuth from '../../hocs/withRedirectOnNotAuth'
 import LoadingIndicator from '../../components/loading-indicator'
 import SuccessMessage from '../../components/success-message'
-import { scrollToTop } from '../../utils'
-import * as routes from '../../routes'
+import ErrorMessage from '../../components/error-message'
 import Heading from '../../components/heading'
 import Button from '../../components/button'
+import NoPermissionMessage from '../../components/no-permission-message'
 
-const CreateAsset = ({ auth }) => {
-  const [isSaving, isSuccess, save] = useDatabaseSave(CollectionNames.Assets)
-  const userId = auth.uid
-  const [userDocument] = useDatabaseDocument(CollectionNames.Users, userId)
+import { scrollToTop } from '../../utils'
+import * as routes from '../../routes'
+
+export default () => {
+  const [isLoadingUser, isErrorLoadingUser, user] = useUserRecord()
+  const [isSaving, isSuccessOrFail, save] = useDatabaseSave(
+    CollectionNames.Assets
+  )
+  const [userDocument] = useDatabaseDocument(
+    CollectionNames.Users,
+    user && user.id
+  )
   const [newDocumentId, setNewDocumentId] = useState(null)
+
+  if (isLoadingUser) {
+    return <LoadingIndicator />
+  }
+
+  if (isErrorLoadingUser) {
+    return <ErrorMessage>Failed to load your profile</ErrorMessage>
+  }
+
+  if (!user) {
+    return <NoPermissionMessage />
+  }
 
   if (isSaving) {
     return <LoadingIndicator message="Creating..." />
   }
 
-  if (isSuccess) {
+  if (isSuccessOrFail === false) {
+    return <ErrorMessage>Failed to create asset</ErrorMessage>
+  }
+
+  if (isSuccessOrFail === true) {
     return (
       <SuccessMessage>
         Asset created successfully <br />
@@ -57,5 +82,3 @@ const CreateAsset = ({ auth }) => {
     </>
   )
 }
-
-export default withRedirectOnNotAuth(withAuthProfile(CreateAsset))

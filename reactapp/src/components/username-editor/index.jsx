@@ -2,20 +2,29 @@ import React, { useState } from 'react'
 import TextField from '@material-ui/core/TextField'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { CollectionNames } from '../../hooks/useDatabaseQuery'
+import useUserRecord from '../../hooks/useUserRecord'
 import { trackAction, actions } from '../../analytics'
 import Button from '../button'
 
-// TODO: Grab from useUserRecord
-export default ({ userId }) => {
-  if (!userId) {
-    return 'Need user ID to edit their username'
-  }
-
+export default () => {
+  const [isLoadingUser, isErrorLoadingUser, user] = useUserRecord()
   const [isSaving, isSuccessOrFail, save] = useDatabaseSave(
     CollectionNames.Users,
-    userId
+    user && user.id
   )
   const [fieldValue, setFieldValue] = useState('')
+
+  if (isLoadingUser) {
+    return 'Loading...'
+  }
+
+  if (isErrorLoadingUser) {
+    return 'Failed to load your profile'
+  }
+
+  if (!user) {
+    return 'You must be logged in to change your username'
+  }
 
   if (isSaving) {
     return 'Changing your username...'
@@ -37,14 +46,22 @@ export default ({ userId }) => {
         variant="contained"
         color="primary"
         onClick={async () => {
-          await save({
-            username: fieldValue
-          })
+          try {
+            await save({
+              username: fieldValue
+            })
 
-          trackAction(actions.CHANGE_USERNAME, {
-            userId,
-            newUsername: fieldValue
-          })
+            trackAction(actions.CHANGE_USERNAME, {
+              userId: user.id,
+              newUsername: fieldValue
+            })
+          } catch (err) {
+            console.error(
+              'Failed to edit username',
+              { userId: user.id, newUsername: fieldValue },
+              err
+            )
+          }
         }}>
         Change Name
       </Button>

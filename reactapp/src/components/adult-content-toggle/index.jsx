@@ -2,23 +2,18 @@ import React from 'react'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Checkbox from '@material-ui/core/Checkbox'
 import FormControl from '@material-ui/core/FormControl'
-import useDatabase from '../../hooks/useDatabase'
-import withAuthProfile from '../../hocs/withAuthProfile'
 import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { trackAction, actions } from '../../analytics'
-import { CollectionNames } from '../../hooks/useDatabaseQuery'
+import { CollectionNames, UserFieldNames } from '../../hooks/useDatabaseQuery'
+import useUserRecord from '../../hooks/useUserRecord'
 
-export default withAuthProfile(({ auth }) => {
-  const userId = auth.uid
-  const [isLoading, isErrored, user, forceRefreshUser] = useDatabase(
-    CollectionNames.Users,
-    userId
-  )
+export default () => {
+  const [isLoading, isErrored, user] = useUserRecord()
   const [isSaving, hasSavingSucceededOrFailed, save] = useDatabaseSave(
     CollectionNames.Users,
-    userId
+    user && user.id
   )
 
   if (isLoading || !user || isSaving) {
@@ -48,14 +43,12 @@ export default withAuthProfile(({ auth }) => {
 
               try {
                 await save({
-                  enabledAdultContent: newSettingValue
+                  [UserFieldNames.enabledAdultContent]: newSettingValue
                 })
-
-                forceRefreshUser()
 
                 trackAction(actions.TOGGLE_ENABLED_ADULT_CONTENT, {
                   newValue: newSettingValue,
-                  userId
+                  userId: user.id
                 })
               } catch (err) {
                 console.error('Failed to save user to toggle adult flag', err)
@@ -68,4 +61,4 @@ export default withAuthProfile(({ auth }) => {
       {hasSavingSucceededOrFailed === true && 'Saved successfully'}
     </FormControl>
   )
-})
+}

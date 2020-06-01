@@ -1,18 +1,23 @@
 import React, { useState } from 'react'
+
 import AssetEditor from '../../components/asset-editor'
-import withRedirectOnNotAuth from '../../hocs/withRedirectOnNotAuth'
-import useDatabase from '../../hooks/useDatabase'
-import useDatabaseSave from '../../hooks/useDatabaseSave'
 import LoadingIndicator from '../../components/loading-indicator'
-import ErrorMessage from '../../components/error-message'
 import SuccessMessage from '../../components/success-message'
-import { scrollToTop } from '../../utils'
-import * as routes from '../../routes'
 import Heading from '../../components/heading'
 import Button from '../../components/button'
+import NoPermissionMessage from '../../components/no-permission-message'
+import ErrorMessage from '../../components/error-message'
+
+import useDatabase from '../../hooks/useDatabase'
+import useDatabaseSave from '../../hooks/useDatabaseSave'
+import useUserRecord from '../../hooks/useUserRecord'
 import { CollectionNames } from '../../hooks/useDatabaseQuery'
 
-const EditAsset = ({ match: { params } }) => {
+import { scrollToTop } from '../../utils'
+import * as routes from '../../routes'
+
+export default ({ match: { params } }) => {
+  const [isLoadingUser, isErrorLoadingUser, user] = useUserRecord()
   const [isLoading, isErrored, asset] = useDatabase(
     CollectionNames.Assets,
     params.assetId
@@ -22,6 +27,18 @@ const EditAsset = ({ match: { params } }) => {
     CollectionNames.Assets,
     params.assetId
   )
+
+  if (isLoadingUser) {
+    return <LoadingIndicator />
+  }
+
+  if (isErrorLoadingUser) {
+    return <ErrorMessage>Failed to load your profile</ErrorMessage>
+  }
+
+  if (!user) {
+    return <NoPermissionMessage />
+  }
 
   return (
     <>
@@ -58,5 +75,3 @@ const EditAsset = ({ match: { params } }) => {
     </>
   )
 }
-
-export default withRedirectOnNotAuth(EditAsset)
