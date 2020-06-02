@@ -123,7 +123,7 @@ export default () => {
     return <ErrorMessage>Failed to load your user profile</ErrorMessage>
   }
 
-  if (!user.isEditor) {
+  if (!user || !user.isEditor) {
     return <NoPermissionMessage />
   }
 

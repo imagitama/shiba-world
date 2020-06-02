@@ -197,8 +197,11 @@ function getCategoryDisplayName(category) {
 function VisitSourceButton({ sourceUrl }) {
   const classes = useStyles()
   return (
-    <Button className={classes.visitSourceBtn} url={sourceUrl}>
-      Visit Source <LaunchIcon />
+    <Button
+      className={classes.visitSourceBtn}
+      url={sourceUrl}
+      icon={<LaunchIcon />}>
+      Visit Source
     </Button>
   )
 }
