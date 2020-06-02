@@ -6,6 +6,7 @@ import CardActionArea from '@material-ui/core/CardActionArea'
 import CardContent from '@material-ui/core/CardContent'
 import CardMedia from '@material-ui/core/CardMedia'
 import Typography from '@material-ui/core/Typography'
+import Chip from '@material-ui/core/Chip'
 import * as routes from '../../routes'
 
 const useStyles = makeStyles({
@@ -22,7 +23,7 @@ const useStyles = makeStyles({
     bottom: 0,
     left: 0
   },
-  primaryTag: {
+  isAdultChip: {
     position: 'absolute',
     top: 0,
     left: 0,
@@ -34,8 +35,17 @@ function truncateTextAndAddEllipsis(text) {
   return text.length >= 100 ? `${text.slice(0, 100)}...` : text
 }
 
+const IsAdultChip = () => {
+  const classes = useStyles()
+  return (
+    <div className={classes.isAdultChip}>
+      <Chip label="NSFW" />
+    </div>
+  )
+}
+
 export default function AssetItem({
-  asset: { id, title, description, thumbnailUrl }
+  asset: { id, title, description, thumbnailUrl, isAdult }
 }) {
   const classes = useStyles()
 
@@ -43,6 +53,7 @@ export default function AssetItem({
     <Card className={classes.root}>
       <CardActionArea>
         <Link to={routes.viewAssetWithVar.replace(':assetId', id)}>
+          {isAdult && <IsAdultChip />}
           <CardMedia
             className={classes.media}
             image={thumbnailUrl}
