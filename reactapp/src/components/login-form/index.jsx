@@ -14,6 +14,7 @@ const LoginForm = ({ onSuccess }) => {
       firebaseAuth.EmailAuthProvider.PROVIDER_ID,
       firebaseAuth.GoogleAuthProvider.PROVIDER_ID,
       // firebaseAuth.FacebookAuthProvider.PROVIDER_ID
+      firebaseAuth.TwitterAuthProvider.PROVIDER_ID
     ],
     credentialHelper: 'none' // disable redirect on email login
   }
