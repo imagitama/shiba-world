@@ -1,5 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
+import CheckIcon from '@material-ui/icons/Check'
 import useUserRecord from '../../hooks/useUserRecord'
 import Button from '../button'
 import useDatabaseQuery, {
@@ -81,8 +82,11 @@ export default ({ assetId }) => {
 
   if (endorsements.find(({ createdBy }) => createdBy.id === user.id)) {
     return (
-      <Button color="default" className={classes.loggedOutBtn}>
-        You have endorsed it ({endorsements.length})
+      <Button
+        color="default"
+        className={classes.loggedOutBtn}
+        icon={<CheckIcon />}>
+        Endorsed ({endorsements.length})
       </Button>
     )
   }

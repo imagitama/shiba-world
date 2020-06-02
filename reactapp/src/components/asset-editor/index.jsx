@@ -10,7 +10,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import shortid from 'shortid'
 import Markdown from 'react-markdown'
 
-import { AssetCategories } from '../../hooks/useDatabaseQuery'
+import { AssetCategories, AssetFieldNames } from '../../hooks/useDatabaseQuery'
 import { species as speciesTags } from '../../tags'
 
 import FileUploader from '../file-uploader'
@@ -176,7 +176,8 @@ export default ({
     tags = [],
     thumbnailUrl,
     fileUrls = [],
-    isAdult = false
+    isAdult = false,
+    sourceUrl
   } = {},
   onSubmit
 }) => {
@@ -324,6 +325,16 @@ Please crop your thumbnails to something like 300x300 (automatic cropping coming
           convertToValidField={text => text.split('\n')}
           multiline
           rows={10}
+        />
+
+        <Heading variant="h2">Source</Heading>
+        <FormField
+          label="Source"
+          value={fieldData.sourceUrl}
+          hint={
+            'Where did you find it? Link to the Discord message or Patreon or wherever.'
+          }
+          onChange={newVal => onFieldChange(AssetFieldNames.sourceUrl, newVal)}
         />
 
         <Heading variant="h2">Files</Heading>

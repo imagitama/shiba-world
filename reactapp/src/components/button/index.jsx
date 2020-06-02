@@ -1,20 +1,38 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import Button from '@material-ui/core/Button'
+import { makeStyles } from '@material-ui/core/styles'
 
-export default ({ children, onClick, url, ...props }) => {
+const useStyles = makeStyles({
+  icon: {
+    marginLeft: '0.5rem',
+    display: 'flex' // fix line height issue
+  }
+})
+
+export default ({ children, onClick, url, icon, ...props }) => {
+  const classes = useStyles()
+
   const FinalButton = () => (
     <Button variant="contained" color="primary" onClick={onClick} {...props}>
-      {children}
+      {children} {icon && <span className={classes.icon}>{icon}</span>}
     </Button>
   )
 
   if (url) {
-    return (
-      <Link to={url}>
-        <FinalButton />
-      </Link>
-    )
+    if (url.substr(0, 1) === '/') {
+      return (
+        <Link to={url}>
+          <FinalButton />
+        </Link>
+      )
+    } else {
+      return (
+        <a href={url} target="_blank" rel="noopener noreferrer">
+          <FinalButton />
+        </a>
+      )
+    }
   }
 
   return <FinalButton />

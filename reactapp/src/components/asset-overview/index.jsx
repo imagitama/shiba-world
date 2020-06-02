@@ -5,6 +5,9 @@ import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper'
 import { Helmet } from 'react-helmet'
+import LaunchIcon from '@material-ui/icons/Launch'
+import GetAppIcon from '@material-ui/icons/GetApp'
+import EditIcon from '@material-ui/icons/Edit'
 
 import useDatabase from '../../hooks/useDatabase'
 import { CollectionNames } from '../../hooks/useDatabaseQuery'
@@ -65,14 +68,12 @@ const FileResult = ({ assetId, url }) => {
       {isUrlAnImage(url) ? (
         <FileResultThumbnail url={url} />
       ) : (
-        <Button className={classes.downloadButton}>
-          <a
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={onDownloadBtnClick}>
-            Download
-          </a>
+        <Button
+          className={classes.downloadButton}
+          url={url}
+          icon={<GetAppIcon />}
+          onClick={onDownloadBtnClick}>
+          Download
         </Button>
       )}
     </Paper>
@@ -82,6 +83,17 @@ const FileResult = ({ assetId, url }) => {
 const useStyles = makeStyles({
   root: {
     position: 'relative'
+  },
+  thumbnailAndControls: {
+    display: 'flex',
+    flexWrap: 'wrap'
+  },
+  thumbnailWrapper: {
+    textAlign: 'center',
+    '@media (max-width: 959px)': {
+      flex: 1,
+      marginBottom: '0.5rem'
+    }
   },
   subtitle: {
     marginTop: '0.5rem'
@@ -101,9 +113,14 @@ const useStyles = makeStyles({
     }
   },
   controls: {
-    position: 'absolute',
-    top: 0,
-    right: 0
+    flex: 1,
+    textAlign: 'right',
+    '@media (max-width: 959px)': {
+      textAlign: 'center'
+    }
+  },
+  visitSourceBtn: {
+    marginLeft: '0.5rem'
   }
 })
 
@@ -177,6 +194,15 @@ function getCategoryDisplayName(category) {
   return `${category.substr(0, 1).toUpperCase()}${category.substr(1)}`
 }
 
+function VisitSourceButton({ sourceUrl }) {
+  const classes = useStyles()
+  return (
+    <Button className={classes.visitSourceBtn} url={sourceUrl}>
+      Visit Source <LaunchIcon />
+    </Button>
+  )
+}
+
 export default ({ assetId, small = false }) => {
   const [isLoading, isErrored, result] = useDatabase(
     CollectionNames.Assets,
@@ -210,7 +236,8 @@ export default ({ assetId, small = false }) => {
     thumbnailUrl,
     isApproved,
     modifiedAt,
-    modifiedBy
+    modifiedBy,
+    sourceUrl
   } = result
 
   const downloadUrls = fileUrls
@@ -245,9 +272,14 @@ export default ({ assetId, small = false }) => {
         <meta property="og:site_name" content="VRCArena" />
       </Helmet>
       {isApproved === false && <NotApprovedMessage />}
-      <AssetThumbnail url={thumbnailUrl} />
-      <div className={classes.controls}>
-        <EndorseAssetButton assetId={id} />
+      <div className={classes.thumbnailAndControls}>
+        <div className={classes.thumbnailWrapper}>
+          <AssetThumbnail url={thumbnailUrl} />
+        </div>
+        <div className={classes.controls}>
+          <EndorseAssetButton assetId={id} />
+          {sourceUrl && <VisitSourceButton sourceUrl={sourceUrl} />}
+        </div>
       </div>
       <Heading variant="h1">
         <Link to={routes.viewAssetWithVar.replace(':assetId', assetId)}>
@@ -309,7 +341,9 @@ export default ({ assetId, small = false }) => {
           </Link>
         ) : canEditAsset(user, createdBy) ? (
           <Link to={`/assets/${assetId}/edit`}>
-            <Button color="primary">Edit Asset</Button>
+            <Button color="primary" icon={<EditIcon />}>
+              Edit Asset
+            </Button>
           </Link>
         ) : null}
       </div>
