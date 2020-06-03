@@ -92,6 +92,8 @@ export default ({ assetId }) => {
   }
 
   return (
-    <Button onClick={onSaveBtnClick}>Endorse ({endorsements.length})</Button>
+    <Button color="default" onClick={onSaveBtnClick}>
+      Endorse ({endorsements.length})
+    </Button>
   )
 }

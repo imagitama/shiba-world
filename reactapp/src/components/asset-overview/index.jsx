@@ -119,7 +119,7 @@ const useStyles = makeStyles({
       textAlign: 'center'
     }
   },
-  visitSourceBtn: {
+  controlBtn: {
     marginLeft: '0.5rem'
   }
 })
@@ -202,10 +202,31 @@ function VisitSourceButton({ sourceUrl }) {
   const classes = useStyles()
   return (
     <Button
-      className={classes.visitSourceBtn}
+      color="default"
+      className={classes.controlBtn}
       url={sourceUrl}
       icon={<LaunchIcon />}>
       Visit Source
+    </Button>
+  )
+}
+
+function DownloadButton({ assetId, url }) {
+  const classes = useStyles()
+
+  const onDownloadBtnClick = () =>
+    trackAction(actions.DOWNLOAD_ASSET, {
+      assetId,
+      url
+    })
+
+  return (
+    <Button
+      className={classes.controlBtn}
+      url={url}
+      icon={<GetAppIcon />}
+      onClick={onDownloadBtnClick}>
+      Download
     </Button>
   )
 }
@@ -291,6 +312,9 @@ export default ({ assetId, small = false }) => {
         <div className={classes.controls}>
           <EndorseAssetButton assetId={id} />
           {sourceUrl && <VisitSourceButton sourceUrl={sourceUrl} />}
+          {downloadUrls.length && (
+            <DownloadButton assetId={id} url={downloadUrls[0]} />
+          )}
         </div>
       </div>
       <Heading variant="h1">

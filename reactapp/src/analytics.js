@@ -25,6 +25,7 @@ export const actions = {
 
   // ASSETS
   COMMENT_ON_ASSET: 'CommentOnAsset',
+  DOWNLOAD_ASSET: 'DownloadAsset',
   DOWNLOAD_ASSET_FILE: 'DownloadAssetFile',
   ENDORSE_ASSET: 'EndorseAsset',
 
@@ -78,6 +79,9 @@ const actionDetails = {
     category: categories.ASSETS
   },
   [actions.DOWNLOAD_ASSET_FILE]: {
+    category: categories.ASSETS
+  },
+  [actions.DOWNLOAD_ASSET]: {
     category: categories.ASSETS
   },
   [actions.ENDORSE_ASSET]: {
