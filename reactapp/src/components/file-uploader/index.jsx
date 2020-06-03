@@ -30,8 +30,8 @@ export default ({ directoryPath = '', filePrefix = '', onDownloadUrl }) => {
     }
   }
 
-  if (uploadedFileRef.current && isUploading) {
-    return `Uploading ${percentageDone}%`
+  if (isUploading || (percentageDone > 0 && percentageDone < 100)) {
+    return `Uploading ${parseInt(percentageDone)}%`
   }
 
   return (

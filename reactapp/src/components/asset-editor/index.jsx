@@ -169,6 +169,7 @@ const getIsFormValid = (formFields, doesHavePermission) => {
 export default ({
   assetId,
   asset: {
+    // WARNING: If optional you must specify a default (not undefined) or Firebase errors
     title,
     description,
     species = [],
@@ -177,8 +178,8 @@ export default ({
     thumbnailUrl,
     fileUrls = [],
     isAdult = false,
-    sourceUrl,
-    videoUrl
+    sourceUrl = '',
+    videoUrl = ''
   } = {},
   onSubmit
 }) => {
