@@ -30,7 +30,8 @@ export const AssetFieldNames = {
   isDeleted: 'isDeleted',
   category: 'category',
   species: 'species',
-  sourceUrl: 'sourceUrl'
+  sourceUrl: 'sourceUrl',
+  videoUrl: 'videoUrl'
 }
 
 export const AssetCategories = {

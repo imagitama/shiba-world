@@ -177,7 +177,8 @@ export default ({
     thumbnailUrl,
     fileUrls = [],
     isAdult = false,
-    sourceUrl
+    sourceUrl,
+    videoUrl
   } = {},
   onSubmit
 }) => {
@@ -189,7 +190,9 @@ export default ({
     tags,
     fileUrls,
     thumbnailUrl,
-    isAdult
+    isAdult,
+    sourceUrl,
+    videoUrl
   })
   const [doesHavePermission, setDoesHavePermission] = useState(false)
   const [showAdvancedFileUrls, setShowAdvancedFileUrls] = useState(false)
@@ -335,6 +338,16 @@ Please crop your thumbnails to something like 300x300 (automatic cropping coming
             'Where did you find it? Link to the Discord message or Patreon or wherever.'
           }
           onChange={newVal => onFieldChange(AssetFieldNames.sourceUrl, newVal)}
+        />
+
+        <Heading variant="h2">Video</Heading>
+        <FormField
+          label="Video URL"
+          value={fieldData.videoUrl}
+          hint={`The URL for a video that is related. eg. if you are posting a YouTube tutorial. Supports popular video extensions (.mp4, .avi, etc.) and streaming sites like YouTube.
+            
+Use the file uploader below to upload your own videos then copy the URL into this field.`}
+          onChange={newVal => onFieldChange(AssetFieldNames.videoUrl, newVal)}
         />
 
         <Heading variant="h2">Files</Heading>

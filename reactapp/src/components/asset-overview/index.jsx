@@ -244,7 +244,8 @@ export default ({ assetId, small = false }) => {
     isApproved,
     modifiedAt,
     modifiedBy,
-    sourceUrl
+    sourceUrl,
+    videoUrl
   } = result
 
   const downloadUrls = fileUrls
@@ -312,6 +313,9 @@ export default ({ assetId, small = false }) => {
           </Link>
         </Heading>
       )}
+
+      {videoUrl && <VideoPlayer url={videoUrl} />}
+
       <div className={classes.description}>
         <Markdown source={description} />
       </div>
