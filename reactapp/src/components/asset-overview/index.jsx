@@ -312,9 +312,9 @@ export default ({ assetId, small = false }) => {
         <div className={classes.controls}>
           <EndorseAssetButton assetId={id} />
           {sourceUrl && <VisitSourceButton sourceUrl={sourceUrl} />}
-          {downloadUrls.length && (
+          {downloadUrls.length ? (
             <DownloadButton assetId={id} url={downloadUrls[0]} />
-          )}
+          ) : null}
         </div>
       </div>
       <Heading variant="h1">
