@@ -23,13 +23,11 @@ import TagChip from '../tag-chip'
 import Heading from '../heading'
 import Button from '../button'
 import AssetThumbnail from '../asset-thumbnail'
+import VideoPlayer from '../video-player'
 
 import * as routes from '../../routes'
 import speciesMeta from '../../species-meta'
 import { trackAction, actions } from '../../analytics'
-
-const isUrlAnImage = url =>
-  url.indexOf('png') >= 0 || url.indexOf('jpg') >= 0 || url.indexOf('jpeg') >= 0
 
 const FileResultThumbnail = ({ url }) => {
   return (
@@ -65,8 +63,10 @@ const FileResult = ({ assetId, url }) => {
     <Paper style={{ padding: '1rem', marginBottom: '1rem' }}>
       {getFilenameFromUrl(url)}
       <br />
-      {isUrlAnImage(url) ? (
+      {filterOnlyImagesUrl(url) ? (
         <FileResultThumbnail url={url} />
+      ) : filterOnlyVideoUrl(url) ? (
+        <VideoPlayer url={url} />
       ) : (
         <Button
           className={classes.downloadButton}
@@ -137,8 +137,12 @@ function NotApprovedMessage() {
   )
 }
 
+function filterOnlyVideoUrl(url) {
+  return url.includes('.mp4') || url.includes('.avi')
+}
+
 function filterOnlyNonImageUrl(url) {
-  return !filterOnlyImagesUrl(url)
+  return !filterOnlyVideoUrl(url) && !filterOnlyImagesUrl(url)
 }
 
 function filterOnlyImagesUrl(url) {
@@ -251,6 +255,10 @@ export default ({ assetId, small = false }) => {
     .filter(filterOnlyImagesUrl)
     .filter(fileUrl => fileUrl !== thumbnailUrl)
 
+  const videoUrls = fileUrls
+    .filter(filterOnlyVideoUrl)
+    .filter(fileUrl => fileUrl !== thumbnailUrl)
+
   return (
     <div className={classes.root}>
       <Helmet>
@@ -315,12 +323,20 @@ export default ({ assetId, small = false }) => {
         </>
       ) : null}
 
+      {videoUrls.length ? (
+        <>
+          <Heading variant="h2">Videos</Heading>
+          <FileList assetId={id} fileUrls={videoUrls} />
+        </>
+      ) : null}
+
       {imageUrls.length ? (
         <>
           <Heading variant="h2">Images</Heading>
           <FileList assetId={id} fileUrls={imageUrls} />
         </>
       ) : null}
+
       <Heading variant="h2">Meta</Heading>
       <div>
         {tags

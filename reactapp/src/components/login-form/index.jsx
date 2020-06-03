@@ -1,10 +1,9 @@
 import React from 'react'
-import { withFirebase } from 'react-redux-firebase'
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth'
 import { auth as firebaseAuth } from 'firebase/app'
 import { auth as authInstance } from '../../firebase'
 
-const LoginForm = ({ onSuccess }) => {
+export default ({ onSuccess }) => {
   const uiConfig = {
     signInFlow: 'popup',
     callbacks: {
@@ -19,11 +18,5 @@ const LoginForm = ({ onSuccess }) => {
     credentialHelper: 'none' // disable redirect on email login
   }
 
-  return (
-    <>
-      <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={authInstance} />
-    </>
-  )
+  return <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={authInstance} />
 }
-
-export default withFirebase(LoginForm)

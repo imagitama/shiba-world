@@ -18,14 +18,19 @@ import useSearchTerm from '../../hooks/useSearchTerm'
 import { AssetCategories } from '../../hooks/useDatabaseQuery'
 
 const useStyles = makeStyles({
-  root: {
-    width: 250,
+  speciesBrowser: { marginTop: '0.5rem', display: 'flex', flexWrap: 'wrap' },
+  speciesItem: {
+    width: 175,
     margin: '0.5rem'
   },
   media: {
     height: 250
   },
-  speciesBrowser: { marginTop: '0.5rem', display: 'flex', flexWrap: 'wrap' }
+  comingSoonMsg: {
+    color: 'gray',
+    alignSelf: 'center',
+    paddingLeft: '1rem'
+  }
 })
 
 const Species = ({ name, title, description, imageUrl }) => {
@@ -33,7 +38,7 @@ const Species = ({ name, title, description, imageUrl }) => {
   const url = routes.viewSpeciesWithVar.replace(':speciesName', name)
 
   return (
-    <Card className={classes.root}>
+    <Card className={classes.speciesItem}>
       <CardActionArea>
         <Link to={url}>
           <CardMedia
@@ -70,6 +75,7 @@ const SpeciesBrowser = () => {
           />
         )
       )}
+      <div className={classes.comingSoonMsg}>More coming soon...</div>
     </div>
   )
 }
