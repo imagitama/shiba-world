@@ -11,7 +11,7 @@ const useStyles = makeStyles({
 export default ({ tagName, isFilled = true }) => {
   const classes = useStyles()
   return (
-    <Link to={routes.browseWithVar.replace(':tagName', tagName)}>
+    <Link to={routes.tagsWithVar.replace(':tagName', tagName)}>
       <Chip
         className={classes.chip}
         label={tagName}
