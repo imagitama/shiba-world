@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom'
 import Card from '@material-ui/core/Card'
 import CardActionArea from '@material-ui/core/CardActionArea'
 import CardContent from '@material-ui/core/CardContent'
-import CardMedia from '@material-ui/core/CardMedia'
 
 import RecentAssets from '../../components/recent-assets'
 import Heading from '../../components/heading'
@@ -23,8 +22,16 @@ const useStyles = makeStyles({
     width: 175,
     margin: '0.5rem'
   },
-  media: {
-    height: 250
+  thumbnailWrapper: {
+    height: 250,
+    position: 'relative'
+  },
+  thumbnail: {
+    height: '100%',
+    position: 'absolute',
+    top: 0,
+    left: '50%',
+    transform: 'translateX(-50%)'
   },
   comingSoonMsg: {
     color: 'gray',
@@ -33,7 +40,13 @@ const useStyles = makeStyles({
   }
 })
 
-const Species = ({ name, title, description, imageUrl }) => {
+const Species = ({
+  name,
+  title,
+  description,
+  backupThumbnailUrl,
+  optimizedThumbnailUrl
+}) => {
   const classes = useStyles()
   const url = routes.viewSpeciesWithVar.replace(':speciesName', name)
 
@@ -41,11 +54,17 @@ const Species = ({ name, title, description, imageUrl }) => {
     <Card className={classes.speciesItem}>
       <CardActionArea>
         <Link to={url}>
-          <CardMedia
-            className={classes.media}
-            image={imageUrl}
-            title={`Thumbnail for ${name}`}
-          />
+          <div className={classes.thumbnailWrapper}>
+            <picture>
+              <source srcSet={optimizedThumbnailUrl} type="image/webp" />
+              <source srcSet={backupThumbnailUrl} type="image/png" />
+              <img
+                src={backupThumbnailUrl}
+                alt={`Thumbnail for species ${title}`}
+                className={classes.thumbnail}
+              />
+            </picture>
+          </div>
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">
               {title}
@@ -65,13 +84,22 @@ const SpeciesBrowser = () => {
   return (
     <div className={classes.speciesBrowser}>
       {Object.entries(speciesMeta).map(
-        ([name, { name: title, shortDescription, thumbnailUrl }]) => (
+        ([
+          name,
+          {
+            name: title,
+            shortDescription,
+            optimizedThumbnailUrl,
+            backupThumbnailUrl
+          }
+        ]) => (
           <Species
             key={name}
             name={name}
             title={title}
             description={shortDescription}
-            imageUrl={thumbnailUrl}
+            optimizedThumbnailUrl={optimizedThumbnailUrl}
+            backupThumbnailUrl={backupThumbnailUrl}
           />
         )
       )}

@@ -1,11 +1,21 @@
-import shibaInuImageUrl from './assets/images/species/shiba_inu.png'
-import avaliImageUrl from './assets/images/species/avali.png'
-import bestBoiImageUrl from './assets/images/species/best_boi.png'
-import sergalImageUrl from './assets/images/species/sergal.png'
-import rexouiumImageUrl from './assets/images/species/rexouium.png'
-import kangarooImageUrl from './assets/images/species/kangaroo.png'
-import racoonImageUrl from './assets/images/species/racoon.png'
-import otherSpeciesImageUrl from './assets/images/species/other-species.png'
+import backupShibaInuImageUrl from './assets/images/species/shiba_inu.png'
+import backupAvaliImageUrl from './assets/images/species/avali.png'
+import backupBestBoiImageUrl from './assets/images/species/best_boi.png'
+import backupSergalImageUrl from './assets/images/species/sergal.png'
+import backupRexouiumImageUrl from './assets/images/species/rexouium.png'
+import backupKangarooImageUrl from './assets/images/species/kangaroo.png'
+import backupRacoonImageUrl from './assets/images/species/racoon.png'
+import backupOtherSpeciesImageUrl from './assets/images/species/other-species.png'
+
+import optimizedShibaInuImageUrl from './assets/images/species/optimized/shiba_inu.webp'
+import optimizedAvaliImageUrl from './assets/images/species/optimized/avali.webp'
+import optimizedBestBoiImageUrl from './assets/images/species/optimized/best_boi.webp'
+import optimizedSergalImageUrl from './assets/images/species/optimized/sergal.webp'
+import optimizedRexouiumImageUrl from './assets/images/species/optimized/rexouium.webp'
+import optimizedKangarooImageUrl from './assets/images/species/optimized/kangaroo.webp'
+import optimizedRacoonImageUrl from './assets/images/species/optimized/racoon.webp'
+import optimizedOtherSpeciesImageUrl from './assets/images/species/optimized/other-species.webp'
+
 import { species } from './tags'
 
 export default {
@@ -14,7 +24,8 @@ export default {
     shortDescription:
       'A cute squishy anthropomorphic shiba inu avatar created by Pikapetey.',
     description: `An anthropomorphic avatar created by [Pikapetey](https://www.patreon.com/pikapetey). It costs $5 and you can purchase it by visiting links in the Avatars section for this species. We recommend the Corpse shiba over the original model as it contains performance improvements and bug fixes.`,
-    thumbnailUrl: shibaInuImageUrl
+    backupThumbnailUrl: backupShibaInuImageUrl,
+    optimizedThumbnailUrl: optimizedShibaInuImageUrl
   },
   [species.Avali]: {
     name: 'Avali',
@@ -25,7 +36,8 @@ They were originally a [RimWorld mod](https://rimworldbase.com/avali-mod/) but h
 
 Useful links:
 - [The Official Avali Wiki](https://avali.fandom.com/wiki/The_Official_Avali_Wiki)`,
-    thumbnailUrl: avaliImageUrl
+    backupThumbnailUrl: backupAvaliImageUrl,
+    optimizedThumbnailUrl: optimizedAvaliImageUrl
   },
   [species.BestBoi]: {
     name: 'Best Boi',
@@ -36,7 +48,8 @@ Useful links:
 - [Model website](https://bestbois.com)
 - [Best Boi Discord](https://discord.com/invite/sRrXpyZ)
 - [Best Boi VRChat world](https://vrchat.com/home/world/wrld_05be1d4a-72ae-489b-93bd-489d2b78abc5)`,
-    thumbnailUrl: bestBoiImageUrl
+    backupThumbnailUrl: backupBestBoiImageUrl,
+    optimizedThumbnailUrl: optimizedBestBoiImageUrl
   },
   [species.sergal]: {
     name: 'Sergal',
@@ -46,7 +59,8 @@ Useful links:
 Useful links:
 - [Wikifur Sergal page](https://en.wikifur.com/wiki/Sergal)
 - [VR Sergal Friends Discord](https://discord.gg/zaQfcwP)`,
-    thumbnailUrl: sergalImageUrl
+    backupThumbnailUrl: backupSergalImageUrl,
+    optimizedThumbnailUrl: optimizedSergalImageUrl
   },
   [species.rexouium]: {
     name: 'Rexouium',
@@ -55,7 +69,8 @@ Useful links:
 
 Useful links:
 - [VRChat World](https://www.vrchat.com/home/launch?worldId=wrld_3a278e64-36c3-4c19-9e2a-f8bac7bbd9c4)`,
-    thumbnailUrl: rexouiumImageUrl
+    backupThumbnailUrl: backupRexouiumImageUrl,
+    optimizedThumbnailUrl: optimizedRexouiumImageUrl
   },
   [species.kangaroo]: {
     name: 'Kangaroo',
@@ -64,7 +79,8 @@ Useful links:
 
 Useful links:
 - [Kanga World](https://www.vrcw.net/world/detail/wrld_4366831d-ada2-4f68-8ab8-6df1d118e50c)`,
-    thumbnailUrl: kangarooImageUrl
+    backupThumbnailUrl: backupKangarooImageUrl,
+    optimizedThumbnailUrl: optimizedKangarooImageUrl
   },
   [species.racoon]: {
     name: 'Racoon',
@@ -74,12 +90,14 @@ Useful links:
 Useful links:
 - [FurAffinity page](https://www.furaffinity.net/view/32997273)
 - [Download the base model](https://drive.google.com/drive/folders/1gny4og32AwilVQcjhSFa-PsxbYEwbXBd)`,
-    thumbnailUrl: racoonImageUrl
+    backupThumbnailUrl: backupRacoonImageUrl,
+    optimizedThumbnailUrl: optimizedRacoonImageUrl
   },
   [species.otherSpecies]: {
     name: 'Other Species',
     shortDescription: `Assets that have tags not matching the popular ones.`,
     description: `Assets that have tags not matching the popular ones.`,
-    thumbnailUrl: otherSpeciesImageUrl
+    backupThumbnailUrl: backupOtherSpeciesImageUrl,
+    optimizedThumbnailUrl: optimizedOtherSpeciesImageUrl
   }
 }
