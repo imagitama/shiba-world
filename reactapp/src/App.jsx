@@ -79,8 +79,7 @@ const MainContent = () => {
           path={routes.home}
           component={Home}
           meta={{
-            title:
-              'Browse and upload assets and tutorials for the different species of VRChat',
+            title: 'Browse assets for the species of VRChat',
             description:
               'Download and upload various kinds of assets and tutorials for the different species found in the online multiplayer VR social game VRChat.'
           }}
