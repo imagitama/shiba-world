@@ -1,5 +1,5 @@
 import React from 'react'
-import FormattedDate from '../formatted-date'
+// import FormattedDate from '../formatted-date'
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
@@ -12,7 +12,7 @@ const useStyles = makeStyles({
   }
 })
 
-export default ({ comment: { comment, createdBy, createdAt } }) => {
+export default ({ endorsement: { createdBy } }) => {
   const classes = useStyles()
 
   return (
@@ -20,11 +20,11 @@ export default ({ comment: { comment, createdBy, createdAt } }) => {
       <div className={classes.container}>
         <CardContent>
           <Typography gutterBottom component="p">
-            {comment}
+            <strong>{createdBy.username}</strong> endorsed this asset
           </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
+          {/* <Typography variant="body2" color="textSecondary" component="p">
             <FormattedDate date={createdAt} /> by {createdBy.username}
-          </Typography>
+          </Typography> */}
         </CardContent>
       </div>
     </Card>

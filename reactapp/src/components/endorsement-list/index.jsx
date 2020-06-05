@@ -1,23 +1,23 @@
 import React from 'react'
-import Comment from '../comment'
+import EndorsementListItem from '../endorsement-list-item'
 import LoadingIndicator from '../loading-indicator'
 import useDatabaseQuery, {
   CollectionNames,
-  CommentFieldNames,
-  Operators
+  Operators,
+  EndorsementFieldNames
 } from '../../hooks/useDatabaseQuery'
 import ErrorMessage from '../error-message'
 import useDatabaseDocument from '../../hooks/useDatabaseDocument'
 
 export default ({ assetId }) => {
   if (!assetId) {
-    throw new Error('Cannot render comment list: no asset ID')
+    throw new Error('Cannot render endorsement list: no asset ID')
   }
 
   const [parentDoc] = useDatabaseDocument(CollectionNames.Assets, assetId)
   const [isLoading, isErrored, results] = useDatabaseQuery(
-    CollectionNames.Comments,
-    [[CommentFieldNames.parent, Operators.EQUALS, parentDoc]]
+    CollectionNames.Endorsements,
+    [[EndorsementFieldNames.asset, Operators.EQUALS, parentDoc]]
   )
 
   if (isLoading) {
@@ -25,17 +25,17 @@ export default ({ assetId }) => {
   }
 
   if (isErrored) {
-    return <ErrorMessage>Failed to load comments</ErrorMessage>
+    return <ErrorMessage>Failed to load endorsements</ErrorMessage>
   }
 
   if (!results.length) {
-    return 'No comments found :('
+    return 'No endorsements found :('
   }
 
   return (
     <>
       {results.map(result => (
-        <Comment key={result.id} comment={result} />
+        <EndorsementListItem key={result.id} endorsement={result} />
       ))}
     </>
   )

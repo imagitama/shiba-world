@@ -24,6 +24,7 @@ import Heading from '../heading'
 import Button from '../button'
 import AssetThumbnail from '../asset-thumbnail'
 import VideoPlayer from '../video-player'
+import EndorsementList from '../endorsement-list'
 
 import * as routes from '../../routes'
 import speciesMeta from '../../species-meta'
@@ -392,6 +393,8 @@ export default ({ assetId, small = false }) => {
       <Heading variant="h2">Comments</Heading>
       <CommentList assetId={assetId} />
       <AddCommentForm assetId={assetId} />
+      <Heading variant="h2">Endorsements</Heading>
+      <EndorsementList assetId={assetId} />
     </div>
   )
 }

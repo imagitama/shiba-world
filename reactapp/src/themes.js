@@ -30,6 +30,9 @@ const createTheme = isDark =>
           a: {
             color: isDark ? colorBrandLight : colorBrand,
             textDecoration: 'none'
+          },
+          strong: {
+            fontWeight: 600
           }
         }
       }
