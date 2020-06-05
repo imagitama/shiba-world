@@ -7,6 +7,7 @@ import CardContent from '@material-ui/core/CardContent'
 import CardMedia from '@material-ui/core/CardMedia'
 import Typography from '@material-ui/core/Typography'
 import Chip from '@material-ui/core/Chip'
+import LazyLoad from 'react-lazyload'
 import * as routes from '../../routes'
 
 const useStyles = makeStyles({
@@ -54,11 +55,13 @@ export default function AssetItem({
       <CardActionArea>
         <Link to={routes.viewAssetWithVar.replace(':assetId', id)}>
           {isAdult && <IsAdultChip />}
-          <CardMedia
-            className={classes.media}
-            image={thumbnailUrl}
-            title={`Thumbnail for ${title}`}
-          />
+          <LazyLoad width={200} height={200}>
+            <CardMedia
+              className={classes.media}
+              image={thumbnailUrl}
+              title={`Thumbnail for ${title}`}
+            />
+          </LazyLoad>
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">
               {title}
