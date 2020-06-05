@@ -1,5 +1,6 @@
 import React from 'react'
 import { Helmet } from 'react-helmet'
+import { Link } from 'react-router-dom'
 import useUserRecord from '../../hooks/useUserRecord'
 import LoadingIndicator from '../../components/loading-indicator'
 import AssetResults from '../../components/asset-results'
@@ -13,6 +14,7 @@ import useDatabaseQuery, {
 } from '../../hooks/useDatabaseQuery'
 import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'
+import * as routes from '../../routes'
 
 function getSpeciesByName(speciesName) {
   if (!speciesMeta[speciesName]) {
@@ -100,8 +102,20 @@ export default ({
         </title>
         <meta name="description" content={desc} />
       </Helmet>
-      <Heading variant="h1">{getNameForSpeciesName(speciesName)}</Heading>
-      <Heading variant="h2">{getCategoryDisplayName(categoryName)}</Heading>
+      <Heading variant="h1">
+        <Link
+          to={routes.viewSpeciesWithVar.replace(':speciesName', speciesName)}>
+          {getNameForSpeciesName(speciesName)}
+        </Link>
+      </Heading>
+      <Heading variant="h2">
+        <Link
+          to={routes.viewSpeciesCategoryWithVar
+            .replace(':speciesName', speciesName)
+            .replace(':categoryName', categoryName)}>
+          {getCategoryDisplayName(categoryName)}
+        </Link>
+      </Heading>
       <BodyText>{desc}</BodyText>
       <Assets speciesName={speciesName} categoryName={categoryName} />
     </>

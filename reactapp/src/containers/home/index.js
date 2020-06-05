@@ -126,19 +126,53 @@ export default () => {
         Select a species to browse their assets, tutorials, avatars and news.
       </BodyText>
       <SpeciesBrowser />
-      <Heading variant="h2">Recent News</Heading>
+      <Heading variant="h2">
+        <Link to={routes.news}>Recent News</Link>
+      </Heading>
       <RecentAssetDescription categoryName={AssetCategories.article} />
       <RecentAssets limit={5} categoryName={AssetCategories.article} />
-      <Heading variant="h2">Recent Accessories</Heading>
+      <Heading variant="h2">
+        <Link
+          to={routes.viewCategoryWithVar.replace(
+            ':categoryName',
+            AssetCategories.accessory
+          )}>
+          Recent Accessories
+        </Link>
+      </Heading>
       <RecentAssetDescription categoryName={AssetCategories.accessory} />
       <RecentAssets limit={5} categoryName={AssetCategories.accessory} />
-      <Heading variant="h2">Recent Animations</Heading>
+      <Heading variant="h2">
+        <Link
+          to={routes.viewCategoryWithVar.replace(
+            ':categoryName',
+            AssetCategories.animation
+          )}>
+          Recent Animations
+        </Link>
+      </Heading>
       <RecentAssetDescription categoryName={AssetCategories.animation} />
       <RecentAssets limit={5} categoryName={AssetCategories.animation} />
-      <Heading variant="h2">Recent Tutorials</Heading>
+      <Heading variant="h2">
+        <Link
+          to={routes.viewCategoryWithVar.replace(
+            ':categoryName',
+            AssetCategories.tutorial
+          )}>
+          Recent Tutorials
+        </Link>
+      </Heading>
       <RecentAssetDescription categoryName={AssetCategories.tutorial} />
       <RecentAssets limit={5} categoryName={AssetCategories.tutorial} />
-      <Heading variant="h2">Avatar Showcase</Heading>
+      <Heading variant="h2">
+        <Link
+          to={routes.viewCategoryWithVar.replace(
+            ':categoryName',
+            AssetCategories.showcase
+          )}>
+          Avatar Showcase
+        </Link>
+      </Heading>
       <RecentAssetDescription categoryName={AssetCategories.showcase} />
       <RecentAssets limit={5} categoryName={AssetCategories.showcase} />
     </>

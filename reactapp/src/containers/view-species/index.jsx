@@ -1,6 +1,7 @@
 import React from 'react'
 import { Helmet } from 'react-helmet'
 import Markdown from 'react-markdown'
+import { Link } from 'react-router-dom'
 import Paper from '@material-ui/core/Paper'
 import { makeStyles } from '@material-ui/core/styles'
 import speciesMeta from '../../species-meta'
@@ -87,46 +88,93 @@ export default ({
           )}
         />
       </Helmet>
-      <Heading variant="h1">{getNameForSpeciesName(speciesName)}</Heading>
+      <Heading variant="h1">
+        <Link
+          to={routes.viewSpeciesWithVar.replace(':speciesName', speciesName)}>
+          {getNameForSpeciesName(speciesName)}
+        </Link>
+      </Heading>
       <Paper className={classes.description}>
         <Markdown>{getDescriptionForSpeciesName(speciesName)}</Markdown>
       </Paper>
-      <Heading variant="h2">Avatars</Heading>
+      <Heading variant="h2">
+        <Link
+          to={routes.viewSpeciesCategoryWithVar
+            .replace(':speciesName', speciesName)
+            .replace(':categoryName', AssetCategories.avatar)}>
+          Avatars
+        </Link>
+      </Heading>
       <RecentAssetDescription categoryName={AssetCategories.avatar} />
       <RecentAssets
         speciesName={speciesName}
         limit={5}
         categoryName={AssetCategories.avatar}
       />
-      <Heading variant="h2">News</Heading>
+      <Heading variant="h2">
+        <Link
+          to={routes.viewSpeciesCategoryWithVar
+            .replace(':speciesName', speciesName)
+            .replace(':categoryName', AssetCategories.article)}>
+          News
+        </Link>
+      </Heading>
       <RecentAssetDescription categoryName={AssetCategories.article} />
       <RecentAssets
         speciesName={speciesName}
         limit={5}
         categoryName={AssetCategories.article}
       />
-      <Heading variant="h2">Recent Accessories</Heading>
+      <Heading variant="h2">
+        <Link
+          to={routes.viewSpeciesCategoryWithVar
+            .replace(':speciesName', speciesName)
+            .replace(':categoryName', AssetCategories.accessory)}>
+          Recent Accessories
+        </Link>
+      </Heading>
       <RecentAssetDescription categoryName={AssetCategories.accessory} />
       <RecentAssets
         speciesName={speciesName}
         limit={5}
         categoryName={AssetCategories.accessory}
       />
-      <Heading variant="h2">Recent Animations</Heading>
+      <Heading variant="h2">
+        <Link
+          to={routes.viewSpeciesCategoryWithVar
+            .replace(':speciesName', speciesName)
+            .replace(':categoryName', AssetCategories.animation)}>
+          Recent Animations
+        </Link>
+      </Heading>
       <RecentAssetDescription categoryName={AssetCategories.animation} />
       <RecentAssets
         speciesName={speciesName}
         limit={5}
         categoryName={AssetCategories.animation}
       />
-      <Heading variant="h2">Recent Tutorials</Heading>
+      <Heading variant="h2">
+        <Link
+          to={routes.viewSpeciesCategoryWithVar
+            .replace(':speciesName', speciesName)
+            .replace(':categoryName', AssetCategories.tutorial)}>
+          Recent Tutorials
+        </Link>
+      </Heading>
       <RecentAssetDescription categoryName={AssetCategories.tutorial} />
       <RecentAssets
         speciesName={speciesName}
         limit={5}
         categoryName={AssetCategories.tutorial}
       />
-      <Heading variant="h2">Avatar Showcase</Heading>
+      <Heading variant="h2">
+        <Link
+          to={routes.viewSpeciesCategoryWithVar
+            .replace(':speciesName', speciesName)
+            .replace(':categoryName', AssetCategories.showcase)}>
+          Avatar Showcase
+        </Link>
+      </Heading>
       <RecentAssetDescription categoryName={AssetCategories.showcase} />
       <RecentAssets
         speciesName={speciesName}
