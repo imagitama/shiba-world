@@ -37,6 +37,7 @@
     "react-player": "^2.1.1",
     "react-redux": "^7.2.0",
     "react-redux-firebase": "^3.0.0-alpha.12",
+    "react-responsive": "^8.1.0",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-twitter-embed": "^3.0.3",
