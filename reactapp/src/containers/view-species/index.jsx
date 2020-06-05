@@ -60,6 +60,13 @@ export default ({
       <Paper className={classes.description}>
         <Markdown>{getDescriptionForSpeciesName(speciesName)}</Markdown>
       </Paper>
+      <Heading variant="h2">Avatars</Heading>
+      <RecentAssetDescription categoryName={AssetCategories.avatar} />
+      <RecentAssets
+        speciesName={speciesName}
+        limit={5}
+        categoryName={AssetCategories.avatar}
+      />
       <Heading variant="h2">News</Heading>
       <RecentAssetDescription categoryName={AssetCategories.article} />
       <RecentAssets
@@ -89,11 +96,11 @@ export default ({
         categoryName={AssetCategories.tutorial}
       />
       <Heading variant="h2">Avatar Showcase</Heading>
-      <RecentAssetDescription categoryName={AssetCategories.avatar} />
+      <RecentAssetDescription categoryName={AssetCategories.showcase} />
       <RecentAssets
         speciesName={speciesName}
         limit={5}
-        categoryName={AssetCategories.avatar}
+        categoryName={AssetCategories.showcase}
       />
     </>
   )

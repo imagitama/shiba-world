@@ -11,6 +11,10 @@ export default {
       'Make your avatar dance, wave or run on the spot using one of these pre-made animations.'
   },
   [AssetCategories.avatar]: {
+    name: 'Avatars',
+    shortDescription: `Download the base model or find links to download them.`
+  },
+  [AssetCategories.showcase]: {
     name: 'Avatar Showcase',
     shortDescription: `Custom avatars built using the base model for this species. Use it to showcase your work with photos or link to public worlds where you can clone the avatar.`
   },

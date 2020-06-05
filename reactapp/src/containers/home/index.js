@@ -110,9 +110,9 @@ export default () => {
       <Heading variant="h2">Recent Tutorials</Heading>
       <RecentAssetDescription categoryName={AssetCategories.tutorial} />
       <RecentAssets limit={5} categoryName={AssetCategories.tutorial} />
-      <Heading variant="h2">Recent Avatars</Heading>
-      <RecentAssetDescription categoryName={AssetCategories.avatar} />
-      <RecentAssets limit={5} categoryName={AssetCategories.avatar} />
+      <Heading variant="h2">Avatar Showcase</Heading>
+      <RecentAssetDescription categoryName={AssetCategories.showcase} />
+      <RecentAssets limit={5} categoryName={AssetCategories.showcase} />
     </>
   )
 }

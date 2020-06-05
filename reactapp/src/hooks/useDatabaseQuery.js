@@ -39,6 +39,7 @@ export const AssetCategories = {
   animation: 'animation',
   tutorial: 'tutorial',
   avatar: 'avatar',
+  showcase: 'showcase',
   article: 'article'
 }
 
