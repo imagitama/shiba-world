@@ -33,10 +33,12 @@ import ViewSpeciesCategory from './containers/view-species-category'
 import PageHeader from './components/header'
 import PageFooter from './components/footer'
 import SearchResults from './components/search-results'
-import useUserRecord from './hooks/useUserRecord'
 import SetupProfile from './components/setup-profile'
-import useSearchTerm from './hooks/useSearchTerm'
 import Notices from './components/notices'
+import ErrorBoundary from './components/error-boundary'
+
+import useUserRecord from './hooks/useUserRecord'
+import useSearchTerm from './hooks/useSearchTerm'
 import useIsLoggedIn from './hooks/useIsLoggedIn'
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
@@ -224,16 +226,18 @@ export default () => {
     ({ app: { darkModeEnabled } }) => darkModeEnabled
   )
   return (
-    <ThemeProvider theme={darkModeEnabled ? darkTheme : lightTheme}>
-      <CssBaseline />
-      <PageHeader />
-      <main className="main">
-        <Container maxWidth="lg">
-          <Notices />
-          <MainContent />
-        </Container>
-      </main>
-      <PageFooter />
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider theme={darkModeEnabled ? darkTheme : lightTheme}>
+        <CssBaseline />
+        <PageHeader />
+        <main className="main">
+          <Container maxWidth="lg">
+            <Notices />
+            <MainContent />
+          </Container>
+        </main>
+        <PageFooter />
+      </ThemeProvider>
+    </ErrorBoundary>
   )
 }
