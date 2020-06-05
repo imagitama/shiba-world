@@ -13,17 +13,7 @@ export default {
     name: 'Shiba Inu',
     shortDescription:
       'A cute squishy anthropomorphic shiba inu avatar created by Pikapetey.',
-    description: `An anthropomorphic avatar created by [Pikapetey](https://www.patreon.com/pikapetey).
-
-To download the Shiba avatar you must first donate $5 to Pikapetey's [Patreon](https://www.patreon.com/pikapetey) then follow the link to join his Discord. From there you can check the #announcements channel for a link to the Unity asset and Substance Painter project.
-
-### Corpse Shiba
-
-Alternatively you can use the more optimized "Corpse Shiba" that is also available from the Pikapetey Discord by clicking [here](https://discordapp.com/channels/224293432498061313/595643494618365952/647970619719286785). It has:
-- more optimized model
-- bug fixes
-- wagging tail
-- floppy ears`,
+    description: `An anthropomorphic avatar created by [Pikapetey](https://www.patreon.com/pikapetey). It costs $5 and you can purchase it by visiting links in the Avatars section for this species. We recommend the Corpse shiba over the original model as it contains performance improvements and bug fixes.`,
     thumbnailUrl: shibaInuImageUrl
   },
   [species.Avali]: {
@@ -34,9 +24,7 @@ Alternatively you can use the more optimized "Corpse Shiba" that is also availab
 They were originally a [RimWorld mod](https://rimworldbase.com/avali-mod/) but have since been made into a VRChat avatar and is very popular amongst players.
 
 Useful links:
-- [The Official Avali Wiki](https://avali.fandom.com/wiki/The_Official_Avali_Wiki)
-- [Reverse Avali Download](https://vrcmods.com/item/5305)
-- [Avali 1.1 Download](https://vrcmods.com/item/3457)`,
+- [The Official Avali Wiki](https://avali.fandom.com/wiki/The_Official_Avali_Wiki)`,
     thumbnailUrl: avaliImageUrl
   },
   [species.BestBoi]: {
@@ -45,7 +33,7 @@ Useful links:
     description: `The foxdragon is a fox-like creature that stands on their hind legs. They were created for VRChat.
     
 Useful links:
-- [Model website](https://bestbois.com/page2.html)
+- [Model website](https://bestbois.com)
 - [Best Boi Discord](https://discord.com/invite/sRrXpyZ)
 - [Best Boi VRChat world](https://vrchat.com/home/world/wrld_05be1d4a-72ae-489b-93bd-489d2b78abc5)`,
     thumbnailUrl: bestBoiImageUrl
@@ -55,18 +43,15 @@ Useful links:
     shortDescription: `A tall, shark-like fictional alien species.`,
     description: `The sergal is a fictional alien species created by [Mick Ono](https://en.wikifur.com/wiki/Trancy_MICK). They have a shark-like head and are nicknamed "cheese wedge" by some.
 
-Unfortunately the base model for the VRChat sergal cannot be found at this time.
-
 Useful links:
-- [Wikifur Sergal page](https://en.wikifur.com/wiki/Sergal)`,
+- [Wikifur Sergal page](https://en.wikifur.com/wiki/Sergal)
+- [VR Sergal Friends Discord](https://discord.gg/zaQfcwP)`,
     thumbnailUrl: sergalImageUrl
   },
   [species.rexouium]: {
     name: 'Rexouium',
     shortDescription: `A tall fictional species with the name meaning king (rex) care-taker (ouium).`,
     description: `A tall fictional species with the name meaning king (rex) care-taker (ouium). Created by [RacoonRezillo](https://www.furaffinity.net/view/36134921). They are the king care-takers of their world. They can climb well and are fast.
-    
-You can purchase the base model from the author [here](https://gumroad.com/l/MYutV).
 
 Useful links:
 - [VRChat World](https://www.vrchat.com/home/launch?worldId=wrld_3a278e64-36c3-4c19-9e2a-f8bac7bbd9c4)`,
@@ -76,8 +61,6 @@ Useful links:
     name: 'Kangaroo',
     shortDescription: `A smooth, curvy anthro kangaroo.`,
     description: `An anthropomorphic kangaroo avatar created by [Spaghet](https://gumroad.com/spaghet_vr).
-
-Base model available for purchase [here](https://gumroad.com/l/TQmtwW).
 
 Useful links:
 - [Kanga World](https://www.vrcw.net/world/detail/wrld_4366831d-ada2-4f68-8ab8-6df1d118e50c)`,
