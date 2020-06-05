@@ -15,6 +15,7 @@ export const viewSpeciesCategoryWithVar = '/species/:speciesName/:categoryName'
 export const viewCategoryWithVar = '/category/:categoryName'
 export const news = '/news'
 export const tagsWithVar = '/tags/:tagName'
+export const searchWithVar = '/search/:searchTerm'
 
 // Outdated routes
 export const browseAssets = '/browse'

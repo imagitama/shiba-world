@@ -103,7 +103,7 @@ const SpeciesBrowser = () => {
           />
         )
       )}
-      <div className={classes.comingSoonMsg}>More coming soon...</div>
+      {/* <div className={classes.comingSoonMsg}>More coming soon...</div> */}
     </div>
   )
 }

@@ -62,7 +62,10 @@ export default () => {
     <header className={classes.root}>
       <Grid container>
         <Grid item xs={8} md={4} lg={4} align="left">
-          <Link to={routes.home} className={classes.logo}>
+          <Link
+            to={routes.home}
+            className={classes.logo}
+            title="Go to the homepage of VRCArena">
             <Logo className={classes.logo} />
           </Link>
         </Grid>
@@ -76,12 +79,15 @@ export default () => {
           <Searchbar />
         </Grid>
         <Grid item xs={4} align="right">
-          <Button
-            className={classes.menuToggleButton}
-            onClick={dispatchOpenMenu}>
-            <MenuIcon className={classes.menuToggleIcon} />
-            <span hidden>Menu</span>
-          </Button>
+          {isMobile && (
+            <Button
+              ariaLabel="Toggle main menu"
+              className={classes.menuToggleButton}
+              onClick={dispatchOpenMenu}>
+              <MenuIcon className={classes.menuToggleIcon} />
+              <span hidden>Menu</span>
+            </Button>
+          )}
         </Grid>
       </Grid>
       {isMobile && <MobileMenu />}

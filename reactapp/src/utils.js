@@ -16,3 +16,11 @@ export function getDescriptionForHtmlMeta(desc) {
 export function getOpenGraphUrlForRouteUrl(routeUrl) {
   return `https://www.vrcarena.com${routeUrl}`
 }
+
+export function convertSearchTermToUrlPath(searchTerm) {
+  return window.encodeURIComponent(searchTerm)
+}
+
+export function parseSearchTermFromUrlPath(urlPath) {
+  return window.decodeURIComponent(urlPath)
+}

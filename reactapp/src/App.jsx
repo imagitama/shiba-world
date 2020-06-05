@@ -26,6 +26,7 @@ import ErrorContainer from './containers/error'
 import ViewCategory from './containers/view-category'
 import News from './containers/news'
 import Tags from './containers/tags'
+import Search from './containers/search'
 
 import ViewSpecies from './containers/view-species'
 import ViewSpeciesCategory from './containers/view-species-category'
@@ -211,6 +212,7 @@ const MainContent = () => {
         />
         <Route exact path={routes.news} component={News} />
         <Route exact path={routes.tagsWithVar} component={Tags} />
+        <Route exact path={routes.searchWithVar} component={Search} />
         <Route
           component={() => (
             <ErrorContainer code={404} message="Page not found" />
