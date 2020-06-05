@@ -34,7 +34,13 @@ function RecentAssetDescription({ categoryName }) {
 
 const useStyles = makeStyles({
   description: {
-    padding: '1rem'
+    padding: '1rem',
+    '& p:first-child': {
+      marginTop: 0
+    },
+    '& p:last-child': {
+      marginBottom: 0
+    }
   }
 })
 

@@ -6,6 +6,7 @@ import backupRexouiumImageUrl from './assets/images/species/rexouium.png'
 import backupKangarooImageUrl from './assets/images/species/kangaroo.png'
 import backupRacoonImageUrl from './assets/images/species/racoon.png'
 import backupOtherSpeciesImageUrl from './assets/images/species/other-species.png'
+import backupFoxShibaImageUrl from './assets/images/species/fox_shiba.png'
 
 import optimizedShibaInuImageUrl from './assets/images/species/optimized/shiba_inu.webp'
 import optimizedAvaliImageUrl from './assets/images/species/optimized/avali.webp'
@@ -15,6 +16,7 @@ import optimizedRexouiumImageUrl from './assets/images/species/optimized/rexouiu
 import optimizedKangarooImageUrl from './assets/images/species/optimized/kangaroo.webp'
 import optimizedRacoonImageUrl from './assets/images/species/optimized/racoon.webp'
 import optimizedOtherSpeciesImageUrl from './assets/images/species/optimized/other-species.webp'
+import optimizedFoxShibaImageUrl from './assets/images/species/optimized/fox_shiba.webp'
 
 import { species } from './tags'
 
@@ -26,6 +28,14 @@ export default {
     description: `An anthropomorphic avatar created by [Pikapetey](https://www.patreon.com/pikapetey). It costs $5 and you can purchase it by visiting links in the Avatars section for this species. We recommend the Corpse shiba over the original model as it contains performance improvements and bug fixes.`,
     backupThumbnailUrl: backupShibaInuImageUrl,
     optimizedThumbnailUrl: optimizedShibaInuImageUrl
+  },
+  [species.FoxShiba]: {
+    name: 'Fox Shiba',
+    shortDescription:
+      'A fox using the Shiba Inu avatar originally by Pikapetey.',
+    description: `An anthropomorphic fox that was created using the Shiba Inu avatar originally by [Pikapetey](https://www.patreon.com/pikapetey). It requires access to the original Shiba Inu avatar by visiting the links in the Avatars section.`,
+    backupThumbnailUrl: backupFoxShibaImageUrl,
+    optimizedThumbnailUrl: optimizedFoxShibaImageUrl
   },
   [species.Avali]: {
     name: 'Avali',

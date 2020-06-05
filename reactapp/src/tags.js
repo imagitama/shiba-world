@@ -1,6 +1,7 @@
 // TODO: move out of here
 export const species = {
   Shiba: 'shiba',
+  FoxShiba: 'fox-shiba',
   Avali: 'avali',
   BestBoi: 'best-boi',
   sergal: 'sergal',
