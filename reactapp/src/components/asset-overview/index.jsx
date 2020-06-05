@@ -28,6 +28,10 @@ import VideoPlayer from '../video-player'
 import * as routes from '../../routes'
 import speciesMeta from '../../species-meta'
 import { trackAction, actions } from '../../analytics'
+import {
+  getDescriptionForHtmlMeta,
+  getOpenGraphUrlForRouteUrl
+} from '../../utils'
 
 const FileResultThumbnail = ({ url }) => {
   return (
@@ -176,17 +180,6 @@ function FileList({ assetId, fileUrls }) {
   ))
 }
 
-function getDescriptionForHtmlMeta(desc) {
-  let newDesc = desc
-    .split('\n')
-    .join(' ')
-    .replace(/\s\s+/g, ' ')
-  if (newDesc.length > 255) {
-    return `${newDesc.substr(0, 255)}...`
-  }
-  return newDesc
-}
-
 function getSpeciesDisplayNameBySpeciesName(speciesName) {
   if (!speciesMeta[speciesName]) {
     throw new Error(`Unknown species name ${speciesName}`)
@@ -299,7 +292,9 @@ export default ({ assetId, small = false }) => {
         />
         <meta
           property="og:url"
-          content={`https://www.vrcarena.com/assets/${id}`}
+          content={getOpenGraphUrlForRouteUrl(
+            routes.viewAssetWithVar.replace(':assetId', id)
+          )}
         />
         <meta property="og:image" content={thumbnailUrl} />
         <meta property="og:site_name" content="VRCArena" />

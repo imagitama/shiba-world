@@ -8,6 +8,11 @@ import Heading from '../../components/heading'
 import RecentAssets from '../../components/recent-assets'
 import { AssetCategories } from '../../hooks/useDatabaseQuery'
 import categoryMeta from '../../category-meta'
+import {
+  getDescriptionForHtmlMeta,
+  getOpenGraphUrlForRouteUrl
+} from '../../utils'
+import * as routes from '../../routes'
 
 function getSpeciesByName(speciesName) {
   if (!speciesMeta[speciesName]) {
@@ -26,6 +31,10 @@ function getShortDescriptionForSpeciesName(speciesName) {
 
 function getDescriptionForSpeciesName(speciesName) {
   return getSpeciesByName(speciesName).description
+}
+
+function getBackupThumbnailUrlForSpeciesName(speciesName) {
+  return getSpeciesByName(speciesName).backupThumbnailUrl
 }
 
 function RecentAssetDescription({ categoryName }) {
@@ -50,16 +59,32 @@ export default ({
   }
 }) => {
   const classes = useStyles()
+  const description = getShortDescriptionForSpeciesName(speciesName)
+  const titleWithoutSuffix = `${getNameForSpeciesName(
+    speciesName
+  )} | ${description}`
   return (
     <>
       <Helmet>
-        <title>
-          {getNameForSpeciesName(speciesName)} |{' '}
-          {getShortDescriptionForSpeciesName(speciesName)} | VRCArena
-        </title>
+        <title>{titleWithoutSuffix} | VRCArena</title>
+        <meta name="description" content={description} />
+        <meta property="og:title" content={titleWithoutSuffix} />
+        <meta property="og:type" content="website" />
         <meta
-          name="description"
-          content={getShortDescriptionForSpeciesName(speciesName)}
+          property="og:description"
+          content={getDescriptionForHtmlMeta(description)}
+        />
+        <meta
+          property="og:url"
+          content={getOpenGraphUrlForRouteUrl(
+            routes.viewSpeciesWithVar.replace(':speciesName', speciesName)
+          )}
+        />
+        <meta
+          property="og:image"
+          content={getOpenGraphUrlForRouteUrl(
+            getBackupThumbnailUrlForSpeciesName(speciesName)
+          )}
         />
       </Helmet>
       <Heading variant="h1">{getNameForSpeciesName(speciesName)}</Heading>
