@@ -25,6 +25,7 @@ import Button from '../button'
 import AssetThumbnail from '../asset-thumbnail'
 import VideoPlayer from '../video-player'
 import EndorsementList from '../endorsement-list'
+import ApproveBtn from '../approve-asset-button'
 
 import * as routes from '../../routes'
 import speciesMeta from '../../species-meta'
@@ -166,6 +167,13 @@ function canEditAsset(currentUser, createdBy) {
   if (currentUser.id === createdBy.id) {
     return true
   }
+  if (currentUser.isEditor) {
+    return true
+  }
+  return false
+}
+
+function canApproveAsset(currentUser) {
   if (currentUser.isEditor) {
     return true
   }
@@ -389,6 +397,9 @@ export default ({ assetId, small = false }) => {
             </Button>
           </Link>
         ) : null}
+        {!isApproved && canApproveAsset(user) && (
+          <ApproveBtn assetId={assetId} />
+        )}
       </div>
       <Heading variant="h2">Comments</Heading>
       <CommentList assetId={assetId} />
