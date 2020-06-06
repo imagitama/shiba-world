@@ -1,0 +1,19 @@
+{
+  "name": "bulk-edit-docs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "GOOGLE_APPLICATION_CREDENTIALS=key.json node src/main.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "firebase-admin": "^8.12.1",
+    "prompt": "^1.0.0",
+    "yargs": "^15.3.1"
+  },
+  "devDependencies": {
+    "prettier": "^2.0.5"
+  }
+}
