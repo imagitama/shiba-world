@@ -27,6 +27,7 @@ import VideoPlayer from '../video-player'
 import EndorsementList from '../endorsement-list'
 import ApproveBtn from '../approve-asset-button'
 import DeleteBtn from '../delete-asset-button'
+import ImageGallery from '../image-gallery'
 
 import * as routes from '../../routes'
 import speciesMeta from '../../species-meta'
@@ -381,7 +382,7 @@ export default ({ assetId, small = false }) => {
       {imageUrls.length ? (
         <>
           <Heading variant="h2">Images</Heading>
-          <FileList assetId={id} fileUrls={imageUrls} />
+          <ImageGallery urls={imageUrls} />
         </>
       ) : null}
 
