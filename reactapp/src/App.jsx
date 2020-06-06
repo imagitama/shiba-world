@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { lazy, Suspense } from 'react'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import Container from '@material-ui/core/Container'
 import ThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
@@ -10,26 +10,12 @@ import * as routes from './routes'
 import { lightTheme, darkTheme } from './themes'
 import { UserFieldNames } from './hooks/useDatabaseQuery'
 
+// Do not lazy load these routes as they are very popular so they should load fast
 import Home from './containers/home'
-import Login from './containers/login'
-import SignUp from './containers/signup'
-import Logout from './containers/logout'
-import CreateAsset from './containers/create-asset'
-import EditAsset from './containers/edit-asset'
 import ViewAsset from './containers/view-asset'
-import MyAccount from './containers/my-account'
-import Admin from './containers/admin'
-import PrivacyPolicy from './containers/privacy-policy'
-import Contributors from './containers/contributors'
-import Unapproved from './containers/unapproved'
-import ErrorContainer from './containers/error'
-import ViewCategory from './containers/view-category'
-import News from './containers/news'
-import Tags from './containers/tags'
-import Search from './containers/search'
-
 import ViewSpecies from './containers/view-species'
 import ViewSpeciesCategory from './containers/view-species-category'
+import ViewCategory from './containers/view-category'
 
 import PageHeader from './components/header'
 import PageFooter from './components/footer'
@@ -37,10 +23,27 @@ import SearchResults from './components/search-results'
 import SetupProfile from './components/setup-profile'
 import Notices from './components/notices'
 import ErrorBoundary from './components/error-boundary'
+import LoadingIndicator from './components/loading-indicator'
 
 import useUserRecord from './hooks/useUserRecord'
 import useSearchTerm from './hooks/useSearchTerm'
 import useIsLoggedIn from './hooks/useIsLoggedIn'
+
+// Lazy load these to improve performance (downloading and processing JS)
+const Login = lazy(() => import('./containers/login'))
+const SignUp = lazy(() => import('./containers/signup'))
+const Logout = lazy(() => import('./containers/logout'))
+const CreateAsset = lazy(() => import('./containers/create-asset'))
+const EditAsset = lazy(() => import('./containers/edit-asset'))
+const MyAccount = lazy(() => import('./containers/my-account'))
+const Admin = lazy(() => import('./containers/admin'))
+const PrivacyPolicy = lazy(() => import('./containers/privacy-policy'))
+const Contributors = lazy(() => import('./containers/contributors'))
+const Unapproved = lazy(() => import('./containers/unapproved'))
+const ErrorContainer = lazy(() => import('./containers/error'))
+const News = lazy(() => import('./containers/news'))
+const Tags = lazy(() => import('./containers/tags'))
+const Search = lazy(() => import('./containers/search'))
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
   return (
@@ -75,7 +78,7 @@ const MainContent = () => {
   }
 
   return (
-    <>
+    <Suspense fallback={<LoadingIndicator />}>
       <Switch>
         <RouteWithMeta
           exact
@@ -219,7 +222,7 @@ const MainContent = () => {
           )}
         />
       </Switch>
-    </>
+    </Suspense>
   )
 }
 
