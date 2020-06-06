@@ -50,6 +50,7 @@ function Assets({ speciesName, categoryName }) {
   let whereClauses = [
     [AssetFieldNames.isApproved, Operators.EQUALS, true],
     [AssetFieldNames.isAdult, Operators.EQUALS, false],
+    [AssetFieldNames.isDeleted, Operators.EQUALS, false],
     [AssetFieldNames.species, Operators.ARRAY_CONTAINS, speciesName],
     [AssetFieldNames.category, Operators.EQUALS, categoryName]
   ]

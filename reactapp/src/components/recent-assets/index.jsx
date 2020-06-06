@@ -27,7 +27,8 @@ function getViewMoreLinkUrl(speciesName, categoryName) {
 export default ({ speciesName, limit = 10, categoryName }) => {
   let whereClauses = [
     [AssetFieldNames.isAdult, Operators.EQUALS, false],
-    [AssetFieldNames.isApproved, Operators.EQUALS, true]
+    [AssetFieldNames.isApproved, Operators.EQUALS, true],
+    [AssetFieldNames.isDeleted, Operators.EQUALS, false]
   ]
 
   if (speciesName) {

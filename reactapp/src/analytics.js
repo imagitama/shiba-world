@@ -29,6 +29,7 @@ export const actions = {
   DOWNLOAD_ASSET_FILE: 'DownloadAssetFile',
   ENDORSE_ASSET: 'EndorseAsset',
   APPROVE_ASSET: 'ApproveAsset',
+  DELETE_ASSET: 'DeleteAsset',
 
   // ACCOUNT
   TOGGLE_ENABLED_ADULT_CONTENT: 'ToggleEnabledAdultContent',
@@ -89,6 +90,9 @@ const actionDetails = {
     category: categories.ASSETS
   },
   [actions.APPROVE_ASSET]: {
+    category: categories.ASSETS
+  },
+  [actions.DELETE_ASSET]: {
     category: categories.ASSETS
   },
 

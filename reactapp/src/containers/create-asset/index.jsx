@@ -69,10 +69,13 @@ export default () => {
           try {
             const [docId] = await save({
               ...newFields,
+              // need to initialize these so our queries work later
               isApproved: false,
+              isDeleted: false,
               createdAt: new Date(),
               createdBy: userDocument
             })
+
             setNewDocumentId(docId)
           } catch (err) {
             console.error('Failed to create asset', newFields, err)

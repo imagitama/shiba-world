@@ -12,6 +12,7 @@ import useDatabase from '../../hooks/useDatabase'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useUserRecord from '../../hooks/useUserRecord'
 import { CollectionNames } from '../../hooks/useDatabaseQuery'
+import useDatabaseDocument from '../../hooks/useDatabaseDocument'
 
 import { scrollToTop } from '../../utils'
 import * as routes from '../../routes'
@@ -21,6 +22,10 @@ export default ({ match: { params } }) => {
   const [isLoading, isErrored, asset] = useDatabase(
     CollectionNames.Assets,
     params.assetId
+  )
+  const [userDocument] = useDatabaseDocument(
+    CollectionNames.Users,
+    user && user.id
   )
   const [newFields, setNewFields] = useState()
   const [isSaving, wasSaveSuccessOrFail, save] = useDatabaseSave(
@@ -67,7 +72,13 @@ export default ({ match: { params } }) => {
           asset={newFields ? newFields : asset}
           onSubmit={fields => {
             scrollToTop()
-            save(fields)
+
+            save({
+              ...fields,
+              lastModifiedBy: userDocument,
+              lastModifiedAt: new Date()
+            })
+
             setNewFields(fields)
           }}
         />

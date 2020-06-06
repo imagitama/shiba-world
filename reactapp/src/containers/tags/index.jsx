@@ -17,6 +17,7 @@ function Assets({ tagName }) {
   let whereClauses = [
     [AssetFieldNames.isApproved, Operators.EQUALS, true],
     [AssetFieldNames.isAdult, Operators.EQUALS, false],
+    [AssetFieldNames.isDeleted, Operators.EQUALS, false],
     [AssetFieldNames.tags, Operators.ARRAY_CONTAINS, tagName]
   ]
 

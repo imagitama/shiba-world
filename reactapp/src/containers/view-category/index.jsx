@@ -27,6 +27,7 @@ function Assets({ categoryName }) {
   let whereClauses = [
     [AssetFieldNames.isApproved, Operators.EQUALS, true],
     [AssetFieldNames.isAdult, Operators.EQUALS, false],
+    [AssetFieldNames.isDeleted, Operators.EQUALS, false],
     [AssetFieldNames.category, Operators.EQUALS, categoryName]
   ]
 

@@ -30,6 +30,10 @@ function insertDocIntoIndex(doc, docData) {
     .saveObject(convertDocToAlgoliaRecord(doc.id, docData))
 }
 
+function deleteDocFromIndex(doc) {
+  return client.initIndex(ALGOLIA_INDEX_NAME).deleteObject(doc.id)
+}
+
 function isNotApproved(docData) {
   return docData.isApproved === false
 }
@@ -84,14 +88,20 @@ exports.onAssetCreated = functions.firestore
 exports.onAssetUpdated = functions.firestore
   .document('assets/{assetId}')
   .onUpdate(async ({ before: beforeDoc, after: doc }) => {
+    const beforeDocData = beforeDoc.data()
     const docData = doc.data()
 
     await storeInHistory(`Edited asset`, doc.ref, {
-      diff: getDifferenceInObjects(beforeDoc.data(), docData),
+      diff: getDifferenceInObjects(beforeDocData, docData),
     })
 
     if (isNotApproved(docData)) {
       return Promise.resolve()
+    }
+
+    if (beforeDocData.isDeleted !== true && docData.isDeleted === true) {
+      await deleteDocFromIndex(doc)
+      return
     }
 
     await insertDocIntoIndex(doc, docData)

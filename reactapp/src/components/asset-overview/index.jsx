@@ -26,6 +26,7 @@ import AssetThumbnail from '../asset-thumbnail'
 import VideoPlayer from '../video-player'
 import EndorsementList from '../endorsement-list'
 import ApproveBtn from '../approve-asset-button'
+import DeleteBtn from '../delete-asset-button'
 
 import * as routes from '../../routes'
 import speciesMeta from '../../species-meta'
@@ -135,6 +136,19 @@ function NotApprovedMessage() {
   return (
     <Paper className={classes.notApprovedMessage}>
       <strong>This asset has not been approved yet. It:</strong>
+      <ul>
+        <li>does not show up in search results</li>
+        <li>is not visible to logged out users</li>
+      </ul>
+    </Paper>
+  )
+}
+
+function DeletedMessage() {
+  const classes = useStyles()
+  return (
+    <Paper className={classes.notApprovedMessage}>
+      <strong>This asset has been deleted. It:</strong>
       <ul>
         <li>does not show up in search results</li>
         <li>is not visible to logged out users</li>
@@ -268,7 +282,8 @@ export default ({ assetId, small = false }) => {
     modifiedAt,
     modifiedBy,
     sourceUrl,
-    videoUrl
+    videoUrl,
+    isDeleted
   } = result
 
   const downloadUrls = fileUrls
@@ -309,6 +324,7 @@ export default ({ assetId, small = false }) => {
         <meta property="og:site_name" content="VRCArena" />
       </Helmet>
       {isApproved === false && <NotApprovedMessage />}
+      {isDeleted === true && <DeletedMessage />}
       <div className={classes.thumbnailAndControls}>
         <div className={classes.thumbnailWrapper}>
           <AssetThumbnail url={thumbnailUrl} />
@@ -400,6 +416,7 @@ export default ({ assetId, small = false }) => {
         {!isApproved && canApproveAsset(user) && (
           <ApproveBtn assetId={assetId} />
         )}
+        {!isDeleted && canApproveAsset(user) && <DeleteBtn assetId={assetId} />}
       </div>
       <Heading variant="h2">Comments</Heading>
       <CommentList assetId={assetId} />
