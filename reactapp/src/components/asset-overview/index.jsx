@@ -189,6 +189,9 @@ function canEditAsset(currentUser, createdBy) {
 }
 
 function canApproveAsset(currentUser) {
+  if (!currentUser) {
+    return false
+  }
   if (currentUser.isEditor) {
     return true
   }
