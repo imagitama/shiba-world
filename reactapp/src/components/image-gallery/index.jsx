@@ -43,7 +43,7 @@ export default ({ urls }) => {
           src={url}
           onClick={() => onThumbnailClick(idx)}
           className={classes.thumbnail}
-          alt="Image thumbnail"
+          alt={`Thumbnail ${idx}`}
         />
       ))}
     </div>

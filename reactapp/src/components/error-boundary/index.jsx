@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import * as Sentry from '@sentry/browser'
 import ErrorMessage from '../error-message'
 
 class ErrorBoundary extends Component {
@@ -12,7 +13,8 @@ class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error(error, errorInfo)
+    console.log(error, errorInfo)
+    Sentry.captureException(error)
   }
 
   render() {
