@@ -218,11 +218,11 @@ function getCategoryDisplayName(category) {
   return `${category.substr(0, 1).toUpperCase()}${category.substr(1)}`
 }
 
-function VisitSourceButton({ sourceUrl }) {
+function VisitSourceButton({ sourceUrl, isNoFilesAttached = false }) {
   const classes = useStyles()
   return (
     <Button
-      color="default"
+      color={isNoFilesAttached ? 'primary' : 'default'}
       className={classes.controlBtn}
       url={sourceUrl}
       icon={<LaunchIcon />}>
@@ -335,7 +335,12 @@ export default ({ assetId, small = false }) => {
         </div>
         <div className={classes.controls}>
           <EndorseAssetButton assetId={id} />
-          {sourceUrl && <VisitSourceButton sourceUrl={sourceUrl} />}
+          {sourceUrl && (
+            <VisitSourceButton
+              sourceUrl={sourceUrl}
+              isNoFilesAttached={downloadUrls.length === 0}
+            />
+          )}
           {downloadUrls.length ? (
             <DownloadButton assetId={id} url={downloadUrls[0]} />
           ) : null}
