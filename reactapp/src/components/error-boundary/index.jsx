@@ -21,7 +21,14 @@ class ErrorBoundary extends Component {
     if (this.state.hasError) {
       return (
         <ErrorMessage>
-          Something went wrong. Refresh the page to try again
+          <p>
+            <strong>Whoops. Something went wrong.</strong>
+          </p>
+          <p>
+            Please try again. If it happens again please contact Peanut via
+            Discord (Peanut#1756) or email (contact@vrcarena.com) and explain
+            what you were doing so he can fix it.
+          </p>
         </ErrorMessage>
       )
     }
