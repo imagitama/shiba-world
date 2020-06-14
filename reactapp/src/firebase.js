@@ -2,6 +2,7 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
 import 'firebase/database'
+import * as Sentry from '@sentry/browser'
 // import { trackAction, actions } from './analytics'
 
 const firebaseConfig = {
@@ -28,7 +29,19 @@ export let loggedInUserId = null
 auth.onAuthStateChanged(user => {
   if (user) {
     loggedInUserId = user
+
+    Sentry.setUser({
+      id: user.uid,
+      username: user.displayName,
+      email: user.email
+    })
   } else {
+    Sentry.setUser({
+      id: null,
+      username: null,
+      email: null
+    })
+
     loggedInUserId = null
   }
 })
