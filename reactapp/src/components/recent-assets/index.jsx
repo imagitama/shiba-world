@@ -73,7 +73,16 @@ export default ({ speciesName, limit = 10, categoryName }) => {
       <div style={{ textAlign: 'center', marginTop: '1rem' }}>
         <Link to={getViewMoreLinkUrl(speciesName, categoryName)}>
           <Button>View More</Button>
-        </Link>
+        </Link>{' '}
+        {speciesName && categoryName && (
+          <Link
+            to={routes.viewCategoryWithVar.replace(
+              ':categoryName',
+              categoryName
+            )}>
+            <Button color="default">View All Species</Button>
+          </Link>
+        )}
       </div>
     </>
   )

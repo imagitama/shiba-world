@@ -24,7 +24,9 @@ export default () => {
 
   return (
     <>
-      <Heading variant="h2">Species</Heading>
+      <Heading variant="h2">
+        <Link to={routes.viewAllSpecies}>Species</Link>
+      </Heading>
       <BodyText>
         Select a species to browse their assets, tutorials, avatars and news.
       </BodyText>

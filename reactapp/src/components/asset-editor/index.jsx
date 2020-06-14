@@ -151,9 +151,6 @@ const getIsFormValid = (formFields, doesHavePermission) => {
   if (!formFields.description) {
     return false
   }
-  if (!formFields.species.length) {
-    return false
-  }
   if (!formFields.category) {
     return false
   }
@@ -316,7 +313,7 @@ Please crop your thumbnails to something like 300x300 (automatic cropping coming
           multiple
           options={Object.values(speciesTags)}
           value={fieldData.species}
-          hint={`What species your asset is for. You can select multiple.`}
+          hint={`What species your asset is for. You can select multiple. Select none to make it available for every species.`}
           onChange={newVal => onFieldChange('species', newVal)}
         />
 

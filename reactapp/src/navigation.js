@@ -38,10 +38,17 @@ export default [
   },
   {
     label: 'Species',
-    children: Object.entries(speciesMeta).map(([name, meta]) => ({
-      label: meta.name,
-      url: routes.viewSpeciesWithVar.replace(':speciesName', name)
-    }))
+    children: [
+      {
+        label: 'All Species',
+        url: routes.viewAllSpecies
+      }
+    ].concat(
+      Object.entries(speciesMeta).map(([name, meta]) => ({
+        label: meta.name,
+        url: routes.viewSpeciesWithVar.replace(':speciesName', name)
+      }))
+    )
   },
   {
     label: 'Categories',

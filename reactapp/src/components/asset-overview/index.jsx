@@ -85,6 +85,9 @@ const useStyles = makeStyles({
 })
 
 function getSpeciesDisplayNameBySpeciesName(speciesName) {
+  if (!speciesName) {
+    return 'All Species'
+  }
   if (!speciesMeta[speciesName]) {
     throw new Error(`Unknown species name ${speciesName}`)
   }
