@@ -3,13 +3,12 @@ import { Link } from 'react-router-dom'
 import Markdown from 'react-markdown'
 import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
-import Paper from '@material-ui/core/Paper'
 import { Helmet } from 'react-helmet'
 import LaunchIcon from '@material-ui/icons/Launch'
 import GetAppIcon from '@material-ui/icons/GetApp'
 import EditIcon from '@material-ui/icons/Edit'
 
-import useDatabase from '../../hooks/useDatabase'
+import useDatabaseQuery from '../../hooks/useDatabaseQuery'
 import { CollectionNames } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 
@@ -34,59 +33,17 @@ import speciesMeta from '../../species-meta'
 import { trackAction, actions } from '../../analytics'
 import {
   getDescriptionForHtmlMeta,
-  getOpenGraphUrlForRouteUrl
+  getOpenGraphUrlForRouteUrl,
+  canApproveAsset,
+  canEditAsset,
+  isUrlAnImage,
+  isUrlAVideo,
+  isUrlNotAnImageOrVideo
 } from '../../utils'
 
-const FileResultThumbnail = ({ url }) => {
-  return (
-    <img
-      src={url}
-      style={{ width: '100%', maxWidth: '500px' }}
-      alt="Thumbnail for file"
-    />
-  )
-}
-
-const getFilenameFromUrl = url =>
-  url
-    .replace('%2F', '/')
-    .split('/')
-    .pop()
-    .split('?')
-    .shift()
-    .replace(/%20/g, ' ')
-    .split('___')
-    .pop()
-
-const FileResult = ({ assetId, url }) => {
-  const classes = useStyles()
-
-  const onDownloadBtnClick = () =>
-    trackAction(actions.DOWNLOAD_ASSET_FILE, {
-      assetId,
-      url
-    })
-
-  return (
-    <Paper style={{ padding: '1rem', marginBottom: '1rem' }}>
-      {getFilenameFromUrl(url)}
-      <br />
-      {filterOnlyImagesUrl(url) ? (
-        <FileResultThumbnail url={url} />
-      ) : filterOnlyVideoUrl(url) ? (
-        <VideoPlayer url={url} />
-      ) : (
-        <Button
-          className={classes.downloadButton}
-          url={url}
-          icon={<GetAppIcon />}
-          onClick={onDownloadBtnClick}>
-          Download
-        </Button>
-      )}
-    </Paper>
-  )
-}
+import NotApprovedMessage from './components/not-approved-message'
+import DeletedMessage from './components/deleted-message'
+import FileList from './components/file-list'
 
 const useStyles = makeStyles({
   root: {
@@ -107,13 +64,8 @@ const useStyles = makeStyles({
     marginTop: '0.5rem'
   },
   description: {
-    fontSize: '90%',
     margin: '2rem 0 1rem',
     '& A': { textDecoration: 'underline' }
-  },
-  notApprovedMessage: {
-    marginBottom: '2rem',
-    padding: '1rem'
   },
   downloadButton: {
     '& a': {
@@ -131,81 +83,6 @@ const useStyles = makeStyles({
     marginLeft: '0.5rem'
   }
 })
-
-function NotApprovedMessage() {
-  const classes = useStyles()
-  return (
-    <Paper className={classes.notApprovedMessage}>
-      <strong>This asset has not been approved yet. It:</strong>
-      <ul>
-        <li>does not show up in search results</li>
-        <li>is not visible to logged out users</li>
-      </ul>
-    </Paper>
-  )
-}
-
-function DeletedMessage() {
-  const classes = useStyles()
-  return (
-    <Paper className={classes.notApprovedMessage}>
-      <strong>This asset has been deleted. It:</strong>
-      <ul>
-        <li>does not show up in search results</li>
-        <li>is not visible to logged out users</li>
-      </ul>
-    </Paper>
-  )
-}
-
-function filterOnlyVideoUrl(url) {
-  return url.includes('.mp4') || url.includes('.avi')
-}
-
-function filterOnlyNonImageUrl(url) {
-  return !filterOnlyVideoUrl(url) && !filterOnlyImagesUrl(url)
-}
-
-function filterOnlyImagesUrl(url) {
-  return (
-    url.includes('jpg') ||
-    url.includes('png') ||
-    url.includes('gif') ||
-    url.includes('jpeg')
-  )
-}
-
-function canEditAsset(currentUser, createdBy) {
-  if (!currentUser) {
-    return false
-  }
-  if (currentUser.id === createdBy.id) {
-    return true
-  }
-  if (currentUser.isEditor) {
-    return true
-  }
-  return false
-}
-
-function canApproveAsset(currentUser) {
-  if (!currentUser) {
-    return false
-  }
-  if (currentUser.isEditor) {
-    return true
-  }
-  return false
-}
-
-function FileList({ assetId, fileUrls }) {
-  if (!fileUrls.length) {
-    return 'None found'
-  }
-  return fileUrls.map(fileUrl => (
-    <FileResult key={fileUrl} assetId={assetId} url={fileUrl} />
-  ))
-}
 
 function getSpeciesDisplayNameBySpeciesName(speciesName) {
   if (!speciesMeta[speciesName]) {
@@ -252,7 +129,7 @@ function DownloadButton({ assetId, url }) {
 }
 
 export default ({ assetId, small = false }) => {
-  const [isLoading, isErrored, result] = useDatabase(
+  const [isLoading, isErrored, result] = useDatabaseQuery(
     CollectionNames.Assets,
     assetId
   )
@@ -291,15 +168,15 @@ export default ({ assetId, small = false }) => {
   } = result
 
   const downloadUrls = fileUrls
-    .filter(filterOnlyNonImageUrl)
+    .filter(isUrlNotAnImageOrVideo)
     .filter(fileUrl => fileUrl !== thumbnailUrl)
 
   const imageUrls = fileUrls
-    .filter(filterOnlyImagesUrl)
+    .filter(isUrlAnImage)
     .filter(fileUrl => fileUrl !== thumbnailUrl)
 
   const videoUrls = fileUrls
-    .filter(filterOnlyVideoUrl)
+    .filter(isUrlAVideo)
     .filter(fileUrl => fileUrl !== thumbnailUrl)
 
   return (
@@ -412,11 +289,11 @@ export default ({ assetId, small = false }) => {
       )}
       <div>
         {small ? (
-          <Link to={`/assets/${assetId}`}>
+          <Link to={routes.viewAssetWithVar.replace(':assetId', assetId)}>
             <Button color="primary">View Asset</Button>
           </Link>
         ) : canEditAsset(user, createdBy) ? (
-          <Link to={`/assets/${assetId}/edit`}>
+          <Link to={routes.editAssetWithVar.replace(':assetId', assetId)}>
             <Button color="primary" icon={<EditIcon />}>
               Edit Asset
             </Button>
