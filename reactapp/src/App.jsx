@@ -16,6 +16,7 @@ import ViewAsset from './containers/view-asset'
 import ViewSpecies from './containers/view-species'
 import ViewSpeciesCategory from './containers/view-species-category'
 import ViewCategory from './containers/view-category'
+import ViewAllSpecies from './containers/view-all-species'
 
 import PageHeader from './components/header'
 import PageFooter from './components/footer'
@@ -216,6 +217,7 @@ const MainContent = () => {
         <Route exact path={routes.news} component={News} />
         <Route exact path={routes.tagsWithVar} component={Tags} />
         <Route exact path={routes.searchWithVar} component={Search} />
+        <Route exact path={routes.viewAllSpecies} component={ViewAllSpecies} />
         <Route
           component={() => (
             <ErrorContainer code={404} message="Page not found" />

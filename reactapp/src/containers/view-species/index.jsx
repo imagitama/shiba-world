@@ -4,39 +4,21 @@ import Markdown from 'react-markdown'
 import { Link } from 'react-router-dom'
 import Paper from '@material-ui/core/Paper'
 import { makeStyles } from '@material-ui/core/styles'
-import speciesMeta from '../../species-meta'
+
 import Heading from '../../components/heading'
 import RecentAssets from '../../components/recent-assets'
+import ErrorMessage from '../../components/error-message'
+import Button from '../../components/button'
+
 import { AssetCategories } from '../../hooks/useDatabaseQuery'
+import useSpeciesMeta from '../../hooks/useSpeciesMeta'
+
 import categoryMeta from '../../category-meta'
 import {
   getDescriptionForHtmlMeta,
   getOpenGraphUrlForRouteUrl
 } from '../../utils'
 import * as routes from '../../routes'
-
-function getSpeciesByName(speciesName) {
-  if (!speciesMeta[speciesName]) {
-    throw new Error(`Invalid species name: ${speciesName}`)
-  }
-  return speciesMeta[speciesName]
-}
-
-function getNameForSpeciesName(speciesName) {
-  return getSpeciesByName(speciesName).name
-}
-
-function getShortDescriptionForSpeciesName(speciesName) {
-  return getSpeciesByName(speciesName).shortDescription
-}
-
-function getDescriptionForSpeciesName(speciesName) {
-  return getSpeciesByName(speciesName).description
-}
-
-function getBackupThumbnailUrlForSpeciesName(speciesName) {
-  return getSpeciesByName(speciesName).backupThumbnailUrl
-}
 
 function RecentAssetDescription({ categoryName }) {
   return <p>{categoryMeta[categoryName].shortDescription}</p>
@@ -59,21 +41,31 @@ export default ({
     params: { speciesName }
   }
 }) => {
+  const species = useSpeciesMeta(speciesName)
   const classes = useStyles()
-  const description = getShortDescriptionForSpeciesName(speciesName)
-  const titleWithoutSuffix = `${getNameForSpeciesName(
-    speciesName
-  )} | ${description}`
+
+  if (!species) {
+    return (
+      <ErrorMessage>
+        Sorry that species does not seem to exist.
+        <br />
+        <br />
+        <Button url={routes.viewAllSpecies}>View All Species</Button>
+      </ErrorMessage>
+    )
+  }
+
+  const titleWithoutSuffix = `${species.name} | ${species.shortDescription}`
   return (
     <>
       <Helmet>
         <title>{titleWithoutSuffix} | VRCArena</title>
-        <meta name="description" content={description} />
+        <meta name="description" content={species.shortDescription} />
         <meta property="og:title" content={titleWithoutSuffix} />
         <meta property="og:type" content="website" />
         <meta
           property="og:description"
-          content={getDescriptionForHtmlMeta(description)}
+          content={getDescriptionForHtmlMeta(species.shortDescription)}
         />
         <meta
           property="og:url"
@@ -83,19 +75,17 @@ export default ({
         />
         <meta
           property="og:image"
-          content={getOpenGraphUrlForRouteUrl(
-            getBackupThumbnailUrlForSpeciesName(speciesName)
-          )}
+          content={getOpenGraphUrlForRouteUrl(species.backupThumbnailUrl)}
         />
       </Helmet>
       <Heading variant="h1">
         <Link
           to={routes.viewSpeciesWithVar.replace(':speciesName', speciesName)}>
-          {getNameForSpeciesName(speciesName)}
+          {species.name}
         </Link>
       </Heading>
       <Paper className={classes.description}>
-        <Markdown>{getDescriptionForSpeciesName(speciesName)}</Markdown>
+        <Markdown>{species.description}</Markdown>
       </Paper>
       <Heading variant="h2">
         <Link
