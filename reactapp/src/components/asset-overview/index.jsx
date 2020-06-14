@@ -81,6 +81,9 @@ const useStyles = makeStyles({
   },
   controlBtn: {
     marginLeft: '0.5rem'
+  },
+  isAdultMsg: {
+    fontSize: '33.3%'
   }
 })
 
@@ -131,6 +134,12 @@ function DownloadButton({ assetId, url }) {
   )
 }
 
+function IsAdultMessage() {
+  const classes = useStyles()
+
+  return <span className={classes.isAdultMsg}>(NSFW)</span>
+}
+
 export default ({ assetId, small = false }) => {
   const [isLoading, isErrored, result] = useDatabaseQuery(
     CollectionNames.Assets,
@@ -167,7 +176,8 @@ export default ({ assetId, small = false }) => {
     modifiedBy,
     sourceUrl,
     videoUrl,
-    isDeleted
+    isDeleted,
+    isAdult
   } = result
 
   const downloadUrls = fileUrls
@@ -229,7 +239,8 @@ export default ({ assetId, small = false }) => {
       <Heading variant="h1">
         <Link to={routes.viewAssetWithVar.replace(':assetId', assetId)}>
           {title}
-        </Link>
+        </Link>{' '}
+        {isAdult && <IsAdultMessage />}
       </Heading>
       {species && category && (
         <Heading className={classes.subtitle} variant="h2">
