@@ -12,12 +12,19 @@ import * as routes from '../../routes'
 
 const useStyles = makeStyles({
   root: {
-    width: 200,
+    width: '200px',
     margin: '0.5rem',
-    position: 'relative'
+    position: 'relative',
+    '@media (max-width: 959px)': {
+      width: '160px',
+      margin: '0.25rem'
+    }
   },
   media: {
-    height: 200
+    height: '200px',
+    '@media (max-width: 959px)': {
+      height: '160px'
+    }
   },
   actions: {
     position: 'absolute',

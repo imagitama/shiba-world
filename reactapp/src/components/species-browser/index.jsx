@@ -11,12 +11,20 @@ import speciesMeta from '../../species-meta'
 const useStyles = makeStyles({
   speciesBrowser: { marginTop: '0.5rem', display: 'flex', flexWrap: 'wrap' },
   speciesItem: {
-    width: 175,
-    margin: '0.5rem'
+    width: '175px',
+    margin: '0.5rem',
+    '@media (max-width: 959px)': {
+      width: '160px',
+      margin: '0.25rem'
+    }
   },
   thumbnailWrapper: {
-    height: 250,
-    position: 'relative'
+    height: '250px',
+    position: 'relative',
+
+    '@media (max-width: 959px)': {
+      height: '200px'
+    }
   },
   thumbnail: {
     height: '100%',
