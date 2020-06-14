@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp'
 import Drawer from '@material-ui/core/Drawer'
 import MenuList from '@material-ui/core/MenuList'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -26,6 +28,7 @@ const useStyles = makeStyles({
     textDecoration: 'none'
   },
   listItemIcon: {
+    minWidth: 0,
     color: '#240b36' // TODO: get from theme
   },
   menuItemLink: {
@@ -33,6 +36,12 @@ const useStyles = makeStyles({
     width: '100%',
     height: '100%',
     color: 'inherit'
+  },
+  label: {
+    flex: 1
+  },
+  subMenuItem: {
+    paddingLeft: '2rem'
   }
 })
 
@@ -41,6 +50,24 @@ const NavigationLink = props => {
   return <Link {...props} className={classes.menuItemLink} />
 }
 
+function MenuItemWithUrl({ onClick, url, label, className = '' }) {
+  const classes = useStyles()
+  return (
+    <NavigationLink
+      className={`${classes.menuListLink} ${className}`}
+      color="primary"
+      variant="inherit"
+      to={url}
+      onClick={onClick}>
+      <Typography component="div" style={{ display: 'flex' }}>
+        <span className={classes.label}>{getLabelForMenuItem(label)}</span>
+        <ListItemIcon className={classes.listItemIcon}>
+          <ChevronRightIcon />
+        </ListItemIcon>
+      </Typography>
+    </NavigationLink>
+  )
+}
 export default () => {
   const classes = useStyles()
   const [, , user] = useUserRecord()
@@ -48,6 +75,18 @@ export default () => {
   const dispatch = useDispatch()
 
   const dispatchCloseMenu = () => dispatch(closeMenu())
+
+  const [openDropdownMenus, setOpenDropdownMenus] = useState({})
+  const onClickDropdownParentItem = idx =>
+    setOpenDropdownMenus({
+      ...openDropdownMenus,
+      [idx]: openDropdownMenus[idx] ? false : true
+    })
+
+  const onClickMenuItemWithUrl = () => {
+    setOpenDropdownMenus({})
+    dispatchCloseMenu()
+  }
 
   return (
     <Drawer
@@ -62,21 +101,44 @@ export default () => {
       <MenuList className={classes.menuList}>
         {navItems
           .filter(navItem => canShowMenuItem(navItem, user))
-          .map(({ label, url }) => (
-            <MenuItem button key={url} onClick={dispatchCloseMenu}>
-              <NavigationLink
-                className={classes.menuListLink}
-                color="primary"
-                variant="inherit"
-                to={url}>
-                <Typography component="div" style={{ display: 'flex' }}>
-                  <ListItemIcon className={classes.listItemIcon}>
-                    <ChevronRightIcon />
-                  </ListItemIcon>
-                  {getLabelForMenuItem(label)}
-                </Typography>
-              </NavigationLink>
-            </MenuItem>
+          .map(({ label, url, children }, idx) => (
+            <>
+              <MenuItem key={url} button>
+                {children ? (
+                  <Typography
+                    component="div"
+                    style={{ display: 'flex', width: '100%' }}
+                    onClick={() => onClickDropdownParentItem(idx)}>
+                    <span className={classes.label}>
+                      {getLabelForMenuItem(label)}
+                    </span>
+                    <ListItemIcon className={classes.listItemIcon}>
+                      {openDropdownMenus[idx] ? (
+                        <KeyboardArrowUpIcon />
+                      ) : (
+                        <KeyboardArrowDownIcon />
+                      )}
+                    </ListItemIcon>
+                  </Typography>
+                ) : (
+                  <MenuItemWithUrl
+                    url={url}
+                    label={label}
+                    onClick={onClickMenuItemWithUrl}
+                  />
+                )}
+              </MenuItem>
+              {openDropdownMenus[idx] &&
+                children.map(child => (
+                  <MenuItem key={url} button className={classes.subMenuItem}>
+                    <MenuItemWithUrl
+                      url={child.url}
+                      label={child.label}
+                      onClick={onClickMenuItemWithUrl}
+                    />
+                  </MenuItem>
+                ))}
+            </>
           ))}
       </MenuList>
       <TwitterFollowButton />
