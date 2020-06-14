@@ -17,6 +17,7 @@ import FileUploader from '../file-uploader'
 import ThumbnailUploader from '../thumbnail-uploader'
 import Heading from '../heading'
 import Button from '../button'
+import TagChip from '../tag-chip'
 
 const useStyles = makeStyles({
   hint: { color: 'grey', marginTop: '0.5rem' },
@@ -318,10 +319,15 @@ Please crop your thumbnails to something like 300x300 (automatic cropping coming
         />
 
         <Heading variant="h2">Tags</Heading>
+        {fieldData.tags.map(tag => (
+          <TagChip key={tag} tagName={tag} />
+        ))}
         <FormField
           label="Tags"
           value={fieldData.tags.join('\n')}
-          hint={'Help users find your assets using filters and searching.'}
+          hint={
+            'Help users find your assets using filters and searching. One tag per line. All lowercase.'
+          }
           onChange={newVal => onFieldChange('tags', newVal)}
           convertToValidField={text => text.split('\n')}
           multiline
