@@ -135,6 +135,11 @@ const FileAttacher = ({ fileUrls, onFileAttached, onFileRemoved }) => {
         />
       ))}
       <Paper className={classes.fileAttacherUploader}>
+        <strong>
+          We recommend you upload .fbx files for models, .anim files for
+          animations or .png/.jpg for images.
+        </strong>
+        <br />
         <FileUploader
           directoryPath="asset-uploads"
           filePrefix={shortid.generate()}
