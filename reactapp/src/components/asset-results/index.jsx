@@ -6,12 +6,16 @@ const useStyles = makeStyles({
   root: { marginTop: '0.5rem', display: 'flex', flexWrap: 'wrap' }
 })
 
-export default ({ assets }) => {
+export default ({ assets, showCategory = false }) => {
   const classes = useStyles()
   return (
     <div className={classes.root}>
       {assets.map(asset => (
-        <AssetResultsItem key={asset.id} asset={asset} />
+        <AssetResultsItem
+          key={asset.id}
+          asset={asset}
+          showCategory={showCategory}
+        />
       ))}
     </div>
   )

@@ -26,6 +26,7 @@ export const AssetFieldNames = {
   isAdult: 'isAdult',
   isApproved: 'isApproved',
   tags: 'tags',
+  createdBy: 'createdBy',
   createdAt: 'createdAt',
   isDeleted: 'isDeleted',
   category: 'category',

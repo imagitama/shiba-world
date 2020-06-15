@@ -31,10 +31,16 @@ const useStyles = makeStyles({
     bottom: 0,
     left: 0
   },
-  isAdultChip: {
+  categoryChip: {
     position: 'absolute',
     top: 0,
     left: 0,
+    margin: '0.5rem'
+  },
+  isAdultChip: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
     margin: '0.5rem'
   }
 })
@@ -52,8 +58,18 @@ const IsAdultChip = () => {
   )
 }
 
+const CategoryChip = ({ categoryName }) => {
+  const classes = useStyles()
+  return (
+    <div className={classes.categoryChip}>
+      <Chip label={categoryName} />
+    </div>
+  )
+}
+
 export default function AssetItem({
-  asset: { id, title, description, thumbnailUrl, isAdult }
+  asset: { id, title, description, thumbnailUrl, isAdult, category },
+  showCategory = false
 }) {
   const classes = useStyles()
 
@@ -62,6 +78,7 @@ export default function AssetItem({
       <CardActionArea>
         <Link to={routes.viewAssetWithVar.replace(':assetId', id)}>
           {isAdult && <IsAdultChip />}
+          {showCategory && <CategoryChip categoryName={category} />}
           <LazyLoad width={200} height={200}>
             <CardMedia
               className={classes.media}

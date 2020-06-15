@@ -17,6 +17,7 @@ export const viewCategoryWithVar = '/category/:categoryName'
 export const news = '/news'
 export const tagsWithVar = '/tags/:tagName'
 export const searchWithVar = '/search/:searchTerm'
+export const viewUserWithVar = '/users/:userId'
 
 // Outdated routes
 export const browseAssets = '/browse'

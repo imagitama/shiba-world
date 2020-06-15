@@ -172,8 +172,8 @@ export default ({ assetId, small = false }) => {
     fileUrls,
     thumbnailUrl,
     isApproved,
-    modifiedAt,
-    modifiedBy,
+    lastModifiedAt,
+    lastModifiedBy,
     sourceUrl,
     videoUrl,
     isDeleted,
@@ -293,12 +293,26 @@ export default ({ assetId, small = false }) => {
       </div>
       <Typography component="p" style={{ margin: '1rem 0' }}>
         Created {createdAt ? <FormattedDate date={createdAt} /> : '(unknown)'}{' '}
-        by {createdBy ? createdBy.username : '(unknown)'}
+        by{' '}
+        {createdBy ? (
+          <Link to={routes.viewUserWithVar.replace(':userId', createdBy.id)}>
+            {createdBy.username}
+          </Link>
+        ) : (
+          '(unknown)'
+        )}
       </Typography>
-      {modifiedBy && (
+      {lastModifiedBy && (
         <Typography component="p" style={{ margin: '1rem 0' }}>
-          Last modified <FormattedDate date={modifiedAt} /> by{' '}
-          {modifiedBy ? modifiedBy.username : '(unknown)'}
+          Last modified <FormattedDate date={lastModifiedAt} /> by{' '}
+          {lastModifiedBy ? (
+            <Link
+              to={routes.viewUserWithVar.replace(':userId', lastModifiedBy.id)}>
+              {lastModifiedBy.username}
+            </Link>
+          ) : (
+            '(unknown)'
+          )}
         </Typography>
       )}
       <div>
