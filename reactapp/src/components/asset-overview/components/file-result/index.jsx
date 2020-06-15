@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Paper from '@material-ui/core/Paper'
 import { makeStyles } from '@material-ui/core/styles'
 import GetAppIcon from '@material-ui/icons/GetApp'
@@ -21,6 +21,7 @@ const useStyles = makeStyles({
 
 export default ({ assetId, url }) => {
   const classes = useStyles()
+  const [showFbxViewer, setShowFbxViewer] = useState(false)
 
   const onDownloadBtnClick = () =>
     trackAction(actions.DOWNLOAD_ASSET_FILE, {
@@ -42,7 +43,14 @@ export default ({ assetId, url }) => {
         <VideoPlayer url={url} />
       ) : (
         <>
-          {isUrlAFbx(url) && <FbxViewer url={url} />}
+          {isUrlAFbx(url) && showFbxViewer && <FbxViewer url={url} />}
+          {isUrlAFbx(url) && !showFbxViewer && (
+            <>
+              <Button onClick={() => setShowFbxViewer(true)} color="default">
+                Preview .fbx
+              </Button>{' '}
+            </>
+          )}
           <Button
             className={classes.downloadButton}
             url={url}
