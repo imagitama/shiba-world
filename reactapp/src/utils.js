@@ -61,6 +61,10 @@ export function isUrlAVideo(url) {
   return url.includes('.mp4') || url.includes('.avi')
 }
 
+export function isUrlAFbx(url) {
+  return url.includes('.fbx')
+}
+
 export function isUrlNotAnImageOrVideo(url) {
   return !isUrlAnImage(url) && !isUrlAVideo(url)
 }

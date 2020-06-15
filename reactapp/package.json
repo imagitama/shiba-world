@@ -46,7 +46,8 @@
     "redux-thunk": "2.3.0",
     "sanitize.css": "7.0.3",
     "serve": "10.1.2",
-    "shortid": "^2.2.15"
+    "shortid": "^2.2.15",
+    "three": "^0.117.1"
   },
   "browserslist": [
     ">0.2%",

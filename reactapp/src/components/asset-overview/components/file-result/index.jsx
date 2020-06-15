@@ -5,11 +5,13 @@ import GetAppIcon from '@material-ui/icons/GetApp'
 
 import Button from '../../../button'
 import VideoPlayer from '../../../video-player'
+import FbxViewer from '../../../fbx-viewer'
 import { trackAction, actions } from '../../../../analytics'
 import {
   getFilenameFromUrl,
   isUrlAnImage,
-  isUrlAVideo
+  isUrlAVideo,
+  isUrlAFbx
 } from '../../../../utils'
 
 const useStyles = makeStyles({
@@ -39,13 +41,16 @@ export default ({ assetId, url }) => {
       ) : isUrlAVideo(url) ? (
         <VideoPlayer url={url} />
       ) : (
-        <Button
-          className={classes.downloadButton}
-          url={url}
-          icon={<GetAppIcon />}
-          onClick={onDownloadBtnClick}>
-          Download
-        </Button>
+        <>
+          {isUrlAFbx(url) && <FbxViewer url={url} />}
+          <Button
+            className={classes.downloadButton}
+            url={url}
+            icon={<GetAppIcon />}
+            onClick={onDownloadBtnClick}>
+            Download
+          </Button>
+        </>
       )}
     </Paper>
   )
