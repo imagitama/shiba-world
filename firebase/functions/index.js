@@ -38,6 +38,10 @@ function isNotApproved(docData) {
   return docData.isApproved === false
 }
 
+function isDeleted(docData) {
+  return docData.isDeleted === true
+}
+
 async function storeInHistory(message, parentRef, data) {
   return db.collection('history').add({
     message,
@@ -69,20 +73,47 @@ function getDifferenceInObjects(objectA, objectB) {
   return diff(objectA, objectB).map(recursiveMap)
 }
 
+function replaceReferenceWithString(ref) {
+  return ref.path
+}
+
+function secondsToDate(seconds) {
+  return new Date(seconds * 1000)
+}
+
+function replaceReferencesWithString(object) {
+  const newObject = {}
+
+  for (const key in object) {
+    const val = object[key]
+
+    if (typeof val === 'object' && val.id) {
+      newObject[key] = replaceReferenceWithString(val)
+    } else if (val.hasOwnProperty('_seconds')) {
+      const newVal = secondsToDate(val._seconds)
+      newObject[key] = newVal.toString()
+    } else {
+      newObject[key] = val
+    }
+  }
+
+  return newObject
+}
+
 exports.onAssetCreated = functions.firestore
   .document('assets/{assetId}')
   .onCreate(async (doc) => {
     const docData = doc.data()
 
     await storeInHistory(`Created asset`, doc.ref, {
-      fields: docData,
+      fields: replaceReferencesWithString(docData),
     })
 
     if (isNotApproved(docData)) {
       return Promise.resolve()
     }
 
-    await insertDocIntoIndex(doc, docData)
+    return insertDocIntoIndex(doc, docData)
   })
 
 exports.onAssetUpdated = functions.firestore
@@ -92,7 +123,10 @@ exports.onAssetUpdated = functions.firestore
     const docData = doc.data()
 
     await storeInHistory(`Edited asset`, doc.ref, {
-      diff: getDifferenceInObjects(beforeDocData, docData),
+      diff: getDifferenceInObjects(
+        replaceReferencesWithString(beforeDocData),
+        replaceReferencesWithString(docData)
+      ),
     })
 
     if (isNotApproved(docData)) {
@@ -100,11 +134,14 @@ exports.onAssetUpdated = functions.firestore
     }
 
     if (beforeDocData.isDeleted !== true && docData.isDeleted === true) {
-      await deleteDocFromIndex(doc)
-      return
+      return deleteDocFromIndex(doc)
     }
 
-    await insertDocIntoIndex(doc, docData)
+    if (isDeleted(docData)) {
+      return Promise.resolve()
+    }
+
+    return insertDocIntoIndex(doc, docData)
   })
 
 exports.onCommentCreated = functions.firestore
@@ -112,8 +149,8 @@ exports.onCommentCreated = functions.firestore
   .onCreate(async (doc) => {
     const docData = doc.data()
 
-    await storeInHistory(`Created comment`, doc.ref, {
-      fields: docData,
+    return storeInHistory(`Created comment`, doc.ref, {
+      fields: replaceReferencesWithString(docData),
     })
   })
 
@@ -122,8 +159,11 @@ exports.onUserUpdated = functions.firestore
   .onUpdate(async ({ before: beforeDoc, after: doc }) => {
     const docData = doc.data()
 
-    await storeInHistory(`Edited user`, doc.ref, {
-      diff: getDifferenceInObjects(beforeDoc.data(), docData),
+    return storeInHistory(`Edited user`, doc.ref, {
+      diff: getDifferenceInObjects(
+        replaceReferencesWithString(beforeDoc.data()),
+        replaceReferencesWithString(docData)
+      ),
     })
   })
 
@@ -138,5 +178,5 @@ exports.onUserSignup = functions.auth.user().onCreate(async (user) => {
     username: '',
   })
 
-  await storeInHistory(`User signup`, userRecord)
+  return storeInHistory(`User signup`, userRecord)
 })
