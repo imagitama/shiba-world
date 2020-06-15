@@ -113,7 +113,6 @@ function History() {
         <TableHead>
           <TableRow>
             <TableCell>Message</TableCell>
-            <TableCell>ID</TableCell>
             <TableCell>Data</TableCell>
             <TableCell>Date</TableCell>
           </TableRow>
@@ -121,8 +120,9 @@ function History() {
         <TableBody>
           {results.map(({ id, message, parent, data, createdAt }) => (
             <TableRow key={id}>
-              <TableCell>{message}</TableCell>
               <TableCell>
+                {message}
+                <br />
                 {parent ? <ParentLabel parent={parent} /> : '(no parent)'}
               </TableCell>
               <TableCell>
