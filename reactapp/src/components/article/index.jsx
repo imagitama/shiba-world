@@ -45,7 +45,10 @@ export default ({
       <Heading variant="h2" className={classes.heading}>
         <Link to={readMoreUrl}>{title}</Link>
       </Heading>
-      Posted <FormattedDate date={createdAt} /> by {createdBy.username}
+      Posted <FormattedDate date={createdAt} /> by{' '}
+      <Link to={routes.viewUserWithVar.replace(':userId', createdBy.id)}>
+        {createdBy.username}
+      </Link>
       <div className={classes.description}>
         <Markdown>{trimDescription(description)}</Markdown>
       </div>
