@@ -24,7 +24,8 @@ export default () => {
         'You are not logged in'
       )}
       <br />
-      <Link to={routes.admin}>&copy;</Link> &ndash;{' '}
+      &copy; {new Date().getFullYear()}{' '}
+      <a href="https://www.jaredwilliams.com.au">Jared Williams</a> &ndash;{' '}
       <Link to={routes.privacyPolicy}>Privacy Policy</Link>
     </footer>
   )
