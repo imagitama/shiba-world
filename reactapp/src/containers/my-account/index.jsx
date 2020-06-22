@@ -5,7 +5,7 @@ import Markdown from 'react-markdown'
 
 import LoadingIndicator from '../../components/loading-indicator'
 import ErrorMessage from '../../components/error-message'
-import UsernameEditor from '../../components/username-editor'
+// import UsernameEditor from '../../components/username-editor'
 import AdultContentToggle from '../../components/adult-content-toggle'
 import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'
@@ -19,7 +19,6 @@ import useDatabaseQuery, {
   CollectionNames,
   AssetFieldNames,
   Operators,
-  UserFieldNames,
   ProfileFieldNames
 } from '../../hooks/useDatabaseQuery'
 import useDatabaseDocument from '../../hooks/useDatabaseDocument'
