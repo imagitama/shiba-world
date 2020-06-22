@@ -33,7 +33,9 @@ export const AssetFieldNames = {
   species: 'species',
   sourceUrl: 'sourceUrl',
   videoUrl: 'videoUrl',
-  isPrivate: 'isPrivate'
+  isPrivate: 'isPrivate',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt'
 }
 
 export const AssetCategories = {
@@ -47,7 +49,13 @@ export const AssetCategories = {
 
 export const UserFieldNames = {
   username: 'username',
-  enabledAdultContent: 'enabledAdultContent'
+  enabledAdultContent: 'enabledAdultContent',
+  discordUsername: 'discordUsername',
+  twitterUsername: 'twitterUsername',
+  telegramUsername: 'telegramUsername',
+  youtubeChannelId: 'youtubeChannelId',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt'
 }
 
 export const CommentFieldNames = {

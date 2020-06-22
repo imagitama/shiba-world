@@ -1,6 +1,12 @@
 import React from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
+import TwitterIcon from '@material-ui/icons/Twitter'
+import TelegramIcon from '@material-ui/icons/Telegram'
+import YouTubeIcon from '@material-ui/icons/YouTube'
+import { makeStyles } from '@material-ui/core/styles'
+
+import { ReactComponent as DiscordIcon } from '../../assets/images/icons/discord.svg'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -14,6 +20,21 @@ import ErrorMessage from '../error-message'
 import Heading from '../heading'
 import AssetResults from '../asset-results'
 import * as routes from '../../routes'
+
+const useStyles = makeStyles({
+  socialMediaItem: {
+    display: 'block',
+    padding: '0.5rem'
+  },
+  notUrl: {
+    cursor: 'default'
+  },
+  icon: {
+    verticalAlign: 'middle',
+    width: '1em',
+    height: '1em'
+  }
+})
 
 const AssetsForUser = ({ userId }) => {
   const [, , currentUser] = useUserRecord()
@@ -54,6 +75,34 @@ const AssetsForUser = ({ userId }) => {
   return <AssetResults assets={results} showCategory />
 }
 
+function SocialMediaLink({ icon: Icon, url, label }) {
+  const classes = useStyles()
+
+  const FinalIcon = () => (
+    <>
+      <Icon className={classes.icon} /> {label}
+    </>
+  )
+
+  if (url) {
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={classes.socialMediaItem}>
+        <FinalIcon />
+      </a>
+    )
+  }
+
+  return (
+    <span className={`${classes.socialMediaItem} ${classes.notUrl}`}>
+      <FinalIcon />
+    </span>
+  )
+}
+
 export default ({ userId }) => {
   const [isLoading, isErrored, user] = useDatabaseQuery(
     CollectionNames.Users,
@@ -68,7 +117,13 @@ export default ({ userId }) => {
     return <ErrorMessage>Failed to load their user profile</ErrorMessage>
   }
 
-  const { username = 'New User' } = user
+  const {
+    username = 'New User',
+    discordUsername,
+    twitterUsername,
+    telegramUsername,
+    youtubeChannelId
+  } = user
 
   return (
     <>
@@ -84,6 +139,27 @@ export default ({ userId }) => {
           {username}
         </Link>
       </Heading>
+      <Heading variant="h2">Social Media</Heading>
+      {discordUsername && (
+        <SocialMediaLink icon={DiscordIcon} label={discordUsername} />
+      )}
+      {twitterUsername && (
+        <SocialMediaLink
+          icon={TwitterIcon}
+          label={`@${twitterUsername}`}
+          url={`https://twitter.com/${twitterUsername}`}
+        />
+      )}
+      {telegramUsername && (
+        <SocialMediaLink icon={TelegramIcon} label={`@${telegramUsername}`} />
+      )}
+      {youtubeChannelId && (
+        <SocialMediaLink
+          icon={YouTubeIcon}
+          label="Channel"
+          url={`https://www.youtube.com/channel/${youtubeChannelId}`}
+        />
+      )}
       <Heading variant="h2">Uploads</Heading>
       <AssetsForUser userId={userId} />
     </>

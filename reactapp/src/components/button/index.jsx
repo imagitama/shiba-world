@@ -10,11 +10,16 @@ const useStyles = makeStyles({
   }
 })
 
-export default ({ children, onClick, url, icon, ...props }) => {
+export default ({ children, onClick, url, icon, isDisabled, ...props }) => {
   const classes = useStyles()
 
   const FinalButton = () => (
-    <Button variant="contained" color="primary" onClick={onClick} {...props}>
+    <Button
+      variant="contained"
+      color="primary"
+      onClick={onClick}
+      disabled={isDisabled}
+      {...props}>
       {children} {icon && <span className={classes.icon}>{icon}</span>}
     </Button>
   )

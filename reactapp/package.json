@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@material-ui/core": "^4.0.1",
-    "@material-ui/icons": "^4.0.1",
+    "@material-ui/icons": "^4.9.1",
     "@redux-beacon/google-tag-manager": "^1.0.1",
     "@rehooks/local-storage": "^2.4.0",
     "@sentry/browser": "^5.5.0",
