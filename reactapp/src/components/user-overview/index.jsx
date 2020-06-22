@@ -5,6 +5,7 @@ import TwitterIcon from '@material-ui/icons/Twitter'
 import TelegramIcon from '@material-ui/icons/Telegram'
 import YouTubeIcon from '@material-ui/icons/YouTube'
 import { makeStyles } from '@material-ui/core/styles'
+import Markdown from 'react-markdown'
 
 import { ReactComponent as DiscordIcon } from '../../assets/images/icons/discord.svg'
 
@@ -119,6 +120,7 @@ export default ({ userId }) => {
 
   const {
     username = 'New User',
+    bio,
     discordUsername,
     twitterUsername,
     telegramUsername,
@@ -139,7 +141,18 @@ export default ({ userId }) => {
           {username}
         </Link>
       </Heading>
-      <Heading variant="h2">Social Media</Heading>
+      {bio && (
+        <>
+          <Heading variant="h2">Bio</Heading>
+          <Markdown source={bio} />
+        </>
+      )}
+      {discordUsername ||
+      twitterUsername ||
+      telegramUsername ||
+      youtubeChannelId ? (
+        <Heading variant="h2">Social Media</Heading>
+      ) : null}
       {discordUsername && (
         <SocialMediaLink icon={DiscordIcon} label={discordUsername} />
       )}

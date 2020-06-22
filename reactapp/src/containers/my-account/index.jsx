@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import TextField from '@material-ui/core/TextField'
+import { makeStyles } from '@material-ui/core/styles'
+import Markdown from 'react-markdown'
 
 import LoadingIndicator from '../../components/loading-indicator'
 import ErrorMessage from '../../components/error-message'
@@ -25,6 +27,12 @@ import useDatabaseSave from '../../hooks/useDatabaseSave'
 
 import * as routes from '../../routes'
 
+const useStyles = makeStyles({
+  bioTextField: {
+    width: '100%'
+  }
+})
+
 function MyUploads() {
   const userId = useFirebaseUserId()
   const [userDocument] = useDatabaseDocument(CollectionNames.Users, userId)
@@ -45,6 +53,88 @@ function MyUploads() {
   }
 
   return <AssetResults assets={assets} showCategory />
+}
+
+function BioEditor() {
+  const classes = useStyles()
+  const [isLoadingUser, isErroredLoadingUser, user] = useUserRecord()
+  const [userDocument] = useDatabaseDocument(
+    CollectionNames.Users,
+    user && user.id
+  )
+  const [isSaving, hasSavedOrFailed, save] = useDatabaseSave(
+    CollectionNames.Users,
+    user && user.id
+  )
+
+  const [bioValue, setBioValue] = useState('')
+  const [showPreview, setShowPreview] = useState(false)
+
+  useEffect(() => {
+    if (!user) {
+      return
+    }
+    setBioValue(user.bio)
+  }, [user && user.id])
+
+  const onSaveBtnClick = async () => {
+    try {
+      await save({
+        [UserFieldNames.bio]: bioValue,
+        [UserFieldNames.lastModifiedBy]: userDocument,
+        [UserFieldNames.lastModifiedAt]: new Date()
+      })
+    } catch (err) {
+      console.error('Failed to save social media fields to database', err)
+    }
+  }
+
+  if (isLoadingUser) {
+    return <LoadingIndicator />
+  }
+
+  if (isErroredLoadingUser) {
+    return <ErrorMessage>Failed to lookup your user details</ErrorMessage>
+  }
+
+  return (
+    <>
+      <TextField
+        value={bioValue}
+        onChange={e => setBioValue(e.target.value)}
+        rows={5}
+        multiline
+        className={classes.bioTextField}
+      />
+      <p>
+        You can use markdown to <strong>format</strong> <em>your</em> content.
+        It is the same as Discord. A guide is here:{' '}
+        <a
+          href="https://www.markdownguide.org/basic-syntax/"
+          target="_blank"
+          rel="noopener noreferrer">
+          Markdown
+        </a>
+      </p>
+      {isSaving && 'Saving...'}
+      {hasSavedOrFailed === true
+        ? 'Success!'
+        : hasSavedOrFailed === false
+        ? 'Failed to save. Maybe try again?'
+        : null}
+      {showPreview === false && (
+        <>
+          <Button onClick={() => setShowPreview(true)} color="default">
+            Show Preview
+          </Button>{' '}
+        </>
+      )}
+      {showPreview === true && <Markdown source={bioValue} />}
+      <Button onClick={onSaveBtnClick} isDisabled={isSaving}>
+        Save
+      </Button>
+    </>
+  )
 }
 
 function SocialMediaEditor() {
@@ -151,11 +241,6 @@ function SocialMediaEditor() {
       <Button onClick={onSaveBtnClick} isDisabled={isSaving}>
         Save
       </Button>
-      <Button
-        url={routes.viewUserWithVar.replace(':userId', user.id)}
-        color="default">
-        View Your Profile
-      </Button>
     </>
   )
 }
@@ -179,8 +264,13 @@ export default () => {
     <>
       <Heading variant="h1">Your Account</Heading>
       <BodyText>Hi, {user.username}!</BodyText>
-      <Heading variant="h2">Change your name</Heading>
-      <UsernameEditor />
+      <Button
+        url={routes.viewUserWithVar.replace(':userId', user.id)}
+        color="default">
+        View Your Profile
+      </Button>
+      <Heading variant="h2">Bio</Heading>
+      <BioEditor />
       <Heading variant="h2">Profile settings</Heading>
       <AdultContentToggle />
       <br />
@@ -188,6 +278,8 @@ export default () => {
       <Heading variant="h2">Social Media</Heading>
       <p>These are shown to everyone on your profile.</p>
       <SocialMediaEditor />
+      <Heading variant="h2">Change your name</Heading>
+      <UsernameEditor />
       <Heading variant="h2">Your Uploads</Heading>
       <MyUploads />
     </>

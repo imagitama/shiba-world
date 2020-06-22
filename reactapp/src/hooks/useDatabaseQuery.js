@@ -55,7 +55,8 @@ export const UserFieldNames = {
   telegramUsername: 'telegramUsername',
   youtubeChannelId: 'youtubeChannelId',
   lastModifiedBy: 'lastModifiedBy',
-  lastModifiedAt: 'lastModifiedAt'
+  lastModifiedAt: 'lastModifiedAt',
+  bio: 'bio'
 }
 
 export const CommentFieldNames = {
