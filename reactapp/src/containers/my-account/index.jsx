@@ -19,7 +19,8 @@ import useDatabaseQuery, {
   CollectionNames,
   AssetFieldNames,
   Operators,
-  UserFieldNames
+  UserFieldNames,
+  ProfileFieldNames
 } from '../../hooks/useDatabaseQuery'
 import useDatabaseDocument from '../../hooks/useDatabaseDocument'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
@@ -57,44 +58,45 @@ function MyUploads() {
 
 function BioEditor() {
   const classes = useStyles()
-  const [isLoadingUser, isErroredLoadingUser, user] = useUserRecord()
-  const [userDocument] = useDatabaseDocument(
-    CollectionNames.Users,
-    user && user.id
+  const userId = useFirebaseUserId()
+  const [isLoadingProfile, isErroredLoadingProfile, profile] = useDatabaseQuery(
+    CollectionNames.Profiles,
+    userId
   )
+  const [userDocument] = useDatabaseDocument(CollectionNames.Users, userId)
   const [isSaving, hasSavedOrFailed, save] = useDatabaseSave(
-    CollectionNames.Users,
-    user && user.id
+    CollectionNames.Profiles,
+    userId
   )
 
   const [bioValue, setBioValue] = useState('')
   const [showPreview, setShowPreview] = useState(false)
 
   useEffect(() => {
-    if (!user) {
+    if (!profile) {
       return
     }
-    setBioValue(user.bio)
-  }, [user && user.id])
+    setBioValue(profile.bio)
+  }, [profile && profile.id])
 
   const onSaveBtnClick = async () => {
     try {
       await save({
-        [UserFieldNames.bio]: bioValue,
-        [UserFieldNames.lastModifiedBy]: userDocument,
-        [UserFieldNames.lastModifiedAt]: new Date()
+        [ProfileFieldNames.bio]: bioValue,
+        [ProfileFieldNames.lastModifiedBy]: userDocument,
+        [ProfileFieldNames.lastModifiedAt]: new Date()
       })
     } catch (err) {
       console.error('Failed to save social media fields to database', err)
     }
   }
 
-  if (isLoadingUser) {
+  if (isLoadingProfile) {
     return <LoadingIndicator />
   }
 
-  if (isErroredLoadingUser) {
-    return <ErrorMessage>Failed to lookup your user details</ErrorMessage>
+  if (isErroredLoadingProfile) {
+    return <ErrorMessage>Failed to lookup your user profile</ErrorMessage>
   }
 
   return (
@@ -138,45 +140,46 @@ function BioEditor() {
 }
 
 function SocialMediaEditor() {
-  const [isLoadingUser, isErroredLoadingUser, user] = useUserRecord()
-  const [userDocument] = useDatabaseDocument(
-    CollectionNames.Users,
-    user && user.id
+  const userId = useFirebaseUserId()
+  const [isLoadingProfile, isErroredLoadingProfile, profile] = useDatabaseQuery(
+    CollectionNames.Profiles,
+    userId
   )
+  const [userDocument] = useDatabaseDocument(CollectionNames.Users, userId)
   const [isSaving, hasSavedOrFailed, save] = useDatabaseSave(
-    CollectionNames.Users,
-    user && user.id
+    CollectionNames.Profiles,
+    userId
   )
 
   const [formFieldValues, setFormFieldValues] = useState({
-    [UserFieldNames.discordUsername]: '',
-    [UserFieldNames.twitterUsername]: '',
-    [UserFieldNames.telegramUsername]: '',
-    [UserFieldNames.youtubeChannelId]: ''
+    [ProfileFieldNames.discordUsername]: '',
+    [ProfileFieldNames.twitterUsername]: '',
+    [ProfileFieldNames.telegramUsername]: '',
+    [ProfileFieldNames.youtubeChannelId]: ''
   })
 
   useEffect(() => {
-    if (!user) {
+    if (!profile) {
       return
     }
     setFormFieldValues({
-      [UserFieldNames.discordUsername]:
-        user[UserFieldNames.discordUsername] || '',
-      [UserFieldNames.twitterUsername]:
-        user[UserFieldNames.twitterUsername] || '',
-      [UserFieldNames.telegramUsername]:
-        user[UserFieldNames.telegramUsername] || '',
-      [UserFieldNames.youtubeChannelId]:
-        user[UserFieldNames.youtubeChannelId] || ''
+      [ProfileFieldNames.discordUsername]:
+        profile[ProfileFieldNames.discordUsername] || '',
+      [ProfileFieldNames.twitterUsername]:
+        profile[ProfileFieldNames.twitterUsername] || '',
+      [ProfileFieldNames.telegramUsername]:
+        profile[ProfileFieldNames.telegramUsername] || '',
+      [ProfileFieldNames.youtubeChannelId]:
+        profile[ProfileFieldNames.youtubeChannelId] || ''
     })
-  }, [user && user.id])
+  }, [profile && profile.id])
 
   const onSaveBtnClick = async () => {
     try {
       await save({
         ...formFieldValues,
-        [UserFieldNames.lastModifiedBy]: userDocument,
-        [UserFieldNames.lastModifiedAt]: new Date()
+        [ProfileFieldNames.lastModifiedBy]: userDocument,
+        [ProfileFieldNames.lastModifiedAt]: new Date()
       })
     } catch (err) {
       console.error('Failed to save social media fields to database', err)
@@ -189,12 +192,12 @@ function SocialMediaEditor() {
       [name]: newVal
     })
 
-  if (isLoadingUser) {
+  if (isLoadingProfile) {
     return <LoadingIndicator />
   }
 
-  if (isErroredLoadingUser) {
-    return <ErrorMessage>Failed to lookup your user details</ErrorMessage>
+  if (isErroredLoadingProfile) {
+    return <ErrorMessage>Failed to lookup your user profile</ErrorMessage>
   }
 
   return (
@@ -203,7 +206,10 @@ function SocialMediaEditor() {
       <TextField
         value={formFieldValues.discordUsername}
         onChange={e =>
-          updateFormFieldValue(UserFieldNames.discordUsername, e.target.value)
+          updateFormFieldValue(
+            ProfileFieldNames.discordUsername,
+            e.target.value
+          )
         }
       />
       <br />
@@ -211,7 +217,10 @@ function SocialMediaEditor() {
       <TextField
         value={formFieldValues.twitterUsername}
         onChange={e =>
-          updateFormFieldValue(UserFieldNames.twitterUsername, e.target.value)
+          updateFormFieldValue(
+            ProfileFieldNames.twitterUsername,
+            e.target.value
+          )
         }
       />
       <br />
@@ -219,7 +228,10 @@ function SocialMediaEditor() {
       <TextField
         value={formFieldValues.telegramUsername}
         onChange={e =>
-          updateFormFieldValue(UserFieldNames.telegramUsername, e.target.value)
+          updateFormFieldValue(
+            ProfileFieldNames.telegramUsername,
+            e.target.value
+          )
         }
       />
       <br />
@@ -228,7 +240,10 @@ function SocialMediaEditor() {
       <TextField
         value={formFieldValues.youtubeChannelId}
         onChange={e =>
-          updateFormFieldValue(UserFieldNames.youtubeChannelId, e.target.value)
+          updateFormFieldValue(
+            ProfileFieldNames.youtubeChannelId,
+            e.target.value
+          )
         }
       />
       <br />
@@ -278,8 +293,8 @@ export default () => {
       <Heading variant="h2">Social Media</Heading>
       <p>These are shown to everyone on your profile.</p>
       <SocialMediaEditor />
-      <Heading variant="h2">Change your name</Heading>
-      <UsernameEditor />
+      {/* <Heading variant="h2">Change your name</Heading>
+      <UsernameEditor /> */}
       <Heading variant="h2">Your Uploads</Heading>
       <MyUploads />
     </>

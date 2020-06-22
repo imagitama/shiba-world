@@ -19,7 +19,8 @@ export const CollectionNames = {
   Comments: 'comments',
   Notices: 'notices',
   History: 'history',
-  Endorsements: 'endorsements'
+  Endorsements: 'endorsements',
+  Profiles: 'profiles'
 }
 
 export const AssetFieldNames = {
@@ -50,6 +51,11 @@ export const AssetCategories = {
 export const UserFieldNames = {
   username: 'username',
   enabledAdultContent: 'enabledAdultContent',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt'
+}
+
+export const ProfileFieldNames = {
   discordUsername: 'discordUsername',
   twitterUsername: 'twitterUsername',
   telegramUsername: 'telegramUsername',

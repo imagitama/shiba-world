@@ -105,27 +105,34 @@ function SocialMediaLink({ icon: Icon, url, label }) {
 }
 
 export default ({ userId }) => {
-  const [isLoading, isErrored, user] = useDatabaseQuery(
+  const [isLoadingUser, isErroredLoadingUser, user] = useDatabaseQuery(
     CollectionNames.Users,
     userId
   )
+  const [isLoadingProfile, isErroredLoadingProfile, profile] = useDatabaseQuery(
+    CollectionNames.Profiles,
+    userId
+  )
 
-  if (isLoading) {
+  if (isLoadingUser || isLoadingProfile) {
     return <LoadingIndicator />
   }
 
-  if (isErrored) {
-    return <ErrorMessage>Failed to load their user profile</ErrorMessage>
+  if (isErroredLoadingUser || isErroredLoadingProfile) {
+    return (
+      <ErrorMessage>Failed to load their account or user profile</ErrorMessage>
+    )
   }
 
+  const { username = 'New User' } = user
+
   const {
-    username = 'New User',
     bio,
     discordUsername,
     twitterUsername,
     telegramUsername,
     youtubeChannelId
-  } = user
+  } = profile
 
   return (
     <>
