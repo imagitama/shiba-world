@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "backup:db": "GOOGLE_APPLICATION_CREDENTIALS=credentials.json firestore-export -p -b backups/db.json",
-    "backup:auth": "firebase auth:export backups/auth.json",
+    "prebackup": "mkdir \"backups/$(date '+%d-%m-%Y')\"",
+    "backup:db": "GOOGLE_APPLICATION_CREDENTIALS=credentials.json firestore-export -p -b \"backups/$(date '+%d-%m-%Y')/db.json\"",
+    "backup:auth": "firebase auth:export \"backups/$(date '+%d-%m-%Y')/auth.json\"",
     "backup": "npm run backup:db && npm run backup:auth"
   },
   "author": "",
