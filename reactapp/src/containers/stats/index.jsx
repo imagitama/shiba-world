@@ -1,11 +1,7 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 
-import useDatabaseQuery, {
-  CollectionNames,
-  UserFieldNames,
-  Operators
-} from '../../hooks/useDatabaseQuery'
+import useDatabaseQuery, { CollectionNames } from '../../hooks/useDatabaseQuery'
 import Heading from '../../components/heading'
 import LoadingIndicator from '../../components/loading-indicator'
 import ErrorMessage from '../../components/error-message'
