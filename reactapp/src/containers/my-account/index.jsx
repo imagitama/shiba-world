@@ -1,5 +1,5 @@
 import React from 'react'
-import useUserRecord from '../../hooks/useUserRecord'
+
 import LoadingIndicator from '../../components/loading-indicator'
 import ErrorMessage from '../../components/error-message'
 import UsernameEditor from '../../components/username-editor'
@@ -8,6 +8,38 @@ import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'
 import NoPermissionMessage from '../../components/no-permission-message'
 import DarkModeToggle from '../../components/darkmode-toggle'
+import AssetResults from '../../components/asset-results'
+
+import useUserRecord from '../../hooks/useUserRecord'
+import useDatabaseQuery, {
+  CollectionNames,
+  AssetFieldNames,
+  Operators
+} from '../../hooks/useDatabaseQuery'
+import useDatabaseDocument from '../../hooks/useDatabaseDocument'
+import useFirebaseUserId from '../../hooks/useFirebaseUserId'
+
+function MyUploads() {
+  const userId = useFirebaseUserId()
+  const [userDocument] = useDatabaseDocument(CollectionNames.Users, userId)
+  const [isLoading, isErrored, assets] = useDatabaseQuery(
+    CollectionNames.Assets,
+    [
+      [AssetFieldNames.createdBy, Operators.EQUALS, userDocument],
+      [AssetFieldNames.isDeleted, Operators.EQUALS, false]
+    ]
+  )
+
+  if (isLoading) {
+    return <LoadingIndicator />
+  }
+
+  if (isErrored) {
+    return <ErrorMessage>Failed to find your uploaded assets</ErrorMessage>
+  }
+
+  return <AssetResults assets={assets} showCategory />
+}
 
 export default () => {
   const [isLoading, isErrored, user] = useUserRecord()
@@ -34,6 +66,8 @@ export default () => {
       <AdultContentToggle />
       <br />
       <DarkModeToggle />
+      <Heading variant="h2">Your Uploads</Heading>
+      <MyUploads />
     </>
   )
 }

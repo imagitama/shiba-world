@@ -9,6 +9,7 @@ import Typography from '@material-ui/core/Typography'
 import Chip from '@material-ui/core/Chip'
 import LazyLoad from 'react-lazyload'
 import * as routes from '../../routes'
+import categoryMeta from '../../category-meta'
 
 const useStyles = makeStyles({
   root: {
@@ -34,14 +35,24 @@ const useStyles = makeStyles({
   categoryChip: {
     position: 'absolute',
     top: 0,
-    left: 0,
-    margin: '0.5rem'
+    left: 0
   },
-  isAdultChip: {
+  categoryChipWithMargin: {
+    margin: '0.5rem',
+    '&:hover': {
+      cursor: 'pointer'
+    }
+  },
+  extraChips: {
     position: 'absolute',
     top: 0,
-    right: 0,
-    margin: '0.5rem'
+    right: 0
+  },
+  extraChip: {
+    margin: '0.5rem',
+    '&:hover': {
+      cursor: 'pointer'
+    }
   }
 })
 
@@ -49,11 +60,13 @@ function truncateTextAndAddEllipsis(text) {
   return text.length >= 100 ? `${text.slice(0, 100)}...` : text
 }
 
-const IsAdultChip = () => {
+function ExtraChips({ isAdult, isApproved, isPrivate }) {
   const classes = useStyles()
   return (
-    <div className={classes.isAdultChip}>
-      <Chip label="NSFW" />
+    <div className={classes.extraChips}>
+      {isAdult && <Chip label="NSFW" className={classes.extraChip} />}
+      {!isApproved && <Chip label="Unapproved" className={classes.extraChip} />}
+      {isPrivate && <Chip label="Private" className={classes.extraChip} />}
     </div>
   )
 }
@@ -62,13 +75,25 @@ const CategoryChip = ({ categoryName }) => {
   const classes = useStyles()
   return (
     <div className={classes.categoryChip}>
-      <Chip label={categoryName} />
+      <Chip
+        label={categoryMeta[categoryName].nameSingular}
+        className={classes.categoryChipWithMargin}
+      />
     </div>
   )
 }
 
 export default function AssetItem({
-  asset: { id, title, description, thumbnailUrl, isAdult, category },
+  asset: {
+    id,
+    title,
+    description,
+    thumbnailUrl,
+    isAdult,
+    isApproved,
+    isPrivate,
+    category
+  },
   showCategory = false
 }) {
   const classes = useStyles()
@@ -77,7 +102,11 @@ export default function AssetItem({
     <Card className={classes.root}>
       <CardActionArea>
         <Link to={routes.viewAssetWithVar.replace(':assetId', id)}>
-          {isAdult && <IsAdultChip />}
+          <ExtraChips
+            isAdult={isAdult}
+            isApproved={isApproved}
+            isPrivate={isPrivate}
+          />
           {showCategory && <CategoryChip categoryName={category} />}
           <LazyLoad width={200} height={200}>
             <CardMedia

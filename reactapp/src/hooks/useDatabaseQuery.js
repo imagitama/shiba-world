@@ -32,7 +32,8 @@ export const AssetFieldNames = {
   category: 'category',
   species: 'species',
   sourceUrl: 'sourceUrl',
-  videoUrl: 'videoUrl'
+  videoUrl: 'videoUrl',
+  isPrivate: 'isPrivate'
 }
 
 export const AssetCategories = {

@@ -182,7 +182,8 @@ export default ({
     fileUrls = [],
     isAdult = false,
     sourceUrl = '',
-    videoUrl = ''
+    videoUrl = '',
+    isPrivate = false
   } = {},
   onSubmit
 }) => {
@@ -196,7 +197,8 @@ export default ({
     thumbnailUrl,
     isAdult,
     sourceUrl,
-    videoUrl
+    videoUrl,
+    isPrivate
   })
   const [doesHavePermission, setDoesHavePermission] = useState(false)
   const [showAdvancedFileUrls, setShowAdvancedFileUrls] = useState(false)
@@ -402,6 +404,16 @@ Use the file uploader below to upload your own videos then copy the URL into thi
           value={fieldData.isAdult}
           hint={`If enabled it is hidden for everyone except logged in users who have opted-in.`}
           onChange={newVal => onFieldChange('isAdult', newVal)}
+        />
+
+        <br />
+
+        <FormField
+          label="Is private"
+          type={formFieldType.checkbox}
+          value={fieldData.isPrivate}
+          hint={`If checked it will not show up in search results and in any results when browsing assets. You can only directly visit the URL and it shows up in your private account overview.`}
+          onChange={newVal => onFieldChange(AssetFieldNames.isPrivate, newVal)}
         />
 
         <Heading variant="h2">Upload</Heading>

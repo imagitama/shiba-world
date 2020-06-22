@@ -28,7 +28,8 @@ export default ({ speciesName, limit = 10, categoryName }) => {
   let whereClauses = [
     [AssetFieldNames.isAdult, Operators.EQUALS, false],
     [AssetFieldNames.isApproved, Operators.EQUALS, true],
-    [AssetFieldNames.isDeleted, Operators.EQUALS, false]
+    [AssetFieldNames.isDeleted, Operators.EQUALS, false],
+    [AssetFieldNames.isPrivate, Operators.EQUALS, false]
   ]
 
   if (speciesName) {

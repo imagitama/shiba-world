@@ -52,7 +52,8 @@ function Assets({ speciesName, categoryName }) {
     [AssetFieldNames.isAdult, Operators.EQUALS, false],
     [AssetFieldNames.isDeleted, Operators.EQUALS, false],
     [AssetFieldNames.species, Operators.ARRAY_CONTAINS, speciesName],
-    [AssetFieldNames.category, Operators.EQUALS, categoryName]
+    [AssetFieldNames.category, Operators.EQUALS, categoryName],
+    [AssetFieldNames.isPrivate, Operators.EQUALS, false]
   ]
 
   // NSFW content is super risky and firebase doesnt have a != operator

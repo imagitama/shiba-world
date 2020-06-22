@@ -43,6 +43,7 @@ import {
 
 import NotApprovedMessage from './components/not-approved-message'
 import DeletedMessage from './components/deleted-message'
+import IsPrivateMessage from './components/is-private-message'
 import FileList from './components/file-list'
 
 const useStyles = makeStyles({
@@ -177,7 +178,8 @@ export default ({ assetId, small = false }) => {
     sourceUrl,
     videoUrl,
     isDeleted,
-    isAdult
+    isAdult,
+    isPrivate
   } = result
 
   const downloadUrls = fileUrls
@@ -219,6 +221,7 @@ export default ({ assetId, small = false }) => {
       </Helmet>
       {isApproved === false && <NotApprovedMessage />}
       {isDeleted === true && <DeletedMessage />}
+      {isPrivate === true && <IsPrivateMessage />}
       <div className={classes.thumbnailAndControls}>
         <div className={classes.thumbnailWrapper}>
           <AssetThumbnail url={thumbnailUrl} />

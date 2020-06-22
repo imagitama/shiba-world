@@ -42,6 +42,10 @@ function isDeleted(docData) {
   return docData.isDeleted === true
 }
 
+function isPrivate(docData) {
+  return docData.isPrivate === true
+}
+
 async function storeInHistory(message, parentRef, data) {
   return db.collection('history').add({
     message,
@@ -113,6 +117,10 @@ exports.onAssetCreated = functions.firestore
       return Promise.resolve()
     }
 
+    if (isPrivate(docData)) {
+      return Promise.resolve()
+    }
+
     return insertDocIntoIndex(doc, docData)
   })
 
@@ -133,8 +141,16 @@ exports.onAssetUpdated = functions.firestore
       return Promise.resolve()
     }
 
+    if (beforeDocData.isPrivate !== true && docData.isPrivate === true) {
+      return deleteDocFromIndex(doc)
+    }
+
     if (beforeDocData.isDeleted !== true && docData.isDeleted === true) {
       return deleteDocFromIndex(doc)
+    }
+
+    if (isPrivate(docData)) {
+      return Promise.resolve()
     }
 
     if (isDeleted(docData)) {
