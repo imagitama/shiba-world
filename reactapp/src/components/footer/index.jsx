@@ -26,7 +26,8 @@ export default () => {
       <br />
       &copy; {new Date().getFullYear()}{' '}
       <a href="https://www.jaredwilliams.com.au">Jared Williams</a> &ndash;{' '}
-      <Link to={routes.privacyPolicy}>Privacy Policy</Link>
+      <Link to={routes.privacyPolicy}>Privacy Policy</Link> &ndash;{' '}
+      <Link to={routes.stats}>Stats</Link>
     </footer>
   )
 }
