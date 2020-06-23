@@ -30,6 +30,9 @@ export const actions = {
   ENDORSE_ASSET: 'EndorseAsset',
   APPROVE_ASSET: 'ApproveAsset',
   DELETE_ASSET: 'DeleteAsset',
+  SORT_ASSETS: 'SortAssets',
+  OPEN_SORT_ASSETS_DROPDOWN: 'OpenSortAssetsDropdown',
+  CLOSE_SORT_ASSETS_DROPDOWN: 'CloseSortAssetsDropdown',
 
   // ACCOUNT
   TOGGLE_ENABLED_ADULT_CONTENT: 'ToggleEnabledAdultContent',
@@ -94,6 +97,15 @@ const actionDetails = {
   },
   [actions.DELETE_ASSET]: {
     category: categories.ASSETS
+  },
+  [actions.SORT_ASSETS]: {
+    categories: categories.ASSETS
+  },
+  [actions.OPEN_SORT_ASSETS_DROPDOWN]: {
+    categories: categories.ASSETS
+  },
+  [actions.CLOSE_SORT_ASSETS_DROPDOWN]: {
+    categories: categories.ASSETS
   },
 
   // OTHER - APP

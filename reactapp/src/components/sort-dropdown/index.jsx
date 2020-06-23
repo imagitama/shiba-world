@@ -7,6 +7,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import ClickAwayListener from '@material-ui/core/ClickAwayListener'
 
 import Button from '../../components/button'
+import { trackAction, actions } from '../../analytics'
 
 const useStyles = makeStyles({
   controls: {
@@ -26,6 +27,11 @@ export default ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
   const onMainBtnClick = () => {
+    if (isDropdownOpen) {
+      trackAction(actions.CLOSE_SORT_ASSETS_DROPDOWN)
+    } else {
+      trackAction(actions.OPEN_SORT_ASSETS_DROPDOWN)
+    }
     setIsDropdownOpen(!isDropdownOpen)
   }
 
@@ -33,10 +39,14 @@ export default ({
     writeStorage(fieldNameKey, fieldName)
     writeStorage(directionKey, direction)
     onNewSortFieldAndDirection(fieldName, direction)
+    trackAction(actions.SORT_ASSETS, { fieldName, direction })
     onClose()
   }
 
-  const onClose = () => setIsDropdownOpen(false)
+  const onClose = () => {
+    setIsDropdownOpen(false)
+    trackAction(actions.CLOSE_SORT_ASSETS_DROPDOWN)
+  }
 
   return (
     <ClickAwayListener onClickAway={onClose}>
