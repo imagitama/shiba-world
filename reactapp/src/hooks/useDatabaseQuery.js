@@ -24,6 +24,7 @@ export const CollectionNames = {
 }
 
 export const AssetFieldNames = {
+  title: 'title',
   isAdult: 'isAdult',
   isApproved: 'isApproved',
   tags: 'tags',

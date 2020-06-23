@@ -1,20 +1,31 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
-import useUserRecord from '../../hooks/useUserRecord'
-import LoadingIndicator from '../../components/loading-indicator'
-import AssetResults from '../../components/asset-results'
+
 import speciesMeta from '../../species-meta'
 import categoriesMeta from '../../category-meta'
+import * as routes from '../../routes'
+import {
+  assetSortFields,
+  assetOptions,
+  getLabelForAssetSortFieldNameAndDirection
+} from '../../sorting'
+
+import LoadingIndicator from '../../components/loading-indicator'
+import AssetResults from '../../components/asset-results'
 import ErrorMessage from '../../components/error-message'
+import Heading from '../../components/heading'
+import BodyText from '../../components/body-text'
+import SortDropdown from '../../components/sort-dropdown'
+
 import useDatabaseQuery, {
   Operators,
   CollectionNames,
-  AssetFieldNames
+  AssetFieldNames,
+  OrderDirections
 } from '../../hooks/useDatabaseQuery'
-import Heading from '../../components/heading'
-import BodyText from '../../components/body-text'
-import * as routes from '../../routes'
+import useUserRecord from '../../hooks/useUserRecord'
+import useStorage, { keys as storageKeys } from '../../hooks/useStorage'
 
 function getSpeciesByName(speciesName) {
   if (!speciesMeta[speciesName]) {
@@ -44,7 +55,12 @@ function getShortDescriptionForCategoryName(categoryName) {
   return getCategoryByName(categoryName).shortDescription
 }
 
-function Assets({ speciesName, categoryName }) {
+function Assets({
+  speciesName,
+  categoryName,
+  sortByFieldName,
+  sortByDirection
+}) {
   const [, , user] = useUserRecord()
 
   let whereClauses = [
@@ -66,7 +82,9 @@ function Assets({ speciesName, categoryName }) {
 
   const [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.Assets,
-    whereClauses.length ? whereClauses : undefined
+    whereClauses.length ? whereClauses : undefined,
+    undefined,
+    [sortByFieldName, sortByDirection]
   )
 
   if (isLoading) {
@@ -94,7 +112,24 @@ export default ({
     params: { speciesName, categoryName }
   }
 }) => {
+  const [assetsSortByFieldName] = useStorage(
+    storageKeys.assetsSortByFieldName,
+    assetSortFields.title
+  )
+  const [assetsSortByDirection] = useStorage(
+    storageKeys.assetsSortByDirection,
+    OrderDirections.ASC
+  )
+  const [activeSortFieldName, setActiveSortFieldName] = useState()
+  const [activeSortDirection, setActiveSortDirection] = useState()
+
+  const onNewSortFieldAndDirection = (fieldName, direction) => {
+    setActiveSortFieldName(fieldName)
+    setActiveSortDirection(direction)
+  }
+
   const desc = getShortDescriptionForCategoryName(categoryName)
+
   return (
     <>
       <Helmet>
@@ -119,7 +154,22 @@ export default ({
         </Link>
       </Heading>
       <BodyText>{desc}</BodyText>
-      <Assets speciesName={speciesName} categoryName={categoryName} />
+      <SortDropdown
+        options={assetOptions}
+        label={getLabelForAssetSortFieldNameAndDirection(
+          activeSortFieldName || assetsSortByFieldName,
+          activeSortDirection || assetsSortByDirection
+        )}
+        fieldNameKey={storageKeys.assetsSortByFieldName}
+        directionKey={storageKeys.assetsSortByDirection}
+        onNewSortFieldAndDirection={onNewSortFieldAndDirection}
+      />
+      <Assets
+        speciesName={speciesName}
+        categoryName={categoryName}
+        sortByFieldName={activeSortFieldName || assetsSortByFieldName}
+        sortByDirection={activeSortDirection || assetsSortByDirection}
+      />
     </>
   )
 }

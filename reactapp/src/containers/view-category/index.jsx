@@ -1,17 +1,28 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Helmet } from 'react-helmet'
-import useUserRecord from '../../hooks/useUserRecord'
+
+import categoryMeta from '../../category-meta'
+import {
+  assetSortFields,
+  assetOptions,
+  getLabelForAssetSortFieldNameAndDirection
+} from '../../sorting'
+
+import ErrorMessage from '../../components/error-message'
 import LoadingIndicator from '../../components/loading-indicator'
 import AssetResults from '../../components/asset-results'
-import categoryMeta from '../../category-meta'
-import ErrorMessage from '../../components/error-message'
+import Heading from '../../components/heading'
+import BodyText from '../../components/body-text'
+import SortDropdown from '../../components/sort-dropdown'
+
+import useUserRecord from '../../hooks/useUserRecord'
 import useDatabaseQuery, {
   Operators,
   CollectionNames,
+  OrderDirections,
   AssetFieldNames
 } from '../../hooks/useDatabaseQuery'
-import Heading from '../../components/heading'
-import BodyText from '../../components/body-text'
+import useStorage, { keys as storageKeys } from '../../hooks/useStorage'
 
 function getDisplayNameByCategoryName(categoryName) {
   return categoryMeta[categoryName].name
@@ -21,7 +32,7 @@ function getDescriptionByCategoryName(categoryName) {
   return categoryMeta[categoryName].shortDescription
 }
 
-function Assets({ categoryName }) {
+function Assets({ categoryName, sortByFieldName, sortByDirection }) {
   const [, , user] = useUserRecord()
 
   let whereClauses = [
@@ -42,7 +53,9 @@ function Assets({ categoryName }) {
 
   const [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.Assets,
-    whereClauses.length ? whereClauses : undefined
+    whereClauses.length ? whereClauses : undefined,
+    undefined,
+    [sortByFieldName, sortByDirection]
   )
 
   if (isLoading) {
@@ -69,6 +82,22 @@ export default ({
     params: { categoryName }
   }
 }) => {
+  const [assetsSortByFieldName] = useStorage(
+    storageKeys.assetsSortByFieldName,
+    assetSortFields.title
+  )
+  const [assetsSortByDirection] = useStorage(
+    storageKeys.assetsSortByDirection,
+    OrderDirections.ASC
+  )
+  const [activeSortFieldName, setActiveSortFieldName] = useState()
+  const [activeSortDirection, setActiveSortDirection] = useState()
+
+  const onNewSortFieldAndDirection = (fieldName, direction) => {
+    setActiveSortFieldName(fieldName)
+    setActiveSortDirection(direction)
+  }
+
   return (
     <>
       <Helmet>
@@ -85,7 +114,21 @@ export default ({
         {getDisplayNameByCategoryName(categoryName)}
       </Heading>
       <BodyText>{getDescriptionByCategoryName(categoryName)}</BodyText>
-      <Assets categoryName={categoryName} />
+      <SortDropdown
+        options={assetOptions}
+        label={getLabelForAssetSortFieldNameAndDirection(
+          activeSortFieldName || assetsSortByFieldName,
+          activeSortDirection || assetsSortByDirection
+        )}
+        fieldNameKey={storageKeys.assetsSortByFieldName}
+        directionKey={storageKeys.assetsSortByDirection}
+        onNewSortFieldAndDirection={onNewSortFieldAndDirection}
+      />
+      <Assets
+        categoryName={categoryName}
+        sortByFieldName={activeSortFieldName || assetsSortByFieldName}
+        sortByDirection={activeSortDirection || assetsSortByDirection}
+      />
     </>
   )
 }

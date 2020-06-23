@@ -12,8 +12,9 @@ import RoomIcon from '@material-ui/icons/Room'
 
 import * as routes from '../../routes'
 import categoryMeta from '../../category-meta'
+import FormattedDate from '../formatted-date'
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
     width: '200px',
     margin: '0.5rem',
@@ -58,8 +59,12 @@ const useStyles = makeStyles({
   },
   extraChipWithIcon: {
     width: '32px' // make rounded
+  },
+  date: {
+    margin: '0.25rem 0 0.5rem',
+    color: theme.palette.text.secondary
   }
-})
+}))
 
 function truncateTextAndAddEllipsis(text) {
   return text.length >= 100 ? `${text.slice(0, 100)}...` : text
@@ -104,7 +109,8 @@ export default function AssetItem({
     isApproved,
     isPrivate,
     category,
-    isPinned
+    isPinned,
+    createdAt
   },
   showCategory = false,
   showPinned = false
@@ -130,9 +136,12 @@ export default function AssetItem({
             />
           </LazyLoad>
           <CardContent>
-            <Typography gutterBottom variant="h5" component="h2">
+            <Typography variant="h5" component="h2">
               {title}
             </Typography>
+            <div className={classes.date}>
+              <FormattedDate date={createdAt} />
+            </div>
             <Typography variant="body2" color="textSecondary" component="p">
               {truncateTextAndAddEllipsis(description)}
             </Typography>
