@@ -8,6 +8,8 @@ import CardMedia from '@material-ui/core/CardMedia'
 import Typography from '@material-ui/core/Typography'
 import Chip from '@material-ui/core/Chip'
 import LazyLoad from 'react-lazyload'
+import RoomIcon from '@material-ui/icons/Room'
+
 import * as routes from '../../routes'
 import categoryMeta from '../../category-meta'
 
@@ -53,6 +55,9 @@ const useStyles = makeStyles({
     '&:hover': {
       cursor: 'pointer'
     }
+  },
+  extraChipWithIcon: {
+    width: '32px' // make rounded
   }
 })
 
@@ -60,13 +65,19 @@ function truncateTextAndAddEllipsis(text) {
   return text.length >= 100 ? `${text.slice(0, 100)}...` : text
 }
 
-function ExtraChips({ isAdult, isApproved, isPrivate }) {
+function ExtraChips({ isAdult, isApproved, isPrivate, isPinned }) {
   const classes = useStyles()
   return (
     <div className={classes.extraChips}>
       {isAdult && <Chip label="NSFW" className={classes.extraChip} />}
       {!isApproved && <Chip label="Unapproved" className={classes.extraChip} />}
       {isPrivate && <Chip label="Private" className={classes.extraChip} />}
+      {isPinned && (
+        <Chip
+          label={<RoomIcon />}
+          className={`${classes.extraChip} ${classes.extraChipWithIcon}`}
+        />
+      )}
     </div>
   )
 }
@@ -92,9 +103,11 @@ export default function AssetItem({
     isAdult,
     isApproved,
     isPrivate,
-    category
+    category,
+    isPinned
   },
-  showCategory = false
+  showCategory = false,
+  showPinned = false
 }) {
   const classes = useStyles()
 
@@ -106,6 +119,7 @@ export default function AssetItem({
             isAdult={isAdult}
             isApproved={isApproved}
             isPrivate={isPrivate}
+            isPinned={showPinned && isPinned}
           />
           {showCategory && <CategoryChip categoryName={category} />}
           <LazyLoad width={200} height={200}>

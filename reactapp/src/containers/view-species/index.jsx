@@ -98,8 +98,9 @@ export default ({
       <RecentAssetDescription categoryName={AssetCategories.avatar} />
       <RecentAssets
         speciesName={speciesName}
-        limit={5}
+        limit={999}
         categoryName={AssetCategories.avatar}
+        showPinned
       />
       <Heading variant="h2">
         <Link

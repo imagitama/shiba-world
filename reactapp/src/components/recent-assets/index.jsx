@@ -24,7 +24,7 @@ function getViewMoreLinkUrl(speciesName, categoryName) {
   throw new Error('Cannot get view more link url: no category name!')
 }
 
-export default ({ speciesName, limit = 10, categoryName }) => {
+export default ({ speciesName, limit = 10, categoryName, showPinned }) => {
   let whereClauses = [
     [AssetFieldNames.isAdult, Operators.EQUALS, false],
     [AssetFieldNames.isApproved, Operators.EQUALS, true],
@@ -70,7 +70,7 @@ export default ({ speciesName, limit = 10, categoryName }) => {
 
   return (
     <>
-      <AssetResults assets={results} />
+      <AssetResults assets={results} showPinned={showPinned} />
       <div style={{ textAlign: 'center', marginTop: '1rem' }}>
         <Link to={getViewMoreLinkUrl(speciesName, categoryName)}>
           <Button>View More</Button>

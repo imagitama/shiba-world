@@ -86,7 +86,7 @@ function Assets({ speciesName, categoryName }) {
     return 'No results'
   }
 
-  return <AssetResults assets={results} />
+  return <AssetResults assets={results} showPinned />
 }
 
 export default ({
