@@ -33,6 +33,12 @@ const createTheme = isDark =>
           },
           strong: {
             fontWeight: 600
+          },
+          blockquote: {
+            margin: '1rem',
+            padding: '0.2rem 0.2rem 0.2rem 1rem',
+            borderLeft: `4px solid ${isDark ? '#5a5a5a' : '#b7b7b7'}`,
+            background: isDark ? '#383838' : '#d9d9d9'
           }
         }
       }
