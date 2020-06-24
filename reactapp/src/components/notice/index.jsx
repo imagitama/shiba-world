@@ -4,6 +4,7 @@ import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import { writeStorage } from '@rehooks/local-storage'
 import CloseIcon from '@material-ui/icons/Close'
+import Markdown from 'react-markdown'
 import useStorage, { keys } from '../../hooks/useStorage'
 import { trackAction, actions } from '../../analytics'
 
@@ -14,7 +15,10 @@ const useStyles = makeStyles(theme => ({
     position: 'relative'
   },
   message: {
-    marginTop: theme.spacing(1)
+    marginTop: theme.spacing(1),
+    '& p:last-child': {
+      marginBottom: 0
+    }
   },
   hideBtn: {
     position: 'absolute',
@@ -47,9 +51,9 @@ export default ({ id, title, message }) => {
       <Typography variant="h5" component="h3">
         {title}
       </Typography>
-      <Typography component="p" className={classes.message}>
-        {message}
-      </Typography>
+      <div className={classes.message}>
+        <Markdown source={message} />
+      </div>
       <div className={classes.hideBtn} onClick={onHideBtnClick}>
         <CloseIcon />
       </div>
