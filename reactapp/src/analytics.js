@@ -33,6 +33,7 @@ export const actions = {
   SORT_ASSETS: 'SortAssets',
   OPEN_SORT_ASSETS_DROPDOWN: 'OpenSortAssetsDropdown',
   CLOSE_SORT_ASSETS_DROPDOWN: 'CloseSortAssetsDropdown',
+  REPORT_ASSET: 'ReportAsset',
 
   // ACCOUNT
   TOGGLE_ENABLED_ADULT_CONTENT: 'ToggleEnabledAdultContent',
@@ -105,6 +106,9 @@ const actionDetails = {
     categories: categories.ASSETS
   },
   [actions.CLOSE_SORT_ASSETS_DROPDOWN]: {
+    categories: categories.ASSETS
+  },
+  [actions.REPORT_ASSET]: {
     categories: categories.ASSETS
   },
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Markdown from 'react-markdown'
 import { makeStyles } from '@material-ui/core/styles'
@@ -7,6 +7,7 @@ import { Helmet } from 'react-helmet'
 import LaunchIcon from '@material-ui/icons/Launch'
 import GetAppIcon from '@material-ui/icons/GetApp'
 import EditIcon from '@material-ui/icons/Edit'
+import ReportIcon from '@material-ui/icons/Report'
 
 import useDatabaseQuery from '../../hooks/useDatabaseQuery'
 import { CollectionNames } from '../../hooks/useDatabaseQuery'
@@ -45,6 +46,7 @@ import NotApprovedMessage from './components/not-approved-message'
 import DeletedMessage from './components/deleted-message'
 import IsPrivateMessage from './components/is-private-message'
 import FileList from './components/file-list'
+import ReportMessage from './components/report-message'
 
 const useStyles = makeStyles({
   root: {
@@ -135,9 +137,29 @@ function DownloadButton({ assetId, url }) {
   )
 }
 
-function IsAdultMessage() {
+function ReportButton({ assetId, onClick }) {
   const classes = useStyles()
 
+  const onBtnClick = () => {
+    onClick()
+    trackAction(actions.REPORT_ASSET, {
+      assetId
+    })
+  }
+
+  return (
+    <Button
+      className={classes.controlBtn}
+      color="default"
+      icon={<ReportIcon />}
+      onClick={onBtnClick}>
+      Report
+    </Button>
+  )
+}
+
+function IsAdultMessage() {
+  const classes = useStyles()
   return <span className={classes.isAdultMsg}>(NSFW)</span>
 }
 
@@ -148,6 +170,7 @@ export default ({ assetId, small = false }) => {
   )
   const classes = useStyles()
   const [, , user] = useUserRecord()
+  const [isReportMessageOpen, setIsReportMessageOpen] = useState()
 
   if (isLoading) {
     return <LoadingIndicator />
@@ -219,6 +242,7 @@ export default ({ assetId, small = false }) => {
         <meta property="og:image" content={thumbnailUrl} />
         <meta property="og:site_name" content="VRCArena" />
       </Helmet>
+      {isReportMessageOpen && <ReportMessage assetId={id} />}
       {isApproved === false && <NotApprovedMessage />}
       {isDeleted === true && <DeletedMessage />}
       {isPrivate === true && <IsPrivateMessage />}
@@ -227,6 +251,10 @@ export default ({ assetId, small = false }) => {
           <AssetThumbnail url={thumbnailUrl} />
         </div>
         <div className={classes.controls}>
+          <ReportButton
+            assetId={id}
+            onClick={() => setIsReportMessageOpen(true)}
+          />{' '}
           <EndorseAssetButton assetId={id} />
           {sourceUrl && (
             <VisitSourceButton
