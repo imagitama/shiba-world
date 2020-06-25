@@ -72,9 +72,6 @@ export default ({ speciesName, limit = 10, categoryName, showPinned }) => {
     <>
       <AssetResults assets={results} showPinned={showPinned} />
       <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-        <Link to={getViewMoreLinkUrl(speciesName, categoryName)}>
-          <Button>View More</Button>
-        </Link>{' '}
         {speciesName && categoryName && (
           <Link
             to={routes.viewCategoryWithVar.replace(
@@ -83,7 +80,15 @@ export default ({ speciesName, limit = 10, categoryName, showPinned }) => {
             )}>
             <Button color="default">View All Species</Button>
           </Link>
-        )}
+        )}{' '}
+        <Link>
+          <Button color="default" url={routes.createAsset}>
+            Upload
+          </Button>
+        </Link>{' '}
+        <Link to={getViewMoreLinkUrl(speciesName, categoryName)}>
+          <Button>View More</Button>
+        </Link>
       </div>
     </>
   )
