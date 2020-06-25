@@ -1,7 +1,6 @@
 import React from 'react'
 import UnapprovedMenuItemLabel from './components/unapproved-menu-item-label'
 import * as routes from './routes'
-import { AssetCategories } from './hooks/useDatabaseQuery'
 import speciesMeta from './species-meta'
 import categoriesMeta from './category-meta'
 
