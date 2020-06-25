@@ -104,6 +104,10 @@ function SocialMediaLink({ icon: Icon, url, label }) {
   )
 }
 
+function isStaffMember(user) {
+  return user.isAdmin || user.isEditor
+}
+
 export default ({ userId }) => {
   const [isLoadingUser, isErroredLoadingUser, user] = useDatabaseQuery(
     CollectionNames.Users,
@@ -148,6 +152,7 @@ export default ({ userId }) => {
           {username}
         </Link>
       </Heading>
+      {isStaffMember(user) && 'Staff'}
       {bio && (
         <>
           <Heading variant="h2">Bio</Heading>
