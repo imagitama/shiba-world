@@ -1,4 +1,5 @@
 import React from 'react'
+import { Helmet } from 'react-helmet'
 import UserList from '../../components/user-list'
 import Heading from '../../components/heading'
 import ErrorMessage from '../../components/error-message'
@@ -36,10 +37,17 @@ export default () => {
     { staffUsers: [], nonStaffUsers: [] }
   )
 
-  console.log(staffUsers, nonStaffUsers)
-
   return (
     <>
+      <Helmet>
+        <title>
+          View a list of users that are signed up on the site | VRCArena
+        </title>
+        <meta
+          name="description"
+          content={`Find every user that has signed up to VRCArena with a different category for staff members to help you connect with them.`}
+        />
+      </Helmet>
       <Heading variant="h1">All Users</Heading>
       <Heading variant="h2">Staff</Heading>
       <p>
