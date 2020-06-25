@@ -47,6 +47,7 @@ const Tags = lazy(() => import('./containers/tags'))
 const Search = lazy(() => import('./containers/search'))
 const ViewUser = lazy(() => import('./containers/view-user'))
 const Stats = lazy(() => import('./containers/stats'))
+const Users = lazy(() => import('./containers/users'))
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
   return (
@@ -222,6 +223,7 @@ const MainContent = () => {
         <Route exact path={routes.viewAllSpecies} component={ViewAllSpecies} />
         <Route exact path={routes.viewUserWithVar} component={ViewUser} />
         <Route exact path={routes.stats} component={Stats} />
+        <Route exact path={routes.users} component={Users} />
         <Route
           component={() => (
             <ErrorContainer code={404} message="Page not found" />
