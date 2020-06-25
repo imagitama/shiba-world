@@ -109,9 +109,7 @@ export default () => {
                     component="div"
                     style={{ display: 'flex', width: '100%' }}
                     onClick={() => onClickDropdownParentItem(idx)}>
-                    <span className={classes.label}>
-                      {getLabelForMenuItem(label)}
-                    </span>
+                    <span>{getLabelForMenuItem(label)}</span>
                     <ListItemIcon className={classes.listItemIcon}>
                       {openDropdownMenus[idx] ? (
                         <KeyboardArrowUpIcon />
