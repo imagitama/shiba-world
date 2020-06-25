@@ -172,20 +172,6 @@ export default ({
         limit={5}
         categoryName={AssetCategories.world}
       />
-      <Heading variant="h2">
-        <Link
-          to={routes.viewSpeciesCategoryWithVar
-            .replace(':speciesName', speciesName)
-            .replace(':categoryName', AssetCategories.showcase)}>
-          Avatar Showcase
-        </Link>
-      </Heading>
-      <RecentAssetDescription categoryName={AssetCategories.showcase} />
-      <RecentAssets
-        speciesName={speciesName}
-        limit={5}
-        categoryName={AssetCategories.showcase}
-      />
     </>
   )
 }

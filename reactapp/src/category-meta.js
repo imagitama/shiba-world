@@ -17,11 +17,6 @@ export default {
     nameSingular: 'Avatar',
     shortDescription: `Download the base model or find links to download them.`
   },
-  [AssetCategories.showcase]: {
-    name: 'Avatar Showcase',
-    nameSingular: 'Avatar Showcase',
-    shortDescription: `Custom avatars built using the base model for this species. Use it to showcase your work with photos or link to public worlds where you can clone the avatar.`
-  },
   [AssetCategories.tutorial]: {
     name: 'Tutorials',
     nameSingular: 'Tutorial',
