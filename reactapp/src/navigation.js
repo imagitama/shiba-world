@@ -3,6 +3,7 @@ import UnapprovedMenuItemLabel from './components/unapproved-menu-item-label'
 import * as routes from './routes'
 import { AssetCategories } from './hooks/useDatabaseQuery'
 import speciesMeta from './species-meta'
+import categoriesMeta from './category-meta'
 
 export function canShowMenuItem(menuItem, user) {
   if (menuItem.requiresAuth && !user) {
@@ -52,36 +53,10 @@ export default [
   },
   {
     label: 'Categories',
-    children: [
-      {
-        label: 'Accessories',
-        url: routes.viewCategoryWithVar.replace(
-          ':categoryName',
-          AssetCategories.accessory
-        )
-      },
-      {
-        label: 'Animations',
-        url: routes.viewCategoryWithVar.replace(
-          ':categoryName',
-          AssetCategories.animation
-        )
-      },
-      {
-        label: 'Tutorials',
-        url: routes.viewCategoryWithVar.replace(
-          ':categoryName',
-          AssetCategories.tutorial
-        )
-      },
-      {
-        label: 'Avatars',
-        url: routes.viewCategoryWithVar.replace(
-          ':categoryName',
-          AssetCategories.avatar
-        )
-      }
-    ]
+    children: Object.entries(categoriesMeta).map(([name, meta]) => ({
+      label: meta.name,
+      url: routes.viewCategoryWithVar.replace(':categoryName', name)
+    }))
   },
   {
     label: 'Upload',
