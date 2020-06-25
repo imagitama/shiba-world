@@ -162,6 +162,20 @@ export default ({
         <Link
           to={routes.viewSpeciesCategoryWithVar
             .replace(':speciesName', speciesName)
+            .replace(':categoryName', AssetCategories.world)}>
+          Recent Worlds
+        </Link>
+      </Heading>
+      <RecentAssetDescription categoryName={AssetCategories.world} />
+      <RecentAssets
+        speciesName={speciesName}
+        limit={5}
+        categoryName={AssetCategories.world}
+      />
+      <Heading variant="h2">
+        <Link
+          to={routes.viewSpeciesCategoryWithVar
+            .replace(':speciesName', speciesName)
             .replace(':categoryName', AssetCategories.showcase)}>
           Avatar Showcase
         </Link>

@@ -31,5 +31,10 @@ export default {
     name: 'News',
     nameSingular: 'Article',
     shortDescription: `Read recent news article about VRChat and the different species.`
+  },
+  [AssetCategories.world]: {
+    name: 'World',
+    nameSingular: 'World',
+    shortDescription: `Worlds you can visit that are related to the species of VRChat.`
   }
 }

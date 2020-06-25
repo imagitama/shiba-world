@@ -46,7 +46,8 @@ export const AssetCategories = {
   tutorial: 'tutorial',
   avatar: 'avatar',
   showcase: 'showcase',
-  article: 'article'
+  article: 'article',
+  world: 'world'
 }
 
 export const UserFieldNames = {
