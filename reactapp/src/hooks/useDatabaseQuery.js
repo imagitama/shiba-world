@@ -57,6 +57,7 @@ export const UserFieldNames = {
 }
 
 export const ProfileFieldNames = {
+  vrchatUsername: 'vrchatUsername',
   discordUsername: 'discordUsername',
   twitterUsername: 'twitterUsername',
   telegramUsername: 'telegramUsername',

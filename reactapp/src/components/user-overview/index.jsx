@@ -8,6 +8,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import Markdown from 'react-markdown'
 
 import { ReactComponent as DiscordIcon } from '../../assets/images/icons/discord.svg'
+import { ReactComponent as VrChatIcon } from '../../assets/images/icons/vrchat.svg'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -32,7 +33,7 @@ const useStyles = makeStyles({
   },
   icon: {
     verticalAlign: 'middle',
-    width: '1em',
+    width: 'auto',
     height: '1em'
   }
 })
@@ -132,6 +133,7 @@ export default ({ userId }) => {
 
   const {
     bio,
+    vrchatUsername,
     discordUsername,
     twitterUsername,
     telegramUsername,
@@ -159,12 +161,16 @@ export default ({ userId }) => {
           <Markdown source={bio} />
         </>
       )}
-      {discordUsername ||
+      {vrchatUsername ||
+      discordUsername ||
       twitterUsername ||
       telegramUsername ||
       youtubeChannelId ? (
         <Heading variant="h2">Social Media</Heading>
       ) : null}
+      {vrchatUsername && (
+        <SocialMediaLink icon={VrChatIcon} label={vrchatUsername} />
+      )}
       {discordUsername && (
         <SocialMediaLink icon={DiscordIcon} label={discordUsername} />
       )}

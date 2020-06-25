@@ -151,6 +151,7 @@ function SocialMediaEditor() {
   )
 
   const [formFieldValues, setFormFieldValues] = useState({
+    [ProfileFieldNames.vrchatUsername]: '',
     [ProfileFieldNames.discordUsername]: '',
     [ProfileFieldNames.twitterUsername]: '',
     [ProfileFieldNames.telegramUsername]: '',
@@ -162,6 +163,8 @@ function SocialMediaEditor() {
       return
     }
     setFormFieldValues({
+      [ProfileFieldNames.vrchatUsername]:
+        profile[ProfileFieldNames.vrchatUsername] || '',
       [ProfileFieldNames.discordUsername]:
         profile[ProfileFieldNames.discordUsername] || '',
       [ProfileFieldNames.twitterUsername]:
@@ -201,6 +204,14 @@ function SocialMediaEditor() {
 
   return (
     <>
+      VRChat username (eg. PeanutBuddha):
+      <TextField
+        value={formFieldValues.vrchatUsername}
+        onChange={e =>
+          updateFormFieldValue(ProfileFieldNames.vrchatUsername, e.target.value)
+        }
+      />
+      <br />
       Discord username (eg. Peanut#1756):
       <TextField
         value={formFieldValues.discordUsername}
