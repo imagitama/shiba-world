@@ -5,6 +5,7 @@ import backupSergalImageUrl from './assets/images/species/sergal.png'
 import backupRexouiumImageUrl from './assets/images/species/rexouium.png'
 import backupKangarooImageUrl from './assets/images/species/kangaroo.png'
 import backupRacoonImageUrl from './assets/images/species/racoon.png'
+import backupNargacugaImageUrl from './assets/images/species/nargacuga.png'
 import backupOtherSpeciesImageUrl from './assets/images/species/other-species.png'
 
 import optimizedShibaInuImageUrl from './assets/images/species/optimized/shiba_inu.webp'
@@ -14,6 +15,7 @@ import optimizedSergalImageUrl from './assets/images/species/optimized/sergal.we
 import optimizedRexouiumImageUrl from './assets/images/species/optimized/rexouium.webp'
 import optimizedKangarooImageUrl from './assets/images/species/optimized/kangaroo.webp'
 import optimizedRacoonImageUrl from './assets/images/species/optimized/racoon.webp'
+import optimizedNargacugaImageUrl from './assets/images/species/optimized/nargacuga.webp'
 import optimizedOtherSpeciesImageUrl from './assets/images/species/optimized/other-species.webp'
 
 import { species } from './tags'
@@ -92,6 +94,16 @@ Useful links:
 - [Download the base model](https://drive.google.com/drive/folders/1gny4og32AwilVQcjhSFa-PsxbYEwbXBd)`,
     backupThumbnailUrl: backupRacoonImageUrl,
     optimizedThumbnailUrl: optimizedRacoonImageUrl
+  },
+  [species.nargacuga]: {
+    name: 'Nargacuga',
+    shortDescription: 'A wyvern from Monster Hunter.',
+    description: `An anthropomorphic large monster from the game [Monster Hunter](https://store.steampowered.com/app/582010/MONSTER_HUNTER_WORLD/).
+
+Useful links:
+- [Wiki page](https://monsterhunterworld.wiki.fextralife.com/Nargacuga)`,
+    backupThumbnailUrl: backupNargacugaImageUrl,
+    optimizedThumbnailUrl: optimizedNargacugaImageUrl
   },
   [species.otherSpecies]: {
     name: 'Other Species',

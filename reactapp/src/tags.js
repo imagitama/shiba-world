@@ -7,6 +7,7 @@ export const species = {
   rexouium: 'rexouium',
   kangaroo: 'kangaroo',
   racoon: 'racoon',
+  nargacuga: 'nargacuga',
   otherSpecies: 'other-species'
 }
 
