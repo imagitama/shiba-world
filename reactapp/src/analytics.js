@@ -30,6 +30,7 @@ export const actions = {
   ENDORSE_ASSET: 'EndorseAsset',
   APPROVE_ASSET: 'ApproveAsset',
   DELETE_ASSET: 'DeleteAsset',
+  RESTORE_ASSET: 'RestoreAsset',
   SORT_ASSETS: 'SortAssets',
   OPEN_SORT_ASSETS_DROPDOWN: 'OpenSortAssetsDropdown',
   CLOSE_SORT_ASSETS_DROPDOWN: 'CloseSortAssetsDropdown',
@@ -97,6 +98,9 @@ const actionDetails = {
     category: categories.ASSETS
   },
   [actions.DELETE_ASSET]: {
+    category: categories.ASSETS
+  },
+  [actions.RESTORE_ASSET]: {
     category: categories.ASSETS
   },
   [actions.SORT_ASSETS]: {

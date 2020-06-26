@@ -381,7 +381,7 @@ export default ({ assetId, small = false }) => {
         {!isApproved && canApproveAsset(user) && (
           <ApproveBtn assetId={assetId} />
         )}
-        {!isDeleted && canApproveAsset(user) && <DeleteBtn assetId={assetId} />}
+        {canApproveAsset(user) && <DeleteBtn assetId={assetId} />}
       </div>
       <Heading variant="h2">Comments</Heading>
       <CommentList assetId={assetId} />

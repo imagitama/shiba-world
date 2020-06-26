@@ -89,7 +89,9 @@ export default () => {
               {children ? (
                 <Dropdown
                   label={actualLabel}
-                  items={children}
+                  items={children.filter(navItem =>
+                    canShowMenuItem(navItem, user)
+                  )}
                   isOpen={openMenuItems[idx]}
                   onOpen={() => openMenuDropdown(idx)}
                   onClose={() => closeMenuDropdown(idx)}

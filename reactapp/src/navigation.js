@@ -1,5 +1,4 @@
 import React from 'react'
-import UnapprovedMenuItemLabel from './components/unapproved-menu-item-label'
 import * as routes from './routes'
 import speciesMeta from './species-meta'
 import categoriesMeta from './category-meta'
@@ -15,6 +14,15 @@ export function canShowMenuItem(menuItem, user) {
     return false
   }
   if (menuItem.requiresAdmin && (!user || user.isAdmin !== true)) {
+    return false
+  }
+  if (menuItem.requiresAdminOrEditor) {
+    if (!user) {
+      return false
+    }
+    if (user.isAdmin || user.isEditor) {
+      return true
+    }
     return false
   }
   return true
@@ -82,19 +90,25 @@ export default [
     url: routes.logout,
     requiresAuth: true
   },
-  // {
-  //   label: 'Contributors',
-  //   url: routes.contributors
-  // },
-  {
-    // Use a component here to avoid unnecessary hook calls for non-editors
-    label: UnapprovedMenuItemLabel,
-    url: routes.unapproved,
-    requiresEditor: true
-  },
   {
     label: 'Admin',
     url: routes.admin,
-    requiresAdmin: true
+    requiresAdminOrEditor: true,
+    children: [
+      {
+        label: 'Users',
+        url: routes.adminUsers,
+        requiresAdmin: true
+      },
+      {
+        label: 'Assets',
+        url: routes.adminAssets
+      },
+      {
+        label: 'History',
+        url: routes.adminHistory,
+        requiresAdmin: true
+      }
+    ]
   }
 ]

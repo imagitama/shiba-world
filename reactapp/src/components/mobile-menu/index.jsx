@@ -127,15 +127,17 @@ export default () => {
                 )}
               </MenuItem>
               {openDropdownMenus[idx] &&
-                children.map(child => (
-                  <MenuItem key={url} button className={classes.subMenuItem}>
-                    <MenuItemWithUrl
-                      url={child.url}
-                      label={child.label}
-                      onClick={onClickMenuItemWithUrl}
-                    />
-                  </MenuItem>
-                ))}
+                children
+                  .filter(navItem => canShowMenuItem(navItem, user))
+                  .map(child => (
+                    <MenuItem key={url} button className={classes.subMenuItem}>
+                      <MenuItemWithUrl
+                        url={child.url}
+                        label={child.label}
+                        onClick={onClickMenuItemWithUrl}
+                      />
+                    </MenuItem>
+                  ))}
             </>
           ))}
       </MenuList>

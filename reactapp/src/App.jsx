@@ -25,6 +25,7 @@ import SetupProfile from './components/setup-profile'
 import Notices from './components/notices'
 import ErrorBoundary from './components/error-boundary'
 import LoadingIndicator from './components/loading-indicator'
+import UnapprovedAssetsMessage from './components/unapproved-assets-message'
 
 import useUserRecord from './hooks/useUserRecord'
 import useSearchTerm from './hooks/useSearchTerm'
@@ -38,6 +39,9 @@ const CreateAsset = lazy(() => import('./containers/create-asset'))
 const EditAsset = lazy(() => import('./containers/edit-asset'))
 const MyAccount = lazy(() => import('./containers/my-account'))
 const Admin = lazy(() => import('./containers/admin'))
+const AdminHistory = lazy(() => import('./containers/admin-history'))
+const AdminUsers = lazy(() => import('./containers/admin-users'))
+const AdminAssets = lazy(() => import('./containers/admin-assets'))
 const PrivacyPolicy = lazy(() => import('./containers/privacy-policy'))
 const Contributors = lazy(() => import('./containers/contributors'))
 const Unapproved = lazy(() => import('./containers/unapproved'))
@@ -159,14 +163,17 @@ const MainContent = () => {
               'Change the meta data about an asset and upload new files for it.'
           }}
         />
+        <RouteWithMeta exact path={routes.admin} component={Admin} />
+        <RouteWithMeta exact path={routes.adminUsers} component={AdminUsers} />
         <RouteWithMeta
           exact
-          path={routes.admin}
-          component={Admin}
-          meta={{
-            title: 'Admins only area',
-            description: 'A restricted space for admins only.'
-          }}
+          path={routes.adminHistory}
+          component={AdminHistory}
+        />
+        <RouteWithMeta
+          exact
+          path={routes.adminAssets}
+          component={AdminAssets}
         />
         <RouteWithMeta
           exact
@@ -246,6 +253,7 @@ export default () => {
         <main className="main">
           <Container maxWidth="lg">
             <Notices />
+            <UnapprovedAssetsMessage />
             <MainContent />
           </Container>
         </main>
