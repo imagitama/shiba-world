@@ -62,6 +62,7 @@ export const ProfileFieldNames = {
   twitterUsername: 'twitterUsername',
   telegramUsername: 'telegramUsername',
   youtubeChannelId: 'youtubeChannelId',
+  twitchUsername: 'twitchUsername',
   lastModifiedBy: 'lastModifiedBy',
   lastModifiedAt: 'lastModifiedAt',
   bio: 'bio'

@@ -9,6 +9,7 @@ import Markdown from 'react-markdown'
 
 import { ReactComponent as DiscordIcon } from '../../assets/images/icons/discord.svg'
 import { ReactComponent as VrChatIcon } from '../../assets/images/icons/vrchat.svg'
+import { ReactComponent as TwitchIcon } from '../../assets/images/icons/twitch.svg'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -137,7 +138,8 @@ export default ({ userId }) => {
     discordUsername,
     twitterUsername,
     telegramUsername,
-    youtubeChannelId
+    youtubeChannelId,
+    twitchUsername
   } = profile
 
   return (
@@ -165,7 +167,8 @@ export default ({ userId }) => {
       discordUsername ||
       twitterUsername ||
       telegramUsername ||
-      youtubeChannelId ? (
+      youtubeChannelId ||
+      twitchUsername ? (
         <Heading variant="h2">Social Media</Heading>
       ) : null}
       {vrchatUsername && (
@@ -189,6 +192,13 @@ export default ({ userId }) => {
           icon={YouTubeIcon}
           label="Channel"
           url={`https://www.youtube.com/channel/${youtubeChannelId}`}
+        />
+      )}
+      {twitchUsername && (
+        <SocialMediaLink
+          icon={TwitchIcon}
+          label={twitchUsername}
+          url={`https://twitch.tv/${twitchUsername}`}
         />
       )}
       <Heading variant="h2">Uploads</Heading>

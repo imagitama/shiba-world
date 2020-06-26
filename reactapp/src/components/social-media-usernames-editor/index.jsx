@@ -30,7 +30,8 @@ export default () => {
     [ProfileFieldNames.discordUsername]: '',
     [ProfileFieldNames.twitterUsername]: '',
     [ProfileFieldNames.telegramUsername]: '',
-    [ProfileFieldNames.youtubeChannelId]: ''
+    [ProfileFieldNames.youtubeChannelId]: '',
+    [ProfileFieldNames.twitchUsername]: ''
   })
 
   useEffect(() => {
@@ -47,7 +48,9 @@ export default () => {
       [ProfileFieldNames.telegramUsername]:
         profile[ProfileFieldNames.telegramUsername] || '',
       [ProfileFieldNames.youtubeChannelId]:
-        profile[ProfileFieldNames.youtubeChannelId] || ''
+        profile[ProfileFieldNames.youtubeChannelId] || '',
+      [ProfileFieldNames.twitchUsername]:
+        profile[ProfileFieldNames.twitchUsername] || ''
     })
   }, [profile && profile.id])
 
@@ -129,6 +132,14 @@ export default () => {
             ProfileFieldNames.youtubeChannelId,
             e.target.value
           )
+        }
+      />
+      <br />
+      Twitch username:
+      <TextField
+        value={formFieldValues.twitchUsername}
+        onChange={e =>
+          updateFormFieldValue(ProfileFieldNames.twitchUsername, e.target.value)
         }
       />
       <br />
