@@ -27,6 +27,7 @@ import VideoPlayer from '../video-player'
 import EndorsementList from '../endorsement-list'
 import ApproveBtn from '../approve-asset-button'
 import DeleteBtn from '../delete-asset-button'
+import PinBtn from '../pin-asset-button'
 import ImageGallery from '../image-gallery'
 
 import * as routes from '../../routes'
@@ -388,6 +389,11 @@ export default ({ assetId, small = false }) => {
         {canApproveAsset(user) && (
           <>
             <DeleteBtn assetId={assetId} />{' '}
+          </>
+        )}
+        {canApproveAsset(user) && (
+          <>
+            <PinBtn assetId={assetId} />{' '}
           </>
         )}
       </div>

@@ -36,6 +36,8 @@ export const actions = {
   OPEN_SORT_ASSETS_DROPDOWN: 'OpenSortAssetsDropdown',
   CLOSE_SORT_ASSETS_DROPDOWN: 'CloseSortAssetsDropdown',
   REPORT_ASSET: 'ReportAsset',
+  PIN_ASSET: 'PinAsset',
+  UNPIN_ASSET: 'UnpinAsset',
 
   // ACCOUNT
   TOGGLE_ENABLED_ADULT_CONTENT: 'ToggleEnabledAdultContent',
