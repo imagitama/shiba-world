@@ -85,14 +85,14 @@ export default () => (
     <RecentAssets limit={5} categoryName={AssetCategories.tutorial} />
     <Heading variant="h2">
       <Link
-        to={routes.viewCategoryWithVar.replace(
+        to={routes.viewSpeciesCategoryWithVar.replace(
           ':categoryName',
-          AssetCategories.showcase
+          AssetCategories.world
         )}>
-        Avatar Showcase
+        Recent Worlds
       </Link>
     </Heading>
-    <RecentAssetDescription categoryName={AssetCategories.showcase} />
-    <RecentAssets limit={5} categoryName={AssetCategories.showcase} />
+    <RecentAssetDescription categoryName={AssetCategories.world} />
+    <RecentAssets limit={5} categoryName={AssetCategories.world} />
   </>
 )
