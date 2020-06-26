@@ -25,7 +25,12 @@ const useStyles = makeStyles({
   fileAttacherItem: { margin: '0 0 1rem 0', padding: '2rem' },
   fileAttacherUploader: { padding: '2rem' },
   advancedModeBtn: { margin: '0.5rem 0' },
-  controls: { marginTop: '2rem', textAlign: 'center' }
+  controls: { marginTop: '2rem', textAlign: 'center' },
+  accidentalUploadMsg: {
+    padding: '2rem',
+    fontWeight: 'bold',
+    fontSize: '150%'
+  }
 })
 
 const Hint = ({ children }) => {
@@ -135,11 +140,6 @@ const FileAttacher = ({ fileUrls, onFileAttached, onFileRemoved }) => {
         />
       ))}
       <Paper className={classes.fileAttacherUploader}>
-        <strong>
-          We recommend you upload .fbx files for models, .anim files for
-          animations or .png/.jpg for images.
-        </strong>
-        <br />
         <FileUploader
           directoryPath="asset-uploads"
           filePrefix={shortid.generate()}
@@ -424,6 +424,14 @@ Use the file uploader below to upload your own videos then copy the URL into thi
           hint="We don't want to steal content. If you want to share someone else's work, please link directly to their website or Discord message (not the file itself)."
           onChange={newVal => setDoesHavePermission(newVal)}
         />
+
+        <br />
+
+        <Paper className={classes.accidentalUploadMsg}>
+          Please be careful you do not accidentally upload a base model that you
+          do not have permission to share (eg. Pikapetey's base model).
+        </Paper>
+
         <div className={classes.controls}>
           {isFormValid === false && (
             <>
