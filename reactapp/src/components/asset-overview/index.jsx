@@ -90,9 +90,11 @@ const useStyles = makeStyles({
   }
 })
 
+const allSpeciesLabel = 'All Species'
+
 function getSpeciesDisplayNameBySpeciesName(speciesName) {
   if (!speciesName) {
-    return 'All Species'
+    return allSpeciesLabel
   }
   if (!speciesMeta[speciesName]) {
     throw new Error(`Unknown species name ${speciesName}`)
@@ -273,19 +275,37 @@ export default ({ assetId, small = false }) => {
         </Link>{' '}
         {isAdult && <IsAdultMessage />}
       </Heading>
-      {species && category && (
+      {category && (
         <Heading className={classes.subtitle} variant="h2">
-          <Link
-            to={routes.viewSpeciesWithVar.replace(':speciesName', species[0])}>
-            {getSpeciesDisplayNameBySpeciesName(species[0])}
-          </Link>
-          {' - '}
-          <Link
-            to={routes.viewSpeciesCategoryWithVar
-              .replace(':speciesName', species[0])
-              .replace(':categoryName', category)}>
-            {getCategoryDisplayName(category)}
-          </Link>
+          {species.length ? (
+            <>
+              <Link
+                to={routes.viewSpeciesWithVar.replace(
+                  ':speciesName',
+                  species[0]
+                )}>
+                {getSpeciesDisplayNameBySpeciesName(species[0])}
+              </Link>
+              {' - '}
+              <Link
+                to={routes.viewSpeciesCategoryWithVar
+                  .replace(':speciesName', species[0])
+                  .replace(':categoryName', category)}>
+                {getCategoryDisplayName(category)}
+              </Link>
+            </>
+          ) : (
+            <>
+              {allSpeciesLabel} -{' '}
+              <Link
+                to={routes.viewCategoryWithVar.replace(
+                  ':categoryName',
+                  category
+                )}>
+                {getCategoryDisplayName(category)}
+              </Link>
+            </>
+          )}
         </Heading>
       )}
 
