@@ -47,17 +47,10 @@ export default ({ assetId }) => {
         lastModifiedAt: new Date()
       })
 
-      if (isDeleted) {
-        trackAction(actions.DELETE_ASSET, {
-          assetId,
-          userId: user && user.id
-        })
-      } else {
-        trackAction(actions.RESTORE_ASSET, {
-          assetId,
-          userId: user && user.id
-        })
-      }
+      trackAction(isDeleted ? actions.RESTORE_ASSET : actions.isDeleted, {
+        assetId,
+        userId: user && user.id
+      })
     } catch (err) {
       console.error('Failed to edit asset to delete or undelete', err)
     }

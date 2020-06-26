@@ -372,16 +372,24 @@ export default ({ assetId, small = false }) => {
             <Button color="primary">View Asset</Button>
           </Link>
         ) : canEditAsset(user, createdBy) ? (
-          <Link to={routes.editAssetWithVar.replace(':assetId', assetId)}>
-            <Button color="primary" icon={<EditIcon />}>
-              Edit Asset
-            </Button>
-          </Link>
+          <>
+            <Link to={routes.editAssetWithVar.replace(':assetId', assetId)}>
+              <Button color="primary" icon={<EditIcon />}>
+                Edit Asset
+              </Button>
+            </Link>{' '}
+          </>
         ) : null}
-        {!isApproved && canApproveAsset(user) && (
-          <ApproveBtn assetId={assetId} />
+        {canApproveAsset(user) && (
+          <>
+            <ApproveBtn assetId={assetId} />{' '}
+          </>
         )}
-        {canApproveAsset(user) && <DeleteBtn assetId={assetId} />}
+        {canApproveAsset(user) && (
+          <>
+            <DeleteBtn assetId={assetId} />{' '}
+          </>
+        )}
       </div>
       <Heading variant="h2">Comments</Heading>
       <CommentList assetId={assetId} />

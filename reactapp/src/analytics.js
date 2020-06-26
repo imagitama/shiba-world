@@ -29,6 +29,7 @@ export const actions = {
   DOWNLOAD_ASSET_FILE: 'DownloadAssetFile',
   ENDORSE_ASSET: 'EndorseAsset',
   APPROVE_ASSET: 'ApproveAsset',
+  UNAPPROVE_ASSET: 'UnapproveAsset',
   DELETE_ASSET: 'DeleteAsset',
   RESTORE_ASSET: 'RestoreAsset',
   SORT_ASSETS: 'SortAssets',
