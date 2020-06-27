@@ -12,6 +12,7 @@ export const actions = {
   NAVIGATE: 'Navigate',
   OPEN_NAV_MENU: 'OpenNavMenu',
   CLOSE_NAV_MENU: 'CloseNavMenu',
+  SET_DARK_MODE_ENABLED: 'SetDarkModeEnabled',
 
   // AUTH
   LOGIN: 'Login',
@@ -125,6 +126,9 @@ const actionDetails = {
   },
   [actions.TOGGLE_DARK_MODE]: {
     category: categories.APP
+  },
+  [actions.SET_DARK_MODE_ENABLED]: {
+    caregory: categories.APP
   }
 }
 

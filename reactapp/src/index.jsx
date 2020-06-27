@@ -10,7 +10,7 @@ import store, { history } from './store'
 import App from './App'
 import { trackAction, actions } from './analytics'
 import { inDevelopment } from './environment'
-import { changeSearchTerm } from './modules/app'
+import { changeSearchTerm, setDarkModeEnabled } from './modules/app'
 
 if (!inDevelopment()) {
   Sentry.init({
@@ -27,6 +27,12 @@ history.listen(location => {
 
   store.dispatch(changeSearchTerm())
 })
+
+window
+  .matchMedia('(prefers-color-scheme: dark)')
+  .addEventListener('change', e => {
+    store.dispatch(setDarkModeEnabled(e.matches))
+  })
 
 const target = document.querySelector('#root')
 
