@@ -208,6 +208,12 @@ export default ({ assetId, small = false }) => {
     isPrivate
   } = result
 
+  if (!title) {
+    return (
+      <ErrorMessage>Asset does not exist. Maybe it was deleted?</ErrorMessage>
+    )
+  }
+
   const downloadUrls = fileUrls
     .filter(isUrlNotAnImageOrVideo)
     .filter(fileUrl => fileUrl !== thumbnailUrl)
