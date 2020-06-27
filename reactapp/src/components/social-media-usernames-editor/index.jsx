@@ -13,6 +13,8 @@ import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
 import Button from '../button'
 
+import { handleError } from '../../error-handling'
+
 export default () => {
   const userId = useFirebaseUserId()
   const [isLoadingProfile, isErroredLoadingProfile, profile] = useDatabaseQuery(
@@ -63,6 +65,7 @@ export default () => {
       })
     } catch (err) {
       console.error('Failed to save social media fields to database', err)
+      handleError(err)
     }
   }
 

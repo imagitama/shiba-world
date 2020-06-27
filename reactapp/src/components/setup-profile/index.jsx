@@ -11,6 +11,7 @@ import LoadingIndicator from '../loading-indicator'
 import Button from '../button'
 import Heading from '../heading'
 import BodyText from '../body-text'
+import { handleError } from '../../error-handling'
 
 export default () => {
   const uid = useFirebaseUserId()
@@ -73,6 +74,7 @@ export default () => {
               { username: fieldValue },
               err
             )
+            handleError(err)
           }
         }}>
         Save

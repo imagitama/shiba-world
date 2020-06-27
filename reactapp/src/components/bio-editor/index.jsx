@@ -15,6 +15,8 @@ import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
 import Button from '../button'
 
+import { handleError } from '../../error-handling'
+
 const useStyles = makeStyles({
   bioTextField: {
     width: '100%'
@@ -53,6 +55,7 @@ export default () => {
       })
     } catch (err) {
       console.error('Failed to save social media fields to database', err)
+      handleError(err)
     }
   }
 

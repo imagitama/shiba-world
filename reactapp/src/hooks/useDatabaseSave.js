@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
+import { handleError } from '../error-handling'
 
 export default (collectionName, documentId = null) => {
   if (!collectionName) {
@@ -32,7 +33,8 @@ export default (collectionName, documentId = null) => {
     } catch (err) {
       setIsSuccess(false)
       setIsSaving(false)
-      console.error(err)
+      console.error('Failed to use database saving', err)
+      handleError(err)
     }
   }
 

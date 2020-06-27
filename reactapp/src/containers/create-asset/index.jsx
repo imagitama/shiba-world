@@ -16,6 +16,8 @@ import NoPermissionMessage from '../../components/no-permission-message'
 import { scrollToTop } from '../../utils'
 import * as routes from '../../routes'
 
+import { handleError } from '../../error-handling'
+
 export default () => {
   const [isLoadingUser, isErrorLoadingUser, user] = useUserRecord()
   const [isSaving, isSuccessOrFail, save] = useDatabaseSave(
@@ -79,6 +81,7 @@ export default () => {
             setNewDocumentId(docId)
           } catch (err) {
             console.error('Failed to create asset', newFields, err)
+            handleError(err)
           }
         }}
       />

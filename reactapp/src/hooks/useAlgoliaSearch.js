@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import createAlgoliaSearchClient from 'algoliasearch'
+import { handleError } from '../error-handling'
 
 export const Indexes = {
   // TODO: Prod/etc. should come from env vars
@@ -42,9 +43,14 @@ export default (indexName, keywords, filters = undefined) => {
         setIsLoading(false)
         setIsErrored(false)
       } catch (err) {
-        console.error(err)
+        console.error(
+          'Failed to search with algolia',
+          { keywords, filters },
+          err
+        )
         setIsLoading(false)
         setIsErrored(true)
+        handleError(err)
       }
     }
 

@@ -11,6 +11,7 @@ import useDatabaseQuery, {
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useDatabaseDocument from '../../hooks/useDatabaseDocument'
 import { trackAction, actions } from '../../analytics'
+import { handleError } from '../../error-handling'
 
 const useStyles = makeStyles({
   loggedOutBtn: {
@@ -51,6 +52,7 @@ export default ({ assetId }) => {
       })
     } catch (err) {
       console.error('Failed to save endorsement', err)
+      handleError(err)
     }
   }
 

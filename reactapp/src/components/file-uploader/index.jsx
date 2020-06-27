@@ -1,6 +1,7 @@
 import React, { useRef } from 'react'
 import useFileUpload from '../../hooks/useFileUpload'
 import Button from '../button'
+import { handleError } from '../../error-handling'
 
 export default ({ directoryPath = '', filePrefix = '', onDownloadUrl }) => {
   const uploadedFileRef = useRef()
@@ -26,7 +27,8 @@ export default ({ directoryPath = '', filePrefix = '', onDownloadUrl }) => {
 
       onDownloadUrl(url)
     } catch (err) {
-      console.error(err)
+      console.error('Failed to upload file', err)
+      handleError(err)
     }
   }
 

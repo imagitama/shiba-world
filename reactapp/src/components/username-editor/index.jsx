@@ -5,6 +5,7 @@ import { CollectionNames } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import { trackAction, actions } from '../../analytics'
 import Button from '../button'
+import { handleError } from '../../error-handling'
 
 export default () => {
   const [isLoadingUser, isErrorLoadingUser, user] = useUserRecord()
@@ -61,6 +62,7 @@ export default () => {
               { userId: user.id, newUsername: fieldValue },
               err
             )
+            handleError(err)
           }
         }}>
         Change Name

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { firestore } from 'firebase/app'
 import { useRef } from 'react'
 import { inDevelopment } from '../environment'
+import { handleError } from '../error-handling'
 
 export const Operators = {
   EQUALS: '==',
@@ -245,9 +246,10 @@ export default (
         setIsErrored(false)
       }
     } catch (err) {
-      console.error(err)
+      console.error('Failed to use database query', err)
       setIsLoading(false)
       setIsErrored(true)
+      handleError(err)
     }
   }
 

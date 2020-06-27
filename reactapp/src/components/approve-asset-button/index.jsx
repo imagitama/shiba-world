@@ -5,6 +5,7 @@ import useDatabaseDocument from '../../hooks/useDatabaseDocument'
 import useDatabaseQuery, { CollectionNames } from '../../hooks/useDatabaseQuery'
 import { trackAction, actions } from '../../analytics'
 import Button from '../button'
+import { handleError } from '../../error-handling'
 
 export default ({ assetId }) => {
   const [isLoadingUser, isErroredLoadingUser, user] = useUserRecord()
@@ -56,6 +57,7 @@ export default ({ assetId }) => {
       )
     } catch (err) {
       console.error('Failed to approve or unapprove asset', err)
+      handleError(err)
     }
   }
 

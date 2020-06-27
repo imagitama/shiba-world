@@ -8,6 +8,7 @@ import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { trackAction, actions } from '../../analytics'
 import { CollectionNames, UserFieldNames } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
+import { handleError } from '../../error-handling'
 
 export default () => {
   const [isLoading, isErrored, user] = useUserRecord()
@@ -52,6 +53,7 @@ export default () => {
                 })
               } catch (err) {
                 console.error('Failed to save user to toggle adult flag', err)
+                handleError(err)
               }
             }}
           />

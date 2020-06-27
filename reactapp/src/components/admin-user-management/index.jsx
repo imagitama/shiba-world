@@ -11,6 +11,7 @@ import useDatabaseSave from '../../hooks/useDatabaseSave'
 import Button from '../../components/button'
 import LoadingIndicator from '../../components/loading-indicator'
 import ErrorMessage from '../../components/error-message'
+import { handleError } from '../../error-handling'
 
 const ToggleFieldButton = ({ userId, fieldName, currentValue }) => {
   const [isSaving, didSaveFailOrSucceed, save] = useDatabaseSave(
@@ -37,6 +38,7 @@ const ToggleFieldButton = ({ userId, fieldName, currentValue }) => {
             })
           } catch (err) {
             console.error('Failed to toggle field', { userId, fieldName }, err)
+            handleError(err)
           }
         }}>
         Toggle

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Markdown from 'react-markdown'
 import { makeStyles } from '@material-ui/core/styles'
@@ -42,6 +42,7 @@ import {
   isUrlAVideo,
   isUrlNotAnImageOrVideo
 } from '../../utils'
+import { handleError } from '../../error-handling'
 
 import NotApprovedMessage from './components/not-approved-message'
 import DeletedMessage from './components/deleted-message'
@@ -174,6 +175,12 @@ export default ({ assetId, small = false }) => {
   const classes = useStyles()
   const [, , user] = useUserRecord()
   const [isReportMessageOpen, setIsReportMessageOpen] = useState()
+
+  useEffect(() => {
+    if (result && !result.title) {
+      handleError(new Error(`Asset with ID ${assetId} does not exist`))
+    }
+  }, [result ? result.title : null])
 
   if (isLoading) {
     return <LoadingIndicator />

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import firebase from 'firebase/app'
 import 'firebase/storage'
+import { handleError } from '../error-handling'
 
 export default () => {
   const [isUploading, setIsUploading] = useState(null)
@@ -36,14 +37,15 @@ export default () => {
             setIsUploading(true)
           }
         },
-        function(error) {
-          console.error('Error uploading', error.code, error) // https://firebase.google.com/docs/storage/web/handle-errors
+        function(err) {
+          console.error('Failed to upload file', err.code, err) // https://firebase.google.com/docs/storage/web/handle-errors
+          handleError(err)
 
           setIsUploading(false)
           setIsSuccess(false)
           setIsErrored(true)
 
-          reject(error)
+          reject(err)
         },
         async () => {
           try {

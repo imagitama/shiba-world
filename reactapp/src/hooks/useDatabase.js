@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { firestore } from 'firebase/app'
+import { handleError } from '../error-handling'
 
 const secondsToDate = seconds => new Date(seconds * 1000)
 
@@ -141,7 +142,8 @@ export default (
     } catch (err) {
       setIsErrored(true)
       setIsLoading(false)
-      console.error(err)
+      console.error('Failed to use database', err)
+      handleError(err)
     }
   }
 

@@ -6,6 +6,7 @@ import 'react-image-crop/dist/ReactCrop.css'
 import Button from '../button'
 import useFileUpload from '../../hooks/useFileUpload'
 import BodyText from '../body-text'
+import { handleError } from '../../error-handling'
 
 const useStyles = makeStyles({
   root: {
@@ -39,6 +40,7 @@ function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
         setCroppedImagePreviewUrl(url)
       } catch (err) {
         console.error('Failed to generate cropped image preview url', err)
+        handleError(err)
       }
     }
     main()
@@ -118,7 +120,8 @@ function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
       setUploadedUrl(uploadedUrl)
       onUploaded(uploadedUrl)
     } catch (err) {
-      console.error(err)
+      console.error('Failed to crop image', err)
+      handleError(err)
     }
   }
 
