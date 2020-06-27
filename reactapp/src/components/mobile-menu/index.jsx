@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { Fragment, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
@@ -102,8 +102,8 @@ export default () => {
         {navItems
           .filter(navItem => canShowMenuItem(navItem, user))
           .map(({ label, url, children }, idx) => (
-            <>
-              <MenuItem key={url} button>
+            <Fragment key={label}>
+              <MenuItem button>
                 {children ? (
                   <Typography
                     component="div"
@@ -138,7 +138,7 @@ export default () => {
                       />
                     </MenuItem>
                   ))}
-            </>
+            </Fragment>
           ))}
       </MenuList>
       <TwitterFollowButton />

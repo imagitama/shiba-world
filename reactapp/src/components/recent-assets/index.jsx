@@ -81,11 +81,9 @@ export default ({ speciesName, limit = 10, categoryName, showPinned }) => {
             <Button color="default">View All Species</Button>
           </Link>
         )}{' '}
-        <Link>
-          <Button color="default" url={routes.createAsset}>
-            Upload
-          </Button>
-        </Link>{' '}
+        <Button color="default" url={routes.createAsset}>
+          Upload
+        </Button>{' '}
         <Link to={getViewMoreLinkUrl(speciesName, categoryName)}>
           <Button>View More</Button>
         </Link>

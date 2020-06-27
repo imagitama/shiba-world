@@ -81,7 +81,6 @@ export default () => {
         <Grid item xs={4} align="right">
           {isMobile && (
             <Button
-              ariaLabel="Toggle main menu"
               className={classes.menuToggleButton}
               onClick={dispatchOpenMenu}>
               <MenuIcon className={classes.menuToggleIcon} />
