@@ -46,12 +46,13 @@ function isPrivate(docData) {
   return docData.isPrivate === true
 }
 
-async function storeInHistory(message, parentRef, data) {
+async function storeInHistory(message, parentRef, data, user) {
   return db.collection('history').add({
     message,
     parent: parentRef,
     data,
     createdAt: new Date(),
+    createdBy: user,
   })
 }
 
@@ -109,9 +110,14 @@ exports.onAssetCreated = functions.firestore
   .onCreate(async (doc) => {
     const docData = doc.data()
 
-    await storeInHistory(`Created asset`, doc.ref, {
-      fields: replaceReferencesWithString(docData),
-    })
+    await storeInHistory(
+      `Created asset`,
+      doc.ref,
+      {
+        fields: replaceReferencesWithString(docData),
+      },
+      docData.createdBy
+    )
 
     if (isNotApproved(docData)) {
       return Promise.resolve()
@@ -130,12 +136,17 @@ exports.onAssetUpdated = functions.firestore
     const beforeDocData = beforeDoc.data()
     const docData = doc.data()
 
-    await storeInHistory(`Edited asset`, doc.ref, {
-      diff: getDifferenceInObjects(
-        replaceReferencesWithString(beforeDocData),
-        replaceReferencesWithString(docData)
-      ),
-    })
+    await storeInHistory(
+      `Edited asset`,
+      doc.ref,
+      {
+        diff: getDifferenceInObjects(
+          replaceReferencesWithString(beforeDocData),
+          replaceReferencesWithString(docData)
+        ),
+      },
+      docData.lastModifiedBy
+    )
 
     if (isNotApproved(docData)) {
       return Promise.resolve()
@@ -165,9 +176,14 @@ exports.onCommentCreated = functions.firestore
   .onCreate(async (doc) => {
     const docData = doc.data()
 
-    return storeInHistory(`Created comment`, doc.ref, {
-      fields: replaceReferencesWithString(docData),
-    })
+    return storeInHistory(
+      `Created comment`,
+      doc.ref,
+      {
+        fields: replaceReferencesWithString(docData),
+      },
+      docData.createdBy
+    )
   })
 
 exports.onUserUpdated = functions.firestore
@@ -175,12 +191,17 @@ exports.onUserUpdated = functions.firestore
   .onUpdate(async ({ before: beforeDoc, after: doc }) => {
     const docData = doc.data()
 
-    return storeInHistory(`Edited user`, doc.ref, {
-      diff: getDifferenceInObjects(
-        replaceReferencesWithString(beforeDoc.data()),
-        replaceReferencesWithString(docData)
-      ),
-    })
+    return storeInHistory(
+      `Edited user`,
+      doc.ref,
+      {
+        diff: getDifferenceInObjects(
+          replaceReferencesWithString(beforeDoc.data()),
+          replaceReferencesWithString(docData)
+        ),
+      },
+      docData.lastModifiedBy
+    )
   })
 
 exports.onUserSignup = functions.auth.user().onCreate(async (user) => {
@@ -194,5 +215,29 @@ exports.onUserSignup = functions.auth.user().onCreate(async (user) => {
     username: '',
   })
 
+  const profileRecord = db.collection('profiles').doc(uid)
+
+  await profileRecord.set({
+    bio: '',
+  })
+
   return storeInHistory(`User signup`, userRecord)
 })
+
+exports.onProfileUpdated = functions.firestore
+  .document('profiles/{userId}')
+  .onUpdate(async ({ before: beforeDoc, after: doc }) => {
+    const docData = doc.data()
+
+    return storeInHistory(
+      `Edited profile`,
+      doc.ref,
+      {
+        diff: getDifferenceInObjects(
+          replaceReferencesWithString(beforeDoc.data()),
+          replaceReferencesWithString(docData)
+        ),
+      },
+      docData.lastModifiedBy
+    )
+  })

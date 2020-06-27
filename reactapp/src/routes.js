@@ -23,6 +23,7 @@ export const searchWithVar = '/search/:searchTerm'
 export const viewUserWithVar = '/users/:userId'
 export const stats = '/stats'
 export const users = '/users'
+export const activity = '/activity'
 
 // Outdated routes
 export const browseAssets = '/browse'

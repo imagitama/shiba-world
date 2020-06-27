@@ -55,6 +55,7 @@ export default () => {
         <a href="https://www.jaredwilliams.com.au">Jared Williams</a> &ndash;{' '}
         <Link to={routes.privacyPolicy}>Privacy Policy</Link> &ndash;{' '}
         <Link to={routes.users}>Users</Link> &ndash;{' '}
+        <Link to={routes.activity}>Activity</Link> &ndash;{' '}
         <Link to={routes.stats}>Stats</Link>
       </footer>
     </>
