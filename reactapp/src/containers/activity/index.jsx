@@ -5,6 +5,7 @@ import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableRow from '@material-ui/core/TableRow'
 import Paper from '@material-ui/core/Paper'
+import { Helmet } from 'react-helmet'
 
 import FormattedDate from '../../components/formatted-date'
 import ErrorMessage from '../../components/error-message'
@@ -100,6 +101,13 @@ export default () => {
 
   return (
     <>
+      <Helmet>
+        <title>View the recent activity around the site | VRCArena</title>
+        <meta
+          name="description"
+          content="Take a look at the actions performed by users on the site including editing assets, profiles and more."
+        />
+      </Helmet>
       <Heading variant="h1">Recent Activity</Heading>
       <Paper>
         <Table>
