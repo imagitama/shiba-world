@@ -54,7 +54,7 @@ export default () => {
       <Paper className={classes.root}>
         <InputBase
           className={classes.input}
-          placeholder={`Search everything eg. "collar" or "beat saber"`}
+          placeholder={`Search title, description and tags`}
           autoFocus={true}
           autoComplete="false"
           onChange={onSearchTermInputChange}

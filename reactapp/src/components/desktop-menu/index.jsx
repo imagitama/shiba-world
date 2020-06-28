@@ -14,9 +14,9 @@ import navItems, {
 
 const useStyles = makeStyles({
   root: {
-    marginTop: '2rem',
     flexWrap: 'wrap',
-    display: 'flex'
+    display: 'flex',
+    alignItems: 'center'
   },
   menuItem: {
     color: '#FFF', // TODO: Get from theme
@@ -36,6 +36,10 @@ const useStyles = makeStyles({
   },
   icon: {
     marginTop: '-2px'
+  },
+  twitterBtn: {
+    paddingLeft: '1rem',
+    marginTop: '0.4rem'
   }
 })
 
@@ -105,7 +109,9 @@ export default () => {
           )
         })}
 
-      <TwitterFollowButton />
+      <div className={classes.twitterBtn}>
+        <TwitterFollowButton />
+      </div>
     </div>
   )
 }

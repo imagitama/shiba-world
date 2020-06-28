@@ -23,8 +23,7 @@ import { species } from './tags'
 export default {
   [species.Shiba]: {
     name: 'Shiba Inu',
-    shortDescription:
-      'A cute squishy anthropomorphic shiba inu avatar created by Pikapetey.',
+    shortDescription: 'A cute squishy anthropomorphic shiba inu.',
     description: `An anthropomorphic avatar created by [Pikapetey](https://www.patreon.com/pikapetey). It costs $5 and you can purchase it by visiting links in the Avatars section for this species. We recommend the Corpse shiba over the original model as it contains performance improvements and bug fixes.`,
     backupThumbnailUrl: backupShibaInuImageUrl,
     optimizedThumbnailUrl: optimizedShibaInuImageUrl
@@ -66,7 +65,7 @@ Useful links:
   },
   [species.rexouium]: {
     name: 'Rexouium',
-    shortDescription: `A tall fictional species with the name meaning king (rex) care-taker (ouium).`,
+    shortDescription: `A tall fictional species with long ears and whiskers.`,
     description: `A tall fictional species with the name meaning king (rex) care-taker (ouium). Created by [RacoonRezillo](https://www.furaffinity.net/view/36134921). They are the king care-takers of their world. They can climb well and are fast.
 
 Useful links:

@@ -10,6 +10,10 @@ import MenuIcon from '@material-ui/icons/Menu'
 import * as routes from '../../routes'
 import { openMenu } from '../../modules/app'
 import { ReactComponent as Logo } from '../../assets/images/logo.svg'
+import {
+  mediaQueryForTabletsOrBelow,
+  mediaQueryForDesktopsOnly
+} from '../../media-queries'
 
 import Searchbar from '../searchbar'
 import MobileMenu from '../mobile-menu'
@@ -17,31 +21,34 @@ import DesktopMenu from '../desktop-menu'
 
 const useStyles = makeStyles({
   root: {
-    padding: '1rem 1rem',
+    padding: '1.5rem 1rem 0',
     borderBottom: '1px solid #260b36',
     marginBottom: '2rem',
     background: 'linear-gradient(20deg, #6e4a9e, #240b36)',
-    '@media (min-width: 600px)': {
-      padding: '2rem 2rem 1rem'
+    [mediaQueryForTabletsOrBelow]: {
+      order: '3',
+      padding: '0.5rem 0.5rem 0'
     }
   },
   gridColSearchbar: {
-    '@media (max-width: 959px)': {
-      order: '3'
+    [mediaQueryForTabletsOrBelow]: {
+      order: '3',
+      padding: '0 1rem'
     }
   },
   logo: {
-    '@media (max-width: 959px)': {
+    [mediaQueryForTabletsOrBelow]: {
       padding: '1rem 0 0'
     },
     '& path': {
       fill: '#FFF'
     },
-    height: '150px',
-    width: 'auto'
+    height: '100px',
+    width: 'auto',
+    marginLeft: '0.5rem'
   },
   menuToggleButton: {
-    '@media (min-width: 960px)': {
+    [mediaQueryForDesktopsOnly]: {
       display: 'none'
     }
   },

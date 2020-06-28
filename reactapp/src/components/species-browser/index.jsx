@@ -5,26 +5,30 @@ import CardActionArea from '@material-ui/core/CardActionArea'
 import CardContent from '@material-ui/core/CardContent'
 import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
+
 import * as routes from '../../routes'
 import speciesMeta from '../../species-meta'
+import { mediaQueryForTabletsOrBelow } from '../../media-queries'
 
 const useStyles = makeStyles({
   speciesBrowser: { marginTop: '0.5rem', display: 'flex', flexWrap: 'wrap' },
   speciesItem: {
-    width: '175px',
-    margin: '0.5rem',
-    '@media (max-width: 959px)': {
-      width: '160px',
-      margin: '0.25rem'
+    width: '50%',
+    padding: '0.5rem',
+    [mediaQueryForTabletsOrBelow]: {
+      width: '100%',
+      padding: '0.25rem'
     }
   },
+  contentWrapper: {
+    display: 'flex',
+    alignItems: 'center'
+  },
   thumbnailWrapper: {
-    height: '250px',
+    width: '100px',
+    height: '100px',
     position: 'relative',
-
-    '@media (max-width: 959px)': {
-      height: '200px'
-    }
+    flexShrink: 0
   },
   thumbnail: {
     height: '100%',
@@ -37,6 +41,12 @@ const useStyles = makeStyles({
     color: 'gray',
     alignSelf: 'center',
     paddingLeft: '1rem'
+  },
+  cardContent: {
+    marginLeft: '1rem',
+    '&, &:last-child': {
+      padding: '0'
+    }
   }
 })
 
@@ -51,31 +61,33 @@ const Species = ({
   const url = routes.viewSpeciesWithVar.replace(':speciesName', name)
 
   return (
-    <Card className={classes.speciesItem}>
-      <CardActionArea>
-        <Link to={url}>
-          <div className={classes.thumbnailWrapper}>
-            <picture>
-              <source srcSet={optimizedThumbnailUrl} type="image/webp" />
-              <source srcSet={backupThumbnailUrl} type="image/png" />
-              <img
-                src={backupThumbnailUrl}
-                alt={`Thumbnail for species ${title}`}
-                className={classes.thumbnail}
-              />
-            </picture>
-          </div>
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="h2">
-              {title}
-            </Typography>
-            <Typography variant="body2" color="textSecondary" component="p">
-              {description}
-            </Typography>
-          </CardContent>
-        </Link>
-      </CardActionArea>
-    </Card>
+    <div className={classes.speciesItem}>
+      <Card>
+        <CardActionArea>
+          <Link to={url} className={classes.contentWrapper}>
+            <div className={classes.thumbnailWrapper}>
+              <picture>
+                <source srcSet={optimizedThumbnailUrl} type="image/webp" />
+                <source srcSet={backupThumbnailUrl} type="image/png" />
+                <img
+                  src={backupThumbnailUrl}
+                  alt={`Thumbnail for species ${title}`}
+                  className={classes.thumbnail}
+                />
+              </picture>
+            </div>
+            <CardContent classes={{ root: classes.cardContent }}>
+              <Typography gutterBottom variant="h5" component="h3">
+                {title}
+              </Typography>
+              <Typography variant="body2" color="textSecondary" component="p">
+                {description}
+              </Typography>
+            </CardContent>
+          </Link>
+        </CardActionArea>
+      </Card>
+    </div>
   )
 }
 
