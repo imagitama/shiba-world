@@ -130,7 +130,11 @@ export default ({ userId }) => {
     )
   }
 
-  const { username = 'New User' } = user
+  const { username = '' } = user
+
+  if (!username) {
+    return <ErrorMessage>User does not appear to exist</ErrorMessage>
+  }
 
   const {
     bio,

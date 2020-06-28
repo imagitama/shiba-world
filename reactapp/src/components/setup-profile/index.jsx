@@ -1,22 +1,27 @@
 import React, { useState } from 'react'
 import TextField from '@material-ui/core/TextField'
 import FormControl from '@material-ui/core/FormControl'
+
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { CollectionNames } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
+import useUserDocument from '../../hooks/useDatabaseDocument'
+
 import ErrorMessage from '../error-message'
 import SuccessMessage from '../success-message'
 import LoadingIndicator from '../loading-indicator'
 import Button from '../button'
 import Heading from '../heading'
 import BodyText from '../body-text'
+
 import { handleError } from '../../error-handling'
 
 export default () => {
   const uid = useFirebaseUserId()
   const [, , user] = useUserRecord()
   const userId = user ? user.id : null
+  const [userDoc] = useUserDocument(CollectionNames.Users, userId)
   const [isCreating, isCreateSuccessOrFail, create] = useDatabaseSave(
     CollectionNames.Users,
     userId
@@ -66,7 +71,9 @@ export default () => {
         onClick={async () => {
           try {
             await create({
-              username: fieldValue
+              username: fieldValue,
+              lastModifiedBy: userDoc,
+              lastModifiedAt: new Date()
             })
           } catch (err) {
             console.error(

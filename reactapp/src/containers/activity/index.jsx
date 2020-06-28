@@ -19,6 +19,27 @@ import useDatabaseQuery, {
 } from '../../hooks/useDatabaseQuery'
 import * as routes from '../../routes'
 
+function FormattedUserName({ message, parent, createdBy }) {
+  if (message === 'User signup') {
+    return (
+      <Link to={routes.viewUserWithVar.replace(':userId', parent.id)}>
+        {parent.username}
+      </Link>
+    )
+  }
+
+  if (createdBy) {
+    return (
+      <Link to={routes.viewUserWithVar.replace(':userId', createdBy.id)}>
+        {createdBy.username}
+      </Link>
+    )
+  }
+
+  // History before June 2020 had no user field
+  return 'Someone'
+}
+
 function FormattedMessage({ message, parent, createdBy }) {
   const LinkToParentAsset = () => (
     <Link to={routes.viewAssetWithVar.replace(':assetId', parent.id)}>
@@ -44,6 +65,10 @@ function FormattedMessage({ message, parent, createdBy }) {
         </>
       )
     case 'Edited user':
+      if (createdBy && createdBy.id === parent.id) {
+        return <>edited their own account</>
+      }
+
       return (
         <>
           edited the account of <LinkToParentUser />
@@ -58,6 +83,8 @@ function FormattedMessage({ message, parent, createdBy }) {
           edited the profile of <LinkToParentUser />
         </>
       )
+    case 'User signup':
+      return <>signed up</>
     default:
       return message
   }
@@ -117,17 +144,11 @@ export default () => {
               .map(({ id, message, parent, createdBy = null, createdAt }) => (
                 <TableRow key={id}>
                   <TableCell>
-                    {createdBy ? (
-                      <Link
-                        to={routes.viewUserWithVar.replace(
-                          ':userId',
-                          createdBy.id
-                        )}>
-                        {createdBy.username}
-                      </Link>
-                    ) : (
-                      'Someone'
-                    )}{' '}
+                    <FormattedUserName
+                      createdBy={createdBy}
+                      parent={parent}
+                      message={message}
+                    />{' '}
                     <FormattedMessage
                       message={message}
                       parent={parent}
