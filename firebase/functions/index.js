@@ -13,6 +13,40 @@ admin.initializeApp()
 const db = admin.firestore()
 db.settings({ ignoreUndefinedProperties: true })
 
+const CollectionNames = {
+  Users: 'users',
+  Assets: 'assets',
+  Comments: 'comments',
+  Notices: 'notices',
+  History: 'history',
+  Endorsements: 'endorsements',
+  Profiles: 'profiles',
+  Mail: 'mail',
+}
+
+const ProfileFieldNames = {
+  vrchatUsername: 'vrchatUsername',
+  discordUsername: 'discordUsername',
+  twitterUsername: 'twitterUsername',
+  telegramUsername: 'telegramUsername',
+  youtubeChannelId: 'youtubeChannelId',
+  twitchUsername: 'twitchUsername',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt',
+  bio: 'bio',
+  notifyOnUnapprovedAssets: 'notifyOnUnapprovedAssets',
+  notificationEmail: 'notificationEmail',
+}
+
+const UserFieldNames = {
+  username: 'username',
+  isEditor: 'isEditor',
+  isAdmin: 'isAdmin',
+  enabledAdultContent: 'enabledAdultContent',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt',
+}
+
 function convertDocToAlgoliaRecord(docId, doc) {
   return {
     objectID: docId,
@@ -105,6 +139,50 @@ function replaceReferencesWithString(object) {
   return newObject
 }
 
+async function notifyUsersOfUnapprovedAsset(assetId, assetData) {
+  const { docs: editorUsers } = await db
+    .collection(CollectionNames.Users)
+    .where(UserFieldNames.isEditor, '==', true)
+    .get()
+
+  let recipientEmails = []
+
+  /* eslint-disable no-await-in-loop */
+  for (user of editorUsers) {
+    // Awaiting like this will cause a bottleneck with a lot of results as it does it in sequence
+    const profileDoc = await db
+      .collection(CollectionNames.Profiles)
+      .doc(user.id)
+      .get()
+    const profileData = profileDoc.data()
+
+    if (profileData[ProfileFieldNames.notificationEmail]) {
+      recipientEmails.push(profileData[ProfileFieldNames.notificationEmail])
+      continue
+    }
+
+    if (profileData[ProfileFieldNames.notifyOnUnapprovedAssets]) {
+      const authUser = await admin.auth().getUser(user.id)
+      recipientEmails.push(authUser.email)
+    }
+  }
+
+  if (!recipientEmails.length) {
+    return Promise.resolve()
+  }
+
+  const emailText = `Hi. The asset ${assetData.title} with ID ${assetId} has just been created and is waiting for approval :)`
+
+  return db.collection(CollectionNames.Mail).add({
+    to: recipientEmails,
+    message: {
+      subject: 'New unapproved asset at VRCArena',
+      text: emailText,
+      html: emailText,
+    },
+  })
+}
+
 exports.onAssetCreated = functions.firestore
   .document('assets/{assetId}')
   .onCreate(async (doc) => {
@@ -120,6 +198,8 @@ exports.onAssetCreated = functions.firestore
     )
 
     if (isNotApproved(docData)) {
+      await notifyUsersOfUnapprovedAsset(doc.id, docData)
+
       return Promise.resolve()
     }
 

@@ -21,7 +21,8 @@ export const CollectionNames = {
   Notices: 'notices',
   History: 'history',
   Endorsements: 'endorsements',
-  Profiles: 'profiles'
+  Profiles: 'profiles',
+  Mail: 'mail'
 }
 
 export const AssetFieldNames = {
@@ -52,12 +53,14 @@ export const AssetCategories = {
 
 export const UserFieldNames = {
   username: 'username',
+  isEditor: 'isEditor',
+  isAdmin: 'isAdmin',
   enabledAdultContent: 'enabledAdultContent',
   lastModifiedBy: 'lastModifiedBy',
   lastModifiedAt: 'lastModifiedAt'
 }
 
-export const ProfileFieldNames = {
+const ProfileFieldNames = {
   vrchatUsername: 'vrchatUsername',
   discordUsername: 'discordUsername',
   twitterUsername: 'twitterUsername',
@@ -66,7 +69,9 @@ export const ProfileFieldNames = {
   twitchUsername: 'twitchUsername',
   lastModifiedBy: 'lastModifiedBy',
   lastModifiedAt: 'lastModifiedAt',
-  bio: 'bio'
+  bio: 'bio',
+  notifyOnUnapprovedAssets: 'notifyOnUnapprovedAssets',
+  notificationEmail: 'notificationEmail'
 }
 
 export const CommentFieldNames = {
