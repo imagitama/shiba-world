@@ -48,7 +48,7 @@ export default ({ assetId }) => {
         lastModifiedAt: new Date()
       })
 
-      trackAction(isDeleted ? actions.RESTORE_ASSET : actions.isDeleted, {
+      trackAction(isDeleted ? actions.RESTORE_ASSET : actions.DELETE_ASSET, {
         assetId,
         userId: user && user.id
       })
