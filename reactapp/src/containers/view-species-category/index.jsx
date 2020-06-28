@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 
-import speciesMeta from '../../species-meta'
 import categoriesMeta from '../../category-meta'
 import * as routes from '../../routes'
 import {
@@ -17,6 +16,7 @@ import ErrorMessage from '../../components/error-message'
 import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'
 import SortDropdown from '../../components/sort-dropdown'
+import Button from '../../components/button'
 
 import useDatabaseQuery, {
   Operators,
@@ -26,13 +26,7 @@ import useDatabaseQuery, {
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import useStorage, { keys as storageKeys } from '../../hooks/useStorage'
-
-function getSpeciesByName(speciesName) {
-  if (!speciesMeta[speciesName]) {
-    throw new Error(`Invalid species name: ${speciesName}`)
-  }
-  return speciesMeta[speciesName]
-}
+import useSpeciesMeta from '../../hooks/useSpeciesMeta'
 
 function getCategoryByName(categoryName) {
   if (!categoriesMeta[categoryName]) {
@@ -41,10 +35,6 @@ function getCategoryByName(categoryName) {
     )
   }
   return categoriesMeta[categoryName]
-}
-
-function getNameForSpeciesName(speciesName) {
-  return getSpeciesByName(speciesName).name
 }
 
 function getCategoryDisplayName(categoryName) {
@@ -112,6 +102,7 @@ export default ({
     params: { speciesName, categoryName }
   }
 }) => {
+  const species = useSpeciesMeta(speciesName)
   const [assetsSortByFieldName] = useStorage(
     storageKeys.assetsSortByFieldName,
     assetSortFields.title
@@ -122,6 +113,17 @@ export default ({
   )
   const [activeSortFieldName, setActiveSortFieldName] = useState()
   const [activeSortDirection, setActiveSortDirection] = useState()
+
+  if (!species) {
+    return (
+      <ErrorMessage>
+        Sorry that species does not seem to exist.
+        <br />
+        <br />
+        <Button url={routes.viewAllSpecies}>View All Species</Button>
+      </ErrorMessage>
+    )
+  }
 
   const onNewSortFieldAndDirection = (fieldName, direction) => {
     setActiveSortFieldName(fieldName)
@@ -134,15 +136,15 @@ export default ({
     <>
       <Helmet>
         <title>
-          {getCategoryDisplayName(categoryName)} -{' '}
-          {getNameForSpeciesName(speciesName)} | {desc} | VRCArena
+          {getCategoryDisplayName(categoryName)} - {species.name} | {desc} |
+          VRCArena
         </title>
         <meta name="description" content={desc} />
       </Helmet>
       <Heading variant="h1">
         <Link
           to={routes.viewSpeciesWithVar.replace(':speciesName', speciesName)}>
-          {getNameForSpeciesName(speciesName)}
+          {species.name}
         </Link>
       </Heading>
       <Heading variant="h2">

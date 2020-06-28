@@ -60,7 +60,7 @@ export const UserFieldNames = {
   lastModifiedAt: 'lastModifiedAt'
 }
 
-const ProfileFieldNames = {
+export const ProfileFieldNames = {
   vrchatUsername: 'vrchatUsername',
   discordUsername: 'discordUsername',
   twitterUsername: 'twitterUsername',
