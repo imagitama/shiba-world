@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 
-import categoriesMeta from '../../category-meta'
 import * as routes from '../../routes'
 import {
   assetSortFields,
@@ -27,23 +26,7 @@ import useDatabaseQuery, {
 import useUserRecord from '../../hooks/useUserRecord'
 import useStorage, { keys as storageKeys } from '../../hooks/useStorage'
 import useSpeciesMeta from '../../hooks/useSpeciesMeta'
-
-function getCategoryByName(categoryName) {
-  if (!categoriesMeta[categoryName]) {
-    throw new Error(
-      `Cannot get category by name. It does not exist: ${categoryName}`
-    )
-  }
-  return categoriesMeta[categoryName]
-}
-
-function getCategoryDisplayName(categoryName) {
-  return getCategoryByName(categoryName).name
-}
-
-function getShortDescriptionForCategoryName(categoryName) {
-  return getCategoryByName(categoryName).shortDescription
-}
+import useCategoryMeta from '../../hooks/useCategoryMeta'
 
 function Assets({
   speciesName,
@@ -103,6 +86,7 @@ export default ({
   }
 }) => {
   const species = useSpeciesMeta(speciesName)
+  const category = useCategoryMeta(categoryName)
   const [assetsSortByFieldName] = useStorage(
     storageKeys.assetsSortByFieldName,
     assetSortFields.title
@@ -125,19 +109,29 @@ export default ({
     )
   }
 
+  if (!category) {
+    return (
+      <ErrorMessage>
+        Sorry that category does not seem to exist.
+        <br />
+        <br />
+        <Button url={routes.viewAllSpecies}>View All Species</Button>
+      </ErrorMessage>
+    )
+  }
+
   const onNewSortFieldAndDirection = (fieldName, direction) => {
     setActiveSortFieldName(fieldName)
     setActiveSortDirection(direction)
   }
 
-  const desc = getShortDescriptionForCategoryName(categoryName)
+  const desc = category.shortDescription
 
   return (
     <>
       <Helmet>
         <title>
-          {getCategoryDisplayName(categoryName)} - {species.name} | {desc} |
-          VRCArena
+          {category.name} - {species.name} | {desc} | VRCArena
         </title>
         <meta name="description" content={desc} />
       </Helmet>
@@ -152,7 +146,7 @@ export default ({
           to={routes.viewSpeciesCategoryWithVar
             .replace(':speciesName', speciesName)
             .replace(':categoryName', categoryName)}>
-          {getCategoryDisplayName(categoryName)}
+          {category.name}
         </Link>
       </Heading>
       <BodyText>{desc}</BodyText>
