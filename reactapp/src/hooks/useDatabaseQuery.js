@@ -22,7 +22,8 @@ export const CollectionNames = {
   History: 'history',
   Endorsements: 'endorsements',
   Profiles: 'profiles',
-  Mail: 'mail'
+  Mail: 'mail',
+  Summaries: 'summaries'
 }
 
 export const AssetFieldNames = {

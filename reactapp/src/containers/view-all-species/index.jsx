@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import Heading from '../../components/heading'
 import RecentAssets from '../../components/recent-assets'
 import SpeciesBrowser from '../../components/species-browser'
+import AllTagsBrowser from '../../components/all-tags-browser'
 
 import { AssetCategories } from '../../hooks/useDatabaseQuery'
 
@@ -94,5 +95,7 @@ export default () => (
     </Heading>
     <RecentAssetDescription categoryName={AssetCategories.world} />
     <RecentAssets limit={5} categoryName={AssetCategories.world} />
+    <Heading variant="h2">Tags</Heading>
+    <AllTagsBrowser lazyLoad />
   </>
 )

@@ -5,6 +5,7 @@ import RecentAssets from '../../components/recent-assets'
 import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'
 import SpeciesBrowser from '../../components/species-browser'
+import AllTagsBrowser from '../../components/all-tags-browser'
 
 import * as routes from '../../routes'
 import categoryMeta from '../../category-meta'
@@ -80,6 +81,8 @@ export default () => {
       </Heading>
       <RecentAssetDescription categoryName={AssetCategories.world} />
       <RecentAssets limit={5} categoryName={AssetCategories.world} />
+      <Heading variant="h2">Tags</Heading>
+      <AllTagsBrowser lazyLoad />
     </>
   )
 }

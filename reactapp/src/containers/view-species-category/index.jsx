@@ -16,6 +16,7 @@ import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'
 import SortDropdown from '../../components/sort-dropdown'
 import Button from '../../components/button'
+import AllTagsBrowser from '../../components/all-tags-browser'
 
 import useDatabaseQuery, {
   Operators,
@@ -166,6 +167,8 @@ export default ({
         sortByFieldName={activeSortFieldName || assetsSortByFieldName}
         sortByDirection={activeSortDirection || assetsSortByDirection}
       />
+      <Heading variant="h2">Tags</Heading>
+      <AllTagsBrowser lazyLoad />
     </>
   )
 }

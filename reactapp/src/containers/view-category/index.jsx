@@ -14,6 +14,7 @@ import AssetResults from '../../components/asset-results'
 import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'
 import SortDropdown from '../../components/sort-dropdown'
+import AllTagsBrowser from '../../components/all-tags-browser'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import useDatabaseQuery, {
@@ -129,6 +130,8 @@ export default ({
         sortByFieldName={activeSortFieldName || assetsSortByFieldName}
         sortByDirection={activeSortDirection || assetsSortByDirection}
       />
+      <Heading variant="h2">Tags</Heading>
+      <AllTagsBrowser lazyLoad />
     </>
   )
 }

@@ -9,6 +9,7 @@ import Heading from '../../components/heading'
 import RecentAssets from '../../components/recent-assets'
 import ErrorMessage from '../../components/error-message'
 import Button from '../../components/button'
+import AllTagsBrowser from '../../components/all-tags-browser'
 
 import { AssetCategories } from '../../hooks/useDatabaseQuery'
 import useSpeciesMeta from '../../hooks/useSpeciesMeta'
@@ -172,6 +173,8 @@ export default ({
         limit={5}
         categoryName={AssetCategories.world}
       />
+      <Heading variant="h2">Tags</Heading>
+      <AllTagsBrowser lazyLoad />
     </>
   )
 }

@@ -10,6 +10,7 @@ import useDatabaseQuery, {
   AssetFieldNames
 } from '../../hooks/useDatabaseQuery'
 import Heading from '../../components/heading'
+import AllTagsBrowser from '../../components/all-tags-browser'
 
 function Assets({ tagName }) {
   const [, , user] = useUserRecord()
@@ -65,6 +66,8 @@ export default ({
       </Helmet>
       <Heading variant="h1">Browse tag "{tagName}"</Heading>
       <Assets tagName={tagName} />
+      <Heading variant="h2">Tags</Heading>
+      <AllTagsBrowser lazyLoad />
     </>
   )
 }

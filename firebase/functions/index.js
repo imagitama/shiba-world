@@ -22,6 +22,24 @@ const CollectionNames = {
   Endorsements: 'endorsements',
   Profiles: 'profiles',
   Mail: 'mail',
+  Summaries: 'summaries',
+}
+
+const AssetFieldNames = {
+  title: 'title',
+  isAdult: 'isAdult',
+  isApproved: 'isApproved',
+  tags: 'tags',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  isDeleted: 'isDeleted',
+  category: 'category',
+  species: 'species',
+  sourceUrl: 'sourceUrl',
+  videoUrl: 'videoUrl',
+  isPrivate: 'isPrivate',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt',
 }
 
 const ProfileFieldNames = {
@@ -183,6 +201,49 @@ async function notifyUsersOfUnapprovedAsset(assetId, assetData) {
   })
 }
 
+async function getAllTags() {
+  const { docs } = await db
+    .collection(CollectionNames.Assets)
+    .where(AssetFieldNames.isAdult, '==', false)
+    .where(AssetFieldNames.isApproved, '==', true)
+    .where(AssetFieldNames.isPrivate, '==', false)
+    .where(AssetFieldNames.isDeleted, '==', false)
+    .get()
+
+  return docs.reduce((allTags, doc) => {
+    const tags = doc.get(AssetFieldNames.tags)
+    if (!tags) {
+      return allTags
+    }
+    return allTags.concat(tags)
+  }, [])
+}
+
+async function addTagsToCache(tags) {
+  if (!tags) {
+    return
+  }
+
+  const tagsDoc = await db.collection(CollectionNames.Summaries).doc('tags')
+  const tagsRecord = await tagsDoc.get()
+  let allTags = []
+  const knownTags = tagsRecord.get('allTags')
+
+  if (knownTags) {
+    allTags = knownTags.concat(tags)
+  } else {
+    allTags = await getAllTags()
+  }
+
+  const allTagsWithoutDupes = allTags.filter(
+    (tag, idx) => allTags.indexOf(tag) === idx
+  )
+
+  return tagsDoc.set({
+    allTags: allTagsWithoutDupes,
+  })
+}
+
 exports.onAssetCreated = functions.firestore
   .document('assets/{assetId}')
   .onCreate(async (doc) => {
@@ -206,6 +267,8 @@ exports.onAssetCreated = functions.firestore
     if (isPrivate(docData)) {
       return Promise.resolve()
     }
+
+    await addTagsToCache(docData.tags)
 
     return insertDocIntoIndex(doc, docData)
   })
@@ -247,6 +310,8 @@ exports.onAssetUpdated = functions.firestore
     if (isDeleted(docData)) {
       return Promise.resolve()
     }
+
+    await addTagsToCache(docData.tags)
 
     return insertDocIntoIndex(doc, docData)
   })
