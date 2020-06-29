@@ -23,7 +23,8 @@ export const CollectionNames = {
   Endorsements: 'endorsements',
   Profiles: 'profiles',
   Mail: 'mail',
-  Summaries: 'summaries'
+  Summaries: 'summaries',
+  Downloads: 'downloads'
 }
 
 export const AssetFieldNames = {

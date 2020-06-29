@@ -5,7 +5,6 @@ import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import { Helmet } from 'react-helmet'
 import LaunchIcon from '@material-ui/icons/Launch'
-import GetAppIcon from '@material-ui/icons/GetApp'
 import EditIcon from '@material-ui/icons/Edit'
 import ReportIcon from '@material-ui/icons/Report'
 
@@ -49,6 +48,7 @@ import DeletedMessage from './components/deleted-message'
 import IsPrivateMessage from './components/is-private-message'
 import FileList from './components/file-list'
 import ReportMessage from './components/report-message'
+import DownloadAssetButton from '../download-asset-button'
 
 const useStyles = makeStyles({
   root: {
@@ -117,26 +117,6 @@ function VisitSourceButton({ sourceUrl, isNoFilesAttached = false }) {
       url={sourceUrl}
       icon={<LaunchIcon />}>
       Visit Source
-    </Button>
-  )
-}
-
-function DownloadButton({ assetId, url }) {
-  const classes = useStyles()
-
-  const onDownloadBtnClick = () =>
-    trackAction(actions.DOWNLOAD_ASSET, {
-      assetId,
-      url
-    })
-
-  return (
-    <Button
-      className={classes.controlBtn}
-      url={url}
-      icon={<GetAppIcon />}
-      onClick={onDownloadBtnClick}>
-      Download
     </Button>
   )
 }
@@ -279,7 +259,7 @@ export default ({ assetId, small = false }) => {
             />
           )}
           {downloadUrls.length ? (
-            <DownloadButton assetId={id} url={downloadUrls[0]} />
+            <DownloadAssetButton assetId={id} url={downloadUrls[0]} />
           ) : null}
         </div>
       </div>
