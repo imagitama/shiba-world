@@ -40,7 +40,10 @@ export const AssetFieldNames = {
   videoUrl: 'videoUrl',
   isPrivate: 'isPrivate',
   lastModifiedBy: 'lastModifiedBy',
-  lastModifiedAt: 'lastModifiedAt'
+  lastModifiedAt: 'lastModifiedAt',
+  thumbnailUrl: 'thumbnailUrl',
+  fileUrls: 'fileUrls',
+  description: 'description'
 }
 
 export const AssetCategories = {

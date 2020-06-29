@@ -9,7 +9,6 @@ import AssetEditor from '../../components/asset-editor'
 import LoadingIndicator from '../../components/loading-indicator'
 import SuccessMessage from '../../components/success-message'
 import ErrorMessage from '../../components/error-message'
-import Heading from '../../components/heading'
 import Button from '../../components/button'
 import NoPermissionMessage from '../../components/no-permission-message'
 
@@ -63,7 +62,6 @@ export default () => {
 
   return (
     <>
-      <Heading variant="h1">Upload Asset</Heading>
       <AssetEditor
         onSubmit={async newFields => {
           scrollToTop()

@@ -135,7 +135,7 @@ function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
           alt="Uploaded preview"
         />
         <Button onClick={onCancelBtnClick} color="default">
-          Delete
+          Try Again
         </Button>
       </>
     )
@@ -149,7 +149,7 @@ function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
     return (
       <>
         <BodyText>
-          Select a file and you will be able to crop it to 300x300
+          Select a PNG and you will be able to crop it to 300x300
         </BodyText>
         <input
           type="file"

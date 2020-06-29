@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import * as routes from '../../routes'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import Button from '../button'
+import { scrollToTop } from '../../utils'
 
 const useStyles = makeStyles({
   footer: {
@@ -22,15 +23,7 @@ function ScrollToTopBtn() {
 
   return (
     <div className={classes.scrollToTopBtnWrapper}>
-      <Button
-        onClick={() =>
-          window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: 'smooth'
-          })
-        }
-        color="default">
+      <Button onClick={() => scrollToTop()} color="default">
         Scroll To Top
       </Button>
     </div>

@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import AssetEditor from '../../components/asset-editor'
 import LoadingIndicator from '../../components/loading-indicator'
 import SuccessMessage from '../../components/success-message'
-import Heading from '../../components/heading'
 import Button from '../../components/button'
 import NoPermissionMessage from '../../components/no-permission-message'
 import ErrorMessage from '../../components/error-message'
@@ -47,7 +46,6 @@ export default ({ match: { params } }) => {
 
   return (
     <>
-      <Heading variant="h1">Edit Asset</Heading>
       {wasSaveSuccessOrFail === true && (
         <SuccessMessage>
           Save success

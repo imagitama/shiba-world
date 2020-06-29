@@ -1,169 +1,127 @@
-import React, { useState, Fragment } from 'react'
-import Paper from '@material-ui/core/Paper'
-import TextField from '@material-ui/core/TextField'
-import FormControl from '@material-ui/core/FormControl'
-import Checkbox from '@material-ui/core/Checkbox'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Select from '@material-ui/core/Select'
-import MenuItem from '@material-ui/core/MenuItem'
-import { makeStyles } from '@material-ui/core/styles'
-import shortid from 'shortid'
+import React, { useState } from 'react'
 import Markdown from 'react-markdown'
+import shortid from 'shortid'
+import { makeStyles } from '@material-ui/core/styles'
 
-import { AssetCategories, AssetFieldNames } from '../../hooks/useDatabaseQuery'
-import { species as speciesTags } from '../../tags'
+import SpeciesSelector from './components/species-selector'
+import CategorySelector from './components/category-selector'
+import FormField, { formFieldType } from './components/form-field'
+import InvalidMessage from './components/invalid-message'
+import FileAttacher from './components/file-attacher'
 
-import FileUploader from '../file-uploader'
-import ThumbnailUploader from '../thumbnail-uploader'
 import Heading from '../heading'
+import ThumbnailUploader from '../thumbnail-uploader'
 import Button from '../button'
 import TagChip from '../tag-chip'
 
+import { AssetFieldNames, AssetCategories } from '../../hooks/useDatabaseQuery'
+import useCategoryMeta from '../../hooks/useCategoryMeta'
+import categoryMeta from '../../category-meta'
+import speciesMeta from '../../species-meta'
+import { scrollToTop } from '../../utils'
+
 const useStyles = makeStyles({
-  hint: { color: 'grey', marginTop: '0.5rem' },
-  formFieldRoot: { padding: '2rem' },
-  fileAttacherItem: { margin: '0 0 1rem 0', padding: '2rem' },
-  fileAttacherUploader: { padding: '2rem' },
-  advancedModeBtn: { margin: '0.5rem 0' },
-  controls: { marginTop: '2rem', textAlign: 'center' },
-  accidentalUploadMsg: {
-    padding: '2rem',
-    fontWeight: 'bold',
-    fontSize: '150%'
-  }
+  controls: { marginTop: '2rem', textAlign: 'center' }
 })
 
-const Hint = ({ children }) => {
-  const classes = useStyles()
-  return <div className={classes.hint}>{children}</div>
+function getFormFieldHint(fieldName, category) {
+  switch (fieldName) {
+    case AssetFieldNames.title:
+      switch (category) {
+        case AssetCategories.accessory:
+          return 'The title of the accessory. eg. "Hoodie" or "Sunglasses" or "Spikey hair"'
+        case AssetCategories.animation:
+          return 'The title of the animation. eg. "Dog running" or "A big smile"'
+        case AssetCategories.article:
+          return 'The title of the news article. eg. "Pikapetey just released a new shiba!"'
+        case AssetCategories.avatar:
+          return 'The name of the avatar. eg. "Avali Base Model 2.0" or "Pikapetey Shiba Inu"'
+        case AssetCategories.world:
+          return 'The name of the world. eg. "Shiba Paradise" or "Avali Homeworld""'
+        case AssetCategories.tutorial:
+          return 'The title of the tutorial. eg. "How to import your Shiba into Beat Saber"'
+        default:
+          return 'The title of the asset.'
+      }
+    case AssetFieldNames.description:
+      switch (category) {
+        case AssetCategories.accessory:
+          return 'What is the accessory, how do they use it, tips for using it, etc.'
+        case AssetCategories.animation:
+          return 'What the animation is for, how do they use it, etc.'
+        case AssetCategories.article:
+          return 'The contents of the news article.'
+        case AssetCategories.avatar:
+          return 'Information about the avatar including is it a paid or free avatar and instructions for importing it.'
+        case AssetCategories.world:
+          return 'Describe the world, why it exists, etc.'
+        case AssetCategories.tutorial:
+          return 'The steps in the tutorial. Use Markdown to use headings and embed images.'
+        default:
+          return 'The description of the asset.'
+      }
+    case AssetFieldNames.sourceUrl:
+      switch (category) {
+        case AssetCategories.world:
+          return 'A URL to where people can go to visit the world.'
+        case AssetCategories.avatar:
+          return 'Where you found the avatar OR a URL to where they can download it.'
+        case AssetCategories.article:
+          return 'A URL to the thing you used for your news article. eg. a tweet or a blog'
+        default:
+          return 'A URL which is where you found the asset.'
+      }
+    default:
+      return ''
+  }
 }
 
-const formFieldType = {
-  text: 'text',
-  checkbox: 'checkbox',
-  dropdown: 'dropdown'
+function getFormFieldLabel(fieldName, category) {
+  switch (fieldName) {
+    case AssetFieldNames.description:
+      switch (category) {
+        case AssetCategories.article:
+          return 'Article Contents'
+        case AssetCategories.tutorial:
+          return 'Tutorial Steps'
+        default:
+          return 'Description'
+      }
+    default:
+      return ''
+  }
 }
 
-const FormField = ({
-  label,
-  type = formFieldType.text,
-  value,
-  hint,
-  convertToValidField,
-  options,
-  onChange,
-  ...textFieldProps
-}) => {
-  const classes = useStyles()
-  return (
-    <Paper className={classes.formFieldRoot}>
-      <FormControl fullWidth>
-        {type === formFieldType.text ? (
-          <TextField
-            label={label}
-            value={value || ''}
-            onChange={event =>
-              onChange(
-                convertToValidField
-                  ? convertToValidField(event.target.value)
-                  : event.target.value
-              )
-            }
-            {...textFieldProps}
-          />
-        ) : type === formFieldType.dropdown ? (
-          <Select
-            label={label}
-            value={value}
-            onChange={event =>
-              onChange(
-                convertToValidField
-                  ? convertToValidField(event.target.value)
-                  : event.target.value
-              )
-            }
-            {...textFieldProps}>
-            {options.map(option => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </Select>
-        ) : (
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={value}
-                onChange={event => onChange(event.target.checked)}
-              />
-            }
-            label={label}
-          />
-        )}
-        <Hint>
-          {typeof hint === 'string'
-            ? hint.split('\n').map((hint, idx) => (
-                <Fragment key={hint}>
-                  {idx !== 0 && <br />}
-                  {hint}
-                </Fragment>
-              ))
-            : hint}
-        </Hint>
-      </FormControl>
-    </Paper>
-  )
+function getLabelForCategory(category) {
+  switch (category) {
+    case AssetCategories.accessory:
+      return 'Upload Accessory'
+    case AssetCategories.animation:
+      return 'Upload Animation'
+    case AssetCategories.article:
+      return 'Post News Article'
+    case AssetCategories.avatar:
+      return 'Upload Avatar'
+    case AssetCategories.world:
+      return 'Post World'
+    case AssetCategories.tutorial:
+      return 'Post Tutorial'
+    default:
+      return 'Upload Asset'
+  }
 }
 
-const FileAttacherItem = ({ url, onRemove }) => {
-  const classes = useStyles()
-  return (
-    <Paper className={classes.fileAttacherItem}>
-      {url}
-      <br />
-      <Button color="default" onClick={onRemove}>
-        Remove
-      </Button>
-    </Paper>
-  )
-}
-
-const FileAttacher = ({ fileUrls, onFileAttached, onFileRemoved }) => {
-  const classes = useStyles()
-  return (
-    <>
-      {fileUrls.map(fileUrl => (
-        <FileAttacherItem
-          key={fileUrl}
-          url={fileUrl}
-          onRemove={() => onFileRemoved(fileUrl)}
-        />
-      ))}
-      <Paper className={classes.fileAttacherUploader}>
-        <FileUploader
-          directoryPath="asset-uploads"
-          filePrefix={shortid.generate()}
-          onDownloadUrl={url => onFileAttached(url)}
-        />
-      </Paper>
-    </>
-  )
-}
-
-const getIsFormValid = (formFields, doesHavePermission) => {
-  if (!formFields.title) {
+const getIsFormValid = formFields => {
+  if (!formFields[AssetFieldNames.title]) {
     return false
   }
-  if (!formFields.description) {
+  if (!formFields[AssetFieldNames.description]) {
     return false
   }
-  if (!formFields.category) {
+  if (!formFields[AssetFieldNames.category]) {
     return false
   }
-  if (!formFields.thumbnailUrl) {
-    return false
-  }
-  if (!doesHavePermission) {
+  if (!formFields[AssetFieldNames.thumbnailUrl]) {
     return false
   }
   return true
@@ -171,12 +129,20 @@ const getIsFormValid = (formFields, doesHavePermission) => {
 
 export default ({
   assetId,
-  asset: {
+  asset = {},
+  onSubmit,
+  preSelectedCategory,
+  preSelectedSpecies
+}) => {
+  const classes = useStyles()
+  const [hasTriedSubmitting, setHasTriedSubmitting] = useState(false)
+
+  const {
     // WARNING: If optional you must specify a default (not undefined) or Firebase errors
     title,
     description,
-    species = [],
-    category,
+    species = preSelectedSpecies ? [preSelectedSpecies] : [],
+    category = preSelectedCategory,
     tags = [],
     thumbnailUrl,
     fileUrls = [],
@@ -184,9 +150,8 @@ export default ({
     sourceUrl = '',
     videoUrl = '',
     isPrivate = false
-  } = {},
-  onSubmit
-}) => {
+  } = asset
+
   const [fieldData, setFieldData] = useState({
     title,
     description,
@@ -200,11 +165,24 @@ export default ({
     videoUrl,
     isPrivate
   })
-  const [doesHavePermission, setDoesHavePermission] = useState(false)
-  const [showAdvancedFileUrls, setShowAdvancedFileUrls] = useState(false)
-  const [showMarkdownPreview, setShowMarkdownPreview] = useState(false)
-  const [showThumbnailUrlInput, setShowThumbnailUrlInput] = useState(false)
-  const classes = useStyles()
+  const [
+    hasFinishedSelectingSpecies,
+    setHasFinishedSelectingSpecies
+  ] = useState(species.length !== 0 || false)
+  const { nameSingular } = useCategoryMeta(fieldData[AssetFieldNames.category])
+
+  const isFormValid = getIsFormValid(fieldData)
+
+  const onFormSubmitted = () => {
+    if (!isFormValid) {
+      if (!hasTriedSubmitting) {
+        setHasTriedSubmitting(true)
+      }
+      return
+    }
+
+    onSubmit(fieldData)
+  }
 
   const onFieldChange = (fieldName, newVal) => {
     setFieldData({
@@ -213,237 +191,193 @@ export default ({
     })
   }
 
-  const onFormSubmitted = () => {
-    if (!doesHavePermission) {
-      return
-    }
-    onSubmit(fieldData)
+  if (!fieldData[AssetFieldNames.category]) {
+    return (
+      <CategorySelector
+        onSelect={newCategory => {
+          onFieldChange(AssetFieldNames.category, newCategory)
+          scrollToTop()
+        }}
+        selectedCategory={fieldData[AssetFieldNames.category]}
+      />
+    )
   }
 
-  const onThumbnailUploaded = url => onFieldChange('thumbnailUrl', url)
-
-  const isFormValid = getIsFormValid(fieldData, doesHavePermission)
+  if (!hasFinishedSelectingSpecies) {
+    return (
+      <SpeciesSelector
+        selectedCategory={fieldData[AssetFieldNames.category]}
+        onSelect={speciesToAdd =>
+          onFieldChange(
+            AssetFieldNames.species,
+            fieldData[AssetFieldNames.species].concat([speciesToAdd])
+          )
+        }
+        onDeSelect={speciesToRemove =>
+          onFieldChange(
+            AssetFieldNames.species,
+            fieldData[AssetFieldNames.species].filter(
+              species => species !== speciesToRemove
+            )
+          )
+        }
+        selectedSpeciesMulti={fieldData.species}
+        onDone={() => {
+          setHasFinishedSelectingSpecies(true)
+          scrollToTop()
+        }}
+      />
+    )
+  }
 
   return (
     <>
-      <form>
-        <Heading variant="h2">Category</Heading>
-        <FormField
-          label="Category"
-          value={fieldData.category}
-          type={formFieldType.dropdown}
-          options={Object.values(AssetCategories)}
-          hint={`What kind of asset are you uploading or posting? For "News" select "article".`}
-          onChange={newVal => onFieldChange('category', newVal)}
-        />
-
-        <Heading variant="h2">Title</Heading>
-        <FormField
-          label="Title"
-          value={fieldData.title}
-          hint="The name of the accessory/animation. The title of your tutorial. The name of your character/avatar. The title of the news article."
-          onChange={newVal => onFieldChange('title', newVal)}
-        />
-        <Heading variant="h2">Description</Heading>
-        <FormField
-          label="Description"
-          value={fieldData.description}
-          hint={
-            <>
-              A short paragraph that describes the accessory/animation. The
-              steps of your tutorial. A bio of your avatar with links to your
-              social media. The content of the news article.
-              <br />
-              <br />
-              You can use markdown to <strong>format</strong> <em>your</em>{' '}
-              content. It is the same as Discord. A guide is here:{' '}
-              <a
-                href="https://www.markdownguide.org/basic-syntax/"
-                target="_blank"
-                rel="noopener noreferrer">
-                Markdown
-              </a>
-            </>
-          }
-          onChange={newVal => onFieldChange('description', newVal)}
-          multiline
-          rows={10}
-        />
-        {showMarkdownPreview === false && (
+      <Heading variant="h1">
+        {assetId
+          ? `Edit ${nameSingular}`
+          : getLabelForCategory(fieldData[AssetFieldNames.category])}
+      </Heading>
+      <Heading variant="h2">
+        {categoryMeta[fieldData[AssetFieldNames.category]].nameSingular} -{' '}
+        {fieldData[AssetFieldNames.species]
+          .map(speciesName => speciesMeta[speciesName].name)
+          .join(', ')}
+      </Heading>
+      <Button onClick={() => onFieldChange(AssetFieldNames.category, '')}>
+        Reset Category
+      </Button>{' '}
+      <Button onClick={() => setHasFinishedSelectingSpecies(false)}>
+        Reset Species
+      </Button>
+      <Heading variant="h3">Title</Heading>
+      <FormField
+        label="Title"
+        value={fieldData[AssetFieldNames.title]}
+        hint={getFormFieldHint(
+          AssetFieldNames.title,
+          fieldData[AssetFieldNames.category]
+        )}
+        onChange={newVal => onFieldChange(AssetFieldNames.title, newVal)}
+        isRequired
+      />
+      <Heading variant="h3">Description</Heading>
+      <FormField
+        label={getFormFieldLabel(
+          AssetFieldNames.description,
+          fieldData[AssetFieldNames.description]
+        )}
+        value={fieldData[AssetFieldNames.description]}
+        hint={
           <>
-            <Button
-              color="default"
-              className={classes.advancedModeBtn}
-              onClick={() => setShowMarkdownPreview(true)}>
-              Show Markdown preview
-            </Button>
+            You can use markdown to <strong>format</strong> <em>your</em>{' '}
+            content. It is the same as Discord. A guide is here:{' '}
+            <a
+              href="https://www.markdownguide.org/basic-syntax/"
+              target="_blank"
+              rel="noopener noreferrer">
+              Markdown
+            </a>
           </>
+        }
+        onChange={newVal => onFieldChange(AssetFieldNames.description, newVal)}
+        multiline
+        rows={10}
+        isRequired
+      />
+      <Markdown source={fieldData[AssetFieldNames.description]} />
+      <Heading variant="h3">Thumbnail</Heading>
+      {fieldData[AssetFieldNames.thumbnailUrl] ? (
+        <img
+          src={fieldData[AssetFieldNames.thumbnailUrl]}
+          alt="Preview of the thumbnail"
+        />
+      ) : (
+        <strong>Please use the form below to upload a thumbnail</strong>
+      )}
+      <Heading variant="h4">Upload</Heading>
+      <ThumbnailUploader
+        directoryPath="asset-thumbnails"
+        filePrefix={shortid.generate()}
+        onUploaded={url => onFieldChange(AssetFieldNames.thumbnailUrl, url)}
+      />
+      <Heading variant="h2">Source</Heading>
+      <FormField
+        label={getFormFieldLabel(
+          AssetFieldNames.sourceUrl,
+          fieldData[AssetFieldNames.category]
         )}
-        {showMarkdownPreview && (
-          <div>
-            <Markdown source={fieldData.description} />
-          </div>
+        value={fieldData.sourceUrl}
+        hint={getFormFieldHint(
+          AssetFieldNames.sourceUrl,
+          fieldData[AssetFieldNames.category]
         )}
-
-        <Heading variant="h2">Thumbnail</Heading>
-
-        {showThumbnailUrlInput === false && (
-          <ThumbnailUploader
-            directoryPath="asset-thumbnails"
-            filePrefix={shortid.generate()}
-            onUploaded={onThumbnailUploaded}
-          />
-        )}
-
-        {showThumbnailUrlInput === false && (
-          <Button
-            color="default"
-            className={classes.advancedModeBtn}
-            onClick={() => setShowThumbnailUrlInput(true)}>
-            Enter thumbnail URL yourself
-          </Button>
-        )}
-        {showThumbnailUrlInput && (
+        onChange={newVal => onFieldChange(AssetFieldNames.sourceUrl, newVal)}
+      />
+      <Heading variant="h3">Tags</Heading>
+      {fieldData[AssetFieldNames.tags].map(tag => (
+        <TagChip key={tag} tagName={tag} />
+      ))}
+      <FormField
+        label="Tags"
+        value={fieldData[AssetFieldNames.tags].join('\n')}
+        hint={
+          'Help users find your assets using filters and searching. One tag per line. All lowercase.'
+        }
+        onChange={newVal => onFieldChange(AssetFieldNames.tags, newVal)}
+        convertToValidField={text => text.split('\n')}
+        multiline
+        rows={10}
+      />
+      {fieldData[AssetFieldNames.category] === AssetCategories.tutorial && (
+        <>
+          <Heading variant="h2">Video</Heading>
           <FormField
-            label="Thumbnail"
-            value={fieldData.thumbnailUrl}
-            hint={`Use the file upload below (it gives you a URL you can paste in here).
-
-Please crop your thumbnails to something like 300x300 (automatic cropping coming soon)`}
-            onChange={newVal => onFieldChange('thumbnailUrl', newVal)}
+            label="Video URL"
+            value={fieldData.videoUrl}
+            hint="Paste a URL to any video. Supports any popular video site like YouTube or file formats like MP4, MKV, etc. Use the file attachment form to upload your own video to the site."
+            onChange={newVal => onFieldChange(AssetFieldNames.videoUrl, newVal)}
           />
-        )}
-
-        <Heading variant="h2">Species</Heading>
-        <FormField
-          label="Species"
-          type={formFieldType.dropdown}
-          multiple
-          options={Object.values(speciesTags)}
-          value={fieldData.species}
-          hint={`What species your asset is for. You can select multiple. Select none to make it available for every species.`}
-          onChange={newVal => onFieldChange('species', newVal)}
-        />
-
-        <Heading variant="h2">Tags</Heading>
-        {fieldData.tags.map(tag => (
-          <TagChip key={tag} tagName={tag} />
-        ))}
-        <FormField
-          label="Tags"
-          value={fieldData.tags.join('\n')}
-          hint={
-            'Help users find your assets using filters and searching. One tag per line. All lowercase.'
-          }
-          onChange={newVal => onFieldChange('tags', newVal)}
-          convertToValidField={text => text.split('\n')}
-          multiline
-          rows={10}
-        />
-
-        <Heading variant="h2">Source</Heading>
-        <FormField
-          label="Source"
-          value={fieldData.sourceUrl}
-          hint={
-            'Where did you find it? Link to the Discord message or Patreon or wherever.'
-          }
-          onChange={newVal => onFieldChange(AssetFieldNames.sourceUrl, newVal)}
-        />
-
-        <Heading variant="h2">Video</Heading>
-        <FormField
-          label="Video URL"
-          value={fieldData.videoUrl}
-          hint={`The URL for a video that is related. eg. if you are posting a YouTube tutorial. Supports popular video extensions (.mp4, .avi, etc.) and streaming sites like YouTube.
-            
-Use the file uploader below to upload your own videos then copy the URL into this field.`}
-          onChange={newVal => onFieldChange(AssetFieldNames.videoUrl, newVal)}
-        />
-
-        <Heading variant="h2">Files</Heading>
-        <FileAttacher
-          fileUrls={fieldData.fileUrls}
-          onFileAttached={fileUrl =>
-            onFieldChange('fileUrls', fieldData.fileUrls.concat([fileUrl]))
-          }
-          onFileRemoved={fileUrl =>
-            onFieldChange(
-              'fileUrls',
-              fieldData.fileUrls.filter(url => url !== fileUrl)
-            )
-          }
-        />
-        {showAdvancedFileUrls === false && (
-          <>
-            <Button
-              color="default"
-              className={classes.advancedModeBtn}
-              onClick={() => setShowAdvancedFileUrls(true)}>
-              Show advanced mode for files
-            </Button>
-          </>
-        )}
-        {showAdvancedFileUrls && (
-          <FormField
-            label="Attached URLs"
-            value={fieldData.fileUrls.join('\n')}
-            hint={`A list of URLs that have been attached. Add and remove them as you need.`}
-            onChange={newVal => onFieldChange('fileUrls', newVal)}
-            convertToValidField={text => text.split('\n')}
-            multiline
-            rows={10}
-          />
-        )}
-
-        <Heading variant="h2">Additional settings</Heading>
-
-        <FormField
-          label="Is adult content"
-          type={formFieldType.checkbox}
-          value={fieldData.isAdult}
-          hint={`If enabled it is hidden for everyone except logged in users who have opted-in.`}
-          onChange={newVal => onFieldChange('isAdult', newVal)}
-        />
-
-        <br />
-
-        <FormField
-          label="Is private"
-          type={formFieldType.checkbox}
-          value={fieldData.isPrivate}
-          hint={`If checked it will not show up in search results and in any results when browsing assets. You can only directly visit the URL and it shows up in your private account overview.`}
-          onChange={newVal => onFieldChange(AssetFieldNames.isPrivate, newVal)}
-        />
-
-        <Heading variant="h2">Upload</Heading>
-        <FormField
-          label="I have permission to upload this asset"
-          type="checkbox"
-          value={doesHavePermission}
-          hint="We don't want to steal content. If you want to share someone else's work, please link directly to their website or Discord message (not the file itself)."
-          onChange={newVal => setDoesHavePermission(newVal)}
-        />
-
-        <br />
-
-        <Paper className={classes.accidentalUploadMsg}>
-          Please be careful you do not accidentally upload a base model that you
-          do not have permission to share (eg. Pikapetey's base model).
-        </Paper>
-
-        <div className={classes.controls}>
-          {isFormValid === false && (
-            <>
-              {'Form is invalid. Please check each field.'}
-              <br />
-            </>
-          )}
-          <Button onClick={onFormSubmitted} disabled={!isFormValid}>
-            {assetId ? 'Save' : 'Create'}
-          </Button>
-        </div>
-      </form>
+        </>
+      )}
+      <Heading variant="h2">Attachments</Heading>
+      <FileAttacher
+        fileUrls={fieldData[AssetFieldNames.fileUrls]}
+        onFileAttached={fileUrl =>
+          onFieldChange(
+            AssetFieldNames.fileUrls,
+            fieldData[AssetFieldNames.fileUrls].concat([fileUrl])
+          )
+        }
+        onFilesChanged={newFileUrls =>
+          onFieldChange(AssetFieldNames.fileUrls, newFileUrls)
+        }
+        onFileRemoved={fileUrl =>
+          onFieldChange(
+            AssetFieldNames.fileUrls,
+            fieldData[AssetFieldNames.fileUrls].filter(url => url !== fileUrl)
+          )
+        }
+      />
+      <Heading variant="h3">Additional settings</Heading>
+      <FormField
+        label="Is adult content"
+        type={formFieldType.checkbox}
+        value={fieldData.isAdult}
+        hint={`If enabled it is hidden for everyone except logged in users who have opted-in.`}
+        onChange={newVal => onFieldChange(AssetFieldNames.isAdult, newVal)}
+      />
+      <br />
+      <FormField
+        label="Is private"
+        type={formFieldType.checkbox}
+        value={fieldData.isPrivate}
+        hint={`If checked it will not show up in search results and in any results when browsing assets. You can only directly visit the URL and it shows up in your private account overview.`}
+        onChange={newVal => onFieldChange(AssetFieldNames.isPrivate, newVal)}
+      />
+      <div className={classes.controls}>
+        {hasTriedSubmitting && <InvalidMessage fieldData={fieldData} />}
+        <Button onClick={onFormSubmitted}>{assetId ? 'Save' : 'Create'}</Button>
+      </div>
     </>
   )
 }
