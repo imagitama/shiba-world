@@ -49,6 +49,7 @@ import DeletedMessage from './components/deleted-message'
 import IsPrivateMessage from './components/is-private-message'
 import FileList from './components/file-list'
 import ReportMessage from './components/report-message'
+import PikapeteyDiscordMessage from './components/pikapetey-discord-message'
 import DownloadAssetButton from '../download-asset-button'
 import VisitSourceButton from '../visit-source-button'
 
@@ -162,6 +163,12 @@ function CreatedByMessage({ authorName, createdBy, categoryName }) {
   )
 }
 
+function getIsPikapeteyDiscordSourceUrl(sourceUrl) {
+  return (
+    sourceUrl && sourceUrl.indexOf('discord.com/channels/224293432498061313')
+  )
+}
+
 export default ({ assetId, small = false }) => {
   const [isLoading, isErrored, result] = useDatabaseQuery(
     CollectionNames.Assets,
@@ -258,6 +265,7 @@ export default ({ assetId, small = false }) => {
       {isApproved === false && <NotApprovedMessage />}
       {isDeleted === true && <DeletedMessage />}
       {isPrivate === true && <IsPrivateMessage />}
+      {getIsPikapeteyDiscordSourceUrl(sourceUrl) && <PikapeteyDiscordMessage />}
       <div className={classes.thumbnailAndControls}>
         <div className={classes.thumbnailWrapper}>
           <AssetThumbnail url={thumbnailUrl} />
