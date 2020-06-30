@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
@@ -106,11 +106,104 @@ function filterUnwantedResults(result) {
   return true
 }
 
+function compressResults(results) {
+  let lastCreatedBy
+  let buffer = []
+  let newResults = []
+
+  function processBuffer(lastCreatedBy) {
+    if (buffer.length >= 5) {
+      newResults.push({
+        id: buffer.map(({ id }) => id).join(','),
+        createdBy: lastCreatedBy,
+        children: buffer
+      })
+    } else {
+      newResults = newResults.concat(buffer)
+    }
+  }
+
+  for (const result of results) {
+    // If same author as previous entry
+    if (
+      result.createdBy &&
+      lastCreatedBy &&
+      result.createdBy.id === lastCreatedBy.id
+    ) {
+      // Store in a buffer for later iterations
+      buffer.push(result)
+
+      // If last item then the "future" processing will never happen
+      if (results.indexOf(result) === results.length - 1) {
+        processBuffer(lastCreatedBy)
+      }
+
+      // If a brand new author
+    } else {
+      processBuffer(lastCreatedBy)
+
+      buffer = []
+
+      // Don't forget we are processing old results so we need to add this one too
+      newResults.push(result)
+    }
+
+    lastCreatedBy = result.createdBy
+  }
+
+  return newResults
+}
+
+function ResultsTable({ results }) {
+  const [expandedResults, setExpandedResults] = useState({})
+
+  const onToggleClick = id =>
+    setExpandedResults({
+      ...expandedResults,
+      [id]: expandedResults[id] ? false : true
+    })
+
+  return (
+    <Table>
+      <TableBody>
+        {results.map(
+          ({ id, message, parent, createdBy = null, createdAt, children }) => (
+            <TableRow key={id}>
+              {children ? (
+                <TableCell>
+                  {createdBy ? createdBy.username : 'Someone'} performed{' '}
+                  {children.length} actions -{' '}
+                  <span onClick={() => onToggleClick(id)}>Toggle</span>
+                  {expandedResults[id] && <ResultsTable results={children} />}
+                </TableCell>
+              ) : (
+                <TableCell>
+                  <FormattedUserName
+                    createdBy={createdBy}
+                    parent={parent}
+                    message={message}
+                  />{' '}
+                  <FormattedMessage
+                    message={message}
+                    parent={parent}
+                    createdBy={createdBy}
+                  />{' '}
+                  <FormattedDate date={createdAt} />
+                </TableCell>
+              )}
+            </TableRow>
+          )
+        )}
+      </TableBody>
+    </Table>
+  )
+}
+
 export default () => {
   const [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.History,
     undefined,
-    20,
+    100,
     [HistoryFieldNames.createdAt, OrderDirections.DESC]
   )
 
@@ -126,6 +219,12 @@ export default () => {
     return 'No history found'
   }
 
+  const resultsWithoutUnwantedResult = results.filter(({ parent }) =>
+    filterUnwantedResults(parent)
+  )
+
+  const compressedResults = compressResults(resultsWithoutUnwantedResult)
+
   return (
     <>
       <Helmet>
@@ -137,29 +236,7 @@ export default () => {
       </Helmet>
       <Heading variant="h1">Recent Activity</Heading>
       <Paper>
-        <Table>
-          <TableBody>
-            {results
-              .filter(({ parent }) => filterUnwantedResults(parent))
-              .map(({ id, message, parent, createdBy = null, createdAt }) => (
-                <TableRow key={id}>
-                  <TableCell>
-                    <FormattedUserName
-                      createdBy={createdBy}
-                      parent={parent}
-                      message={message}
-                    />{' '}
-                    <FormattedMessage
-                      message={message}
-                      parent={parent}
-                      createdBy={createdBy}
-                    />{' '}
-                    <FormattedDate date={createdAt} />
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
+        <ResultsTable results={compressedResults} />
       </Paper>
     </>
   )

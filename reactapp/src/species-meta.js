@@ -24,7 +24,10 @@ export default {
   [species.Shiba]: {
     name: 'Shiba Inu',
     shortDescription: 'A cute squishy anthropomorphic shiba inu.',
-    description: `An anthropomorphic avatar created by [Pikapetey](https://www.patreon.com/pikapetey). It costs $5 and you can purchase it by visiting links in the Avatars section for this species. We recommend the Corpse shiba over the original model as it contains performance improvements and bug fixes.`,
+    description: `An anthropomorphic avatar created by [Pikapetey](https://www.patreon.com/pikapetey). It costs $5 and you can purchase it by visiting links in the Avatars section for this species. We recommend the Corpse shiba over the original model as it contains performance improvements and bug fixes.
+
+Useful links:
+- [Shiba retexture Trello](https://trello.com/b/8K6zOgCP/public-shibas)`,
     backupThumbnailUrl: backupShibaInuImageUrl,
     optimizedThumbnailUrl: optimizedShibaInuImageUrl
   },
