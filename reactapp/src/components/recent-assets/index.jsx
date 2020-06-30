@@ -6,6 +6,7 @@ import useDatabaseQuery, {
   AssetFieldNames,
   OrderDirections
 } from '../../hooks/useDatabaseQuery'
+import useUserRecord from '../../hooks/useUserRecord'
 import LoadingIndicator from '../loading-indicator'
 import AssetResults from '../asset-results'
 import ErrorMessage from '../error-message'
@@ -25,6 +26,8 @@ function getViewMoreLinkUrl(speciesName, categoryName) {
 }
 
 export default ({ speciesName, limit = 10, categoryName, showPinned }) => {
+  const [, , user] = useUserRecord()
+
   let whereClauses = [
     [AssetFieldNames.isAdult, Operators.EQUALS, false],
     [AssetFieldNames.isApproved, Operators.EQUALS, true],
@@ -81,9 +84,11 @@ export default ({ speciesName, limit = 10, categoryName, showPinned }) => {
             <Button color="default">View All Species</Button>
           </Link>
         )}{' '}
-        <Button color="default" url={routes.createAsset}>
-          Upload
-        </Button>{' '}
+        {user && (
+          <Button color="default" url={routes.createAsset}>
+            Upload
+          </Button>
+        )}{' '}
         <Link to={getViewMoreLinkUrl(speciesName, categoryName)}>
           <Button>View More</Button>
         </Link>

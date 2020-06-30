@@ -44,7 +44,8 @@ export const AssetFieldNames = {
   lastModifiedAt: 'lastModifiedAt',
   thumbnailUrl: 'thumbnailUrl',
   fileUrls: 'fileUrls',
-  description: 'description'
+  description: 'description',
+  authorName: 'authorName'
 }
 
 export const AssetCategories = {

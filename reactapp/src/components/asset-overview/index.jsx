@@ -7,8 +7,10 @@ import { Helmet } from 'react-helmet'
 import EditIcon from '@material-ui/icons/Edit'
 import ReportIcon from '@material-ui/icons/Report'
 
-import useDatabaseQuery from '../../hooks/useDatabaseQuery'
-import { CollectionNames } from '../../hooks/useDatabaseQuery'
+import useDatabaseQuery, {
+  CollectionNames,
+  AssetCategories
+} from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 
 import LoadingIndicator from '../loading-indicator'
@@ -89,6 +91,9 @@ const useStyles = makeStyles({
   },
   isAdultMsg: {
     fontSize: '33.3%'
+  },
+  createdByInTitle: {
+    fontSize: '50%'
   }
 })
 
@@ -129,9 +134,32 @@ function ReportButton({ assetId, onClick }) {
   )
 }
 
-function IsAdultMessage() {
+function getLabelForNonAuthorName(categoryName) {
+  switch (categoryName) {
+    case AssetCategories.article:
+      return 'posted'
+    default:
+      return 'uploaded'
+  }
+}
+
+function CreatedByMessage({ authorName, createdBy, categoryName }) {
   const classes = useStyles()
-  return <span className={classes.isAdultMsg}>(NSFW)</span>
+
+  return (
+    <span className={classes.createdByInTitle}>
+      {authorName ? (
+        `by ${authorName}`
+      ) : (
+        <>
+          {getLabelForNonAuthorName(categoryName)} by{' '}
+          <Link to={routes.viewUserWithVar.replace(':userId', createdBy.id)}>
+            {createdBy.username}
+          </Link>
+        </>
+      )}
+    </span>
+  )
 }
 
 export default ({ assetId, small = false }) => {
@@ -179,7 +207,8 @@ export default ({ assetId, small = false }) => {
     videoUrl,
     isDeleted,
     isAdult,
-    isPrivate
+    isPrivate,
+    authorName
   } = result
 
   if (!title) {
@@ -255,7 +284,11 @@ export default ({ assetId, small = false }) => {
         <Link to={routes.viewAssetWithVar.replace(':assetId', assetId)}>
           {title}
         </Link>{' '}
-        {isAdult && <IsAdultMessage />}
+        <CreatedByMessage
+          authorName={authorName}
+          createdBy={createdBy}
+          categoryName={category}
+        />
       </Heading>
       {category && (
         <Heading className={classes.subtitle} variant="h2">
@@ -325,7 +358,7 @@ export default ({ assetId, small = false }) => {
           : '(no tags)'}
       </div>
       <Typography component="p" style={{ margin: '1rem 0' }}>
-        Created {createdAt ? <FormattedDate date={createdAt} /> : '(unknown)'}{' '}
+        Uploaded {createdAt ? <FormattedDate date={createdAt} /> : '(unknown)'}{' '}
         by{' '}
         {createdBy ? (
           <Link to={routes.viewUserWithVar.replace(':userId', createdBy.id)}>
@@ -346,6 +379,11 @@ export default ({ assetId, small = false }) => {
           ) : (
             '(unknown)'
           )}
+        </Typography>
+      )}
+      {isAdult && (
+        <Typography component="p" style={{ margin: '1rem 0' }}>
+          Marked as NSFW
         </Typography>
       )}
       <div>

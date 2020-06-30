@@ -149,7 +149,8 @@ export default ({
     isAdult = false,
     sourceUrl = '',
     videoUrl = '',
-    isPrivate = false
+    isPrivate = false,
+    authorName = ''
   } = asset
 
   const [fieldData, setFieldData] = useState({
@@ -163,7 +164,8 @@ export default ({
     isAdult,
     sourceUrl,
     videoUrl,
-    isPrivate
+    isPrivate,
+    authorName
   })
   const [
     hasFinishedSelectingSpecies,
@@ -359,6 +361,13 @@ export default ({
         }
       />
       <Heading variant="h3">Additional settings</Heading>
+      <FormField
+        label="Author Name"
+        value={fieldData[AssetFieldNames.authorName]}
+        hint="Optional. The name of the original author. If the user has signed up to this site please ask a staff member to switch the uploader to them."
+        onChange={newVal => onFieldChange(AssetFieldNames.authorName, newVal)}
+      />
+      <br />
       <FormField
         label="Is adult content"
         type={formFieldType.checkbox}
