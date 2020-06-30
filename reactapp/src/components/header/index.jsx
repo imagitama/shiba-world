@@ -27,7 +27,8 @@ const useStyles = makeStyles({
     background: 'linear-gradient(20deg, #6e4a9e, #240b36)',
     [mediaQueryForTabletsOrBelow]: {
       order: '3',
-      padding: '0.5rem 0.5rem 0'
+      padding: '0.5rem 0.5rem 0',
+      marginBottom: '0.5rem'
     }
   },
   gridColSearchbar: {

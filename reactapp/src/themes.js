@@ -1,4 +1,5 @@
 import { createMuiTheme } from '@material-ui/core/styles'
+import { mediaQueryForTabletsOrBelow } from './media-queries'
 
 const colorBrand = '#6e4a9e'
 const colorBrandLight = '#9E85C4'
@@ -39,6 +40,22 @@ const createTheme = isDark =>
             padding: '0.2rem 0.2rem 0.2rem 1rem',
             borderLeft: `4px solid ${isDark ? '#5a5a5a' : '#b7b7b7'}`,
             background: isDark ? '#383838' : '#d9d9d9'
+          }
+        }
+      },
+      MuiContainer: {
+        root: {
+          [mediaQueryForTabletsOrBelow]: {
+            padding: '0.5rem'
+          }
+        }
+      },
+      MuiCardContent: {
+        root: {
+          [mediaQueryForTabletsOrBelow]: {
+            '&, &:last-child': {
+              padding: '0.5rem'
+            }
           }
         }
       }

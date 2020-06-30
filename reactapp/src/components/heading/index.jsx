@@ -1,6 +1,7 @@
 import React from 'react'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
+import { mediaQueryForTabletsOrBelow } from '../../media-queries'
 
 function getFontSizeForVariant(variant) {
   switch (variant) {
@@ -18,7 +19,10 @@ function getFontSizeForVariant(variant) {
 const useStyles = makeStyles({
   heading: ({ variant }) => ({
     fontSize: getFontSizeForVariant(variant),
-    margin: '2rem 0 1rem'
+    margin: '2rem 0 1rem',
+    [mediaQueryForTabletsOrBelow]: {
+      marginTop: '1rem'
+    }
   })
 })
 

@@ -13,20 +13,21 @@ import RoomIcon from '@material-ui/icons/Room'
 import * as routes from '../../routes'
 import categoryMeta from '../../category-meta'
 import FormattedDate from '../formatted-date'
+import { mediaQueryForTabletsOrBelow } from '../../media-queries'
 
 const useStyles = makeStyles(theme => ({
   root: {
     width: '200px',
     margin: '0.5rem',
     position: 'relative',
-    '@media (max-width: 959px)': {
+    [mediaQueryForTabletsOrBelow]: {
       width: '160px',
       margin: '0.25rem'
     }
   },
   media: {
     height: '200px',
-    '@media (max-width: 959px)': {
+    [mediaQueryForTabletsOrBelow]: {
       height: '160px'
     }
   },
