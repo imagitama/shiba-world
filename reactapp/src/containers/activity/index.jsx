@@ -168,7 +168,7 @@ function ResultsTable({ results }) {
       <TableBody>
         {results.map(
           ({ id, message, parent, createdBy = null, createdAt, children }) => (
-            <TableRow key={id}>
+            <TableRow key={id} title={id}>
               {children ? (
                 <TableCell>
                   {createdBy ? createdBy.username : 'Someone'} performed{' '}

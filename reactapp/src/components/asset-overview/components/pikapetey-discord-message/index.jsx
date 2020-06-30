@@ -16,9 +16,6 @@ const useStyles = makeStyles({
   }
 })
 
-const shibaInuBaseModelUrl =
-  'https://www.vrcarena.com/assets/sLtMXTewSFWGvmJ8WST8'
-
 export default () => {
   const classes = useStyles()
 
@@ -26,11 +23,16 @@ export default () => {
     <Paper className={classes.root}>
       <WarningIcon className={classes.icon} />
       <span>
-        This asset is only available to Pikapetey Patreons that have the Member
-        role in his Discord. If you are not a member you may need to contact the
-        original author of the asset or contact staff of the Discord server for
-        more info. <Link to={shibaInuBaseModelUrl}>Click here</Link> to view the
-        Pikapetey base model.
+        This asset is only available to members of Pikapetey's{' '}
+        <a
+          href="http://www.patreon.com/pikapetey"
+          target="_blank"
+          rel="noopener noreferrer">
+          Patreon
+        </a>{' '}
+        and Discord. Regular participation in the server will award you the role
+        needed to access the required files. If the asset author is available
+        you may contact them directly with a request to download it.
       </span>
     </Paper>
   )
