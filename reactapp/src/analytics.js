@@ -39,6 +39,7 @@ export const actions = {
   REPORT_ASSET: 'ReportAsset',
   PIN_ASSET: 'PinAsset',
   UNPIN_ASSET: 'UnpinAsset',
+  VISIT_SOURCE: 'VisitSource',
 
   // ACCOUNT
   TOGGLE_ENABLED_ADULT_CONTENT: 'ToggleEnabledAdultContent',
@@ -117,6 +118,9 @@ const actionDetails = {
     categories: categories.ASSETS
   },
   [actions.REPORT_ASSET]: {
+    categories: categories.ASSETS
+  },
+  [actions.VISIT_SOURCE]: {
     categories: categories.ASSETS
   },
 

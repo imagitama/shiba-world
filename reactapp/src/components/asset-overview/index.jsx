@@ -4,7 +4,6 @@ import Markdown from 'react-markdown'
 import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import { Helmet } from 'react-helmet'
-import LaunchIcon from '@material-ui/icons/Launch'
 import EditIcon from '@material-ui/icons/Edit'
 import ReportIcon from '@material-ui/icons/Report'
 
@@ -49,6 +48,7 @@ import IsPrivateMessage from './components/is-private-message'
 import FileList from './components/file-list'
 import ReportMessage from './components/report-message'
 import DownloadAssetButton from '../download-asset-button'
+import VisitSourceButton from '../visit-source-button'
 
 const useStyles = makeStyles({
   root: {
@@ -106,19 +106,6 @@ function getSpeciesDisplayNameBySpeciesName(speciesName) {
 
 function getCategoryDisplayName(category) {
   return `${category.substr(0, 1).toUpperCase()}${category.substr(1)}`
-}
-
-function VisitSourceButton({ sourceUrl, isNoFilesAttached = false }) {
-  const classes = useStyles()
-  return (
-    <Button
-      color={isNoFilesAttached ? 'primary' : 'default'}
-      className={classes.controlBtn}
-      url={sourceUrl}
-      icon={<LaunchIcon />}>
-      Visit Source
-    </Button>
-  )
 }
 
 function ReportButton({ assetId, onClick }) {
@@ -254,6 +241,7 @@ export default ({ assetId, small = false }) => {
           <EndorseAssetButton assetId={id} />
           {sourceUrl && (
             <VisitSourceButton
+              assetId={assetId}
               sourceUrl={sourceUrl}
               isNoFilesAttached={downloadUrls.length === 0}
             />
