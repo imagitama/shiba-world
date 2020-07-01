@@ -50,6 +50,7 @@ import IsPrivateMessage from './components/is-private-message'
 import FileList from './components/file-list'
 import ReportMessage from './components/report-message'
 import PikapeteyDiscordMessage from './components/pikapetey-discord-message'
+import ChildrenAssets from './components/children-assets'
 import DownloadAssetButton from '../download-asset-button'
 import VisitSourceButton from '../visit-source-button'
 
@@ -216,8 +217,10 @@ export default ({ assetId, small = false }) => {
     isDeleted,
     isAdult,
     isPrivate,
-    authorName
+    authorName,
+    children
   } = result
+  console.log(children)
 
   if (!title) {
     return (
@@ -359,6 +362,13 @@ export default ({ assetId, small = false }) => {
         <>
           <Heading variant="h2">Images</Heading>
           <ImageGallery urls={imageUrls} />
+        </>
+      ) : null}
+
+      {children && children.length ? (
+        <>
+          <Heading variant="h2">Children</Heading>
+          <ChildrenAssets assetChildren={children} />
         </>
       ) : null}
 

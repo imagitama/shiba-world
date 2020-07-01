@@ -45,7 +45,8 @@ export const AssetFieldNames = {
   thumbnailUrl: 'thumbnailUrl',
   fileUrls: 'fileUrls',
   description: 'description',
-  authorName: 'authorName'
+  authorName: 'authorName',
+  children: 'children'
 }
 
 export const AssetCategories = {
@@ -171,12 +172,39 @@ export async function formatRawDoc(doc) {
   return formattedDocs[0]
 }
 
+function isFirebaseDoc(value) {
+  return value && value instanceof firestore.DocumentReference
+}
+
+async function mapDocArrays(doc) {
+  const newFields = await Promise.all(
+    Object.entries(doc).map(async ([key, value]) => {
+      if (Array.isArray(value) && value.length && isFirebaseDoc(value[0])) {
+        return [
+          key,
+          await formatRawDocs(await Promise.all(value.map(item => item.get())))
+        ]
+      }
+      return [key, await Promise.resolve(value)]
+    })
+  )
+
+  return newFields.reduce(
+    (newDoc, [key, value]) => ({
+      ...newDoc,
+      [key]: value
+    }),
+    {}
+  )
+}
+
 export async function formatRawDocs(docs) {
   const docsWithDates = docs
     .map(doc => ({ ...doc.data(), id: doc.id }))
     .map(mapDates)
 
-  return Promise.all(docsWithDates.map(mapReferences))
+  const mappedRefs = await Promise.all(docsWithDates.map(mapReferences))
+  return Promise.all(mappedRefs.map(mapDocArrays))
 }
 
 function getOrderByAsString(orderBy) {

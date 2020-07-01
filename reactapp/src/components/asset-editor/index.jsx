@@ -8,6 +8,7 @@ import CategorySelector from './components/category-selector'
 import FormField, { formFieldType } from './components/form-field'
 import InvalidMessage from './components/invalid-message'
 import FileAttacher from './components/file-attacher'
+import ChildrenInput from './components/children-input'
 
 import Heading from '../heading'
 import ThumbnailUploader from '../thumbnail-uploader'
@@ -150,7 +151,8 @@ export default ({
     sourceUrl = '',
     videoUrl = '',
     isPrivate = false,
-    authorName = ''
+    authorName = '',
+    children = []
   } = asset
 
   const [fieldData, setFieldData] = useState({
@@ -165,7 +167,8 @@ export default ({
     sourceUrl,
     videoUrl,
     isPrivate,
-    authorName
+    authorName,
+    children
   })
   const [
     hasFinishedSelectingSpecies,
@@ -366,6 +369,13 @@ export default ({
         value={fieldData[AssetFieldNames.authorName]}
         hint="Optional. The name of the original author. If the user has signed up to this site please ask a staff member to switch the uploader to them."
         onChange={newVal => onFieldChange(AssetFieldNames.authorName, newVal)}
+      />
+      <br />
+      <ChildrenInput
+        assetChildren={fieldData[AssetFieldNames.children]}
+        onChange={newChildren =>
+          onFieldChange(AssetFieldNames.children, newChildren)
+        }
       />
       <br />
       <FormField
