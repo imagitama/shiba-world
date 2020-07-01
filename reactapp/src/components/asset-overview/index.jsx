@@ -165,7 +165,8 @@ function CreatedByMessage({ authorName, createdBy, categoryName }) {
 
 function getIsPikapeteyDiscordSourceUrl(sourceUrl) {
   return (
-    sourceUrl && sourceUrl.indexOf('discord.com/channels/224293432498061313')
+    sourceUrl &&
+    sourceUrl.indexOf('discord.com/channels/224293432498061313') !== -1
   )
 }
 
@@ -265,7 +266,9 @@ export default ({ assetId, small = false }) => {
       {isApproved === false && <NotApprovedMessage />}
       {isDeleted === true && <DeletedMessage />}
       {isPrivate === true && <IsPrivateMessage />}
-      {getIsPikapeteyDiscordSourceUrl(sourceUrl) && <PikapeteyDiscordMessage />}
+      {getIsPikapeteyDiscordSourceUrl(sourceUrl) ? (
+        <PikapeteyDiscordMessage />
+      ) : null}
       <div className={classes.thumbnailAndControls}>
         <div className={classes.thumbnailWrapper}>
           <AssetThumbnail url={thumbnailUrl} />
