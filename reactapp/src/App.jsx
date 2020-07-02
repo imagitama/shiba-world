@@ -53,6 +53,9 @@ const ViewUser = lazy(() => import('./containers/view-user'))
 const Stats = lazy(() => import('./containers/stats'))
 const Users = lazy(() => import('./containers/users'))
 const Activity = lazy(() => import('./containers/activity'))
+const Requests = lazy(() => import('./containers/requests'))
+const CreateRequest = lazy(() => import('./containers/create-request'))
+const ViewRequest = lazy(() => import('./containers/view-request'))
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
   return (
@@ -233,6 +236,9 @@ const MainContent = () => {
         <Route exact path={routes.stats} component={Stats} />
         <Route exact path={routes.users} component={Users} />
         <Route exact path={routes.activity} component={Activity} />
+        <Route exact path={routes.requests} component={Requests} />
+        <Route exact path={routes.createRequest} component={CreateRequest} />
+        <Route exact path={routes.viewRequestWithVar} component={ViewRequest} />
         <Route
           component={() => (
             <ErrorContainer code={404} message="Page not found" />

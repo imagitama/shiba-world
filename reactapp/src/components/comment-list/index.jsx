@@ -9,12 +9,15 @@ import useDatabaseQuery, {
 import ErrorMessage from '../error-message'
 import useDatabaseDocument from '../../hooks/useDatabaseDocument'
 
-export default ({ assetId }) => {
-  if (!assetId) {
-    throw new Error('Cannot render comment list: no asset ID')
+export default ({ collectionName, parentId }) => {
+  if (!collectionName) {
+    throw new Error('Cannot render comment list: no collection name!')
+  }
+  if (!parentId) {
+    throw new Error('Cannot render comment list: no parent ID')
   }
 
-  const [parentDoc] = useDatabaseDocument(CollectionNames.Assets, assetId)
+  const [parentDoc] = useDatabaseDocument(collectionName, parentId)
   const [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.Comments,
     [[CommentFieldNames.parent, Operators.EQUALS, parentDoc]]

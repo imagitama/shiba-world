@@ -437,8 +437,11 @@ export default ({ assetId, small = false }) => {
         )}
       </div>
       <Heading variant="h2">Comments</Heading>
-      <CommentList assetId={assetId} />
-      <AddCommentForm assetId={assetId} />
+      <CommentList collectionName={CollectionNames.Assets} parentId={assetId} />
+      <AddCommentForm
+        collectionName={CollectionNames.Assets}
+        parentId={assetId}
+      />
       <Heading variant="h2">Endorsements</Heading>
       <EndorsementList assetId={assetId} />
     </div>

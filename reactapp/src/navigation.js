@@ -66,6 +66,10 @@ export default [
     }))
   },
   {
+    label: 'Requests',
+    url: routes.requests
+  },
+  {
     label: 'Upload',
     url: routes.createAsset,
     requiresAuth: true

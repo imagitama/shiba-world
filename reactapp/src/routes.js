@@ -24,6 +24,9 @@ export const viewUserWithVar = '/users/:userId'
 export const stats = '/stats'
 export const users = '/users'
 export const activity = '/activity'
+export const requests = '/requests'
+export const viewRequestWithVar = '/requests/:requestId'
+export const createRequest = '/requests/create'
 
 // Outdated routes
 export const browseAssets = '/browse'

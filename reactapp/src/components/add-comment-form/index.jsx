@@ -23,9 +23,12 @@ const useStyles = makeStyles({
   }
 })
 
-export default ({ assetId }) => {
-  if (!assetId) {
-    throw new Error('Cannot render add comment form: no asset ID provided')
+export default ({ collectionName, parentId }) => {
+  if (!collectionName) {
+    throw new Error('Cannot render comment list: no collection name!')
+  }
+  if (!parentId) {
+    throw new Error('Cannot render comment list: no parent ID')
   }
 
   const [textFieldValue, setTextFieldValue] = useState('')
@@ -37,11 +40,11 @@ export default ({ assetId }) => {
     CollectionNames.Users,
     user && user.id
   )
-  const [assetDocument] = useDatabaseDocument(CollectionNames.Assets, assetId)
+  const [parentDoc] = useDatabaseDocument(collectionName, parentId)
   const classes = useStyles()
 
   if (!user) {
-    return null
+    return 'You must be logged in'
   }
 
   if (isSaving) {
@@ -73,14 +76,14 @@ export default ({ assetId }) => {
         className={classes.button}
         onClick={async () => {
           const [documentId] = await save({
-            parent: assetDocument,
+            parent: parentDoc,
             comment: textFieldValue,
             createdBy: userDocument,
             createdAt: new Date()
           })
 
-          trackAction(actions.COMMENT_ON_ASSET, {
-            assetId: documentId,
+          trackAction(actions.CREATE_COMMENT, {
+            parentId: documentId,
             userId: user.id
           })
         }}>

@@ -24,7 +24,8 @@ export const CollectionNames = {
   Profiles: 'profiles',
   Mail: 'mail',
   Summaries: 'summaries',
-  Downloads: 'downloads'
+  Downloads: 'downloads',
+  Requests: 'requests'
 }
 
 export const AssetFieldNames = {
@@ -97,6 +98,16 @@ export const NoticesFieldNames = {
 export const EndorsementFieldNames = {
   asset: 'asset',
   createdBy: 'createdBy'
+}
+
+export const RequestsFieldNames = {
+  title: 'title',
+  description: 'description',
+  isClosed: 'isClosed',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt'
 }
 
 function getWhereClausesAsString(whereClauses) {

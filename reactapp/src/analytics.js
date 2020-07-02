@@ -4,7 +4,9 @@ const categories = {
   ROUTING: 'Routing',
   AUTH: 'Auth',
   ASSETS: 'Assets',
-  APP: 'App'
+  APP: 'App',
+  COMMENTS: 'Comments',
+  REQUESTS: 'Requests'
 }
 
 export const actions = {
@@ -45,7 +47,16 @@ export const actions = {
   TOGGLE_ENABLED_ADULT_CONTENT: 'ToggleEnabledAdultContent',
 
   HIDE_NOTICE: 'HideNotice',
-  TOGGLE_DARK_MODE: 'ToggleDarkMode'
+  TOGGLE_DARK_MODE: 'ToggleDarkMode',
+
+  // COMMENTS
+  CREATE_COMMENT: 'CreateComment',
+
+  // REQUESTS
+  OPEN_REQUEST: 'OpenRequest',
+  CLOSE_REQUEST: 'CloseRequest',
+  CREATE_REQUEST: 'CreateRequest',
+  EDIT_REQUEST: 'EditRequest'
 }
 
 const actionDetails = {
@@ -83,6 +94,10 @@ const actionDetails = {
   },
   [actions.CHANGE_SEARCH_TERM]: {
     category: categories.LISTS
+  },
+
+  [actions.CREATE_COMMENT]: {
+    category: categories.COMMENTS
   },
 
   // ASSETS
@@ -133,6 +148,20 @@ const actionDetails = {
   },
   [actions.SET_DARK_MODE_ENABLED]: {
     caregory: categories.APP
+  },
+
+  // REQUESTS
+  [actions.CREATE_REQUEST]: {
+    category: categories.REQUESTS
+  },
+  [actions.EDIT_REQUEST]: {
+    category: categories.REQUESTS
+  },
+  [actions.CLOSE_REQUEST]: {
+    category: categories.REQUESTS
+  },
+  [actions.OPEN_REQUEST]: {
+    category: categories.REQUESTS
   }
 }
 
