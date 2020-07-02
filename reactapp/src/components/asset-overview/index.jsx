@@ -220,7 +220,6 @@ export default ({ assetId, small = false }) => {
     authorName,
     children
   } = result
-  console.log(children)
 
   if (!title) {
     return (
@@ -367,7 +366,7 @@ export default ({ assetId, small = false }) => {
 
       {children && children.length ? (
         <>
-          <Heading variant="h2">Children</Heading>
+          <Heading variant="h2">Linked Assets</Heading>
           <ChildrenAssets assetChildren={children} />
         </>
       ) : null}
