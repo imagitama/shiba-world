@@ -196,6 +196,20 @@ async function mapDocArrays(doc) {
           await formatRawDocs(await Promise.all(value.map(item => item.get())))
         ]
       }
+      // Hack to support history data having a "parent" field ie. comments
+      if (
+        typeof value === 'object' &&
+        value.parent &&
+        isFirebaseDoc(value.parent)
+      ) {
+        return [
+          key,
+          {
+            ...value,
+            parent: await formatRawDoc(await value.parent.get())
+          }
+        ]
+      }
       return [key, await Promise.resolve(value)]
     })
   )
@@ -211,7 +225,11 @@ async function mapDocArrays(doc) {
 
 export async function formatRawDocs(docs) {
   const docsWithDates = docs
-    .map(doc => ({ ...doc.data(), id: doc.id }))
+    .map(doc => ({
+      ...doc.data(),
+      id: doc.id,
+      parentPath: doc.ref.parent.path
+    }))
     .map(mapDates)
 
   const mappedRefs = await Promise.all(docsWithDates.map(mapReferences))

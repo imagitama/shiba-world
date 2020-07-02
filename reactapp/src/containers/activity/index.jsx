@@ -40,28 +40,62 @@ function FormattedUserName({ message, parent, createdBy }) {
   return 'Someone'
 }
 
-function FormattedMessage({ message, parent, createdBy }) {
-  const LinkToParentAsset = () => (
-    <Link to={routes.viewAssetWithVar.replace(':assetId', parent.id)}>
-      {parent.title}
+function getUrlForRelevantData(collectionName, result) {
+  switch (collectionName) {
+    case CollectionNames.Assets:
+      return routes.viewAssetWithVar.replace(':assetId', result.id)
+    case CollectionNames.Requests:
+      return routes.viewRequestWithVar.replace(':requestId', result.id)
+    case CollectionNames.Users:
+      return routes.viewUserWithVar.replace(':userId', result.id)
+    default:
+      return '#'
+  }
+}
+
+function getLabelForRelevantData(collectionName, result) {
+  switch (collectionName) {
+    case CollectionNames.Assets:
+    case CollectionNames.Requests:
+      return result.title
+    case CollectionNames.Users:
+      return result.username
+    default:
+      return '(unknown collection name)'
+  }
+}
+
+function LinkToRelevantData({ collectionName, result }) {
+  if (!result) {
+    return 'something'
+  }
+  return (
+    <Link to={getUrlForRelevantData(collectionName, result)}>
+      {getLabelForRelevantData(collectionName, result)}
     </Link>
   )
-  const LinkToParentUser = () => (
-    <Link to={routes.viewUserWithVar.replace(':userId', parent.id)}>
-      {parent.username}
-    </Link>
-  )
+}
+
+function FormattedMessage({ message, parent, createdBy, data }) {
   switch (message) {
     case 'Edited asset':
       return (
         <>
-          edited the asset <LinkToParentAsset />
+          edited the asset{' '}
+          <LinkToRelevantData
+            collectionName={CollectionNames.Assets}
+            result={parent}
+          />
         </>
       )
     case 'Created asset':
       return (
         <>
-          created the asset <LinkToParentAsset />
+          created the asset{' '}
+          <LinkToRelevantData
+            collectionName={CollectionNames.Assets}
+            result={parent}
+          />
         </>
       )
     case 'Edited user':
@@ -71,7 +105,11 @@ function FormattedMessage({ message, parent, createdBy }) {
 
       return (
         <>
-          edited the account of <LinkToParentUser />
+          edited the account of{' '}
+          <LinkToRelevantData
+            collectionName={CollectionNames.Users}
+            result={parent}
+          />
         </>
       )
     case 'Edited profile':
@@ -80,17 +118,39 @@ function FormattedMessage({ message, parent, createdBy }) {
       }
       return (
         <>
-          edited the profile of <LinkToParentUser />
+          edited the profile of{' '}
+          <LinkToRelevantData
+            collectionName={CollectionNames.Users}
+            result={parent}
+          />
         </>
       )
     case 'User signup':
       return <>signed up</>
+
+    case 'Created comment':
+      return (
+        <>
+          commented on{' '}
+          <LinkToRelevantData
+            collectionName={getCollectionNameForResult(data.parent)}
+            result={data.parent}
+          />
+        </>
+      )
+
     default:
       return message
   }
 }
 
 function getCollectionNameForResult(result) {
+  if (!result) {
+    return ''
+  }
+  if (result.parentPath) {
+    return result.parentPath
+  }
   return result.refPath.split('/')[0]
 }
 
@@ -167,7 +227,15 @@ function ResultsTable({ results }) {
     <Table>
       <TableBody>
         {results.map(
-          ({ id, message, parent, createdBy = null, createdAt, children }) => (
+          ({
+            id,
+            message,
+            parent,
+            createdBy = null,
+            createdAt,
+            children,
+            data
+          }) => (
             <TableRow key={id} title={id}>
               {children ? (
                 <TableCell>
@@ -187,6 +255,7 @@ function ResultsTable({ results }) {
                     message={message}
                     parent={parent}
                     createdBy={createdBy}
+                    data={data}
                   />{' '}
                   <FormattedDate date={createdAt} />
                 </TableCell>
