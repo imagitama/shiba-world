@@ -250,7 +250,7 @@ exports.onAssetCreated = functions.firestore
     const docData = doc.data()
 
     await storeInHistory(
-      `Created asset`,
+      'Created asset',
       doc.ref,
       {
         fields: replaceReferencesWithString(docData),
@@ -280,7 +280,7 @@ exports.onAssetUpdated = functions.firestore
     const docData = doc.data()
 
     await storeInHistory(
-      `Edited asset`,
+      'Edited asset',
       doc.ref,
       {
         diff: getDifferenceInObjects(
@@ -322,10 +322,11 @@ exports.onCommentCreated = functions.firestore
     const docData = doc.data()
 
     return storeInHistory(
-      `Created comment`,
+      'Created comment',
       doc.ref,
       {
         fields: replaceReferencesWithString(docData),
+        parent: doc.parent,
       },
       docData.createdBy
     )
@@ -337,7 +338,7 @@ exports.onUserUpdated = functions.firestore
     const docData = doc.data()
 
     return storeInHistory(
-      `Edited user`,
+      'Edited user',
       doc.ref,
       {
         diff: getDifferenceInObjects(
@@ -375,11 +376,45 @@ exports.onProfileUpdated = functions.firestore
     const docData = doc.data()
 
     return storeInHistory(
-      `Edited profile`,
+      'Edited profile',
       doc.ref,
       {
         diff: getDifferenceInObjects(
           replaceReferencesWithString(beforeDoc.data()),
+          replaceReferencesWithString(docData)
+        ),
+      },
+      docData.lastModifiedBy
+    )
+  })
+
+exports.onRequestCreated = functions.firestore
+  .document('requests/{requestId}')
+  .onCreate(async (doc) => {
+    const docData = doc.data()
+
+    return storeInHistory(
+      'Created request',
+      doc.ref,
+      {
+        fields: replaceReferencesWithString(docData),
+      },
+      docData.createdBy
+    )
+  })
+
+exports.onRequestEdited = functions.firestore
+  .document('requests/{requestId}')
+  .onUpdate(async ({ before: beforeDoc, after: doc }) => {
+    const beforeDocData = beforeDoc.data()
+    const docData = doc.data()
+
+    await storeInHistory(
+      'Edited request',
+      doc.ref,
+      {
+        diff: getDifferenceInObjects(
+          replaceReferencesWithString(beforeDocData),
           replaceReferencesWithString(docData)
         ),
       },
