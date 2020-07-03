@@ -1,6 +1,6 @@
 import React from 'react'
-import LaunchIcon from '@material-ui/icons/Launch'
 import { makeStyles } from '@material-ui/core/styles'
+import LaunchIcon from '@material-ui/icons/Launch'
 
 import { trackAction, actions } from '../../analytics'
 
@@ -12,12 +12,17 @@ import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import Button from '../button'
 
 const useStyles = makeStyles({
-  root: {
-    marginLeft: '0.5rem'
+  large: {
+    width: '100%'
   }
 })
 
-export default ({ assetId, sourceUrl, isNoFilesAttached = false }) => {
+export default ({
+  assetId,
+  sourceUrl,
+  isNoFilesAttached = false,
+  isLarge = false
+}) => {
   const classes = useStyles()
   const [assetDocument] = useDatabaseDocument(CollectionNames.Assets, assetId)
   const userId = useFirebaseUserId()
@@ -43,10 +48,11 @@ export default ({ assetId, sourceUrl, isNoFilesAttached = false }) => {
   return (
     <Button
       color={isNoFilesAttached ? 'primary' : 'default'}
-      className={classes.root}
       url={sourceUrl}
       icon={<LaunchIcon />}
-      onClick={onBtnClick}>
+      onClick={onBtnClick}
+      size={isLarge ? 'large' : ''}
+      className={isLarge ? classes.large : ''}>
       Visit Source
     </Button>
   )

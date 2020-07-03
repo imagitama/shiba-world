@@ -43,6 +43,7 @@ import {
   isUrlNotAnImageOrVideo
 } from '../../utils'
 import { handleError } from '../../error-handling'
+import { mediaQueryForTabletsOrBelow } from '../../media-queries'
 
 import NotApprovedMessage from './components/not-approved-message'
 import DeletedMessage from './components/deleted-message'
@@ -58,17 +59,74 @@ const useStyles = makeStyles({
   root: {
     position: 'relative'
   },
-  thumbnailAndControls: {
+
+  cols: {
     display: 'flex',
-    flexWrap: 'wrap'
-  },
-  thumbnailWrapper: {
-    textAlign: 'center',
-    '@media (max-width: 959px)': {
-      flex: 1,
-      marginBottom: '0.5rem'
+    flexDirection: 'row',
+
+    [mediaQueryForTabletsOrBelow]: {
+      flexDirection: 'column'
     }
   },
+
+  leftCol: {
+    flex: 1
+  },
+
+  rightCol: {
+    flexShrink: 0,
+    marginLeft: '5%',
+
+    [mediaQueryForTabletsOrBelow]: {
+      margin: 0
+    }
+  },
+
+  thumbAndTitle: {
+    display: 'flex',
+    flexDirection: 'row',
+
+    [mediaQueryForTabletsOrBelow]: {
+      flexDirection: 'column'
+    }
+  },
+
+  titlesWrapper: {
+    paddingLeft: '1rem',
+    display: 'flex',
+    alignItems: 'center'
+  },
+
+  thumbnailWrapper: {
+    flexShrink: 0,
+    width: '200px',
+
+    [mediaQueryForTabletsOrBelow]: {
+      width: '100%'
+    }
+  },
+
+  thumbnail: {
+    width: '100%',
+    height: 'auto'
+  },
+
+  categoryMeta: {
+    fontSize: '125%',
+    marginBottom: '1rem'
+  },
+
+  // thumbnailAndControls: {
+  //   display: 'flex',
+  //   flexWrap: 'wrap'
+  // },
+  // thumbnailWrapper: {
+  //   textAlign: 'center',
+  //   '@media (max-width: 959px)': {
+  //     flex: 1,
+  //     marginBottom: '0.5rem'
+  //   }
+  // },
   subtitle: {
     marginTop: '0.5rem'
   },
@@ -81,21 +139,44 @@ const useStyles = makeStyles({
       color: 'inherit'
     }
   },
-  controls: {
-    flex: 1,
-    textAlign: 'right',
-    '@media (max-width: 959px)': {
-      textAlign: 'center'
-    }
-  },
-  controlBtn: {
-    marginLeft: '0.5rem'
-  },
+  // controls: {
+  //   flex: 1,
+  //   textAlign: 'right',
+  //   '@media (max-width: 959px)': {
+  //     textAlign: 'center'
+  //   }
+  // },
+  // controlBtn: {
+  //   marginLeft: '0.5rem'
+  // },
   isAdultMsg: {
     fontSize: '33.3%'
   },
   createdByInTitle: {
-    fontSize: '50%'
+    fontSize: '50%',
+
+    [mediaQueryForTabletsOrBelow]: {
+      width: '100%',
+      display: 'block',
+      marginTop: '0.5rem'
+    }
+  },
+  control: {
+    marginBottom: '0.5rem'
+  },
+  mobilePrimaryBtn: {
+    display: 'none',
+
+    [mediaQueryForTabletsOrBelow]: {
+      display: 'block',
+      marginTop: '1rem'
+    }
+  },
+  noDownloadsMsg: {
+    marginTop: '0.25rem',
+    opacity: '0.5',
+    display: 'block',
+    textAlign: 'center'
   }
 })
 
@@ -168,6 +249,36 @@ function getIsPikapeteyDiscordSourceUrl(sourceUrl) {
   return (
     sourceUrl &&
     sourceUrl.indexOf('discord.com/channels/224293432498061313') !== -1
+  )
+}
+
+function Control({ children }) {
+  const classes = useStyles()
+  return <div className={classes.control}>{children}</div>
+}
+
+function MobilePrimaryBtn({ downloadUrls, sourceUrl, assetId }) {
+  const classes = useStyles()
+
+  // TODO: Use media query hook instead of css to show/hide
+  return (
+    <div className={classes.mobilePrimaryBtn}>
+      {downloadUrls.length ? (
+        <DownloadAssetButton isLarge={true} />
+      ) : sourceUrl ? (
+        <>
+          <VisitSourceButton
+            isLarge={true}
+            assetId={assetId}
+            sourceUrl={sourceUrl}
+            isNoFilesAttached={downloadUrls.length === 0}
+          />
+          {/* <span className={classes.noDownloadsMsg}>
+            (there are no available downloads for this asset)
+          </span> */}
+        </>
+      ) : null}
+    </div>
   )
 }
 
@@ -271,171 +382,206 @@ export default ({ assetId, small = false }) => {
       {getIsPikapeteyDiscordSourceUrl(sourceUrl) ? (
         <PikapeteyDiscordMessage />
       ) : null}
-      <div className={classes.thumbnailAndControls}>
+
+      <div className={classes.thumbAndTitle}>
         <div className={classes.thumbnailWrapper}>
-          <AssetThumbnail url={thumbnailUrl} />
+          <AssetThumbnail url={thumbnailUrl} className={classes.thumbnail} />
         </div>
-        <div className={classes.controls}>
-          <ReportButton
-            assetId={id}
-            onClick={() => setIsReportMessageOpen(true)}
-          />{' '}
-          <EndorseAssetButton assetId={id} />
-          {sourceUrl && (
-            <VisitSourceButton
-              assetId={assetId}
-              sourceUrl={sourceUrl}
-              isNoFilesAttached={downloadUrls.length === 0}
-            />
-          )}
-          {downloadUrls.length ? (
-            <DownloadAssetButton assetId={id} url={downloadUrls[0]} />
-          ) : null}
-        </div>
-      </div>
-      <Heading variant="h1">
-        <Link to={routes.viewAssetWithVar.replace(':assetId', assetId)}>
-          {title}
-        </Link>{' '}
-        <CreatedByMessage
-          authorName={authorName}
-          createdBy={createdBy}
-          categoryName={category}
-        />
-      </Heading>
-      {category && (
-        <Heading className={classes.subtitle} variant="h2">
-          {species.length ? (
-            <>
-              <Link
-                to={routes.viewSpeciesWithVar.replace(
-                  ':speciesName',
-                  species[0]
-                )}>
-                {getSpeciesDisplayNameBySpeciesName(species[0])}
-              </Link>
-              {' - '}
-              <Link
-                to={routes.viewSpeciesCategoryWithVar
-                  .replace(':speciesName', species[0])
-                  .replace(':categoryName', category)}>
-                {getCategoryDisplayName(category)}
-              </Link>
-            </>
-          ) : (
-            <>
-              {allSpeciesLabel} -{' '}
-              <Link
-                to={routes.viewCategoryWithVar.replace(
-                  ':categoryName',
-                  category
-                )}>
-                {getCategoryDisplayName(category)}
-              </Link>
-            </>
-          )}
-        </Heading>
-      )}
-
-      {videoUrl && <VideoPlayer url={videoUrl} />}
-
-      <div className={classes.description}>
-        <Markdown source={description} />
-      </div>
-
-      {downloadUrls.length ? (
-        <>
-          <Heading variant="h2">Files</Heading>
-          <FileList assetId={id} fileUrls={downloadUrls} />
-        </>
-      ) : null}
-
-      {videoUrls.length ? (
-        <>
-          <Heading variant="h2">Videos</Heading>
-          <FileList assetId={id} fileUrls={videoUrls} />
-        </>
-      ) : null}
-
-      {imageUrls.length ? (
-        <>
-          <Heading variant="h2">Images</Heading>
-          <ImageGallery urls={imageUrls} />
-        </>
-      ) : null}
-
-      {children && children.length ? (
-        <>
-          <Heading variant="h2">Linked Assets</Heading>
-          <ChildrenAssets assetChildren={children} />
-        </>
-      ) : null}
-
-      <Heading variant="h2">Meta</Heading>
-      <div>
-        {tags
-          ? tags.map(tagName => <TagChip key={tagName} tagName={tagName} />)
-          : '(no tags)'}
-      </div>
-      <Typography component="p" style={{ margin: '1rem 0' }}>
-        Uploaded {createdAt ? <FormattedDate date={createdAt} /> : '(unknown)'}{' '}
-        by{' '}
-        {createdBy ? (
-          <Link to={routes.viewUserWithVar.replace(':userId', createdBy.id)}>
-            {createdBy.username}
-          </Link>
-        ) : (
-          '(unknown)'
-        )}
-      </Typography>
-      {lastModifiedBy && (
-        <Typography component="p" style={{ margin: '1rem 0' }}>
-          Last modified <FormattedDate date={lastModifiedAt} /> by{' '}
-          {lastModifiedBy ? (
-            <Link
-              to={routes.viewUserWithVar.replace(':userId', lastModifiedBy.id)}>
-              {lastModifiedBy.username}
-            </Link>
-          ) : (
-            '(unknown)'
-          )}
-        </Typography>
-      )}
-      {isAdult && (
-        <Typography component="p" style={{ margin: '1rem 0' }}>
-          Marked as NSFW
-        </Typography>
-      )}
-      <div>
-        {small ? (
-          <Link to={routes.viewAssetWithVar.replace(':assetId', assetId)}>
-            <Button color="primary">View Asset</Button>
-          </Link>
-        ) : canEditAsset(user, createdBy) ? (
-          <>
-            <Link to={routes.editAssetWithVar.replace(':assetId', assetId)}>
-              <Button color="primary" icon={<EditIcon />}>
-                Edit Asset
-              </Button>
+        <div className={classes.titlesWrapper}>
+          <Heading variant="h1">
+            <Link to={routes.viewAssetWithVar.replace(':assetId', assetId)}>
+              {title}
             </Link>{' '}
-          </>
-        ) : null}
-        {canApproveAsset(user) && (
-          <>
-            <ApproveBtn assetId={assetId} />{' '}
-          </>
-        )}
-        {canApproveAsset(user) && (
-          <>
-            <DeleteBtn assetId={assetId} />{' '}
-          </>
-        )}
-        {canApproveAsset(user) && (
-          <>
-            <PinBtn assetId={assetId} />{' '}
-          </>
-        )}
+            <CreatedByMessage
+              authorName={authorName}
+              createdBy={createdBy}
+              categoryName={category}
+            />
+          </Heading>
+        </div>
       </div>
+
+      <MobilePrimaryBtn
+        downloadUrls={downloadUrls}
+        sourceUrl={sourceUrl}
+        assetId={assetId}
+      />
+
+      <div className={classes.cols}>
+        <div className={classes.leftCol}>
+          {videoUrl && <VideoPlayer url={videoUrl} />}
+
+          <div className={classes.description}>
+            <Heading variant="h2">Description</Heading>
+            <Markdown source={description} />
+          </div>
+
+          {downloadUrls.length ? (
+            <>
+              <Heading variant="h2">Files</Heading>
+              <FileList assetId={id} fileUrls={downloadUrls} />
+            </>
+          ) : null}
+
+          {videoUrls.length ? (
+            <>
+              <Heading variant="h2">Videos</Heading>
+              <FileList assetId={id} fileUrls={videoUrls} />
+            </>
+          ) : null}
+
+          {imageUrls.length ? (
+            <>
+              <Heading variant="h2">Images</Heading>
+              <ImageGallery urls={imageUrls} />
+            </>
+          ) : null}
+
+          {children && children.length ? (
+            <>
+              <Heading variant="h2">Linked Assets</Heading>
+              <ChildrenAssets assetChildren={children} />
+            </>
+          ) : null}
+
+          <Heading variant="h2">Meta</Heading>
+          <div className={classes.categoryMeta}>
+            {category && (
+              <div>
+                {species.length ? (
+                  <>
+                    <Link
+                      to={routes.viewSpeciesWithVar.replace(
+                        ':speciesName',
+                        species[0]
+                      )}>
+                      {getSpeciesDisplayNameBySpeciesName(species[0])}
+                    </Link>
+                    {' - '}
+                    <Link
+                      to={routes.viewSpeciesCategoryWithVar
+                        .replace(':speciesName', species[0])
+                        .replace(':categoryName', category)}>
+                      {getCategoryDisplayName(category)}
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    {allSpeciesLabel} -{' '}
+                    <Link
+                      to={routes.viewCategoryWithVar.replace(
+                        ':categoryName',
+                        category
+                      )}>
+                      {getCategoryDisplayName(category)}
+                    </Link>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div>
+            {tags
+              ? tags.map(tagName => <TagChip key={tagName} tagName={tagName} />)
+              : '(no tags)'}
+          </div>
+          <Typography component="p" style={{ margin: '1rem 0' }}>
+            Uploaded{' '}
+            {createdAt ? <FormattedDate date={createdAt} /> : '(unknown)'} by{' '}
+            {createdBy ? (
+              <Link
+                to={routes.viewUserWithVar.replace(':userId', createdBy.id)}>
+                {createdBy.username}
+              </Link>
+            ) : (
+              '(unknown)'
+            )}
+          </Typography>
+          {lastModifiedBy && (
+            <Typography component="p" style={{ margin: '1rem 0' }}>
+              Last modified <FormattedDate date={lastModifiedAt} /> by{' '}
+              {lastModifiedBy ? (
+                <Link
+                  to={routes.viewUserWithVar.replace(
+                    ':userId',
+                    lastModifiedBy.id
+                  )}>
+                  {lastModifiedBy.username}
+                </Link>
+              ) : (
+                '(unknown)'
+              )}
+            </Typography>
+          )}
+          {isAdult && (
+            <Typography component="p" style={{ margin: '1rem 0' }}>
+              Marked as NSFW
+            </Typography>
+          )}
+        </div>
+
+        <div className={classes.rightCol}>
+          <div className={classes.controls}>
+            {sourceUrl && (
+              <Control>
+                <VisitSourceButton
+                  assetId={assetId}
+                  sourceUrl={sourceUrl}
+                  isNoFilesAttached={downloadUrls.length === 0}
+                />
+              </Control>
+            )}
+            {downloadUrls.length ? (
+              <Control>
+                <DownloadAssetButton assetId={id} url={downloadUrls[0]} />
+              </Control>
+            ) : null}
+            <Control>
+              <ReportButton
+                assetId={id}
+                onClick={() => setIsReportMessageOpen(true)}
+              />
+            </Control>
+            <Control>
+              <EndorseAssetButton assetId={id} />
+            </Control>
+
+            {canEditAsset(user, createdBy) ? (
+              <>
+                <Heading variant="h4">Owner Actions</Heading>
+                <Control>
+                  <Button
+                    url={routes.editAssetWithVar.replace(':assetId', assetId)}
+                    color="default"
+                    icon={<EditIcon />}>
+                    Edit Asset
+                  </Button>
+                </Control>
+              </>
+            ) : null}
+            {canApproveAsset(user) && (
+              <Heading variant="h4">Editor Actions</Heading>
+            )}
+            {canApproveAsset(user) && (
+              <Control>
+                <ApproveBtn assetId={assetId} />
+              </Control>
+            )}
+            {canApproveAsset(user) && (
+              <Control>
+                <DeleteBtn assetId={assetId} />
+              </Control>
+            )}
+            {canApproveAsset(user) && (
+              <Control>
+                <PinBtn assetId={assetId} />
+              </Control>
+            )}
+          </div>
+        </div>
+      </div>
+
       <Heading variant="h2">Comments</Heading>
       <CommentList collectionName={CollectionNames.Assets} parentId={assetId} />
       <AddCommentForm

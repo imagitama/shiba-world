@@ -12,12 +12,13 @@ import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import Button from '../button'
 
 const useStyles = makeStyles({
-  root: {
-    marginLeft: '0.5rem'
+  // TODO: Re-use between view-source-btn
+  large: {
+    width: '100%'
   }
 })
 
-export default ({ assetId, url }) => {
+export default ({ assetId, url, isLarge = false }) => {
   const classes = useStyles()
   const [assetDocument] = useDatabaseDocument(CollectionNames.Assets, assetId)
   const userId = useFirebaseUserId()
@@ -39,10 +40,11 @@ export default ({ assetId, url }) => {
 
   return (
     <Button
-      className={classes.root}
+      className={`${classes.root} ${isLarge ? classes.large : ''}`}
       url={url}
       icon={<GetAppIcon />}
-      onClick={onDownloadBtnClick}>
+      onClick={onDownloadBtnClick}
+      size={isLarge ? 'large' : ''}>
       Download
     </Button>
   )
