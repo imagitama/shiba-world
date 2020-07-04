@@ -1,15 +1,13 @@
 import React from 'react'
 import { Helmet } from 'react-helmet'
-import Paper from '@material-ui/core/Paper'
 import { makeStyles } from '@material-ui/core/styles'
-import { Link } from 'react-router-dom'
 
 import ErrorMessage from '../../components/error-message'
 import LoadingIndicator from '../../components/loading-indicator'
 import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'
-import FormattedDate from '../../components/formatted-date'
 import Button from '../../components/button'
+import SimpleResultsItem from '../../components/simple-results-item'
 
 import useDatabaseQuery, { CollectionNames } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
@@ -32,31 +30,16 @@ const useStyles = makeStyles({
 })
 
 function Request({
-  request: { id, title, description, isClosed, createdBy, createdAt }
+  request: { id, title, description, createdBy, createdAt }
 }) {
-  const classes = useStyles()
   return (
-    <Paper className={classes.request}>
-      {isClosed && (
-        <>
-          <strong>CLOSED!</strong>
-          <br />
-        </>
-      )}
-      <div className={classes.title}>
-        <Link to={routes.viewRequestWithVar.replace(':requestId', id)}>
-          {title}
-        </Link>
-      </div>
-      <div className={classes.description}>{description}</div>
-      <div className={classes.meta}>
-        Created by{' '}
-        <Link to={routes.viewUserWithVar.replace(':userId', createdBy.id)}>
-          {createdBy.username}
-        </Link>{' '}
-        <FormattedDate date={createdAt} />
-      </div>
-    </Paper>
+    <SimpleResultsItem
+      url={routes.viewRequestWithVar.replace(':requestId', id)}
+      title={title}
+      description={description}
+      author={createdBy}
+      date={createdAt}
+    />
   )
 }
 
@@ -78,11 +61,34 @@ function Requests() {
     return 'No results'
   }
 
+  const { activeRequests, closedRequests } = results.reduce(
+    ({ activeRequests, closedRequests }, result) => ({
+      activeRequests:
+        result.isClosed === false
+          ? activeRequests.concat(result)
+          : activeRequests,
+      closedRequests:
+        result.isClosed === true
+          ? activeRequests.concat(result)
+          : closedRequests
+    }),
+    { activeRequests: [], closedRequests: [] }
+  )
+
   return (
     <div className={classes.container}>
-      {results.map(result => (
-        <Request key={result.id} request={result} />
-      ))}
+      <Heading variant="h2">Active</Heading>
+      {activeRequests.length
+        ? activeRequests.map(result => (
+            <Request key={result.id} request={result} />
+          ))
+        : 'No active requests'}
+      <Heading variant="h2">Closed</Heading>
+      {closedRequests.length
+        ? closedRequests.map(result => (
+            <Request key={result.id} request={result} />
+          ))
+        : 'No closed requests'}
     </div>
   )
 }

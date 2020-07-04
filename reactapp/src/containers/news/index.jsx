@@ -1,5 +1,7 @@
 import React from 'react'
 import { Helmet } from 'react-helmet'
+import { makeStyles } from '@material-ui/core/styles'
+
 import useDatabaseQuery, {
   CollectionNames,
   AssetCategories,
@@ -7,15 +9,25 @@ import useDatabaseQuery, {
   Operators
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
+
 import LoadingIndicator from '../../components/loading-indicator'
 import ErrorMessage from '../../components/error-message'
-import Article from '../../components/article'
+import SimpleResultsItem from '../../components/simple-results-item'
 import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'
+
 import categoryMeta from '../../category-meta'
+import * as routes from '../../routes'
+
+const useStyles = makeStyles({
+  articles: {
+    marginTop: '1rem'
+  }
+})
 
 function Articles() {
   const [, , user] = useUserRecord()
+  const classes = useStyles()
 
   let whereClauses = [
     [AssetFieldNames.category, Operators.EQUALS, AssetCategories.article],
@@ -49,10 +61,20 @@ function Articles() {
   }
 
   return (
-    <div>
-      {articles.map(article => (
-        <Article key={article.id} article={article} />
-      ))}
+    <div className={classes.articles}>
+      {articles.map(
+        ({ id, title, description, createdAt, createdBy, thumbnailUrl }) => (
+          <SimpleResultsItem
+            key={id}
+            url={routes.viewAssetWithVar.replace(':assetId', id)}
+            title={title}
+            description={description}
+            author={createdBy}
+            date={createdAt}
+            thumbnailUrl={thumbnailUrl}
+          />
+        )
+      )}
     </div>
   )
 }
