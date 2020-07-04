@@ -6,7 +6,8 @@ import useDatabaseQuery, {
   CollectionNames,
   AssetCategories,
   AssetFieldNames,
-  Operators
+  Operators,
+  OrderDirections
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 
@@ -30,9 +31,11 @@ function Articles() {
   const classes = useStyles()
 
   let whereClauses = [
-    [AssetFieldNames.category, Operators.EQUALS, AssetCategories.article],
     [AssetFieldNames.isApproved, Operators.EQUALS, true],
-    [AssetFieldNames.isAdult, Operators.EQUALS, false]
+    [AssetFieldNames.isAdult, Operators.EQUALS, false],
+    [AssetFieldNames.isDeleted, Operators.EQUALS, false],
+    [AssetFieldNames.category, Operators.EQUALS, AssetCategories.article],
+    [AssetFieldNames.isPrivate, Operators.EQUALS, false]
   ]
 
   // NSFW content is super risky and firebase doesnt have a != operator
@@ -45,7 +48,9 @@ function Articles() {
 
   const [isLoading, isErrored, articles] = useDatabaseQuery(
     CollectionNames.Assets,
-    whereClauses
+    whereClauses,
+    10,
+    [AssetFieldNames.createdAt, OrderDirections.DESC]
   )
 
   if (isLoading) {
