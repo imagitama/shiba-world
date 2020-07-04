@@ -198,6 +198,7 @@ async function mapDocArrays(doc) {
       }
       // Hack to support history data having a "parent" field ie. comments
       if (
+        value &&
         typeof value === 'object' &&
         value.parent &&
         isFirebaseDoc(value.parent)
