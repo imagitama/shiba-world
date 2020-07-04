@@ -10,6 +10,7 @@ import Markdown from 'react-markdown'
 import { ReactComponent as DiscordIcon } from '../../assets/images/icons/discord.svg'
 import { ReactComponent as VrChatIcon } from '../../assets/images/icons/vrchat.svg'
 import { ReactComponent as TwitchIcon } from '../../assets/images/icons/twitch.svg'
+import defaultAvatarUrl from '../../assets/images/default-avatar.png'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -18,10 +19,13 @@ import useDatabaseQuery, {
 } from '../../hooks/useDatabaseQuery'
 import useDatabaseDocument from '../../hooks/useDatabaseDocument'
 import useUserRecord from '../../hooks/useUserRecord'
+
 import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
 import Heading from '../heading'
 import AssetResults from '../asset-results'
+import Message from '../message'
+
 import * as routes from '../../routes'
 
 const useStyles = makeStyles({
@@ -36,6 +40,17 @@ const useStyles = makeStyles({
     verticalAlign: 'middle',
     width: 'auto',
     height: '1em'
+  },
+  avatar: {
+    width: '200px',
+    height: '200px'
+  },
+  img: {
+    width: '100%',
+    height: '100%'
+  },
+  username: {
+    marginTop: '1rem'
   }
 })
 
@@ -106,6 +121,29 @@ function SocialMediaLink({ icon: Icon, url, label }) {
   )
 }
 
+function Avatar({ username, url }) {
+  const classes = useStyles()
+
+  return (
+    <div className={classes.avatar}>
+      <img
+        src={url || defaultAvatarUrl}
+        className={classes.img}
+        alt={`Avatar for ${username}`}
+      />
+    </div>
+  )
+}
+
+function StaffMemberMessage() {
+  return (
+    <Message>
+      This user is a staff member. You can contact them using social media (eg.
+      Discord or Twitter) to report a problem with the site.
+    </Message>
+  )
+}
+
 function isStaffMember(user) {
   return user.isAdmin || user.isEditor
 }
@@ -119,6 +157,7 @@ export default ({ userId }) => {
     CollectionNames.Profiles,
     userId
   )
+  const classes = useStyles()
 
   if (isLoadingUser || isLoadingProfile) {
     return <LoadingIndicator />
@@ -155,12 +194,13 @@ export default ({ userId }) => {
           content={`Browse all of the accessories, animations, avatars, news articles, tutorials and more uploaded by ${username}`}
         />
       </Helmet>
-      <Heading variant="h1">
+      <Avatar username={user.username} url={user.avatarUrl} />
+      <Heading variant="h1" className={classes.username}>
         <Link to={routes.viewUserWithVar.replace(':userId', userId)}>
           {username}
         </Link>
       </Heading>
-      {isStaffMember(user) && 'Staff'}
+      {isStaffMember(user) && <StaffMemberMessage />}
       {bio && (
         <>
           <Heading variant="h2">Bio</Heading>

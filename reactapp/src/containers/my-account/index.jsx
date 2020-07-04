@@ -1,14 +1,15 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 import LoadingIndicator from '../../components/loading-indicator'
 import ErrorMessage from '../../components/error-message'
+import AvatarUploadForm from '../../components/avatar-upload-form'
 // import UsernameEditor from '../../components/username-editor'
 import AdultContentToggle from '../../components/adult-content-toggle'
 import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'
 import NoPermissionMessage from '../../components/no-permission-message'
 import DarkModeToggle from '../../components/darkmode-toggle'
-import Button from '../../components/button'
 import MyUploads from '../../components/my-uploads'
 import SocialMediaUsernamesEditor from '../../components/social-media-usernames-editor'
 import BioEditor from '../../components/bio-editor'
@@ -34,12 +35,17 @@ export default () => {
   return (
     <>
       <Heading variant="h1">Your Account</Heading>
-      <BodyText>Hi, {user.username}!</BodyText>
-      <Button
-        url={routes.viewUserWithVar.replace(':userId', user.id)}
-        color="default">
-        View Your Profile
-      </Button>
+      <BodyText>
+        Hi,{' '}
+        <Link to={routes.viewUserWithVar.replace(':userId', user.id)}>
+          {user.username}
+        </Link>
+        !
+      </BodyText>
+
+      <Heading variant="h2">Avatar</Heading>
+      <AvatarUploadForm />
+
       <Heading variant="h2">Bio</Heading>
       <BioEditor />
       <Heading variant="h2">Profile settings</Heading>
