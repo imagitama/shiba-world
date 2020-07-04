@@ -108,25 +108,14 @@ const useStyles = makeStyles({
 
   thumbnail: {
     width: '100%',
-    height: 'auto'
+    height: 'auto',
+    maxWidth: '300px'
   },
 
   categoryMeta: {
     fontSize: '125%',
     marginBottom: '1rem'
   },
-
-  // thumbnailAndControls: {
-  //   display: 'flex',
-  //   flexWrap: 'wrap'
-  // },
-  // thumbnailWrapper: {
-  //   textAlign: 'center',
-  //   '@media (max-width: 959px)': {
-  //     flex: 1,
-  //     marginBottom: '0.5rem'
-  //   }
-  // },
   subtitle: {
     marginTop: '0.5rem'
   },
@@ -139,16 +128,6 @@ const useStyles = makeStyles({
       color: 'inherit'
     }
   },
-  // controls: {
-  //   flex: 1,
-  //   textAlign: 'right',
-  //   '@media (max-width: 959px)': {
-  //     textAlign: 'center'
-  //   }
-  // },
-  // controlBtn: {
-  //   marginLeft: '0.5rem'
-  // },
   isAdultMsg: {
     fontSize: '33.3%'
   },

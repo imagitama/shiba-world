@@ -24,7 +24,8 @@ const useStyles = makeStyles({
   },
   rightCol: {
     flex: 1,
-    position: 'relative'
+    position: 'relative',
+    paddingBottom: '3rem'
   },
   controls: {
     position: 'absolute',
