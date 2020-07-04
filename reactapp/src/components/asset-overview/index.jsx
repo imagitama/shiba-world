@@ -246,10 +246,7 @@ function CreatedByMessage({ authorName, createdBy, categoryName }) {
 }
 
 function getIsPikapeteyDiscordSourceUrl(sourceUrl) {
-  return (
-    sourceUrl &&
-    sourceUrl.indexOf('discord.com/channels/224293432498061313') !== -1
-  )
+  return sourceUrl && sourceUrl.indexOf('channels/224293432498061313') !== -1
 }
 
 function Control({ children }) {
