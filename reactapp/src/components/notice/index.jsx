@@ -7,13 +7,21 @@ import CloseIcon from '@material-ui/icons/Close'
 import Markdown from 'react-markdown'
 import useStorage, { keys } from '../../hooks/useStorage'
 import { trackAction, actions } from '../../analytics'
+import Avatar, { sizes } from '../avatar'
 
 const useStyles = makeStyles(theme => ({
   paper: {
     padding: theme.spacing(2, 2),
     marginBottom: '1rem',
-    position: 'relative'
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center'
   },
+  leftCol: {
+    flexShrink: 0,
+    marginRight: '1%'
+  },
+  rightCol: {},
   message: {
     marginTop: theme.spacing(1),
     '& p:last-child': {
@@ -31,7 +39,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default ({ id, title, message }) => {
+export default ({ id, title, message, createdBy }) => {
   const classes = useStyles()
   const [hiddenNotices] = useStorage(keys.hiddenNotices, [])
   const onHideBtnClick = () => {
@@ -48,14 +56,23 @@ export default ({ id, title, message }) => {
 
   return (
     <Paper className={classes.paper}>
-      <Typography variant="h5" component="h3">
-        {title}
-      </Typography>
-      <div className={classes.message}>
-        <Markdown source={message} />
+      <div className={classes.leftCol}>
+        <Avatar
+          url={createdBy.avatarUrl}
+          username={createdBy.username}
+          size={sizes.SMALL}
+        />
       </div>
-      <div className={classes.hideBtn} onClick={onHideBtnClick}>
-        <CloseIcon />
+      <div className={classes.rightCol}>
+        <Typography variant="h5" component="h3">
+          {title}
+        </Typography>
+        <div className={classes.message}>
+          <Markdown source={message} />
+        </div>
+        <div className={classes.hideBtn} onClick={onHideBtnClick}>
+          <CloseIcon />
+        </div>
       </div>
     </Paper>
   )
