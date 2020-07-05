@@ -6,6 +6,7 @@ import { handleError } from '../error-handling'
 
 export const Operators = {
   EQUALS: '==',
+  GREATER_THAN: '>',
   ARRAY_CONTAINS: 'array-contains'
 }
 

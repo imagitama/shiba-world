@@ -30,6 +30,29 @@ function ScrollToTopBtn() {
   )
 }
 
+const footerLinks = [
+  {
+    url: routes.privacyPolicy,
+    label: 'Privacy Policy'
+  },
+  {
+    url: routes.users,
+    label: 'Users'
+  },
+  {
+    url: routes.streams,
+    label: 'Streams'
+  },
+  {
+    url: routes.activity,
+    label: 'Activity'
+  },
+  {
+    url: routes.stats,
+    label: 'Stats'
+  }
+]
+
 export default () => {
   const uid = useFirebaseUserId()
   const classes = useStyles()
@@ -46,10 +69,12 @@ export default () => {
         <br />
         &copy; {new Date().getFullYear()}{' '}
         <a href="https://www.jaredwilliams.com.au">Jared Williams</a> &ndash;{' '}
-        <Link to={routes.privacyPolicy}>Privacy Policy</Link> &ndash;{' '}
-        <Link to={routes.users}>Users</Link> &ndash;{' '}
-        <Link to={routes.activity}>Activity</Link> &ndash;{' '}
-        <Link to={routes.stats}>Stats</Link>
+        {footerLinks.map(({ url, label }, idx) => (
+          <span key={url}>
+            {idx !== 0 ? <> &ndash; </> : null}
+            <Link to={url}>{label}</Link>
+          </span>
+        ))}
       </footer>
     </>
   )
