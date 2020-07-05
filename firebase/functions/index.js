@@ -209,7 +209,8 @@ async function notifyUsersOfUnapprovedAsset(assetId, assetData) {
   const emailText = `Hi. The asset ${assetData.title} with ID ${assetId} has just been created and is waiting for approval :)`
 
   return db.collection(CollectionNames.Mail).add({
-    to: recipientEmails,
+    // BCC = blind carbon copy = others cant see it
+    bcc: recipientEmails,
     message: {
       subject: 'New unapproved asset at VRCArena',
       text: emailText,
