@@ -15,6 +15,7 @@ import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'
 import SortDropdown from '../../components/sort-dropdown'
 import AllTagsBrowser from '../../components/all-tags-browser'
+import NoResultsMessage from '../../components/no-results-message'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import useDatabaseQuery, {
@@ -72,7 +73,7 @@ function Assets({ categoryName, sortByFieldName, sortByDirection }) {
   }
 
   if (!results.length) {
-    return 'No results'
+    return <NoResultsMessage />
   }
 
   return <AssetResults assets={results} />

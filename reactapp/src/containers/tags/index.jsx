@@ -1,16 +1,21 @@
 import React from 'react'
 import { Helmet } from 'react-helmet'
+
 import useUserRecord from '../../hooks/useUserRecord'
-import LoadingIndicator from '../../components/loading-indicator'
-import AssetResults from '../../components/asset-results'
-import ErrorMessage from '../../components/error-message'
 import useDatabaseQuery, {
   Operators,
   CollectionNames,
   AssetFieldNames
 } from '../../hooks/useDatabaseQuery'
+
+import LoadingIndicator from '../../components/loading-indicator'
+import AssetResults from '../../components/asset-results'
+import ErrorMessage from '../../components/error-message'
 import Heading from '../../components/heading'
 import AllTagsBrowser from '../../components/all-tags-browser'
+import NoResultsMessage from '../../components/no-results-message'
+
+import * as routes from '../../routes'
 
 function Assets({ tagName }) {
   const [, , user] = useUserRecord()
@@ -44,7 +49,12 @@ function Assets({ tagName }) {
   }
 
   if (!results.length) {
-    return 'No results'
+    return (
+      <NoResultsMessage
+        callToActionUrl={routes.searchWithVar.replace(':searchTerm', tagName)}
+        callToActionLabel="Try search instead"
+      />
+    )
   }
 
   return <AssetResults assets={results} />

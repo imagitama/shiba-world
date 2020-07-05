@@ -5,6 +5,7 @@ import useUserRecord from '../../hooks/useUserRecord'
 import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
 import SearchResult from '../search-result'
+import NoResultsMessage from '../no-results-message'
 
 export default () => {
   const { searchTerm } = useSelector(({ app: { searchTerm } }) => ({
@@ -27,7 +28,11 @@ export default () => {
   }
 
   if (!hits.length) {
-    return 'Nothing found matching your search term'
+    return (
+      <NoResultsMessage>
+        Nothing found matching your search term
+      </NoResultsMessage>
+    )
   }
 
   return (

@@ -10,6 +10,7 @@ import Paper from '@material-ui/core/Paper'
 import FormattedDate from '../formatted-date'
 import ErrorMessage from '../error-message'
 import LoadingIndicator from '../loading-indicator'
+import NoResultsMessage from '../no-results-message'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -102,7 +103,7 @@ export default () => {
   }
 
   if (!results.length) {
-    return 'No history found'
+    return <NoResultsMessage>No history found</NoResultsMessage>
   }
 
   return (

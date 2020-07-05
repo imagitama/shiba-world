@@ -3,6 +3,7 @@ import React from 'react'
 import AssetResults from '../asset-results'
 import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
+import NoResultsMessage from '../no-results-message'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -29,6 +30,10 @@ export default () => {
 
   if (isErrored) {
     return <ErrorMessage>Failed to find your uploaded assets</ErrorMessage>
+  }
+
+  if (!assets.length) {
+    return <NoResultsMessage />
   }
 
   return <AssetResults assets={assets} showCategory />

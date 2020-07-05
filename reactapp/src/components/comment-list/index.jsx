@@ -1,12 +1,15 @@
 import React from 'react'
+
 import Comment from '../comment'
 import LoadingIndicator from '../loading-indicator'
+import ErrorMessage from '../error-message'
+import NoResultsMessage from '../no-results-message'
+
 import useDatabaseQuery, {
   CollectionNames,
   CommentFieldNames,
   Operators
 } from '../../hooks/useDatabaseQuery'
-import ErrorMessage from '../error-message'
 import useDatabaseDocument from '../../hooks/useDatabaseDocument'
 
 export default ({ collectionName, parentId }) => {
@@ -32,7 +35,7 @@ export default ({ collectionName, parentId }) => {
   }
 
   if (!results.length) {
-    return 'No comments found :('
+    return <NoResultsMessage>No comments found</NoResultsMessage>
   }
 
   return (

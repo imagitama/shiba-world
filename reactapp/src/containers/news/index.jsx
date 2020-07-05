@@ -16,6 +16,7 @@ import ErrorMessage from '../../components/error-message'
 import SimpleResultsItem from '../../components/simple-results-item'
 import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'
+import NoResultsMessage from '../../components/no-results-message'
 
 import categoryMeta from '../../category-meta'
 import * as routes from '../../routes'
@@ -62,7 +63,7 @@ function Articles() {
   }
 
   if (!articles.length) {
-    return 'No articles found'
+    return <NoResultsMessage>No articles found</NoResultsMessage>
   }
 
   return (

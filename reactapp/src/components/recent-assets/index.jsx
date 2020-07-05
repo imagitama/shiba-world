@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+
 import useDatabaseQuery, {
   Operators,
   CollectionNames,
@@ -7,10 +8,13 @@ import useDatabaseQuery, {
   OrderDirections
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
+
 import LoadingIndicator from '../loading-indicator'
 import AssetResults from '../asset-results'
 import ErrorMessage from '../error-message'
 import Button from '../button'
+import NoResultsMessage from '../no-results-message'
+
 import * as routes from '../../routes'
 
 function getViewMoreLinkUrl(speciesName, categoryName) {
@@ -67,13 +71,13 @@ export default ({ speciesName, limit = 10, categoryName, showPinned }) => {
     return <ErrorMessage>Failed to get recent assets</ErrorMessage>
   }
 
-  if (!results.length) {
-    return 'No results'
-  }
-
   return (
     <>
-      <AssetResults assets={results} showPinned={showPinned} />
+      {results.length ? (
+        <AssetResults assets={results} showPinned={showPinned} />
+      ) : (
+        <NoResultsMessage />
+      )}
       <div style={{ textAlign: 'center', marginTop: '1rem' }}>
         {speciesName && categoryName && (
           <Link

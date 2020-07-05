@@ -7,13 +7,17 @@ import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Paper from '@material-ui/core/Paper'
+
 import useDatabaseQuery, {
   CollectionNames,
   AssetFieldNames,
   Operators
 } from '../../hooks/useDatabaseQuery'
+
 import LoadingIndicator from '../../components/loading-indicator'
 import ErrorMessage from '../../components/error-message'
+import NoResultsMessage from '../../components/no-results-message'
+
 import * as routes from '../../routes'
 
 const useStyles = makeStyles({
@@ -66,7 +70,7 @@ export default () => {
   }
 
   if (!results.length) {
-    return 'None found :)'
+    return <NoResultsMessage />
   }
 
   return <AssetsTable assets={results} />

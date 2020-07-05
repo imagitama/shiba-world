@@ -12,7 +12,7 @@ import Avatar, { sizes } from '../avatar'
 const useStyles = makeStyles(theme => ({
   paper: {
     padding: theme.spacing(2, 2),
-    marginBottom: '1rem',
+    marginBottom: '2rem',
     position: 'relative',
     display: 'flex',
     alignItems: 'center'

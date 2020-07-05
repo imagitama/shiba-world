@@ -17,6 +17,7 @@ import BodyText from '../../components/body-text'
 import SortDropdown from '../../components/sort-dropdown'
 import Button from '../../components/button'
 import AllTagsBrowser from '../../components/all-tags-browser'
+import NoResultsMessage from '../../components/no-results-message'
 
 import useDatabaseQuery, {
   Operators,
@@ -75,7 +76,7 @@ function Assets({
   }
 
   if (!results.length) {
-    return 'No results'
+    return <NoResultsMessage />
   }
 
   return <AssetResults assets={results} showPinned />

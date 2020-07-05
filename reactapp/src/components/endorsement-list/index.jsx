@@ -1,12 +1,15 @@
 import React from 'react'
+
 import EndorsementListItem from '../endorsement-list-item'
 import LoadingIndicator from '../loading-indicator'
+import ErrorMessage from '../error-message'
+import NoResultsMessage from '../no-results-message'
+
 import useDatabaseQuery, {
   CollectionNames,
   Operators,
   EndorsementFieldNames
 } from '../../hooks/useDatabaseQuery'
-import ErrorMessage from '../error-message'
 import useDatabaseDocument from '../../hooks/useDatabaseDocument'
 
 export default ({ assetId }) => {
@@ -29,7 +32,7 @@ export default ({ assetId }) => {
   }
 
   if (!results.length) {
-    return 'No endorsements found :('
+    return <NoResultsMessage>No endorsements found</NoResultsMessage>
   }
 
   return (
