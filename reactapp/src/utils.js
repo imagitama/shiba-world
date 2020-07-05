@@ -1,3 +1,6 @@
+import firebase from 'firebase/app'
+import 'firebase/firestore'
+
 export function scrollToTop() {
   window.scrollTo({
     top: 0,
@@ -83,4 +86,26 @@ export function getFilenameFromUrl(url) {
     .replace(/%20/g, ' ')
     .split('___')
     .pop()
+}
+
+// TODO: Move these funcs to a firestore utils file
+
+export function createRef(collectionName, id) {
+  return {
+    ref: {
+      collectionName,
+      id
+    }
+  }
+}
+
+export function isRef(value) {
+  return value && typeof value === 'object' && value.hasOwnProperty('ref')
+}
+
+export function getDocument(collectionName, id) {
+  return firebase
+    .firestore()
+    .collection(collectionName)
+    .doc(id)
 }

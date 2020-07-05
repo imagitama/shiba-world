@@ -17,7 +17,6 @@ import useDatabaseQuery, {
   AssetFieldNames,
   Operators
 } from '../../hooks/useDatabaseQuery'
-import useDatabaseDocument from '../../hooks/useDatabaseDocument'
 import useUserRecord from '../../hooks/useUserRecord'
 
 import LoadingIndicator from '../loading-indicator'
@@ -27,6 +26,7 @@ import AssetResults from '../asset-results'
 import Message from '../message'
 
 import * as routes from '../../routes'
+import { createRef } from '../../utils'
 
 const useStyles = makeStyles({
   socialMediaItem: {
@@ -56,13 +56,16 @@ const useStyles = makeStyles({
 
 const AssetsForUser = ({ userId }) => {
   const [, , currentUser] = useUserRecord()
-  const [userDocument] = useDatabaseDocument(CollectionNames.Users, userId)
 
   let whereClauses = [
     [AssetFieldNames.isApproved, Operators.EQUALS, true],
     [AssetFieldNames.isAdult, Operators.EQUALS, false],
     [AssetFieldNames.isDeleted, Operators.EQUALS, false],
-    [AssetFieldNames.createdBy, Operators.EQUALS, userDocument]
+    [
+      AssetFieldNames.createdBy,
+      Operators.EQUALS,
+      createRef(CollectionNames.Users, userId)
+    ]
   ]
 
   // NSFW content is super risky and firebase doesnt have a != operator
@@ -75,7 +78,7 @@ const AssetsForUser = ({ userId }) => {
 
   const [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.Assets,
-    userDocument ? whereClauses : false
+    currentUser ? whereClauses : false
   )
 
   if (isLoading || results === null) {

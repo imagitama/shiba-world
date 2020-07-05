@@ -6,7 +6,8 @@ const categories = {
   ASSETS: 'Assets',
   APP: 'App',
   COMMENTS: 'Comments',
-  REQUESTS: 'Requests'
+  REQUESTS: 'Requests',
+  PROFILE: 'Profile'
 }
 
 export const actions = {
@@ -21,6 +22,8 @@ export const actions = {
   LOGOUT: 'Logout',
   SIGNUP: 'SignUp',
   CHANGE_USERNAME: 'ChangeUsername',
+  UPLOAD_AVATAR: 'UploadAvatar',
+  TOGGLE_ENABLED_ADULT_CONTENT: 'ToggleEnabledAdultContent',
 
   // SEARCH
   FOCUS_SEARCH: 'FocusSearch',
@@ -43,8 +46,8 @@ export const actions = {
   UNPIN_ASSET: 'UnpinAsset',
   VISIT_SOURCE: 'VisitSource',
 
-  // ACCOUNT
-  TOGGLE_ENABLED_ADULT_CONTENT: 'ToggleEnabledAdultContent',
+  // PROFILE
+  EDIT_SOCIAL_MEDIA_USERNAMES: 'EditSocialMediaUsernames',
 
   HIDE_NOTICE: 'HideNotice',
   TOGGLE_DARK_MODE: 'ToggleDarkMode',
@@ -85,6 +88,18 @@ const actionDetails = {
   },
   [actions.CHANGE_USERNAME]: {
     category: categories.AUTH
+  },
+  [actions.TOGGLE_ENABLED_ADULT_CONTENT]: {
+    category: categories.AUTH
+  },
+  [actions.UPLOAD_AVATAR]: {
+    category: categories.AUTH
+  },
+
+  // PROFILE
+
+  [actions.EDIT_SOCIAL_MEDIA_USERNAMES]: {
+    category: categories.PROFILE
   },
 
   // SEARCH

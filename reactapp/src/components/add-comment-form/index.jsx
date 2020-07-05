@@ -1,15 +1,19 @@
 import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
-import Button from '../button'
+
 import useDatabaseSave from '../../hooks/useDatabaseSave'
-import useDatabaseDocument from '../../hooks/useDatabaseDocument'
 import { trackAction, actions } from '../../analytics'
-import useUserRecord from '../../hooks/useUserRecord'
 import { CollectionNames } from '../../hooks/useDatabaseQuery'
+import useFirebaseUserId from '../../hooks/useFirebaseUserId'
+
 import ErrorMessage from '../error-message'
 import SuccessMessage from '../success-message'
 import LoadingIndicator from '../loading-indicator'
+import Button from '../button'
+
+import { handleError } from '../../error-handling'
+import { createRef } from '../../utils'
 
 const useStyles = makeStyles({
   root: {
@@ -32,33 +36,43 @@ export default ({ collectionName, parentId }) => {
   }
 
   const [textFieldValue, setTextFieldValue] = useState('')
-  const [, , user] = useUserRecord()
-  const [isSaving, didSaveSucceedOrFail, save] = useDatabaseSave(
+  const userId = useFirebaseUserId()
+  const [isSaving, isSuccess, isErrored, save] = useDatabaseSave(
     CollectionNames.Comments
   )
-  const [userDocument] = useDatabaseDocument(
-    CollectionNames.Users,
-    user && user.id
-  )
-  const [parentDoc] = useDatabaseDocument(collectionName, parentId)
   const classes = useStyles()
-
-  if (!user) {
-    return null
-  }
 
   if (isSaving) {
     return <LoadingIndicator>Adding your comment...</LoadingIndicator>
   }
 
-  if (didSaveSucceedOrFail === true) {
+  if (isSuccess) {
     return <SuccessMessage>Added your comment successfully</SuccessMessage>
   }
 
-  if (didSaveSucceedOrFail === false) {
+  if (isErrored) {
     return (
       <ErrorMessage>Error adding your comment. Please try again.</ErrorMessage>
     )
+  }
+
+  const onAddCommentBtnClick = async () => {
+    try {
+      const [documentId] = await save({
+        parent: createRef(collectionName, parentId),
+        comment: textFieldValue,
+        createdBy: createRef(CollectionNames.Users, userId),
+        createdAt: new Date()
+      })
+
+      trackAction(actions.CREATE_COMMENT, {
+        parentId: documentId,
+        userId
+      })
+    } catch (err) {
+      console.error('Failed to add comment', err)
+      handleError(err)
+    }
   }
 
   return (
@@ -72,21 +86,7 @@ export default ({ collectionName, parentId }) => {
         rows={5}
         variant="filled"
       />
-      <Button
-        className={classes.button}
-        onClick={async () => {
-          const [documentId] = await save({
-            parent: parentDoc,
-            comment: textFieldValue,
-            createdBy: userDocument,
-            createdAt: new Date()
-          })
-
-          trackAction(actions.CREATE_COMMENT, {
-            parentId: documentId,
-            userId: user.id
-          })
-        }}>
+      <Button className={classes.button} onClick={onAddCommentBtnClick}>
         Add Comment
       </Button>
     </div>

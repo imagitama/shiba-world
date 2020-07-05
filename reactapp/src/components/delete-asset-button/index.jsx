@@ -1,56 +1,55 @@
 import React from 'react'
+
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useUserRecord from '../../hooks/useUserRecord'
-import useDatabaseDocument from '../../hooks/useDatabaseDocument'
-import useDatabaseQuery, { CollectionNames } from '../../hooks/useDatabaseQuery'
-import { trackAction, actions } from '../../analytics'
+import useDatabaseQuery, {
+  CollectionNames,
+  AssetFieldNames
+} from '../../hooks/useDatabaseQuery'
+import useFirebaseUserId from '../../hooks/useFirebaseUserId'
+
 import Button from '../button'
+
+import { trackAction, actions } from '../../analytics'
 import { handleError } from '../../error-handling'
+import { createRef } from '../../utils'
 
 export default ({ assetId }) => {
-  const [isLoadingUser, isErroredLoadingUser, user] = useUserRecord()
-  const [userDocument] = useDatabaseDocument(
-    CollectionNames.Users,
-    user && user.id
-  )
+  const userId = useFirebaseUserId()
+  const [, , user] = useUserRecord()
   const [isLoadingAsset, isErroredLoadingAsset, asset] = useDatabaseQuery(
     CollectionNames.Assets,
     assetId
   )
-  const [isSaving, didSaveSucceedOrFail, save] = useDatabaseSave(
+  const [isSaving, , isErroredSavingAsset, saveAsset] = useDatabaseSave(
     CollectionNames.Assets,
     assetId
   )
 
-  if (isLoadingUser || isLoadingAsset || isSaving) {
+  if (!user || isLoadingAsset || isSaving) {
     return <Button color="default">Loading...</Button>
   }
 
-  if (
-    isErroredLoadingUser ||
-    isErroredLoadingAsset ||
-    didSaveSucceedOrFail === false
-  ) {
+  if (isErroredLoadingAsset || isErroredSavingAsset) {
     return <Button disabled>Error</Button>
   }
 
-  if (!user) {
-    return null
-  }
-
-  const { isDeleted } = asset
+  const { [AssetFieldNames.isDeleted]: isDeleted } = asset
 
   const onBtnClick = async () => {
     try {
-      await save({
-        isDeleted: !isDeleted,
-        lastModifiedBy: userDocument,
-        lastModifiedAt: new Date()
+      await saveAsset({
+        [AssetFieldNames.isDeleted]: !isDeleted,
+        [AssetFieldNames.lastModifiedBy]: createRef(
+          CollectionNames.Users,
+          userId
+        ),
+        [AssetFieldNames.lastModifiedAt]: new Date()
       })
 
       trackAction(isDeleted ? actions.RESTORE_ASSET : actions.DELETE_ASSET, {
         assetId,
-        userId: user && user.id
+        userId
       })
     } catch (err) {
       console.error('Failed to edit asset to delete or undelete', err)

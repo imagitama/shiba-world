@@ -13,6 +13,7 @@ class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, errorInfo) {
+    // Do regular .log() here just in case .error() triggers Sentry twice
     console.log(error, errorInfo)
     Sentry.captureException(error)
   }

@@ -18,15 +18,17 @@ import Button from '../../components/button'
 
 import useDatabaseQuery, {
   CollectionNames,
-  RequestsFieldNames
+  RequestsFieldNames,
+  UserFieldNames
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
-import useDatabaseDocument from '../../hooks/useDatabaseDocument'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
+import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import * as routes from '../../routes'
 import { handleError } from '../../error-handling'
 import { trackAction, actions } from '../../analytics'
+import { createRef } from '../../utils'
 
 const useStyles = makeStyles({
   container: {
@@ -61,20 +63,26 @@ function IsClosedMessage() {
   )
 }
 
+function IsDeletedMessage() {
+  const classes = useStyles()
+  return (
+    <Paper className={classes.message}>This request has been deleted.</Paper>
+  )
+}
+
 function getCanUserEditRequest(request, user) {
   return (
-    user && (user.isEditor || user.isAdmin || user.id === request.createdBy.id)
+    user &&
+    (user[UserFieldNames.isEditor] ||
+      user[UserFieldNames.isAdmin] ||
+      user.id === request[RequestsFieldNames.createdBy].id)
   )
 }
 
 function RequestEditor({ request, onDone }) {
-  const [, , user] = useUserRecord()
+  const userId = useFirebaseUserId()
   const classes = useStyles()
-  const [userDocument] = useDatabaseDocument(
-    CollectionNames.Users,
-    user && user.id
-  )
-  const [isSaving, wasSaveSuccessOrFail, save] = useDatabaseSave(
+  const [isSaving, isSaveSuccess, isSaveError, save] = useDatabaseSave(
     CollectionNames.Requests,
     request.id
   )
@@ -84,22 +92,17 @@ function RequestEditor({ request, onDone }) {
     return <LoadingIndicator />
   }
 
-  if (wasSaveSuccessOrFail === false) {
+  if (isSaveError) {
     return <ErrorMessage>Failed to save the request</ErrorMessage>
   }
 
-  if (wasSaveSuccessOrFail === true) {
+  if (isSaveSuccess) {
     return (
       <SuccessMessage>
         Saved successfully
         <br />
         <br />
-        <Button
-          onClick={() => {
-            onDone()
-          }}>
-          Dismiss
-        </Button>
+        <Button onClick={() => onDone()}>Dismiss</Button>
       </SuccessMessage>
     )
   }
@@ -111,6 +114,7 @@ function RequestEditor({ request, onDone }) {
     })
 
   const onSaveBtnClick = async () => {
+    // TODO: Output these invalid fields to user
     if (
       !fieldData[RequestsFieldNames.title] ||
       !fieldData[RequestsFieldNames.description]
@@ -122,13 +126,16 @@ function RequestEditor({ request, onDone }) {
       await save({
         ...fieldData,
         [RequestsFieldNames.isClosed]: false,
-        [RequestsFieldNames.lastModifiedBy]: userDocument,
+        [RequestsFieldNames.lastModifiedBy]: createRef(
+          CollectionNames.Users,
+          userId
+        ),
         [RequestsFieldNames.lastModifiedAt]: new Date()
       })
 
       trackAction(actions.EDIT_REQUEST, {
         requestId: request.id,
-        userId: user.id
+        userId
       })
     } catch (err) {
       console.error('Failed to edit request', err)
@@ -205,7 +212,15 @@ export default ({
     return <ErrorMessage>Request does not exist</ErrorMessage>
   }
 
-  const { id, title, description, createdAt, createdBy, isClosed } = result
+  const {
+    id,
+    title,
+    description,
+    createdAt,
+    createdBy,
+    isClosed,
+    [RequestsFieldNames.isDeleted]: isDeleted
+  } = result
 
   return (
     <>
@@ -216,6 +231,7 @@ export default ({
         <meta name="description" content={description} />
       </Helmet>
       {isClosed && <IsClosedMessage />}
+      {isDeleted && <IsDeletedMessage />}
       {isInEditMode ? (
         <RequestEditor request={result} onDone={() => setIsInEditMode(false)} />
       ) : (

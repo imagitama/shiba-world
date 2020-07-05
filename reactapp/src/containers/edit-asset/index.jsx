@@ -9,78 +9,79 @@ import ErrorMessage from '../../components/error-message'
 
 import useDatabase from '../../hooks/useDatabase'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
-import useUserRecord from '../../hooks/useUserRecord'
-import { CollectionNames } from '../../hooks/useDatabaseQuery'
-import useDatabaseDocument from '../../hooks/useDatabaseDocument'
+import { CollectionNames, AssetFieldNames } from '../../hooks/useDatabaseQuery'
+import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import { scrollToTop } from '../../utils'
 import * as routes from '../../routes'
+import { handleError } from '../../error-handling'
+import { createRef } from '../../utils'
 
 export default ({ match: { params } }) => {
-  const [isLoadingUser, isErrorLoadingUser, user] = useUserRecord()
-  const [isLoading, isErrored, asset] = useDatabase(
+  const assetId = params.assetId
+  const userId = useFirebaseUserId()
+  const [isLoadingAsset, isErroredLoadingAsset, asset] = useDatabase(
     CollectionNames.Assets,
-    params.assetId
-  )
-  const [userDocument] = useDatabaseDocument(
-    CollectionNames.Users,
-    user && user.id
+    assetId
   )
   const [newFields, setNewFields] = useState()
-  const [isSaving, wasSaveSuccessOrFail, save] = useDatabaseSave(
+  const [isSaving, isSaveSuccess, isSaveError, save] = useDatabaseSave(
     CollectionNames.Assets,
-    params.assetId
+    assetId
   )
 
-  if (isLoadingUser) {
-    return <LoadingIndicator />
-  }
-
-  if (isErrorLoadingUser) {
-    return <ErrorMessage>Failed to load your profile</ErrorMessage>
-  }
-
-  if (!user) {
+  if (!userId) {
     return <NoPermissionMessage />
+  }
+
+  if (isLoadingAsset || !asset) {
+    return <LoadingIndicator message="Loading asset..." />
+  }
+
+  if (isErroredLoadingAsset) {
+    return <ErrorMessage>Failed to load the asset</ErrorMessage>
+  }
+
+  const onEditorSubmit = async fields => {
+    try {
+      scrollToTop()
+
+      await save({
+        ...fields,
+        [AssetFieldNames.lastModifiedBy]: createRef(
+          CollectionNames.Users,
+          userId
+        ),
+        [AssetFieldNames.lastModifiedAt]: new Date()
+      })
+
+      setNewFields(fields)
+    } catch (err) {
+      console.error('Failed to save asset to db', err)
+      handleError(err)
+    }
   }
 
   return (
     <>
-      {wasSaveSuccessOrFail === true && (
+      {isSaveSuccess ? (
         <SuccessMessage>
           Save success
           <br />
-          <Button
-            url={routes.viewAssetWithVar.replace(':assetId', params.assetId)}>
+          <Button url={routes.viewAssetWithVar.replace(':assetId', assetId)}>
             View Asset
           </Button>
         </SuccessMessage>
-      )}
-      {isLoading || isSaving ? (
-        <LoadingIndicator
-          message={isSaving ? 'Saving...' : isLoading ? 'Loading...' : ''}
-        />
-      ) : isErrored || !asset ? (
-        <ErrorMessage>Failed to load the asset for editing</ErrorMessage>
-      ) : wasSaveSuccessOrFail === false ? (
-        <ErrorMessage>Failed to edit the asset</ErrorMessage>
-      ) : (
-        <AssetEditor
-          assetId={params.assetId}
-          asset={newFields ? newFields : asset}
-          onSubmit={fields => {
-            scrollToTop()
-
-            save({
-              ...fields,
-              lastModifiedBy: userDocument,
-              lastModifiedAt: new Date()
-            })
-
-            setNewFields(fields)
-          }}
-        />
-      )}
+      ) : isSaving ? (
+        <LoadingIndicator message="Saving..." />
+      ) : isSaveError ? (
+        <ErrorMessage>Failed to save the asset. Maybe try again?</ErrorMessage>
+      ) : null}
+      <AssetEditor
+        assetId={assetId}
+        asset={newFields ? newFields : asset}
+        onSubmit={onEditorSubmit}
+      />
     </>
   )
 }

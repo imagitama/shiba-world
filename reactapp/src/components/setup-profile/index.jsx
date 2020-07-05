@@ -3,10 +3,9 @@ import TextField from '@material-ui/core/TextField'
 import FormControl from '@material-ui/core/FormControl'
 
 import useDatabaseSave from '../../hooks/useDatabaseSave'
-import { CollectionNames } from '../../hooks/useDatabaseQuery'
+import { CollectionNames, UserFieldNames } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
-import useUserDocument from '../../hooks/useDatabaseDocument'
 
 import ErrorMessage from '../error-message'
 import SuccessMessage from '../success-message'
@@ -16,25 +15,28 @@ import Heading from '../heading'
 import BodyText from '../body-text'
 
 import { handleError } from '../../error-handling'
+import { createRef } from '../../utils'
 
 export default () => {
-  const uid = useFirebaseUserId()
-  const [, , user] = useUserRecord()
-  const userId = user ? user.id : null
-  const [userDoc] = useUserDocument(CollectionNames.Users, userId)
-  const [isCreating, isCreateSuccessOrFail, create] = useDatabaseSave(
+  const userId = useFirebaseUserId()
+  const [isLoadingUser, , user] = useUserRecord()
+  const [isCreating, isCreateSuccess, isCreateError, create] = useDatabaseSave(
     CollectionNames.Users,
     userId
   )
   const [fieldValue, setFieldValue] = useState('')
 
+  if (!userId) {
+    return null
+  }
+
   // Sometimes a delay before firebase function creates their profile
-  if ((uid && !userId) || user.username !== '') {
+  if (isLoadingUser || !user) {
     return (
       <LoadingIndicator
         message={
           <>
-            Looking up your profile...
+            Looking up your account...
             <br />
             <br />
             (contact Peanut if this never goes away)
@@ -48,12 +50,33 @@ export default () => {
     return <LoadingIndicator message="Setting up your profile..." />
   }
 
-  if (isCreateSuccessOrFail === true) {
+  if (isCreateSuccess) {
     return <SuccessMessage>Profile has been setup successfully</SuccessMessage>
   }
 
-  if (isCreateSuccessOrFail === false) {
-    return <ErrorMessage>Failed to create your profile</ErrorMessage>
+  if (isCreateError) {
+    return (
+      <ErrorMessage>
+        Failed to create your profile. Please contact Peanut ASAP to fix this
+      </ErrorMessage>
+    )
+  }
+
+  const onSaveBtnClick = async () => {
+    try {
+      if (!fieldValue) {
+        return
+      }
+
+      await create({
+        [UserFieldNames.username]: fieldValue,
+        [UserFieldNames.createdBy]: createRef(CollectionNames.Users, userId),
+        [UserFieldNames.createdAt]: new Date()
+      })
+    } catch (err) {
+      console.error('Failed to setup profile', { username: fieldValue }, err)
+      handleError(err)
+    }
   }
 
   return (
@@ -67,25 +90,7 @@ export default () => {
           onChange={event => setFieldValue(event.target.value)}
         />
       </FormControl>
-      <Button
-        onClick={async () => {
-          try {
-            await create({
-              username: fieldValue,
-              lastModifiedBy: userDoc,
-              lastModifiedAt: new Date()
-            })
-          } catch (err) {
-            console.error(
-              'Failed to setup profile',
-              { username: fieldValue },
-              err
-            )
-            handleError(err)
-          }
-        }}>
-        Save
-      </Button>
+      <Button onClick={onSaveBtnClick}>Save</Button>
     </>
   )
 }

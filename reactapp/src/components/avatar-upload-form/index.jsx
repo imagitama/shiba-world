@@ -5,12 +5,14 @@ import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
 import FileUploader from '../file-uploader'
 
-import useDatabaseDocument from '../../hooks/useDatabaseDocument'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
-import { CollectionNames } from '../../hooks/useDatabaseQuery'
+import { CollectionNames, UserFieldNames } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
+import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import { handleError } from '../../error-handling'
+import { createRef } from '../../utils'
+import { trackAction, actions } from '../../analytics'
 import defaultAvatarUrl from '../../assets/images/default-avatar.png'
 
 const useStyles = makeStyles({
@@ -36,23 +38,28 @@ const useStyles = makeStyles({
 })
 
 export default () => {
+  const userId = useFirebaseUserId()
   const classes = useStyles()
   const [, , user] = useUserRecord()
-  const [userDocument] = useDatabaseDocument(
+  const [isSaving, , isErrored, save] = useDatabaseSave(
     CollectionNames.Users,
-    user && user.id
-  )
-  const [isSaving, hasSucceededOrFailed, save] = useDatabaseSave(
-    CollectionNames.Users,
-    user && user.id
+    userId
   )
 
   const onDownloadUrl = async uploadedUrl => {
     try {
       await save({
+        [UserFieldNames.avatarUrl]: uploadedUrl,
+        [UserFieldNames.lastModifiedBy]: createRef(
+          CollectionNames.Users,
+          userId
+        ),
+        [UserFieldNames.lastModifiedAt]: new Date()
+      })
+
+      trackAction(actions.UPLOAD_AVATAR, {
         avatarUrl: uploadedUrl,
-        lastModifiedBy: userDocument,
-        lastModifiedAt: new Date()
+        userId
       })
     } catch (err) {
       console.error(err)
@@ -64,17 +71,19 @@ export default () => {
     return <LoadingIndicator />
   }
 
-  if (hasSucceededOrFailed === false) {
+  if (isErrored) {
     return <ErrorMessage>Failed to upload your avatar</ErrorMessage>
   }
+
+  const { [UserFieldNames.avatarUrl]: avatarUrl } = user
 
   return (
     <FileUploader
       onDownloadUrl={onDownloadUrl}
-      directoryPath={`avatars/${user.id}`}>
+      directoryPath={`avatars/${userId}`}>
       <div className={classes.container}>
         <img
-          src={user.avatarUrl ? user.avatarUrl : defaultAvatarUrl}
+          src={avatarUrl ? avatarUrl : defaultAvatarUrl}
           className={classes.image}
           alt="Avatar upload preview"
         />

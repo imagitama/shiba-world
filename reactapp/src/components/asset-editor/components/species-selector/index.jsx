@@ -114,14 +114,7 @@ export default ({
         ))}
       </div>
       <div className={classes.doneBtn}>
-        <Button
-          size="large"
-          onClick={() => {
-            if (!selectedSpeciesMulti.length) {
-              return
-            }
-            onDone()
-          }}>
+        <Button size="large" onClick={() => onDone()}>
           Done
         </Button>
       </div>

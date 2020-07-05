@@ -5,7 +5,6 @@ import useDatabaseQuery, {
   CollectionNames,
   ProfileFieldNames
 } from '../../hooks/useDatabaseQuery'
-import useDatabaseDocument from '../../hooks/useDatabaseDocument'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 
@@ -14,6 +13,8 @@ import ErrorMessage from '../error-message'
 import Button from '../button'
 
 import { handleError } from '../../error-handling'
+import { createRef } from '../../utils'
+import { trackAction, actions } from '../../analytics'
 
 export default () => {
   const userId = useFirebaseUserId()
@@ -21,8 +22,7 @@ export default () => {
     CollectionNames.Profiles,
     userId
   )
-  const [userDocument] = useDatabaseDocument(CollectionNames.Users, userId)
-  const [isSaving, hasSavedOrFailed, save] = useDatabaseSave(
+  const [isSaving, isSaveSuccess, isSaveError, save] = useDatabaseSave(
     CollectionNames.Profiles,
     userId
   )
@@ -60,8 +60,16 @@ export default () => {
     try {
       await save({
         ...formFieldValues,
-        [ProfileFieldNames.lastModifiedBy]: userDocument,
+        [ProfileFieldNames.lastModifiedBy]: createRef(
+          CollectionNames.Users,
+          userId
+        ),
         [ProfileFieldNames.lastModifiedAt]: new Date()
+      })
+
+      trackAction(actions.EDIT_SOCIAL_MEDIA_USERNAMES, {
+        usernames: formFieldValues,
+        userId
       })
     } catch (err) {
       console.error('Failed to save social media fields to database', err)
@@ -147,9 +155,9 @@ export default () => {
       />
       <br />
       {isSaving && 'Saving...'}
-      {hasSavedOrFailed === true
+      {isSaveSuccess
         ? 'Success!'
-        : hasSavedOrFailed === false
+        : isSaveError
         ? 'Failed to save. Maybe try again?'
         : null}
       <Button onClick={onSaveBtnClick} isDisabled={isSaving}>

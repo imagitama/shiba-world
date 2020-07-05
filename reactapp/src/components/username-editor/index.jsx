@@ -1,73 +1,87 @@
 import React, { useState } from 'react'
 import TextField from '@material-ui/core/TextField'
+
 import useDatabaseSave from '../../hooks/useDatabaseSave'
-import { CollectionNames } from '../../hooks/useDatabaseQuery'
+import { CollectionNames, UserFieldNames } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
+import useFirebaseUserId from '../../hooks/useFirebaseUserId'
+
 import { trackAction, actions } from '../../analytics'
-import Button from '../button'
 import { handleError } from '../../error-handling'
+import { createRef } from '../../utils'
+
+import Button from '../button'
+import LoadingIndicator from '../loading-indicator'
+import ErrorMessage from '../error-message'
 
 export default () => {
+  const userId = useFirebaseUserId()
   const [isLoadingUser, isErrorLoadingUser, user] = useUserRecord()
-  const [isSaving, isSuccessOrFail, save] = useDatabaseSave(
+  const [isSaving, isSaveSuccess, isSaveError, save] = useDatabaseSave(
     CollectionNames.Users,
-    user && user.id
+    userId
   )
   const [fieldValue, setFieldValue] = useState('')
 
+  // TODO: Show error?
+  if (!userId) {
+    return null
+  }
+
   if (isLoadingUser) {
-    return 'Loading...'
+    return <LoadingIndicator />
   }
 
   if (isErrorLoadingUser) {
-    return 'Failed to load your profile'
+    return <ErrorMessage>Failed to load your user account</ErrorMessage>
   }
 
-  if (!user) {
-    return 'You must be logged in to change your username'
-  }
+  const { [UserFieldNames.username]: username } = user
 
-  if (isSaving) {
-    return 'Changing your username...'
-  }
+  const onSaveBtnClick = async () => {
+    try {
+      await save({
+        [UserFieldNames.username]: fieldValue,
+        [UserFieldNames.lastModifiedBy]: createRef(
+          CollectionNames.Users,
+          userId
+        ),
+        [UserFieldNames.lastModifiedAt]: new Date()
+      })
 
-  if (isSuccessOrFail === true) {
-    return 'Username has been changed successfully'
-  }
-
-  if (isSuccessOrFail === false) {
-    return 'Failed to change your username. Probably a connection or permissions error'
+      trackAction(actions.CHANGE_USERNAME, {
+        userId,
+        newUsername: fieldValue
+      })
+    } catch (err) {
+      console.error(
+        'Failed to edit username',
+        { userId: user.id, newUsername: fieldValue },
+        err
+      )
+      handleError(err)
+    }
   }
 
   return (
     <>
-      Enter in your new name:{' '}
-      <TextField onChange={event => setFieldValue(event.target.value)} /> <br />
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={async () => {
-          try {
-            await save({
-              username: fieldValue
-            })
-
-            trackAction(actions.CHANGE_USERNAME, {
-              userId: user.id,
-              newUsername: fieldValue
-            })
-          } catch (err) {
-            console.error(
-              'Failed to edit username',
-              { userId: user.id, newUsername: fieldValue },
-              err
-            )
-            handleError(err)
-          }
-        }}>
-        Change Name
+      Enter a new name to change it:
+      <br />
+      <br />
+      <TextField
+        defaultValue={username}
+        onChange={event => setFieldValue(event.target.value)}
+      />
+      <Button variant="contained" color="primary" onClick={onSaveBtnClick}>
+        Change
       </Button>
-      {}
+      {isSaving
+        ? 'Saving...'
+        : isSaveSuccess
+        ? 'Username changed successfully'
+        : isSaveError
+        ? 'Failed to change your username - please try again'
+        : null}
     </>
   )
 }

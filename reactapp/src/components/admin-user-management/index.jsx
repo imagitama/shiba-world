@@ -5,16 +5,21 @@ import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Paper from '@material-ui/core/Paper'
-import useDatabase from '../../hooks/useDatabase'
-import { CollectionNames } from '../../hooks/useDatabaseQuery'
+
+import useDatabaseQuery, { CollectionNames } from '../../hooks/useDatabaseQuery'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
+import useFirebaseUserId from '../../hooks/useFirebaseUserId'
+
 import Button from '../../components/button'
 import LoadingIndicator from '../../components/loading-indicator'
 import ErrorMessage from '../../components/error-message'
+
 import { handleError } from '../../error-handling'
+import { createRef } from '../../utils'
 
 const ToggleFieldButton = ({ userId, fieldName, currentValue }) => {
-  const [isSaving, didSaveFailOrSucceed, save] = useDatabaseSave(
+  const myUserId = useFirebaseUserId()
+  const [isSaving, isSuccess, isErrored, save] = useDatabaseSave(
     CollectionNames.Users,
     userId
   )
@@ -25,16 +30,14 @@ const ToggleFieldButton = ({ userId, fieldName, currentValue }) => {
 
   return (
     <>
-      {didSaveFailOrSucceed === true
-        ? 'Saved!'
-        : didSaveFailOrSucceed === false
-        ? 'Failed to save'
-        : ''}
+      {isSuccess ? 'Saved!' : isErrored ? 'Failed to save' : ''}
       <Button
         onClick={async () => {
           try {
             await save({
-              [fieldName]: !currentValue
+              [fieldName]: !currentValue,
+              lastModifiedBy: createRef(CollectionNames.Users, myUserId),
+              lastModifiedAt: new Date()
             })
           } catch (err) {
             console.error('Failed to toggle field', { userId, fieldName }, err)
@@ -48,15 +51,13 @@ const ToggleFieldButton = ({ userId, fieldName, currentValue }) => {
 }
 
 const AdminUserManagement = () => {
-  const [isLoadingRecord, didLoadingRecordFail, users] = useDatabase(
-    CollectionNames.Users
-  )
+  const [isLoading, isErrored, users] = useDatabaseQuery(CollectionNames.Users)
 
-  if (isLoadingRecord) {
+  if (isLoading) {
     return <LoadingIndicator>Loading users...</LoadingIndicator>
   }
 
-  if (didLoadingRecordFail) {
+  if (isErrored) {
     return <ErrorMessage>ailed to load users. Please try again</ErrorMessage>
   }
 

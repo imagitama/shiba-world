@@ -13,47 +13,19 @@ import useDatabaseQuery, {
   AssetFieldNames,
   Operators
 } from '../../hooks/useDatabaseQuery'
-import useDatabaseSave from '../../hooks/useDatabaseSave'
 
 import * as routes from '../../routes'
 
 import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
-import Button from '../button'
 import NoResultsMessage from '../no-results-message'
+import ApproveAssetButton from '../approve-asset-button'
 
 const useStyles = makeStyles({
   table: {
     width: '100%'
   }
 })
-
-function ApproveButton({ assetId }) {
-  const [isSaving, didSaveSucceedOrFail, save] = useDatabaseSave(
-    CollectionNames.Assets,
-    assetId
-  )
-
-  const approve = () => {
-    save({
-      isApproved: true
-    })
-  }
-
-  if (isSaving) {
-    return 'Approving...'
-  }
-
-  if (didSaveSucceedOrFail === true) {
-    return 'Approved!'
-  }
-
-  if (didSaveSucceedOrFail === false) {
-    return 'Failed to approve'
-  }
-
-  return <Button onClick={approve}>Approve</Button>
-}
 
 function AssetsTable({ assets }) {
   const classes = useStyles()
@@ -78,7 +50,7 @@ function AssetsTable({ assets }) {
               </TableCell>
               <TableCell>{createdBy.username}</TableCell>
               <TableCell>
-                <ApproveButton assetId={id} />
+                <ApproveAssetButton assetId={id} />
               </TableCell>
             </TableRow>
           ))}

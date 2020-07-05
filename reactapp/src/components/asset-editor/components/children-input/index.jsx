@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import Paper from '@material-ui/core/Paper'
 import TextField from '@material-ui/core/TextField'
+import { makeStyles } from '@material-ui/core/styles'
+
 import useDatabaseDocument from '../../../../hooks/useDatabaseDocument'
 import {
   CollectionNames,
@@ -8,6 +10,12 @@ import {
 } from '../../../../hooks/useDatabaseQuery'
 import Button from '../../../button'
 import AssetResultsItem from '../../../asset-results-item'
+
+const useStyles = makeStyles({
+  root: {
+    padding: '1rem'
+  }
+})
 
 function ChildAsset({ assetDoc, onDelete }) {
   const [asset, setAsset] = useState(null)
@@ -46,6 +54,7 @@ export default ({ assetChildren, onChange }) => {
   const [assetIdValue, setAssetIdValue] = useState('')
   const [assetDoc] = useDatabaseDocument(CollectionNames.Assets, assetIdValue)
   const [assetRecord, setAssetRecord] = useState(null)
+  const classes = useStyles()
 
   useEffect(() => {
     if (!assetDoc) {
@@ -62,14 +71,11 @@ export default ({ assetChildren, onChange }) => {
   }, [assetIdValue, assetDoc === null])
 
   const onAddBtnClick = () => {
-    console.log('add it', addChildAsset(assetChildren, assetDoc))
     onChange(addChildAsset(assetChildren, assetDoc))
   }
 
-  console.log(assetChildren)
-
   return (
-    <Paper>
+    <Paper className={classes.root}>
       <strong>Children</strong>
       <br />
       <p>

@@ -1,56 +1,63 @@
 import React from 'react'
+
 import useDatabaseSave from '../../hooks/useDatabaseSave'
-import useUserRecord from '../../hooks/useUserRecord'
-import useDatabaseDocument from '../../hooks/useDatabaseDocument'
-import useDatabaseQuery, { CollectionNames } from '../../hooks/useDatabaseQuery'
+import useDatabaseQuery, {
+  CollectionNames,
+  RequestsFieldNames
+} from '../../hooks/useDatabaseQuery'
+import useFirebaseUserId from '../../hooks/useFirebaseUserId'
+
 import { trackAction, actions } from '../../analytics'
-import Button from '../button'
 import { handleError } from '../../error-handling'
+import { createRef } from '../../utils'
+
+import Button from '../button'
 
 export default ({ requestId }) => {
-  const [isLoadingUser, isErroredLoadingUser, user] = useUserRecord()
-  const [userDocument] = useDatabaseDocument(
-    CollectionNames.Users,
-    user && user.id
-  )
+  const userId = useFirebaseUserId()
   const [isLoadingRequest, isErroredLoadingRequest, request] = useDatabaseQuery(
     CollectionNames.Requests,
     requestId
   )
-  const [isSaving, didSaveSucceedOrFail, save] = useDatabaseSave(
+  const [isSaving, , isSaveError, save] = useDatabaseSave(
     CollectionNames.Requests,
     requestId
   )
 
-  if (isLoadingUser || isLoadingRequest || isSaving) {
-    return <Button color="default">Loading...</Button>
-  }
-
-  if (
-    isErroredLoadingUser ||
-    isErroredLoadingRequest ||
-    didSaveSucceedOrFail === false
-  ) {
-    return <Button disabled>Error</Button>
-  }
-
-  if (!user) {
+  // TODO: Check if they are allowed to close this - relying on parent to do this is bad!
+  if (!userId) {
     return null
   }
 
-  const { isClosed } = request
+  if (isLoadingRequest) {
+    // TODO: Remove this code duplication
+    return <Button color="default">Loading...</Button>
+  }
+
+  if (isSaving) {
+    return <Button color="default">Saving...</Button>
+  }
+
+  if ((isErroredLoadingRequest, isSaveError)) {
+    return <Button disabled>Error</Button>
+  }
+
+  const { [RequestsFieldNames.isClosed]: isClosed } = request
 
   const onBtnClick = async () => {
     try {
       await save({
-        isClosed: !isClosed,
-        lastModifiedBy: userDocument,
-        lastModifiedAt: new Date()
+        [RequestsFieldNames.isClosed]: !isClosed,
+        [RequestsFieldNames.lastModifiedBy]: createRef(
+          CollectionNames.Users,
+          userId
+        ),
+        [RequestsFieldNames.lastModifiedAt]: new Date()
       })
 
       trackAction(isClosed ? actions.OPEN_REQUEST : actions.CLOSE_REQUEST, {
         requestId,
-        userId: user && user.id
+        userId
       })
     } catch (err) {
       console.error('Failed to toggle is closed', err)

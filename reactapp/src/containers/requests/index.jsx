@@ -10,7 +10,11 @@ import Button from '../../components/button'
 import SimpleResultsItem from '../../components/simple-results-item'
 import NoResultsMessage from '../../components/no-results-message'
 
-import useDatabaseQuery, { CollectionNames } from '../../hooks/useDatabaseQuery'
+import useDatabaseQuery, {
+  CollectionNames,
+  RequestsFieldNames,
+  Operators
+} from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import * as routes from '../../routes'
 
@@ -47,7 +51,8 @@ function Request({
 function Requests() {
   const classes = useStyles()
   const [isLoading, isErrored, results] = useDatabaseQuery(
-    CollectionNames.Requests
+    CollectionNames.Requests,
+    [[RequestsFieldNames.isDeleted, Operators.EQUALS, false]]
   )
 
   if (isLoading) {
@@ -79,17 +84,21 @@ function Requests() {
   return (
     <div className={classes.container}>
       <Heading variant="h2">Active</Heading>
-      {activeRequests.length
-        ? activeRequests.map(result => (
-            <Request key={result.id} request={result} />
-          ))
-        : 'No active requests'}
+      {activeRequests.length ? (
+        activeRequests.map(result => (
+          <Request key={result.id} request={result} />
+        ))
+      ) : (
+        <NoResultsMessage>No active requests</NoResultsMessage>
+      )}
       <Heading variant="h2">Closed</Heading>
-      {closedRequests.length
-        ? closedRequests.map(result => (
-            <Request key={result.id} request={result} />
-          ))
-        : 'No closed requests'}
+      {closedRequests.length ? (
+        closedRequests.map(result => (
+          <Request key={result.id} request={result} />
+        ))
+      ) : (
+        <NoResultsMessage>No closed requests</NoResultsMessage>
+      )}
     </div>
   )
 }

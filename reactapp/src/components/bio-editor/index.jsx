@@ -7,7 +7,6 @@ import useDatabaseQuery, {
   CollectionNames,
   ProfileFieldNames
 } from '../../hooks/useDatabaseQuery'
-import useDatabaseDocument from '../../hooks/useDatabaseDocument'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 
@@ -16,6 +15,7 @@ import ErrorMessage from '../error-message'
 import Button from '../button'
 
 import { handleError } from '../../error-handling'
+import { createRef } from '../../utils'
 
 const useStyles = makeStyles({
   bioTextField: {
@@ -30,8 +30,7 @@ export default () => {
     CollectionNames.Profiles,
     userId
   )
-  const [userDocument] = useDatabaseDocument(CollectionNames.Users, userId)
-  const [isSaving, hasSavedOrFailed, save] = useDatabaseSave(
+  const [isSaving, isSuccess, isErrored, save] = useDatabaseSave(
     CollectionNames.Profiles,
     userId
   )
@@ -50,7 +49,10 @@ export default () => {
     try {
       await save({
         [ProfileFieldNames.bio]: bioValue,
-        [ProfileFieldNames.lastModifiedBy]: userDocument,
+        [ProfileFieldNames.lastModifiedBy]: createRef(
+          CollectionNames.Users,
+          userId
+        ),
         [ProfileFieldNames.lastModifiedAt]: new Date()
       })
     } catch (err) {
@@ -87,9 +89,9 @@ export default () => {
         </a>
       </p>
       {isSaving && 'Saving...'}
-      {hasSavedOrFailed === true
+      {isSuccess
         ? 'Success!'
-        : hasSavedOrFailed === false
+        : isErrored
         ? 'Failed to save. Maybe try again?'
         : null}
       {showPreview === false && (

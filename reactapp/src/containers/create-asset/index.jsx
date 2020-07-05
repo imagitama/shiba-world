@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
 
 import useDatabaseSave from '../../hooks/useDatabaseSave'
-import useDatabaseDocument from '../../hooks/useDatabaseDocument'
-import { CollectionNames } from '../../hooks/useDatabaseQuery'
-import useUserRecord from '../../hooks/useUserRecord'
+import { CollectionNames, AssetFieldNames } from '../../hooks/useDatabaseQuery'
+import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import AssetEditor from '../../components/asset-editor'
 import LoadingIndicator from '../../components/loading-indicator'
@@ -14,29 +13,17 @@ import NoPermissionMessage from '../../components/no-permission-message'
 
 import { scrollToTop } from '../../utils'
 import * as routes from '../../routes'
-
 import { handleError } from '../../error-handling'
+import { createRef } from '../../utils'
 
 export default () => {
-  const [isLoadingUser, isErrorLoadingUser, user] = useUserRecord()
-  const [isSaving, isSuccessOrFail, save] = useDatabaseSave(
+  const userId = useFirebaseUserId()
+  const [isSaving, isSaveSuccess, isSaveError, save] = useDatabaseSave(
     CollectionNames.Assets
-  )
-  const [userDocument] = useDatabaseDocument(
-    CollectionNames.Users,
-    user && user.id
   )
   const [newDocumentId, setNewDocumentId] = useState(null)
 
-  if (isLoadingUser) {
-    return <LoadingIndicator />
-  }
-
-  if (isErrorLoadingUser) {
-    return <ErrorMessage>Failed to load your profile</ErrorMessage>
-  }
-
-  if (!user) {
+  if (!userId) {
     return <NoPermissionMessage />
   }
 
@@ -44,11 +31,11 @@ export default () => {
     return <LoadingIndicator message="Creating..." />
   }
 
-  if (isSuccessOrFail === false) {
+  if (isSaveError) {
     return <ErrorMessage>Failed to create asset</ErrorMessage>
   }
 
-  if (isSuccessOrFail === true) {
+  if (isSaveSuccess) {
     return (
       <SuccessMessage>
         Asset created successfully <br />
@@ -70,10 +57,13 @@ export default () => {
             const [docId] = await save({
               ...newFields,
               // need to initialize these so our queries work later
-              isApproved: false,
-              isDeleted: false,
-              createdAt: new Date(),
-              createdBy: userDocument
+              [AssetFieldNames.isApproved]: false,
+              [AssetFieldNames.isDeleted]: false,
+              [AssetFieldNames.createdBy]: createRef(
+                CollectionNames.Users,
+                userId
+              ),
+              [AssetFieldNames.createdAt]: new Date()
             })
 
             setNewDocumentId(docId)

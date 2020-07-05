@@ -12,12 +12,12 @@ const useStyles = makeStyles({
   }
 })
 
-export default ({ comment: { comment, createdBy, createdAt } }) => {
+export default ({ comment: { id, comment, createdBy, createdAt } }) => {
   const classes = useStyles()
 
   return (
     <Card className={classes.root}>
-      <div className={classes.container}>
+      <div className={classes.container} title={id}>
         <CardContent>
           <Typography gutterBottom component="p">
             {comment}

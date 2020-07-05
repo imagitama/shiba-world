@@ -1,17 +1,20 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import CheckIcon from '@material-ui/icons/Check'
-import useUserRecord from '../../hooks/useUserRecord'
+
 import Button from '../button'
+
 import useDatabaseQuery, {
   CollectionNames,
   EndorsementFieldNames,
   Operators
 } from '../../hooks/useDatabaseQuery'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
-import useDatabaseDocument from '../../hooks/useDatabaseDocument'
+import useFirebaseUserId from '../../hooks/useFirebaseUserId'
+
 import { trackAction, actions } from '../../analytics'
 import { handleError } from '../../error-handling'
+import { createRef } from '../../utils'
 
 const useStyles = makeStyles({
   loggedOutBtn: {
@@ -21,20 +24,19 @@ const useStyles = makeStyles({
 })
 
 export default ({ assetId }) => {
-  const [isLoadingUser, isErroredLoadingUser, user] = useUserRecord()
-  const [assetDocument] = useDatabaseDocument(CollectionNames.Assets, assetId)
-  const [userDocument] = useDatabaseDocument(
-    CollectionNames.Users,
-    user && user.id
-  )
+  const userId = useFirebaseUserId()
   const [
     isFetchingEndorsements,
     isErroredFetchingEndorsements,
     endorsements
   ] = useDatabaseQuery(CollectionNames.Endorsements, [
-    [EndorsementFieldNames.asset, Operators.EQUALS, assetDocument]
+    [
+      EndorsementFieldNames.asset,
+      Operators.EQUALS,
+      createRef(CollectionNames.Assets, assetId)
+    ]
   ])
-  const [isSaving, didSaveSucceedOrFail, save] = useDatabaseSave(
+  const [isSaving, isSavingSuccess, isSavingError, save] = useDatabaseSave(
     CollectionNames.Endorsements
   )
   const classes = useStyles()
@@ -42,13 +44,20 @@ export default ({ assetId }) => {
   const onSaveBtnClick = async () => {
     try {
       await save({
-        asset: assetDocument,
-        createdBy: userDocument
+        [EndorsementFieldNames.asset]: createRef(
+          CollectionNames.Assets,
+          assetId
+        ),
+        [EndorsementFieldNames.createdBy]: createRef(
+          CollectionNames.Users,
+          userId
+        ),
+        [EndorsementFieldNames.createdAt]: new Date()
       })
 
       trackAction(actions.ENDORSE_ASSET, {
         assetId,
-        userId: user && user.id
+        userId
       })
     } catch (err) {
       console.error('Failed to save endorsement', err)
@@ -56,25 +65,12 @@ export default ({ assetId }) => {
     }
   }
 
-  if (isLoadingUser || isFetchingEndorsements || isSaving) {
+  if (isFetchingEndorsements) {
+    // TODO: Remove string duplication everywhere
     return <Button color="default">Loading...</Button>
   }
 
-  if (
-    isErroredLoadingUser ||
-    isErroredFetchingEndorsements ||
-    didSaveSucceedOrFail === false
-  ) {
-    return <Button disabled>Error</Button>
-  }
-
-  if (didSaveSucceedOrFail === true) {
-    return (
-      <Button disabled>Successfully endorsed ({endorsements.length})</Button>
-    )
-  }
-
-  if (!user) {
+  if (!userId) {
     return (
       <Button color="default" className={classes.loggedOutBtn}>
         Log in to endorse ({endorsements.length})
@@ -82,7 +78,26 @@ export default ({ assetId }) => {
     )
   }
 
-  if (endorsements.find(({ createdBy }) => createdBy.id === user.id)) {
+  if (isSaving) {
+    return <Button color="default">Saving...</Button>
+  }
+
+  if (isErroredFetchingEndorsements || isSavingError) {
+    return <Button disabled>Error</Button>
+  }
+
+  if (isSavingSuccess) {
+    return (
+      <Button disabled>Successfully endorsed ({endorsements.length})</Button>
+    )
+  }
+
+  if (
+    endorsements.find(
+      ({ [EndorsementFieldNames.createdBy]: createdBy }) =>
+        createdBy.id === userId
+    )
+  ) {
     return (
       <Button
         color="default"

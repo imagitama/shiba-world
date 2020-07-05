@@ -173,7 +173,7 @@ export default ({
   const [
     hasFinishedSelectingSpecies,
     setHasFinishedSelectingSpecies
-  ] = useState(species.length !== 0 || false)
+  ] = useState(asset.id ? true : species.length !== 0 ? true : false)
   const { nameSingular } = useCategoryMeta(fieldData[AssetFieldNames.category])
 
   const isFormValid = getIsFormValid(fieldData)
@@ -244,9 +244,11 @@ export default ({
       </Heading>
       <Heading variant="h2">
         {categoryMeta[fieldData[AssetFieldNames.category]].nameSingular} -{' '}
-        {fieldData[AssetFieldNames.species]
-          .map(speciesName => speciesMeta[speciesName].name)
-          .join(', ')}
+        {fieldData[AssetFieldNames.species].length
+          ? fieldData[AssetFieldNames.species]
+              .map(speciesName => speciesMeta[speciesName].name)
+              .join(', ')
+          : 'All Species'}
       </Heading>
       <Button onClick={() => onFieldChange(AssetFieldNames.category, '')}>
         Reset Category

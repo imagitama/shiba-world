@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet'
 import TextField from '@material-ui/core/TextField'
 
 import ErrorMessage from '../../components/error-message'
+import NoPermissionMessage from '../../components/no-permission-message'
 import SuccessMessage from '../../components/success-message'
 import LoadingIndicator from '../../components/loading-indicator'
 import Button from '../../components/button'
@@ -12,21 +13,17 @@ import {
   CollectionNames,
   RequestsFieldNames
 } from '../../hooks/useDatabaseQuery'
-import useUserRecord from '../../hooks/useUserRecord'
-import useDatabaseDocument from '../../hooks/useDatabaseDocument'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
+import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import * as routes from '../../routes'
 import { handleError } from '../../error-handling'
 import { trackAction, actions } from '../../analytics'
+import { createRef } from '../../utils'
 
 export default () => {
-  const [, , user] = useUserRecord()
-  const [userDocument] = useDatabaseDocument(
-    CollectionNames.Users,
-    user && user.id
-  )
-  const [isSaving, wasSaveSuccessOrFail, save] = useDatabaseSave(
+  const userId = useFirebaseUserId()
+  const [isSaving, isSaveSuccess, isSaveError, save] = useDatabaseSave(
     CollectionNames.Requests
   )
   const [fieldData, setFieldData] = useState({
@@ -35,15 +32,19 @@ export default () => {
   })
   const [createdDocId, setCreatedDocId] = useState(null)
 
+  if (!userId) {
+    return <NoPermissionMessage />
+  }
+
   if (isSaving) {
     return <LoadingIndicator />
   }
 
-  if (wasSaveSuccessOrFail === false) {
+  if (isSaveError) {
     return <ErrorMessage>Failed to create the request</ErrorMessage>
   }
 
-  if (wasSaveSuccessOrFail === true) {
+  if (isSaveSuccess) {
     return (
       <SuccessMessage>
         Request created successfully
@@ -64,6 +65,7 @@ export default () => {
     })
 
   const onCreateBtnClick = async () => {
+    // TODO: Output this invalid data to user
     if (
       !fieldData[RequestsFieldNames.title] ||
       !fieldData[RequestsFieldNames.description]
@@ -74,7 +76,12 @@ export default () => {
     try {
       const [newDocId] = await save({
         ...fieldData,
-        [RequestsFieldNames.createdBy]: userDocument,
+        // Need to populate these for queries later
+        [RequestsFieldNames.isDeleted]: false,
+        [RequestsFieldNames.createdBy]: createRef(
+          CollectionNames.Users,
+          userId
+        ),
         [RequestsFieldNames.createdAt]: new Date()
       })
 
@@ -82,7 +89,7 @@ export default () => {
 
       trackAction(actions.CREATE_REQUEST, {
         requestId: newDocId,
-        userId: user.id
+        userId
       })
     } catch (err) {
       console.error('Failed to create request', err)

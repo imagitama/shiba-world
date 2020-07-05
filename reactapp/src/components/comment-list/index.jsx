@@ -10,7 +10,8 @@ import useDatabaseQuery, {
   CommentFieldNames,
   Operators
 } from '../../hooks/useDatabaseQuery'
-import useDatabaseDocument from '../../hooks/useDatabaseDocument'
+
+import { createRef } from '../../utils'
 
 export default ({ collectionName, parentId }) => {
   if (!collectionName) {
@@ -20,10 +21,15 @@ export default ({ collectionName, parentId }) => {
     throw new Error('Cannot render comment list: no parent ID')
   }
 
-  const [parentDoc] = useDatabaseDocument(collectionName, parentId)
   const [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.Comments,
-    [[CommentFieldNames.parent, Operators.EQUALS, parentDoc]]
+    [
+      [
+        CommentFieldNames.parent,
+        Operators.EQUALS,
+        createRef(collectionName, parentId)
+      ]
+    ]
   )
 
   if (isLoading) {

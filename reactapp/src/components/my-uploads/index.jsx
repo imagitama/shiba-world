@@ -10,16 +10,20 @@ import useDatabaseQuery, {
   AssetFieldNames,
   Operators
 } from '../../hooks/useDatabaseQuery'
-import useDatabaseDocument from '../../hooks/useDatabaseDocument'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
+
+import { createRef } from '../../utils'
 
 export default () => {
   const userId = useFirebaseUserId()
-  const [userDocument] = useDatabaseDocument(CollectionNames.Users, userId)
   const [isLoading, isErrored, assets] = useDatabaseQuery(
     CollectionNames.Assets,
     [
-      [AssetFieldNames.createdBy, Operators.EQUALS, userDocument],
+      [
+        AssetFieldNames.createdBy,
+        Operators.EQUALS,
+        createRef(CollectionNames.Users, userId)
+      ],
       [AssetFieldNames.isDeleted, Operators.EQUALS, false]
     ]
   )

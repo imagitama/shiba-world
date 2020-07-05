@@ -6,7 +6,7 @@ export const USER_UNLOADED = 'user/USER_UNLOADED'
 const initialState = {
   isLoading: false,
   isErrored: false,
-  record: null // immutable record for deep equality checks
+  record: null // initialize as null for setup profile component
 }
 
 export default (state = initialState, action) => {
@@ -28,7 +28,7 @@ export default (state = initialState, action) => {
         ...state,
         isLoading: false,
         isErrored: false,
-        record: action.record // immutable record
+        record: action.record
       }
 
     case USER_UNLOADED:

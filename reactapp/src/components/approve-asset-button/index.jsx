@@ -1,58 +1,57 @@
 import React from 'react'
+
 import useDatabaseSave from '../../hooks/useDatabaseSave'
-import useUserRecord from '../../hooks/useUserRecord'
-import useDatabaseDocument from '../../hooks/useDatabaseDocument'
-import useDatabaseQuery, { CollectionNames } from '../../hooks/useDatabaseQuery'
-import { trackAction, actions } from '../../analytics'
+import useDatabaseQuery, {
+  CollectionNames,
+  AssetFieldNames
+} from '../../hooks/useDatabaseQuery'
+import useFirebaseUserId from '../../hooks/useFirebaseUserId'
+
 import Button from '../button'
+
+import { trackAction, actions } from '../../analytics'
 import { handleError } from '../../error-handling'
+import { createRef } from '../../utils'
 
 export default ({ assetId }) => {
-  const [isLoadingUser, isErroredLoadingUser, user] = useUserRecord()
-  const [userDocument] = useDatabaseDocument(
-    CollectionNames.Users,
-    user && user.id
-  )
+  // TODO: Check if they are editor! We are assuming the parent does this = not good
+
+  const userId = useFirebaseUserId()
   const [isLoadingAsset, isErroredLoadingAsset, asset] = useDatabaseQuery(
     CollectionNames.Assets,
     assetId
   )
-  const [isSaving, didSaveSucceedOrFail, save] = useDatabaseSave(
+  const [isSaving, , isSaveError, save] = useDatabaseSave(
     CollectionNames.Assets,
     assetId
   )
 
-  if (isLoadingUser || isLoadingAsset || isSaving) {
+  if (!userId || isLoadingAsset || isSaving) {
     return <Button color="default">Loading...</Button>
   }
 
-  if (
-    isErroredLoadingUser ||
-    isErroredLoadingAsset ||
-    didSaveSucceedOrFail === false
-  ) {
+  if (isErroredLoadingAsset || isSaveError) {
     return <Button disabled>Error</Button>
   }
 
-  if (!user) {
-    return null
-  }
-
-  const { isApproved } = asset
+  const { [AssetFieldNames.isApproved]: isApproved } = asset
 
   const onBtnClick = async () => {
     try {
       await save({
-        isApproved: !isApproved,
-        lastModifiedBy: userDocument,
-        lastModifiedAt: new Date()
+        [AssetFieldNames.isApproved]: !isApproved,
+        [AssetFieldNames.lastModifiedBy]: createRef(
+          CollectionNames.Users,
+          userId
+        ),
+        [AssetFieldNames.lastModifiedAt]: new Date()
       })
 
       trackAction(
         isApproved ? actions.UNAPPROVE_ASSET : actions.APPROVE_ASSET,
         {
           assetId,
-          userId: user && user.id
+          userId: userId
         }
       )
     } catch (err) {

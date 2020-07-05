@@ -3,6 +3,7 @@ import { firestore } from 'firebase/app'
 import { useRef } from 'react'
 import { inDevelopment } from '../environment'
 import { handleError } from '../error-handling'
+import { isRef, getDocument } from '../utils'
 
 export const Operators = {
   EQUALS: '==',
@@ -66,7 +67,10 @@ export const UserFieldNames = {
   isAdmin: 'isAdmin',
   enabledAdultContent: 'enabledAdultContent',
   lastModifiedBy: 'lastModifiedBy',
-  lastModifiedAt: 'lastModifiedAt'
+  lastModifiedAt: 'lastModifiedAt',
+  avatarUrl: 'avatarUrl',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt'
 }
 
 export const ProfileFieldNames = {
@@ -98,7 +102,8 @@ export const NoticesFieldNames = {
 
 export const EndorsementFieldNames = {
   asset: 'asset',
-  createdBy: 'createdBy'
+  createdBy: 'createdBy',
+  createdAt: 'createdAt'
 }
 
 export const RequestsFieldNames = {
@@ -108,7 +113,8 @@ export const RequestsFieldNames = {
   createdBy: 'createdBy',
   createdAt: 'createdAt',
   lastModifiedBy: 'lastModifiedBy',
-  lastModifiedAt: 'lastModifiedAt'
+  lastModifiedAt: 'lastModifiedAt',
+  isDeleted: 'isDeleted'
 }
 
 function getWhereClausesAsString(whereClauses) {
@@ -279,7 +285,13 @@ export default (
         // or an array of searches
       } else if (Array.isArray(whereClauses)) {
         for (const [field, operator, value] of whereClauses) {
-          queryChain = queryChain.where(field, operator, value)
+          let valueToUse = value
+
+          if (isRef(value)) {
+            valueToUse = getDocument(value.ref.collectionName, value.ref.id)
+          }
+
+          queryChain = queryChain.where(field, operator, valueToUse)
         }
         // or undefined - all results
       } else {

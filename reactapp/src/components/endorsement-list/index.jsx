@@ -10,17 +10,23 @@ import useDatabaseQuery, {
   Operators,
   EndorsementFieldNames
 } from '../../hooks/useDatabaseQuery'
-import useDatabaseDocument from '../../hooks/useDatabaseDocument'
+
+import { createRef } from '../../utils'
 
 export default ({ assetId }) => {
   if (!assetId) {
     throw new Error('Cannot render endorsement list: no asset ID')
   }
 
-  const [parentDoc] = useDatabaseDocument(CollectionNames.Assets, assetId)
   const [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.Endorsements,
-    [[EndorsementFieldNames.asset, Operators.EQUALS, parentDoc]]
+    [
+      [
+        EndorsementFieldNames.asset,
+        Operators.EQUALS,
+        createRef(CollectionNames.Assets, assetId)
+      ]
+    ]
   )
 
   if (isLoading) {

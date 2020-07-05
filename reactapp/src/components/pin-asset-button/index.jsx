@@ -1,56 +1,56 @@
 import React from 'react'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
-import useUserRecord from '../../hooks/useUserRecord'
-import useDatabaseDocument from '../../hooks/useDatabaseDocument'
-import useDatabaseQuery, { CollectionNames } from '../../hooks/useDatabaseQuery'
+import useFirebaseUserId from '../../hooks/useFirebaseUserId'
+import useDatabaseQuery, {
+  CollectionNames,
+  AssetFieldNames
+} from '../../hooks/useDatabaseQuery'
+
 import { trackAction, actions } from '../../analytics'
-import Button from '../button'
 import { handleError } from '../../error-handling'
+import { createRef } from '../../utils'
+
+import Button from '../button'
 
 export default ({ assetId }) => {
-  const [isLoadingUser, isErroredLoadingUser, user] = useUserRecord()
-  const [userDocument] = useDatabaseDocument(
-    CollectionNames.Users,
-    user && user.id
-  )
+  // TODO: Check if they are editor! We are assuming the parent does this = not good
+
+  const userId = useFirebaseUserId()
+
   const [isLoadingAsset, isErroredLoadingAsset, asset] = useDatabaseQuery(
     CollectionNames.Assets,
     assetId
   )
-  const [isSaving, didSaveSucceedOrFail, save] = useDatabaseSave(
+  const [isSaving, , isSaveErrored, save] = useDatabaseSave(
     CollectionNames.Assets,
     assetId
   )
 
-  if (isLoadingUser || isLoadingAsset || isSaving) {
+  if (isLoadingAsset || isSaving) {
+    // TODO: Remove string duplication with color prop
     return <Button color="default">Loading...</Button>
   }
 
-  if (
-    isErroredLoadingUser ||
-    isErroredLoadingAsset ||
-    didSaveSucceedOrFail === false
-  ) {
+  if (isErroredLoadingAsset || isSaveErrored) {
     return <Button disabled>Error</Button>
   }
 
-  if (!user) {
-    return null
-  }
-
-  const { isPinned } = asset
+  const { [AssetFieldNames.isPinned]: isPinned } = asset
 
   const onBtnClick = async () => {
     try {
       await save({
-        isPinned: !isPinned,
-        lastModifiedBy: userDocument,
-        lastModifiedAt: new Date()
+        [AssetFieldNames.isPinned]: !isPinned,
+        [AssetFieldNames.lastModifiedBy]: createRef(
+          CollectionNames.Users,
+          userId
+        ),
+        [AssetFieldNames.lastModifiedAt]: new Date()
       })
 
       trackAction(isPinned ? actions.UNPIN_ASSET : actions.PIN_ASSET, {
         assetId,
-        userId: user && user.id
+        userId
       })
     } catch (err) {
       console.error('Failed to pin or unpin asset', err)
