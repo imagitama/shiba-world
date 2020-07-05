@@ -5,6 +5,7 @@ import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Paper from '@material-ui/core/Paper'
+import { Link } from 'react-router-dom'
 
 import useDatabaseQuery, { CollectionNames } from '../../hooks/useDatabaseQuery'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
@@ -16,6 +17,7 @@ import ErrorMessage from '../../components/error-message'
 
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
+import * as routes from '../../routes'
 
 const ToggleFieldButton = ({ userId, fieldName, currentValue }) => {
   const myUserId = useFirebaseUserId()
@@ -80,7 +82,11 @@ const AdminUserManagement = () => {
           {users.map(({ id, username, isEditor, isAdmin }) => (
             <TableRow key={id}>
               <TableCell>{id}</TableCell>
-              <TableCell>{username}</TableCell>
+              <TableCell>
+                <Link to={routes.viewUserWithVar.replace(':userId', id)}>
+                  {username}
+                </Link>
+              </TableCell>
               <TableCell>
                 {isEditor ? 'Y' : 'N'}
                 <br />

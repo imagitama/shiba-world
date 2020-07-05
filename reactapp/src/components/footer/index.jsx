@@ -50,6 +50,10 @@ const footerLinks = [
   {
     url: routes.stats,
     label: 'Stats'
+  },
+  {
+    url: routes.about,
+    label: 'About'
   }
 ]
 

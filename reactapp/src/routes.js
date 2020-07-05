@@ -28,6 +28,7 @@ export const requests = '/requests'
 export const viewRequestWithVar = '/requests/:requestId'
 export const createRequest = '/requests/create'
 export const streams = '/streams'
+export const about = '/about'
 
 // Outdated routes
 export const browseAssets = '/browse'
