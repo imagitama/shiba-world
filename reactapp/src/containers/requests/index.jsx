@@ -8,6 +8,7 @@ import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'
 import Button from '../../components/button'
 import SimpleResultsItem from '../../components/simple-results-item'
+import NoResultsMessage from '../../components/no-results-message'
 
 import useDatabaseQuery, { CollectionNames } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
@@ -58,7 +59,7 @@ function Requests() {
   }
 
   if (!results.length) {
-    return 'No results'
+    return <NoResultsMessage />
   }
 
   const { activeRequests, closedRequests } = results.reduce(

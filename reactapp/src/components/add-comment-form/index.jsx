@@ -44,7 +44,7 @@ export default ({ collectionName, parentId }) => {
   const classes = useStyles()
 
   if (!user) {
-    return 'You must be logged in'
+    return null
   }
 
   if (isSaving) {

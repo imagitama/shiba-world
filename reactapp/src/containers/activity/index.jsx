@@ -11,6 +11,7 @@ import FormattedDate from '../../components/formatted-date'
 import ErrorMessage from '../../components/error-message'
 import LoadingIndicator from '../../components/loading-indicator'
 import Heading from '../../components/heading'
+import NoResultsMessage from '../../components/no-results-message'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -285,7 +286,7 @@ export default () => {
   }
 
   if (!results.length) {
-    return 'No history found'
+    return <NoResultsMessage>No history found</NoResultsMessage>
   }
 
   const resultsWithoutUnwantedResult = results.filter(({ parent }) =>
