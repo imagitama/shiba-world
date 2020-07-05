@@ -2,12 +2,49 @@ const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 const algoliasearch = require('algoliasearch')
 const diff = require('deep-diff')
+const Twit = require('twit')
 
-const ALGOLIA_APP_ID = functions.config().algolia.app_id
-const ALGOLIA_ADMIN_KEY = functions.config().algolia.admin_api_key
+const config = functions.config()
 
+// ALGOLIA
+
+const ALGOLIA_APP_ID = config.algolia.app_id
+const ALGOLIA_ADMIN_KEY = config.algolia.admin_api_key
 const ALGOLIA_INDEX_NAME = 'prod_ASSETS'
-const client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_ADMIN_KEY)
+
+let algoliaClient
+
+function getAlgoliaClient() {
+  if (algoliaClient) {
+    return algoliaClient
+  }
+
+  algoliaClient = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_ADMIN_KEY)
+  return algoliaClient
+}
+
+function convertDocToAlgoliaRecord(docId, doc) {
+  return {
+    objectID: docId,
+    title: doc.title,
+    description: doc.description,
+    thumbnailUrl: doc.thumbnailUrl,
+    isAdult: doc.isAdult,
+    tags: doc.tags,
+  }
+}
+
+function insertDocIntoIndex(doc, docData) {
+  return getAlgoliaClient()
+    .initIndex(ALGOLIA_INDEX_NAME)
+    .saveObject(convertDocToAlgoliaRecord(doc.id, docData))
+}
+
+function deleteDocFromIndex(doc) {
+  return getAlgoliaClient().initIndex(ALGOLIA_INDEX_NAME).deleteObject(doc.id)
+}
+
+// FIREBASE
 
 admin.initializeApp()
 const db = admin.firestore()
@@ -23,6 +60,7 @@ const CollectionNames = {
   Profiles: 'profiles',
   Mail: 'mail',
   Summaries: 'summaries',
+  Tweets: 'tweets',
 }
 
 const AssetFieldNames = {
@@ -65,27 +103,6 @@ const UserFieldNames = {
   lastModifiedAt: 'lastModifiedAt',
 }
 
-function convertDocToAlgoliaRecord(docId, doc) {
-  return {
-    objectID: docId,
-    title: doc.title,
-    description: doc.description,
-    thumbnailUrl: doc.thumbnailUrl,
-    isAdult: doc.isAdult,
-    tags: doc.tags,
-  }
-}
-
-function insertDocIntoIndex(doc, docData) {
-  return client
-    .initIndex(ALGOLIA_INDEX_NAME)
-    .saveObject(convertDocToAlgoliaRecord(doc.id, docData))
-}
-
-function deleteDocFromIndex(doc) {
-  return client.initIndex(ALGOLIA_INDEX_NAME).deleteObject(doc.id)
-}
-
 function isNotApproved(docData) {
   return docData.isApproved === false
 }
@@ -99,7 +116,7 @@ function isPrivate(docData) {
 }
 
 async function storeInHistory(message, parentRef, data, user) {
-  return db.collection('history').add({
+  return db.collection(CollectionNames.History).add({
     message,
     parent: parentRef,
     data,
@@ -244,6 +261,50 @@ async function addTagsToCache(tags) {
   })
 }
 
+// TWITTER
+
+const TWITTER_CONSUMER_KEY = config.twitter.consumer_key
+const TWITTER_CONSUMER_SECRET = config.twitter.consumer_secret
+const TWITTER_ACCESS_TOKEN_KEY = config.twitter.access_token_key
+const TWITTER_ACCESS_TOKEN_SECRET = config.twitter.access_token_secret
+let twitterClient
+
+function getTwitterClient() {
+  if (twitterClient) {
+    return twitterClient
+  }
+
+  twitterClient = new Twit({
+    consumer_key: TWITTER_CONSUMER_KEY,
+    consumer_secret: TWITTER_CONSUMER_SECRET,
+    access_token: TWITTER_ACCESS_TOKEN_KEY,
+    access_token_secret: TWITTER_ACCESS_TOKEN_SECRET,
+  })
+  return twitterClient
+}
+
+async function sendTweet(status) {
+  return getTwitterClient()
+    .post('statuses/update', {
+      status,
+    })
+    .then(({ data }) => data.id)
+}
+
+async function insertTweetRecordInDatabase(status) {
+  return db.collection(CollectionNames.Tweets).add({
+    status,
+    createdAt: new Date(),
+  })
+}
+
+async function updateTweetRecordInDatabase(recordId, tweetId) {
+  return db.collection(CollectionNames.Tweets).doc(recordId).update({
+    tweetId,
+    tweetedAt: new Date(),
+  })
+}
+
 exports.onAssetCreated = functions.firestore
   .document('assets/{assetId}')
   .onCreate(async (doc) => {
@@ -309,6 +370,16 @@ exports.onAssetUpdated = functions.firestore
 
     if (isDeleted(docData)) {
       return Promise.resolve()
+    }
+
+    if (beforeDocData.isApproved !== true && docData.isApproved === true) {
+      const author = await docData.createdBy.get()
+
+      await insertTweetRecordInDatabase(
+        `"${docData.title}" uploaded by ${author.get(
+          UserFieldNames.username
+        )} https://www.vrcarena.com/assets/${doc.id}`
+      )
     }
 
     await addTagsToCache(docData.tags)
@@ -420,4 +491,14 @@ exports.onRequestEdited = functions.firestore
       },
       docData.lastModifiedBy
     )
+  })
+
+exports.onTweetCreated = functions.firestore
+  .document('tweets/{tweetId}')
+  .onCreate(async (doc) => {
+    const docData = doc.data()
+
+    const tweetId = await sendTweet(docData.status)
+
+    await updateTweetRecordInDatabase(doc.id, tweetId)
   })
