@@ -94,6 +94,11 @@ const MainContent = () => {
   return (
     <Suspense fallback={<LoadingIndicator />}>
       <Switch>
+        <Redirect
+          // deprecated category
+          from={routes.viewCategoryWithVar.replace(':categoryName', 'showcase')}
+          to={routes.users}
+        />
         <RouteWithMeta
           exact
           path={routes.home}

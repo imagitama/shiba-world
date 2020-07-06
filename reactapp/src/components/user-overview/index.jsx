@@ -15,7 +15,8 @@ import defaultAvatarUrl from '../../assets/images/default-avatar.png'
 import useDatabaseQuery, {
   CollectionNames,
   AssetFieldNames,
-  Operators
+  Operators,
+  OrderDirections
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 
@@ -61,6 +62,7 @@ const AssetsForUser = ({ userId }) => {
     [AssetFieldNames.isApproved, Operators.EQUALS, true],
     [AssetFieldNames.isAdult, Operators.EQUALS, false],
     [AssetFieldNames.isDeleted, Operators.EQUALS, false],
+    [AssetFieldNames.isPrivate, Operators.EQUALS, false],
     [
       AssetFieldNames.createdBy,
       Operators.EQUALS,
@@ -78,7 +80,9 @@ const AssetsForUser = ({ userId }) => {
 
   const [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.Assets,
-    currentUser ? whereClauses : false
+    currentUser ? whereClauses : false,
+    100,
+    [AssetFieldNames.createdAt, OrderDirections.DESC]
   )
 
   if (isLoading || results === null) {
