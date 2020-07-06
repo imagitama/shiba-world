@@ -377,7 +377,7 @@ exports.onAssetUpdated = functions.firestore
       const author = await docData.createdBy.get()
 
       await insertTweetRecordInDatabase(
-        `"${docData.title}" uploaded by ${author.get(
+        `"${docData.title}" posted by ${author.get(
           UserFieldNames.username
         )} https://www.vrcarena.com/assets/${doc.id}`
       )
