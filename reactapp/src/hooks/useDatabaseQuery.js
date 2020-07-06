@@ -117,6 +117,12 @@ export const RequestsFieldNames = {
   isDeleted: 'isDeleted'
 }
 
+export const DownloadsFieldNames = {
+  asset: 'asset',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt'
+}
+
 function getWhereClausesAsString(whereClauses) {
   if (whereClauses === undefined) {
     return 'undefined'
@@ -205,6 +211,7 @@ async function mapDocArrays(doc) {
       }
       // Hack to support history data having a "parent" field ie. comments
       if (
+        value &&
         typeof value === 'object' &&
         value.parent &&
         isFirebaseDoc(value.parent)

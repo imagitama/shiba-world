@@ -52,6 +52,8 @@ import FileList from './components/file-list'
 import ReportMessage from './components/report-message'
 import PikapeteyDiscordMessage from './components/pikapetey-discord-message'
 import ChildrenAssets from './components/children-assets'
+import DownloadList from './components/download-list'
+
 import DownloadAssetButton from '../download-asset-button'
 import VisitSourceButton from '../visit-source-button'
 
@@ -536,9 +538,7 @@ export default ({ assetId, small = false }) => {
                 </Control>
               </>
             ) : null}
-            {canApproveAsset(user) && (
-              <Heading variant="h4">Editor Actions</Heading>
-            )}
+            {canApproveAsset && <Heading variant="h4">Editor Actions</Heading>}
             {canApproveAsset(user) && (
               <Control>
                 <ApproveBtn assetId={assetId} />
@@ -566,6 +566,13 @@ export default ({ assetId, small = false }) => {
       />
       <Heading variant="h2">Endorsements</Heading>
       <EndorsementList assetId={assetId} />
+
+      {canApproveAsset(user) && (
+        <>
+          <Heading variant="h2">Downloads (Editors Only)</Heading>
+          <DownloadList assetId={assetId} />
+        </>
+      )}
     </div>
   )
 }
