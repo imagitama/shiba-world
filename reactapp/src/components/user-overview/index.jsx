@@ -52,6 +52,11 @@ const useStyles = makeStyles({
   },
   username: {
     marginTop: '1rem'
+  },
+  bio: {
+    '& img': {
+      maxWidth: '100%'
+    }
   }
 })
 
@@ -211,7 +216,9 @@ export default ({ userId }) => {
       {bio && (
         <>
           <Heading variant="h2">Bio</Heading>
-          <Markdown source={bio} />
+          <div className={classes.bio}>
+            <Markdown source={bio} />
+          </div>
         </>
       )}
       {vrchatUsername ||
