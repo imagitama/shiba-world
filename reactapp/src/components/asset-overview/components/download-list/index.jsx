@@ -39,6 +39,10 @@ export default ({ assetId }) => {
     return <ErrorMessage>Failed to query</ErrorMessage>
   }
 
+  if (!results.length) {
+    return 'No downloads yet'
+  }
+
   return (
     <ul>
       {results.map(result => (
