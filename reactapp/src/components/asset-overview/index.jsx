@@ -123,7 +123,9 @@ const useStyles = makeStyles({
   },
   description: {
     margin: '2rem 0 1rem',
-    '& A': { textDecoration: 'underline' }
+    '& A': { textDecoration: 'underline' },
+    // fix embedded urls causing content to break out of mobile layout
+    wordBreak: 'break-all'
   },
   downloadButton: {
     '& a': {

@@ -59,7 +59,7 @@ export default ({
       onClick={onBtnClick}
       size={isLarge ? 'large' : ''}
       className={isLarge ? classes.large : ''}>
-      Visit Source
+      {isNoFilesAttached ? 'Download from Source' : 'Visit Source'}
     </Button>
   )
 }
