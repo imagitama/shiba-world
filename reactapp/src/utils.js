@@ -55,29 +55,43 @@ export function canApproveAsset(currentUser) {
   return false
 }
 
+// Some uploaded files have an uppercase extension (.PNG)
+// TODO: Upload the files always as lowercase?
+function getValidUrl(url) {
+  if (!url) {
+    return ''
+  }
+  return url.toLowerCase()
+}
+
 export function isUrlAnImage(url) {
+  const validUrl = getValidUrl(url)
   return (
-    url.includes('jpg') ||
-    url.includes('png') ||
-    url.includes('gif') ||
-    url.includes('jpeg')
+    validUrl.includes('jpg') ||
+    validUrl.includes('png') ||
+    validUrl.includes('gif') ||
+    validUrl.includes('jpeg')
   )
 }
 
 export function isUrlAVideo(url) {
-  return url.includes('.mp4') || url.includes('.avi')
+  const validUrl = getValidUrl(url)
+  return validUrl.includes('.mp4') || validUrl.includes('.avi')
 }
 
 export function isUrlAFbx(url) {
-  return url.includes('.fbx')
+  const validUrl = getValidUrl(url)
+  return validUrl.includes('.fbx')
 }
 
 export function isUrlNotAnImageOrVideo(url) {
-  return !isUrlAnImage(url) && !isUrlAVideo(url)
+  const validUrl = getValidUrl(url)
+  return !isUrlAnImage(validUrl) && !isUrlAVideo(validUrl)
 }
 
 export function getFilenameFromUrl(url) {
-  return url
+  const validUrl = getValidUrl(url)
+  return validUrl
     .replace('%2F', '/')
     .split('/')
     .pop()
