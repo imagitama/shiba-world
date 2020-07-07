@@ -11,6 +11,7 @@ import ErrorMessage from '../error-message'
 import SuccessMessage from '../success-message'
 import LoadingIndicator from '../loading-indicator'
 import Button from '../button'
+import Message from '../message'
 
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
@@ -41,6 +42,10 @@ export default ({ collectionName, parentId }) => {
     CollectionNames.Comments
   )
   const classes = useStyles()
+
+  if (!userId) {
+    return <Message>You must be logged in to comment</Message>
+  }
 
   if (isSaving) {
     return <LoadingIndicator>Adding your comment...</LoadingIndicator>
