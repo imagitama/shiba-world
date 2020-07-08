@@ -25,6 +25,8 @@ import ErrorMessage from '../error-message'
 import Heading from '../heading'
 import AssetResults from '../asset-results'
 import Message from '../message'
+import CommentList from '../comment-list'
+import AddCommentForm from '../add-comment-form'
 
 import * as routes from '../../routes'
 import { createRef } from '../../utils'
@@ -259,6 +261,12 @@ export default ({ userId }) => {
           url={`https://twitch.tv/${twitchUsername}`}
         />
       )}
+      <Heading variant="h2">Comments</Heading>
+      <CommentList collectionName={CollectionNames.Users} parentId={userId} />
+      <AddCommentForm
+        collectionName={CollectionNames.Users}
+        parentId={userId}
+      />
       <Heading variant="h2">Uploads</Heading>
       <AssetsForUser userId={userId} />
     </>
