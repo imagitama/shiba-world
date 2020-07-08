@@ -22,8 +22,11 @@ const useStyles = makeStyles(theme => ({
     marginRight: '1%'
   },
   rightCol: {},
+  header: {
+    lineHeight: 1
+  },
   message: {
-    marginTop: theme.spacing(1),
+    marginTop: '-8px',
     '& p:last-child': {
       marginBottom: 0
     }
@@ -60,11 +63,11 @@ export default ({ id, title, message, createdBy }) => {
         <Avatar
           url={createdBy.avatarUrl}
           username={createdBy.username}
-          size={sizes.SMALL}
+          size={sizes.TINY}
         />
       </div>
       <div className={classes.rightCol}>
-        <Typography variant="h5" component="h3">
+        <Typography variant="h5" component="h3" className={classes.header}>
           {title}
         </Typography>
         <div className={classes.message}>

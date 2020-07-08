@@ -5,6 +5,7 @@ import LoadingIndicator from '../loading-indicator'
 import defaultAvatarUrl from '../../assets/images/default-avatar.png'
 
 export const sizes = {
+  TINY: 'tiny',
   SMALL: 'small',
   MEDIUM: 'large'
 }
@@ -12,6 +13,10 @@ export const sizes = {
 const useStyles = makeStyles({
   container: {
     position: 'relative'
+  },
+  [sizes.TINY]: {
+    width: '50px',
+    height: '50px'
   },
   [sizes.SMALL]: {
     width: '100px',
