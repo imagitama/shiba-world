@@ -33,7 +33,7 @@ export default ({ assetId, url, isLarge = false }) => {
     try {
       await saveToDatabase({
         asset: createRef(CollectionNames.Assets, assetId),
-        createdBy: createRef(CollectionNames.Users, userId),
+        createdBy: userId ? createRef(CollectionNames.Users, userId) : null,
         createdAt: new Date()
       })
     } catch (err) {

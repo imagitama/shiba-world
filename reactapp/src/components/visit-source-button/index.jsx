@@ -41,7 +41,7 @@ export default ({
         await saveToDatabase({
           asset: createRef(CollectionNames.Assets, assetId),
           visitSource: true,
-          createdBy: createRef(CollectionNames.Users, userId),
+          createdBy: userId ? createRef(CollectionNames.Users, userId) : null,
           createdAt: new Date()
         })
       }
