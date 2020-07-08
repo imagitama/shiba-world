@@ -193,6 +193,10 @@ const mapReferences = async doc => {
       if (value && value instanceof firestore.DocumentReference) {
         return [key, await getDataFromReference(value)]
       }
+      // Bad hack for the Notifications Added comment author field :)
+      if (value && typeof value === 'object' && value.author) {
+        return [key, await mapReferences(value)]
+      }
       return [key, await Promise.resolve(value)]
     })
   )

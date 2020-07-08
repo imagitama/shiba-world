@@ -7,7 +7,8 @@ import { makeStyles } from '@material-ui/core/styles'
 import useDatabaseQuery, {
   CollectionNames,
   NotificationsFieldNames,
-  Operators
+  Operators,
+  OrderDirections
 } from '../../hooks/useDatabaseQuery'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
@@ -43,12 +44,14 @@ const useStyles = makeStyles({
   }
 })
 
-function Message({ parent, message }) {
+function Message({ parent, message, data }) {
   switch (message) {
     case 'Approved asset':
       return `Your asset "${parent.title}" was approved`
     case 'Created comment':
-      return `Someone commented on asset "${parent.title}"`
+      return `${
+        data && data.author ? data.author.username : 'Someone'
+      } commented on asset "${parent.title}"`
     default:
       return '???'
   }
@@ -89,7 +92,9 @@ export default ({ onClose }) => {
             createRef(CollectionNames.Users, userId)
           ]
         ]
-      : false // do not query if not logged in
+      : false, // do not query if not logged in
+    100,
+    [NotificationsFieldNames.createdAt, OrderDirections.DESC]
   )
 
   if (isLoading) {
@@ -127,7 +132,7 @@ export default ({ onClose }) => {
     }
   }
 
-  return results.map(({ id, parent, message, createdAt }) => (
+  return results.map(({ id, parent, message, createdAt, data }) => (
     <MenuItem key={id}>
       <Link
         to={getLinkUrl(parent)}
@@ -135,7 +140,7 @@ export default ({ onClose }) => {
         className={classes.anchor}>
         <div className={classes.leftCol}>
           <div className={classes.message}>
-            <Message parent={parent} message={message} />
+            <Message parent={parent} message={message} data={data} />
           </div>
           <div className={classes.date}>
             <FormattedDate date={createdAt} />

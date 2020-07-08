@@ -114,6 +114,7 @@ const NotificationsFieldNames = {
   message: 'message',
   parent: 'parent',
   isRead: 'isRead',
+  data: 'data',
   createdAt: 'createdAt',
 }
 
@@ -150,12 +151,18 @@ async function storeInHistory(message, parentRef, data, user) {
   })
 }
 
-async function storeInNotifications(message, parentRef, recipientRef) {
+async function storeInNotifications(
+  message,
+  parentRef,
+  recipientRef,
+  data = null
+) {
   return db.collection(CollectionNames.Notifications).add({
     [NotificationsFieldNames.message]: message,
     [NotificationsFieldNames.parent]: parentRef,
     [NotificationsFieldNames.recipient]: recipientRef,
     [NotificationsFieldNames.isRead]: false,
+    [NotificationsFieldNames.data]: data,
     [NotificationsFieldNames.createdAt]: new Date(),
   })
 }
@@ -442,7 +449,10 @@ exports.onCommentCreated = functions.firestore
     await storeInNotifications(
       'Created comment',
       docData[CommentFieldNames.parent],
-      originalAuthor
+      originalAuthor,
+      {
+        author: docData[CommentFieldNames.createdBy],
+      }
     )
 
     return storeInHistory(
