@@ -115,6 +115,10 @@ function isPrivate(docData) {
   return docData.isPrivate === true
 }
 
+function isAdult(docData) {
+  return docData[AssetFieldNames.isAdult] === true
+}
+
 async function storeInHistory(message, parentRef, data, user) {
   return db.collection(CollectionNames.History).add({
     message,
@@ -373,7 +377,11 @@ exports.onAssetUpdated = functions.firestore
       return Promise.resolve()
     }
 
-    if (beforeDocData.isApproved !== true && docData.isApproved === true) {
+    if (
+      !isAdult(docData) &&
+      beforeDocData.isApproved !== true &&
+      docData.isApproved === true
+    ) {
       const author = await docData.createdBy.get()
 
       await insertTweetRecordInDatabase(
