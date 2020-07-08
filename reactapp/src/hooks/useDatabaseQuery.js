@@ -89,7 +89,9 @@ export const ProfileFieldNames = {
 }
 
 export const CommentFieldNames = {
-  parent: 'parent'
+  parent: 'parent',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy'
 }
 
 export const HistoryFieldNames = {

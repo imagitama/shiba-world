@@ -8,7 +8,8 @@ import NoResultsMessage from '../no-results-message'
 import useDatabaseQuery, {
   CollectionNames,
   CommentFieldNames,
-  Operators
+  Operators,
+  OrderDirections
 } from '../../hooks/useDatabaseQuery'
 
 import { createRef } from '../../utils'
@@ -29,7 +30,9 @@ export default ({ collectionName, parentId }) => {
         Operators.EQUALS,
         createRef(collectionName, parentId)
       ]
-    ]
+    ],
+    100,
+    [CommentFieldNames.createdAt, OrderDirections.DESC]
   )
 
   if (isLoading) {
