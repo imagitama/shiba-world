@@ -27,9 +27,12 @@ const useStyles = makeStyles({
   },
   anchor: {
     color: 'inherit',
-    display: 'flex'
+    display: 'flex',
+    width: '100%'
   },
-  leftCol: {},
+  leftCol: {
+    flex: 1
+  },
   rightCol: {
     flexShrink: 1,
     marginLeft: '2%'
