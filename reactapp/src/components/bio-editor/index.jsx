@@ -39,7 +39,8 @@ export default () => {
   const [showPreview, setShowPreview] = useState(false)
 
   useEffect(() => {
-    if (!profile) {
+    // Check if "bio" is undefined otherwise throws Firebase error
+    if (!profile || !profile.bio) {
       return
     }
     setBioValue(profile.bio)
