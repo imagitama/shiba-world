@@ -54,64 +54,84 @@ function Dropdown({ label, items, isOpen, onOpen, onClose }) {
   }
 
   return (
-    <ClickAwayListener onClickAway={onClose}>
-      <span>
-        <span ref={labelRef} onClick={onOpen} className={classes.menuItemLabel}>
-          {label} <KeyboardArrowDownIcon className={classes.icon} />
-        </span>
-        <Menu anchorEl={labelRef.current} open={isOpen}>
-          {items.map(({ label, url }) => (
-            <MenuItem key={url} onClick={() => onClickItem(url)}>
-              {label}
-            </MenuItem>
-          ))}
-        </Menu>
+    <>
+      <span ref={labelRef} onClick={onOpen} className={classes.menuItemLabel}>
+        {label} <KeyboardArrowDownIcon className={classes.icon} />
       </span>
-    </ClickAwayListener>
+      <Menu
+        anchorEl={labelRef.current}
+        getContentAnchorEl={null}
+        open={isOpen}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right'
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right'
+        }}>
+        {isChildrenAComponent(items)
+          ? React.createElement(items, { onClose })
+          : items.map(({ label, url }) => (
+              <MenuItem key={url} onClick={() => onClickItem(url)}>
+                {label}
+              </MenuItem>
+            ))}
+      </Menu>
+    </>
   )
+}
+
+function isChildrenAComponent(children) {
+  return children && !Array.isArray(children)
 }
 
 export default () => {
   const classes = useStyles()
   const [, , user] = useUserRecord()
-  const [openMenuItems, setOpenMenuItems] = useState({})
+  const [openMenuItem, setOpenMenuItem] = useState(null)
 
-  const openMenuDropdown = idx =>
-    setOpenMenuItems({ ...openMenuItems, [idx]: true })
-  const closeMenuDropdown = idx =>
-    setOpenMenuItems({ ...openMenuItems, [idx]: false })
+  const closeMenuDropdown = () => {
+    setOpenMenuItem(null)
+  }
 
   return (
-    <div className={classes.root}>
-      {navItems
-        .filter(navItem => canShowMenuItem(navItem, user))
-        .map(({ label, url, children }, idx) => {
-          const actualLabel = getLabelForMenuItem(label)
+    <ClickAwayListener onClickAway={closeMenuDropdown}>
+      <div className={classes.root}>
+        {navItems
+          .filter(navItem => canShowMenuItem(navItem, user))
+          .map(({ id, label, url, children }) => {
+            const actualLabel = getLabelForMenuItem(label)
 
-          return (
-            <div key={url} className={classes.menuItem}>
-              {children ? (
-                <Dropdown
-                  label={actualLabel}
-                  items={children.filter(navItem =>
-                    canShowMenuItem(navItem, user)
-                  )}
-                  isOpen={openMenuItems[idx]}
-                  onOpen={() => openMenuDropdown(idx)}
-                  onClose={() => closeMenuDropdown(idx)}
-                />
-              ) : (
-                <Link to={url} className={classes.menuItemLabel}>
-                  {actualLabel}
-                </Link>
-              )}
-            </div>
-          )
-        })}
+            return (
+              <div key={id} className={classes.menuItem}>
+                {children ? (
+                  <Dropdown
+                    label={actualLabel}
+                    items={
+                      isChildrenAComponent(children)
+                        ? children
+                        : children.filter(navItem =>
+                            canShowMenuItem(navItem, user)
+                          )
+                    }
+                    isOpen={openMenuItem === id}
+                    onOpen={() => setOpenMenuItem(id)}
+                    onClose={() => closeMenuDropdown()}
+                  />
+                ) : (
+                  <Link to={url} className={classes.menuItemLabel}>
+                    {actualLabel}
+                  </Link>
+                )}
+              </div>
+            )
+          })}
 
-      <div className={classes.twitterBtn}>
-        <TwitterFollowButton />
+        <div className={classes.twitterBtn}>
+          <TwitterFollowButton />
+        </div>
       </div>
-    </div>
+    </ClickAwayListener>
   )
 }

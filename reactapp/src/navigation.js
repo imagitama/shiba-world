@@ -2,6 +2,8 @@ import React from 'react'
 import * as routes from './routes'
 import speciesMeta from './species-meta'
 import categoriesMeta from './category-meta'
+import NotificationsMenuLabel from './components/notifications-menu-label'
+import NotificationsMenuChildren from './components/notifications-menu-children'
 
 export function canShowMenuItem(menuItem, user) {
   if (menuItem.requiresAuth && !user) {
@@ -37,14 +39,17 @@ export function getLabelForMenuItem(Label) {
 
 export default [
   {
+    id: 'home',
     label: 'Home',
     url: routes.home
   },
   {
+    id: 'news',
     label: 'News',
     url: routes.news
   },
   {
+    id: 'species',
     label: 'Species',
     children: [
       {
@@ -59,6 +64,7 @@ export default [
     )
   },
   {
+    id: 'categories',
     label: 'Categories',
     children: Object.entries(categoriesMeta).map(([name, meta]) => ({
       label: meta.name,
@@ -66,35 +72,42 @@ export default [
     }))
   },
   {
+    id: 'requests',
     label: 'Requests',
     url: routes.requests
   },
   {
+    id: 'upload',
     label: 'Upload',
     url: routes.createAsset,
     requiresAuth: true
   },
   {
+    id: 'my-account',
     label: 'Your Account',
     url: routes.myAccount,
     requiresAuth: true
   },
   {
+    id: 'login',
     label: 'Login',
     url: routes.login,
     requiresNotAuth: true
   },
   {
+    id: 'sign-up',
     label: 'Sign Up',
     url: routes.signUp,
     requiresNotAuth: true
   },
   {
+    id: 'logout',
     label: 'Logout',
     url: routes.logout,
     requiresAuth: true
   },
   {
+    id: 'admin',
     label: 'Admin',
     url: routes.admin,
     requiresAdminOrEditor: true,
@@ -114,5 +127,11 @@ export default [
         requiresAdmin: true
       }
     ]
+  },
+  {
+    id: 'notifications',
+    label: NotificationsMenuLabel,
+    requiresAuth: true,
+    children: NotificationsMenuChildren
   }
 ]

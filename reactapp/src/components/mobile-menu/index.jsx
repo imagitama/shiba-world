@@ -68,6 +68,11 @@ function MenuItemWithUrl({ onClick, url, label, className = '' }) {
     </NavigationLink>
   )
 }
+
+function isChildrenAComponent(children) {
+  return children && !Array.isArray(children)
+}
+
 export default () => {
   const classes = useStyles()
   const [, , user] = useUserRecord()
@@ -126,18 +131,26 @@ export default () => {
                   />
                 )}
               </MenuItem>
-              {openDropdownMenus[idx] &&
-                children
-                  .filter(navItem => canShowMenuItem(navItem, user))
-                  .map(child => (
-                    <MenuItem key={url} button className={classes.subMenuItem}>
-                      <MenuItemWithUrl
-                        url={child.url}
-                        label={child.label}
-                        onClick={onClickMenuItemWithUrl}
-                      />
-                    </MenuItem>
-                  ))}
+              {openDropdownMenus[idx]
+                ? isChildrenAComponent(children)
+                  ? React.createElement(children, {
+                      onClose: onClickMenuItemWithUrl
+                    })
+                  : children
+                      .filter(navItem => canShowMenuItem(navItem, user))
+                      .map(child => (
+                        <MenuItem
+                          key={url}
+                          button
+                          className={classes.subMenuItem}>
+                          <MenuItemWithUrl
+                            url={child.url}
+                            label={child.label}
+                            onClick={onClickMenuItemWithUrl}
+                          />
+                        </MenuItem>
+                      ))
+                : null}
             </Fragment>
           ))}
       </MenuList>

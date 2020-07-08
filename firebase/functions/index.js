@@ -61,6 +61,7 @@ const CollectionNames = {
   Mail: 'mail',
   Summaries: 'summaries',
   Tweets: 'tweets',
+  Notifications: 'notifications',
 }
 
 const AssetFieldNames = {
@@ -78,6 +79,11 @@ const AssetFieldNames = {
   isPrivate: 'isPrivate',
   lastModifiedBy: 'lastModifiedBy',
   lastModifiedAt: 'lastModifiedAt',
+}
+
+const CommentFieldNames = {
+  parent: 'parent',
+  createdBy: 'createdBy',
 }
 
 const ProfileFieldNames = {
@@ -103,6 +109,14 @@ const UserFieldNames = {
   lastModifiedAt: 'lastModifiedAt',
 }
 
+const NotificationsFieldNames = {
+  recipient: 'recipient',
+  message: 'message',
+  parent: 'parent',
+  isRead: 'isRead',
+  createdAt: 'createdAt',
+}
+
 function isNotApproved(docData) {
   return docData.isApproved === false
 }
@@ -119,6 +133,13 @@ function isAdult(docData) {
   return docData[AssetFieldNames.isAdult] === true
 }
 
+function hasAssetJustBeenApproved(beforeDocData, afterDocData) {
+  return (
+    beforeDocData[AssetFieldNames.isApproved] !== true &&
+    afterDocData[AssetFieldNames.isApproved] === true
+  )
+}
+
 async function storeInHistory(message, parentRef, data, user) {
   return db.collection(CollectionNames.History).add({
     message,
@@ -126,6 +147,16 @@ async function storeInHistory(message, parentRef, data, user) {
     data,
     createdAt: new Date(),
     createdBy: user,
+  })
+}
+
+async function storeInNotifications(message, parentRef, recipientRef) {
+  return db.collection(CollectionNames.Notifications).add({
+    [NotificationsFieldNames.message]: message,
+    [NotificationsFieldNames.parent]: parentRef,
+    [NotificationsFieldNames.recipient]: recipientRef,
+    [NotificationsFieldNames.isRead]: false,
+    [NotificationsFieldNames.createdAt]: new Date(),
   })
 }
 
@@ -369,6 +400,14 @@ exports.onAssetUpdated = functions.firestore
       return deleteDocFromIndex(doc)
     }
 
+    if (hasAssetJustBeenApproved(beforeDocData, docData)) {
+      await storeInNotifications(
+        'Approved asset',
+        beforeDoc.ref,
+        docData.createdBy
+      )
+    }
+
     if (isPrivate(docData)) {
       return Promise.resolve()
     }
@@ -377,11 +416,7 @@ exports.onAssetUpdated = functions.firestore
       return Promise.resolve()
     }
 
-    if (
-      !isAdult(docData) &&
-      beforeDocData.isApproved !== true &&
-      docData.isApproved === true
-    ) {
+    if (hasAssetJustBeenApproved(beforeDocData, docData) && !isAdult(docData)) {
       const author = await docData.createdBy.get()
 
       await insertTweetRecordInDatabase(
@@ -401,14 +436,23 @@ exports.onCommentCreated = functions.firestore
   .onCreate(async (doc) => {
     const docData = doc.data()
 
+    const asset = await docData[CommentFieldNames.parent].get()
+    const originalAuthor = asset.get(AssetFieldNames.createdBy)
+
+    await storeInNotifications(
+      'Created comment',
+      docData[CommentFieldNames.parent],
+      originalAuthor
+    )
+
     return storeInHistory(
       'Created comment',
       doc.ref,
       {
         fields: replaceReferencesWithString(docData),
-        parent: doc.parent,
+        parent: doc[CommentFieldNames.parent],
       },
-      docData.createdBy
+      docData[CommentFieldNames.createdBy]
     )
   })
 

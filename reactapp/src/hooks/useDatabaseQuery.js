@@ -27,7 +27,8 @@ export const CollectionNames = {
   Mail: 'mail',
   Summaries: 'summaries',
   Downloads: 'downloads',
-  Requests: 'requests'
+  Requests: 'requests',
+  Notifications: 'notifications'
 }
 
 export const AssetFieldNames = {
@@ -120,6 +121,14 @@ export const RequestsFieldNames = {
 export const DownloadsFieldNames = {
   asset: 'asset',
   createdBy: 'createdBy',
+  createdAt: 'createdAt'
+}
+
+export const NotificationsFieldNames = {
+  recipient: 'recipient',
+  message: 'message',
+  parent: 'parent',
+  isRead: 'isRead',
   createdAt: 'createdAt'
 }
 
