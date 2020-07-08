@@ -85,7 +85,7 @@ const AssetsForUser = ({ userId }) => {
 
   const [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.Assets,
-    currentUser ? whereClauses : false,
+    whereClauses,
     100,
     [AssetFieldNames.createdAt, OrderDirections.DESC]
   )
