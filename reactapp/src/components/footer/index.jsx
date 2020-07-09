@@ -36,24 +36,8 @@ const footerLinks = [
     label: 'Privacy Policy'
   },
   {
-    url: routes.users,
-    label: 'Users'
-  },
-  {
-    url: routes.streams,
-    label: 'Streams'
-  },
-  {
-    url: routes.activity,
-    label: 'Activity'
-  },
-  {
     url: routes.stats,
     label: 'Stats'
-  },
-  {
-    url: routes.about,
-    label: 'About'
   }
 ]
 

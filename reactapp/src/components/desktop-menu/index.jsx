@@ -6,7 +6,6 @@ import MenuItem from '@material-ui/core/MenuItem'
 import ClickAwayListener from '@material-ui/core/ClickAwayListener'
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import useUserRecord from '../../hooks/useUserRecord'
-import TwitterFollowButton from '../twitter-follow-button'
 import navItems, {
   canShowMenuItem,
   getLabelForMenuItem
@@ -14,7 +13,6 @@ import navItems, {
 
 const useStyles = makeStyles({
   root: {
-    flexWrap: 'wrap',
     display: 'flex',
     alignItems: 'center'
   },
@@ -30,12 +28,10 @@ const useStyles = makeStyles({
     padding: '1rem',
     color: 'inherit',
     display: 'flex', // for icon
+    alignItems: 'center',
     '&:hover': {
       cursor: 'pointer'
     }
-  },
-  icon: {
-    marginTop: '-2px'
   },
   twitterBtn: {
     paddingLeft: '1rem',
@@ -103,6 +99,21 @@ export default () => {
           .map(({ id, label, url, children }) => {
             const actualLabel = getLabelForMenuItem(label)
 
+            const Anchor = ({ children }) =>
+              url.includes('http') ? (
+                <a
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={classes.menuItemLabel}>
+                  {children}
+                </a>
+              ) : (
+                <Link to={url} className={classes.menuItemLabel}>
+                  {children}
+                </Link>
+              )
+
             return (
               <div key={id} className={classes.menuItem}>
                 {children ? (
@@ -120,17 +131,11 @@ export default () => {
                     onClose={() => closeMenuDropdown()}
                   />
                 ) : (
-                  <Link to={url} className={classes.menuItemLabel}>
-                    {actualLabel}
-                  </Link>
+                  <Anchor>{actualLabel}</Anchor>
                 )}
               </div>
             )
           })}
-
-        <div className={classes.twitterBtn}>
-          <TwitterFollowButton />
-        </div>
       </div>
     </ClickAwayListener>
   )

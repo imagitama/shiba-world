@@ -13,7 +13,6 @@ const useStyles = makeStyles({
   root: {
     padding: '2px 2px 2px 24px',
     borderRadius: '3rem',
-    margin: '1.5rem auto',
     display: 'flex',
     alignItems: 'center',
     '@media (min-width: 960px)': {

@@ -1,3 +1,7 @@
+import React from 'react'
+import { makeStyles } from '@material-ui/core/styles'
+import Badge from '@material-ui/core/Badge'
+import NotificationsIcon from '@material-ui/icons/Notifications'
 import useDatabaseQuery, {
   CollectionNames,
   NotificationsFieldNames,
@@ -6,21 +10,16 @@ import useDatabaseQuery, {
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import { createRef } from '../../utils'
 
-function getValueForNotifications(isLoading, isErrored, results) {
-  if (isLoading) {
-    return '...'
+const useStyles = makeStyles({
+  root: {
+    display: 'flex' // fix icon alignment
   }
-
-  if (isErrored) {
-    return '?'
-  }
-
-  return results.length
-}
+})
 
 export default () => {
+  const classes = useStyles()
   const userId = useFirebaseUserId()
-  const [isLoading, isErrored, results] = useDatabaseQuery(
+  const [, , results] = useDatabaseQuery(
     CollectionNames.Notifications,
     userId
       ? [
@@ -33,9 +32,11 @@ export default () => {
       : false // do not query if not logged in
   )
 
-  return `Notifications (${getValueForNotifications(
-    isLoading,
-    isErrored,
-    results
-  )})`
+  return (
+    <span className={classes.root}>
+      <Badge badgeContent={results ? results.length : null} color="primary">
+        <NotificationsIcon />
+      </Badge>
+    </span>
+  )
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import ClearIcon from '@material-ui/icons/Clear'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -20,11 +20,10 @@ import * as routes from '../../routes'
 import FormattedDate from '../formatted-date'
 
 const useStyles = makeStyles({
-  // NOTE: MenuItem is set to flex
-  loadingItem: {
-    // Fix menu appearing off to right because it starts as 0px then expands when items loaded
-    minWidth: '200px'
+  desktopItem: {
+    width: '500px'
   },
+  // NOTE: MenuItem is set to flex
   anchor: {
     color: 'inherit',
     display: 'flex',
@@ -82,7 +81,7 @@ function getLinkUrl(parent) {
   }
 }
 
-export default ({ onClose }) => {
+export default ({ onClose, isMobile = false }) => {
   const classes = useStyles()
   const userId = useFirebaseUserId()
   const [isLoading, isErrored, results] = useDatabaseQuery(
@@ -100,16 +99,25 @@ export default ({ onClose }) => {
     [NotificationsFieldNames.createdAt, OrderDirections.DESC]
   )
 
+  useEffect(() => {
+    if (!results) {
+      return
+    }
+    window.dispatchEvent(new Event('resize'))
+  }, [results && results.length > 0])
+
+  const menuItemClassName = isMobile ? classes.mobileItem : classes.desktopItem
+
   if (isLoading) {
-    return <MenuItem className={classes.loadingItem}>...</MenuItem>
+    return <MenuItem disabled>Loading...</MenuItem>
   }
 
   if (isErrored) {
-    return <MenuItem>Failed to get notifications</MenuItem>
+    return <MenuItem disabled>Failed to get notifications</MenuItem>
   }
 
   if (!results.length) {
-    return <MenuItem>No notifications</MenuItem>
+    return <MenuItem disabled>No notifications</MenuItem>
   }
 
   const onClearClick = (event, id) => {
@@ -136,7 +144,7 @@ export default ({ onClose }) => {
   }
 
   return results.map(({ id, parent, message, createdAt, data }) => (
-    <MenuItem key={id}>
+    <MenuItem key={id} className={menuItemClassName}>
       <Link
         to={getLinkUrl(parent)}
         onClick={onClose}

@@ -1,9 +1,9 @@
 import React from 'react'
+import TwitterIcon from '@material-ui/icons/Twitter'
 import * as routes from './routes'
 import speciesMeta from './species-meta'
 import categoriesMeta from './category-meta'
-import NotificationsMenuLabel from './components/notifications-menu-label'
-import NotificationsMenuChildren from './components/notifications-menu-children'
+import { TWITTER_URL } from './config'
 
 export function canShowMenuItem(menuItem, user) {
   if (menuItem.requiresAuth && !user) {
@@ -39,11 +39,6 @@ export function getLabelForMenuItem(Label) {
 
 export default [
   {
-    id: 'home',
-    label: 'Home',
-    url: routes.home
-  },
-  {
     id: 'news',
     label: 'News',
     url: routes.news
@@ -58,6 +53,7 @@ export default [
       }
     ].concat(
       Object.entries(speciesMeta).map(([name, meta]) => ({
+        id: name,
         label: meta.name,
         url: routes.viewSpeciesWithVar.replace(':speciesName', name)
       }))
@@ -67,44 +63,46 @@ export default [
     id: 'categories',
     label: 'Categories',
     children: Object.entries(categoriesMeta).map(([name, meta]) => ({
+      id: name,
       label: meta.name,
       url: routes.viewCategoryWithVar.replace(':categoryName', name)
     }))
   },
   {
-    id: 'requests',
-    label: 'Requests',
-    url: routes.requests
+    id: 'users',
+    url: routes.users,
+    label: 'Users'
   },
   {
-    id: 'upload',
-    label: 'Upload',
-    url: routes.createAsset,
-    requiresAuth: true
+    id: 'more',
+    label: 'More',
+    children: [
+      {
+        id: 'activity',
+        url: routes.activity,
+        label: 'Activity'
+      },
+      {
+        id: 'streams',
+        url: routes.streams,
+        label: 'Streams'
+      },
+      {
+        id: 'requests',
+        label: 'Requests',
+        url: routes.requests
+      },
+      {
+        id: 'about',
+        url: routes.about,
+        label: 'About'
+      }
+    ]
   },
   {
-    id: 'my-account',
-    label: 'Your Account',
-    url: routes.myAccount,
-    requiresAuth: true
-  },
-  {
-    id: 'login',
-    label: 'Login',
-    url: routes.login,
-    requiresNotAuth: true
-  },
-  {
-    id: 'sign-up',
-    label: 'Sign Up',
-    url: routes.signUp,
-    requiresNotAuth: true
-  },
-  {
-    id: 'logout',
-    label: 'Logout',
-    url: routes.logout,
-    requiresAuth: true
+    id: 'twitter',
+    label: TwitterIcon,
+    url: TWITTER_URL
   },
   {
     id: 'admin',
@@ -113,25 +111,22 @@ export default [
     requiresAdminOrEditor: true,
     children: [
       {
+        id: 'admin-users',
         label: 'Users',
         url: routes.adminUsers,
         requiresAdmin: true
       },
       {
+        id: 'admin-assets',
         label: 'Assets',
         url: routes.adminAssets
       },
       {
+        id: 'admin-history',
         label: 'History',
         url: routes.adminHistory,
         requiresAdmin: true
       }
     ]
-  },
-  {
-    id: 'notifications',
-    label: NotificationsMenuLabel,
-    requiresAuth: true,
-    children: NotificationsMenuChildren
   }
 ]
