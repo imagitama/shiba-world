@@ -72,7 +72,7 @@ const loggedOutMenuItems = [
   }
 ]
 
-export default ({ onClose, isMobile = false }) => {
+export default ({ onClose = null, isMobile = false }) => {
   const [, , user] = useUserRecord()
   const classes = useStyles()
   const userMenuLabelRef = useRef()
@@ -102,7 +102,9 @@ export default ({ onClose, isMobile = false }) => {
   }
 
   const closeAllDropdowns = () => {
-    onClose()
+    if (onClose) {
+      onClose()
+    }
     setIsUserDropdownOpen(false)
     setIsNotificationsDropdownOpen(false)
   }
@@ -185,7 +187,10 @@ export default ({ onClose, isMobile = false }) => {
             vertical: 'top',
             horizontal: 'right'
           }}>
-          <NotificationsMenuChildren onClose={onClose} isMobile={isMobile} />
+          <NotificationsMenuChildren
+            onClose={closeAllDropdowns}
+            isMobile={isMobile}
+          />
         </MenuOrMenuList>
       </div>
     </ClickAwayListener>
