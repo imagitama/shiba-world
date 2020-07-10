@@ -105,6 +105,8 @@ export function getFilenameFromUrl(url) {
 // TODO: Move these funcs to a firestore utils file
 
 export function createRef(collectionName, id) {
+  // To help debug Sentry issue #1766726990
+  console.log('createRef', collectionName, id)
   return {
     ref: {
       collectionName,
@@ -118,6 +120,8 @@ export function isRef(value) {
 }
 
 export function getDocument(collectionName, id) {
+  // To help debug Sentry issue #1766726990
+  console.log('getDocument', collectionName, id)
   return firebase
     .firestore()
     .collection(collectionName)
