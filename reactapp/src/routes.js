@@ -29,6 +29,7 @@ export const viewRequestWithVar = '/requests/:requestId'
 export const createRequest = '/requests/create'
 export const streams = '/streams'
 export const about = '/about'
+export const adultAssets = '/adult-assets'
 
 // Outdated routes
 export const browseAssets = '/browse'

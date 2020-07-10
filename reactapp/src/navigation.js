@@ -4,6 +4,7 @@ import * as routes from './routes'
 import speciesMeta from './species-meta'
 import categoriesMeta from './category-meta'
 import { TWITTER_URL } from './config'
+import { UserFieldNames } from './hooks/useDatabaseQuery'
 
 export function canShowMenuItem(menuItem, user) {
   if (menuItem.requiresAuth && !user) {
@@ -23,6 +24,15 @@ export function canShowMenuItem(menuItem, user) {
       return false
     }
     if (user.isAdmin || user.isEditor) {
+      return true
+    }
+    return false
+  }
+  if (menuItem.requiresAdultContentEnabled) {
+    if (!user) {
+      return false
+    }
+    if (user[UserFieldNames.enabledAdultContent]) {
       return true
     }
     return false
@@ -96,6 +106,12 @@ export default [
         id: 'about',
         url: routes.about,
         label: 'About'
+      },
+      {
+        id: 'adult',
+        url: routes.adultAssets,
+        label: 'Adult Content',
+        requiresAdultContentEnabled: true
       }
     ]
   },
