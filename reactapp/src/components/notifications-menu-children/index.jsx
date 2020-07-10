@@ -116,7 +116,7 @@ export default ({ onClose, isMobile = false }) => {
     return <MenuItem disabled>Failed to get notifications</MenuItem>
   }
 
-  if (!results.length) {
+  if (!results || !results.length) {
     return <MenuItem disabled>No notifications</MenuItem>
   }
 

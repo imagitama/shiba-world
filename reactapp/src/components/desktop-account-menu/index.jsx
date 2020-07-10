@@ -1,0 +1,181 @@
+import React, { useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { makeStyles } from '@material-ui/core/styles'
+import Menu from '@material-ui/core/Menu'
+import MenuItem from '@material-ui/core/MenuItem'
+import ClickAwayListener from '@material-ui/core/ClickAwayListener'
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
+
+import * as routes from '../../routes'
+import useUserRecord from '../../hooks/useUserRecord'
+
+import Avatar, { sizes } from '../avatar'
+import Button from '../button'
+import NotificationsMenuLabel from '../notifications-menu-label'
+import NotificationsMenuChildren from '../notifications-menu-children'
+
+const useStyles = makeStyles({
+  toggle: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+  uploadBtn: {
+    marginRight: '1rem'
+  },
+  notifications: {
+    marginRight: '1rem',
+    '&:hover': {
+      cursor: 'pointer'
+    }
+  },
+  link: {
+    color: 'inherit'
+  },
+  userDropdownBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    '&:hover': {
+      cursor: 'pointer'
+    }
+  }
+})
+
+const loggedInMenuItems = [
+  {
+    id: 'my-account',
+    url: routes.myAccount,
+    label: 'My Account'
+  },
+  {
+    id: 'my-profile',
+    getUrlFromUserId: id => routes.viewUserWithVar.replace(':userId', id),
+    label: 'My Profile'
+  },
+  {
+    id: 'sign-out',
+    url: routes.logout,
+    label: 'Logout'
+  }
+]
+
+const loggedOutMenuItems = [
+  {
+    id: 'login',
+    url: routes.login,
+    label: 'Log In'
+  },
+  {
+    id: 'sign-up',
+    url: routes.signUp,
+    label: 'Sign Up'
+  }
+]
+
+export default ({ onClose = null, isMobile = false }) => {
+  const [, , user] = useUserRecord()
+  const classes = useStyles()
+  const userMenuLabelRef = useRef()
+  const notificationsMenuLabelRef = useRef()
+  const [openId, setOpenId] = useState(null)
+
+  const toggleUserDropdown = () => {
+    if (openId === 'user') {
+      closeAllDropdowns()
+    } else {
+      setOpenId('user')
+    }
+  }
+
+  const toggleNotificationsDropdown = () => {
+    if (openId === 'notifications') {
+      closeAllDropdowns()
+    } else {
+      setOpenId('notifications')
+    }
+  }
+
+  const closeAllDropdowns = () => {
+    if (onClose) {
+      onClose()
+    }
+    setOpenId(null)
+  }
+
+  const menuItems = user ? loggedInMenuItems : loggedOutMenuItems
+
+  return (
+    <>
+      <span className={classes.toggle}>
+        {user && (
+          <Button
+            url={routes.createAsset}
+            className={classes.uploadBtn}
+            onClick={closeAllDropdowns}>
+            Upload
+          </Button>
+        )}
+        {user && (
+          <div
+            ref={notificationsMenuLabelRef}
+            className={classes.notifications}
+            onClick={() => toggleNotificationsDropdown()}>
+            <NotificationsMenuLabel />
+          </div>
+        )}
+        <div
+          ref={userMenuLabelRef}
+          onClick={() => toggleUserDropdown()}
+          className={classes.userDropdownBtn}>
+          <Avatar url={user ? user.avatarUrl : false} size={sizes.TINY} />
+          <div className={classes.dropdownIcon}>
+            <KeyboardArrowDownIcon className={classes.icon} />
+          </div>
+        </div>
+      </span>
+      <ClickAwayListener onClickAway={closeAllDropdowns}>
+        <div>
+          <Menu
+            anchorEl={userMenuLabelRef.current}
+            getContentAnchorEl={null}
+            open={openId === 'user'}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right'
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right'
+            }}>
+            {menuItems.map(({ id, url, label, getUrlFromUserId }) => (
+              <MenuItem key={id}>
+                <Link
+                  to={getUrlFromUserId ? getUrlFromUserId(user.id) : url}
+                  className={classes.link}
+                  onClick={closeAllDropdowns}>
+                  {label}
+                </Link>
+              </MenuItem>
+            ))}
+          </Menu>
+          <Menu
+            anchorEl={notificationsMenuLabelRef.current}
+            getContentAnchorEl={null}
+            open={openId === 'notifications'}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right'
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right'
+            }}>
+            <NotificationsMenuChildren
+              onClose={closeAllDropdowns}
+              isMobile={isMobile}
+            />
+          </Menu>
+        </div>
+      </ClickAwayListener>
+    </>
+  )
+}

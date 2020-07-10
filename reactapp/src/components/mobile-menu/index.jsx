@@ -19,7 +19,7 @@ import navItems, {
   getLabelForMenuItem
 } from '../../navigation'
 
-import HeaderAccountMenu from '../header-account-menu'
+import MobileAccountMenu from '../mobile-account-menu'
 
 const useStyles = makeStyles({
   content: {
@@ -45,7 +45,7 @@ const useStyles = makeStyles({
   subMenuItem: {
     paddingLeft: '2rem'
   },
-  headerAccountMenu: {
+  mobileAccountMenu: {
     padding: '0.5rem'
   }
 })
@@ -101,8 +101,8 @@ export default () => {
   return (
     <Drawer anchor="right" open={isMenuOpen} onClose={dispatchCloseMenu}>
       <div className={classes.content}>
-        <div className={classes.headerAccountMenu}>
-          <HeaderAccountMenu isMobile onClose={dispatchCloseMenu} />
+        <div className={classes.mobileAccountMenu}>
+          <MobileAccountMenu onClose={dispatchCloseMenu} />
         </div>
         <Divider />
         <MenuList>
@@ -142,7 +142,7 @@ export default () => {
                         .filter(navItem => canShowMenuItem(navItem, user))
                         .map(child => (
                           <MenuItem
-                            key={url}
+                            key={child.id}
                             button
                             className={classes.subMenuItem}>
                             <MenuItemWithUrl

@@ -19,7 +19,7 @@ import {
 import Searchbar from '../searchbar'
 import MobileMenu from '../mobile-menu'
 import DesktopMenu from '../desktop-menu'
-import HeaderAccountMenu from '../header-account-menu'
+import DesktopAccountMenu from '../desktop-account-menu'
 
 const useStyles = makeStyles({
   root: {
@@ -128,7 +128,7 @@ export default () => {
       </div>
 
       <div className={classes.floatingMenu}>
-        {!isMobile && <HeaderAccountMenu />}
+        {!isMobile && <DesktopAccountMenu />}
         {isMobile && (
           <Button
             className={classes.menuToggleButton}
