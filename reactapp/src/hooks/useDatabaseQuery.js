@@ -28,7 +28,9 @@ export const CollectionNames = {
   Summaries: 'summaries',
   Downloads: 'downloads',
   Requests: 'requests',
-  Notifications: 'notifications'
+  Notifications: 'notifications',
+  Polls: 'polls',
+  PollResponses: 'pollResponses'
 }
 
 export const AssetFieldNames = {
@@ -131,6 +133,21 @@ export const NotificationsFieldNames = {
   message: 'message',
   parent: 'parent',
   isRead: 'isRead',
+  createdAt: 'createdAt'
+}
+
+export const PollsFieldNames = {
+  question: 'question',
+  answers: 'answers',
+  isClosed: 'isClosed',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt'
+}
+
+export const PollResponsesFieldNames = {
+  poll: 'poll',
+  answer: 'answer',
+  createdBy: 'createdBy',
   createdAt: 'createdAt'
 }
 

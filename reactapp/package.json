@@ -42,6 +42,7 @@
     "react-router-dom": "^5.2.0",
     "react-twitch-embed-video": "^2.0.3",
     "react-twitter-embed": "^3.0.3",
+    "recharts": "^1.8.5",
     "redux": "4.0.1",
     "redux-beacon": "^2.1.0",
     "redux-thunk": "2.3.0",

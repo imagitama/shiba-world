@@ -6,6 +6,7 @@ import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'
 import SpeciesBrowser from '../../components/species-browser'
 import AllTagsBrowser from '../../components/all-tags-browser'
+import Polls from '../../components/polls'
 
 import * as routes from '../../routes'
 import categoryMeta from '../../category-meta'
@@ -25,6 +26,7 @@ export default () => {
 
   return (
     <>
+      <Polls />
       <Heading variant="h2">
         <Link to={routes.viewAllSpecies}>Species</Link>
       </Heading>
