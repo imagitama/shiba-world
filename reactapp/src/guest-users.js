@@ -61,6 +61,10 @@ async function lookupGuestIdWithIpAddress(ipAddress) {
     throw new Error(`Multiple docs found with IP address ${ipAddress}`)
   }
 
+  if (!docs.length) {
+    return null
+  }
+
   const data = docs[0].data()
   return data.id
 }
