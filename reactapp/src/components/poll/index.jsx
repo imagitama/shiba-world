@@ -68,15 +68,18 @@ function Answer({ answer, onClick }) {
 }
 
 function PollResults({ pollId, answers }) {
-  const [, , results] = useDatabaseQuery(CollectionNames.PollResponses, [
+  const [isLoadingResults, , results] = useDatabaseQuery(
+    CollectionNames.PollResponses,
     [
-      PollResponsesFieldNames.poll,
-      Operators.EQUALS,
-      createRef(CollectionNames.Polls, pollId)
+      [
+        PollResponsesFieldNames.poll,
+        Operators.EQUALS,
+        createRef(CollectionNames.Polls, pollId)
+      ]
     ]
-  ])
+  )
 
-  if (!results || !results.length) {
+  if (isLoadingResults || !results) {
     return <LoadingIndicator />
   }
 
@@ -132,6 +135,11 @@ export default ({ poll: { id: pollId, question, description, answers } }) => {
               : guestUser
               ? createRef(CollectionNames.GuestUsers, guestUser.id)
               : false
+          ],
+          [
+            PollResponsesFieldNames.poll,
+            Operators.EQUALS,
+            createRef(CollectionNames.Polls, pollId)
           ]
         ]
   )
