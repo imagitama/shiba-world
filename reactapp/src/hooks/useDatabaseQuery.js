@@ -30,7 +30,8 @@ export const CollectionNames = {
   Requests: 'requests',
   Notifications: 'notifications',
   Polls: 'polls',
-  PollResponses: 'pollResponses'
+  PollResponses: 'pollResponses',
+  GuestUsers: 'guestUsers'
 }
 
 export const AssetFieldNames = {
@@ -148,6 +149,11 @@ export const PollResponsesFieldNames = {
   poll: 'poll',
   answer: 'answer',
   createdBy: 'createdBy',
+  createdAt: 'createdAt'
+}
+
+export const GuestUsersFieldNames = {
+  ipAddress: 'ipAddress',
   createdAt: 'createdAt'
 }
 

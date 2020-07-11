@@ -19,12 +19,7 @@ import useDatabaseQuery, {
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 
-function Assets({
-  speciesName,
-  categoryName,
-  sortByFieldName,
-  sortByDirection
-}) {
+function Assets() {
   const [, , user] = useUserRecord()
 
   let whereClauses = [

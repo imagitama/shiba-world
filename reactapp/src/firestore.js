@@ -8,3 +8,10 @@ export function quickDeleteRecord(collectionName, id) {
     .doc(id)
     .delete()
 }
+
+export function doesDocumentExist(collectionName, id) {
+  return firestore()
+    .collection(collectionName)
+    .doc(id)
+    .exists()
+}
