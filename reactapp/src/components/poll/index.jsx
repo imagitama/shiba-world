@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { BarChart, XAxis, YAxis, Bar } from 'recharts'
+import { ResponsiveContainer, PieChart, Pie, Legend, Cell } from 'recharts'
 import Paper from '../paper'
 
 import useDatabaseSave from '../../hooks/useDatabaseSave'
@@ -67,6 +67,32 @@ function Answer({ answer, onClick }) {
   )
 }
 
+// Source: https://sashamaps.net/docs/tools/20-colors/
+const colors = [
+  '#e6194b',
+  '#3cb44b',
+  '#ffe119',
+  '#4363d8',
+  '#f58231',
+  '#911eb4',
+  '#46f0f0',
+  '#f032e6',
+  '#bcf60c',
+  '#fabebe',
+  '#008080',
+  '#e6beff',
+  '#9a6324',
+  '#fffac8',
+  '#800000',
+  '#aaffc3',
+  '#808000',
+  '#ffd8b1',
+  '#000075',
+  '#808080',
+  '#ffffff',
+  '#000000'
+]
+
 function PollResults({ pollId, answers }) {
   const [isLoadingResults, , results] = useDatabaseQuery(
     CollectionNames.PollResponses,
@@ -101,17 +127,22 @@ function PollResults({ pollId, answers }) {
   }))
 
   return (
-    <div>
-      <BarChart
-        width={500}
-        height={200}
-        data={chartData}
-        margin={{ top: 0, left: 0, right: 0, bottom: 0 }}>
-        <XAxis dataKey="name" />
-        <YAxis dataKey="value" allowDecimals={false} />
-        <Bar dataKey="value" fill="#FFFFFF" />
-      </BarChart>
-    </div>
+    <ResponsiveContainer width="100%" height={300}>
+      <PieChart>
+        <Pie
+          data={chartData}
+          nameKey="name"
+          dataKey="value"
+          label={({ value, percent }) =>
+            `${(percent * 100).toFixed(0)}% (${value})`
+          }>
+          {chartData.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+          ))}
+        </Pie>
+        <Legend verticalAlign="bottom" height={36} />
+      </PieChart>
+    </ResponsiveContainer>
   )
 }
 
