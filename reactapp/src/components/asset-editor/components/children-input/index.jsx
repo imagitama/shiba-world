@@ -76,13 +76,13 @@ export default ({ assetChildren, onChange }) => {
 
   return (
     <Paper className={classes.root}>
-      <strong>Children</strong>
+      <strong>Linked Assets</strong>
       <br />
       <p>
-        Link other assets to this asset by listing them as "children". They will
-        be listed under the description.
+        Link other assets to this asset and they will be listed on the same
+        page. This feature is a W.I.P. and might not work 100%.
       </p>
-      Current children:
+      Current links:
       <div>
         {assetChildren.map(childAssetDoc => (
           <ChildAsset
@@ -94,7 +94,7 @@ export default ({ assetChildren, onChange }) => {
           />
         ))}
       </div>
-      Add a new child by entering a valid ID:
+      Add a new link by entering a valid ID:
       <TextField
         onChange={e => setAssetIdValue(e.target.value)}
         value={assetIdValue}

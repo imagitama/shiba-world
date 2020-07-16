@@ -208,7 +208,11 @@ const getDataFromReference = async record => {
   }
 }
 
-const mapReferences = async doc => {
+const mapReferences = async (doc, fetchChildren = true) => {
+  if (!fetchChildren) {
+    return doc
+  }
+
   const newDoc = { ...doc }
 
   const results = await Promise.all(
@@ -218,7 +222,7 @@ const mapReferences = async doc => {
       }
       // Bad hack for the Notifications Added comment author field :)
       if (value && typeof value === 'object' && value.author) {
-        return [key, await mapReferences(value)]
+        return [key, await mapReferences(value, false)]
       }
       return [key, await Promise.resolve(value)]
     })
@@ -229,8 +233,9 @@ const mapReferences = async doc => {
   return newDoc
 }
 
-export async function formatRawDoc(doc) {
-  const formattedDocs = await formatRawDocs([doc])
+// the 2nd arg is to avoid an infinite loop with fetching children who then have children that refer to the parent
+export async function formatRawDoc(doc, fetchChildren = true) {
+  const formattedDocs = await formatRawDocs([doc], fetchChildren)
   return formattedDocs[0]
 }
 
@@ -238,13 +243,20 @@ function isFirebaseDoc(value) {
   return value && value instanceof firestore.DocumentReference
 }
 
-async function mapDocArrays(doc) {
+async function mapDocArrays(doc, fetchChildren = true) {
+  if (!fetchChildren) {
+    return doc
+  }
+
   const newFields = await Promise.all(
     Object.entries(doc).map(async ([key, value]) => {
       if (Array.isArray(value) && value.length && isFirebaseDoc(value[0])) {
         return [
           key,
-          await formatRawDocs(await Promise.all(value.map(item => item.get())))
+          await formatRawDocs(
+            await Promise.all(value.map(item => item.get())),
+            false
+          )
         ]
       }
       // Hack to support history data having a "parent" field ie. comments
@@ -258,7 +270,7 @@ async function mapDocArrays(doc) {
           key,
           {
             ...value,
-            parent: await formatRawDoc(await value.parent.get())
+            parent: await formatRawDoc(await value.parent.get(), false)
           }
         ]
       }
@@ -275,7 +287,8 @@ async function mapDocArrays(doc) {
   )
 }
 
-export async function formatRawDocs(docs) {
+// the 2nd arg is to avoid an infinite loop with fetching children who then have children that refer to the parent
+export async function formatRawDocs(docs, fetchChildren = true) {
   const docsWithDates = docs
     .map(doc => ({
       ...doc.data(),
@@ -284,8 +297,10 @@ export async function formatRawDocs(docs) {
     }))
     .map(mapDates)
 
-  const mappedRefs = await Promise.all(docsWithDates.map(mapReferences))
-  return Promise.all(mappedRefs.map(mapDocArrays))
+  const mappedRefs = await Promise.all(
+    docsWithDates.map(doc => mapReferences(doc, fetchChildren))
+  )
+  return Promise.all(mappedRefs.map(ref => mapDocArrays(ref, fetchChildren)))
 }
 
 function getOrderByAsString(orderBy) {
