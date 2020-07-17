@@ -143,6 +143,12 @@ export default [
         label: 'History',
         url: routes.adminHistory,
         requiresAdmin: true
+      },
+      {
+        id: 'admin-polls',
+        label: 'Polls',
+        url: routes.adminPolls,
+        requiresAdmin: true
       }
     ]
   }

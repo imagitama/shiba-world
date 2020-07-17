@@ -42,6 +42,7 @@ const Admin = lazy(() => import('./containers/admin'))
 const AdminHistory = lazy(() => import('./containers/admin-history'))
 const AdminUsers = lazy(() => import('./containers/admin-users'))
 const AdminAssets = lazy(() => import('./containers/admin-assets'))
+const AdminPolls = lazy(() => import('./containers/admin-polls'))
 const PrivacyPolicy = lazy(() => import('./containers/privacy-policy'))
 const Contributors = lazy(() => import('./containers/contributors'))
 const ErrorContainer = lazy(() => import('./containers/error'))
@@ -186,6 +187,7 @@ const MainContent = () => {
           path={routes.adminAssets}
           component={AdminAssets}
         />
+        <RouteWithMeta exact path={routes.adminPolls} component={AdminPolls} />
         <RouteWithMeta
           exact
           path={routes.myAccount}
