@@ -438,13 +438,19 @@ exports.onAssetUpdated = functions.firestore
     return insertDocIntoIndex(doc, docData)
   })
 
+function isUserDocument(doc) {
+  return !!doc.get(UserFieldNames.username)
+}
+
 exports.onCommentCreated = functions.firestore
   .document('comments/{commentId}')
   .onCreate(async (doc) => {
     const docData = doc.data()
 
-    const asset = await docData[CommentFieldNames.parent].get()
-    const originalAuthor = asset.get(AssetFieldNames.createdBy)
+    const parentDoc = await docData[CommentFieldNames.parent].get()
+    const originalAuthor = isUserDocument(parentDoc)
+      ? docData[CommentFieldNames.parent]
+      : parentDoc.get(AssetFieldNames.createdBy)
 
     await storeInNotifications(
       'Created comment',

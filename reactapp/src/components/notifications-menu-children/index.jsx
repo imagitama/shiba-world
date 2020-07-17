@@ -8,7 +8,8 @@ import useDatabaseQuery, {
   CollectionNames,
   NotificationsFieldNames,
   Operators,
-  OrderDirections
+  OrderDirections,
+  AssetFieldNames
 } from '../../hooks/useDatabaseQuery'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
@@ -49,11 +50,22 @@ const useStyles = makeStyles({
 function Message({ parent, message, data }) {
   switch (message) {
     case 'Approved asset':
-      return `Your asset "${parent.title}" was approved`
+      return `Your asset "${parent[AssetFieldNames.title]}" was approved`
     case 'Created comment':
-      return `${
-        data && data.author ? data.author.username : 'Someone'
-      } commented on asset "${parent.title}"`
+      const collectionName = getCollectionNameForResult(parent)
+
+      switch (collectionName) {
+        case CollectionNames.Assets:
+          return `${
+            data && data.author ? data.author.username : 'Someone'
+          } commented on asset "${parent[AssetFieldNames.title]}"`
+        case CollectionNames.Users:
+          return `${
+            data && data.author ? data.author.username : 'Someone'
+          } commented on your profile`
+        default:
+          return '????'
+      }
     default:
       return '???'
   }
