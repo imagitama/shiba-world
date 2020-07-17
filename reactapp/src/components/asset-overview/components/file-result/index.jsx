@@ -6,7 +6,7 @@ import GetAppIcon from '@material-ui/icons/GetApp'
 import Button from '../../../button'
 import VideoPlayer from '../../../video-player'
 import FbxViewer from '../../../fbx-viewer'
-import { trackAction, actions } from '../../../../analytics'
+import { trackAction } from '../../../../analytics'
 import {
   getFilenameFromUrl,
   isUrlAnImage,
@@ -19,15 +19,11 @@ const useStyles = makeStyles({
   imageThumbnail: { width: '100%', maxWidth: '500px' }
 })
 
+const analyticsCategoryName = 'ViewAsset'
+
 export default ({ assetId, url }) => {
   const classes = useStyles()
   const [showFbxViewer, setShowFbxViewer] = useState(false)
-
-  const onDownloadBtnClick = () =>
-    trackAction(actions.DOWNLOAD_ASSET_FILE, {
-      assetId,
-      url
-    })
 
   return (
     <Paper className={classes.root}>
@@ -40,13 +36,39 @@ export default ({ assetId, url }) => {
           alt="Thumbnail for file"
         />
       ) : isUrlAVideo(url) ? (
-        <VideoPlayer url={url} />
+        <VideoPlayer
+          url={url}
+          onPlay={() =>
+            trackAction(analyticsCategoryName, 'Play attached video', {
+              assetId,
+              url
+            })
+          }
+        />
       ) : (
         <>
-          {isUrlAFbx(url) && showFbxViewer && <FbxViewer url={url} />}
+          {isUrlAFbx(url) && showFbxViewer && (
+            <FbxViewer
+              url={url}
+              onClick={() =>
+                trackAction(analyticsCategoryName, 'Click on FBX viewer', {
+                  assetId,
+                  url
+                })
+              }
+            />
+          )}
           {isUrlAFbx(url) && !showFbxViewer && (
             <>
-              <Button onClick={() => setShowFbxViewer(true)} color="default">
+              <Button
+                onClick={() => {
+                  setShowFbxViewer(true)
+                  trackAction(analyticsCategoryName, 'Click view FBX button', {
+                    assetId,
+                    url
+                  })
+                }}
+                color="default">
                 Preview .fbx
               </Button>{' '}
             </>
@@ -55,7 +77,16 @@ export default ({ assetId, url }) => {
             className={classes.downloadButton}
             url={url}
             icon={<GetAppIcon />}
-            onClick={onDownloadBtnClick}>
+            onClick={() =>
+              trackAction(
+                analyticsCategoryName,
+                'Click download attached file',
+                {
+                  assetId,
+                  url
+                }
+              )
+            }>
             Download
           </Button>
         </>

@@ -1,10 +1,13 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
-import * as routes from '../../routes'
+
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import Button from '../button'
+
+import * as routes from '../../routes'
 import { scrollToTop } from '../../utils'
+import { trackAction } from '../../analytics'
 
 const useStyles = makeStyles({
   footer: {
@@ -23,7 +26,12 @@ function ScrollToTopBtn() {
 
   return (
     <div className={classes.scrollToTopBtnWrapper}>
-      <Button onClick={() => scrollToTop()} color="default">
+      <Button
+        onClick={() => {
+          scrollToTop()
+          trackAction('Footer', 'Click scroll to top button')
+        }}
+        color="default">
         Scroll To Top
       </Button>
     </div>

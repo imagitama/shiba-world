@@ -6,13 +6,12 @@ import useDatabaseQuery, {
   AssetFieldNames
 } from '../../hooks/useDatabaseQuery'
 
-import { trackAction, actions } from '../../analytics'
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
 
 import Button from '../button'
 
-export default ({ assetId }) => {
+export default ({ assetId, onClick = null }) => {
   // TODO: Check if they are editor! We are assuming the parent does this = not good
 
   const userId = useFirebaseUserId()
@@ -39,18 +38,19 @@ export default ({ assetId }) => {
 
   const onBtnClick = async () => {
     try {
+      const newValue = !isPinned
+
+      if (onClick) {
+        onClick(newValue)
+      }
+
       await save({
-        [AssetFieldNames.isPinned]: !isPinned,
+        [AssetFieldNames.isPinned]: newValue,
         [AssetFieldNames.lastModifiedBy]: createRef(
           CollectionNames.Users,
           userId
         ),
         [AssetFieldNames.lastModifiedAt]: new Date()
-      })
-
-      trackAction(isPinned ? actions.UNPIN_ASSET : actions.PIN_ASSET, {
-        assetId,
-        userId
       })
     } catch (err) {
       console.error('Failed to pin or unpin asset', err)

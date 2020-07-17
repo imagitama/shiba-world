@@ -18,6 +18,7 @@ import navItems, {
   canShowMenuItem,
   getLabelForMenuItem
 } from '../../navigation'
+import { trackAction } from '../../analytics'
 
 import MobileAccountMenu from '../mobile-account-menu'
 
@@ -87,11 +88,18 @@ export default () => {
   const dispatchCloseMenu = () => dispatch(closeMenu())
 
   const [openDropdownMenus, setOpenDropdownMenus] = useState({})
-  const onClickDropdownParentItem = idx =>
+  const onClickDropdownParentItem = id => {
+    const newValue = openDropdownMenus[id] ? false : true
+
     setOpenDropdownMenus({
       ...openDropdownMenus,
-      [idx]: openDropdownMenus[idx] ? false : true
+      [id]: newValue
     })
+
+    if (newValue === true) {
+      trackAction('MobileMenu', 'Expand dropdown menu', id)
+    }
+  }
 
   const onClickMenuItemWithUrl = () => {
     setOpenDropdownMenus({})
@@ -108,17 +116,17 @@ export default () => {
         <MenuList>
           {navItems
             .filter(navItem => canShowMenuItem(navItem, user))
-            .map(({ label, url, children }, idx) => (
-              <Fragment key={label}>
+            .map(({ id, label, url, children }) => (
+              <Fragment key={id}>
                 <MenuItem button>
                   {children ? (
                     <Typography
                       component="div"
                       style={{ display: 'flex', width: '100%' }}
-                      onClick={() => onClickDropdownParentItem(idx)}>
+                      onClick={() => onClickDropdownParentItem(id)}>
                       <span>{getLabelForMenuItem(label)}</span>
                       <ListItemIcon className={classes.listItemIcon}>
-                        {openDropdownMenus[idx] ? (
+                        {openDropdownMenus[id] ? (
                           <KeyboardArrowUpIcon />
                         ) : (
                           <KeyboardArrowDownIcon />
@@ -133,7 +141,7 @@ export default () => {
                     />
                   )}
                 </MenuItem>
-                {openDropdownMenus[idx]
+                {openDropdownMenus[id]
                   ? isChildrenAComponent(children)
                     ? React.createElement(children, {
                         onClose: onClickMenuItemWithUrl

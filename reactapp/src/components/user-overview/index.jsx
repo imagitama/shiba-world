@@ -30,6 +30,7 @@ import AddCommentForm from '../add-comment-form'
 
 import * as routes from '../../routes'
 import { createRef } from '../../utils'
+import { trackAction } from '../../analytics'
 
 const useStyles = makeStyles({
   socialMediaItem: {
@@ -266,6 +267,9 @@ export default ({ userId }) => {
       <AddCommentForm
         collectionName={CollectionNames.Users}
         parentId={userId}
+        onAddClick={() =>
+          trackAction('ViewUser', 'Click add comment button', { userId })
+        }
       />
       <Heading variant="h2">Uploads</Heading>
       <AssetsForUser userId={userId} />

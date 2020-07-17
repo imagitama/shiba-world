@@ -12,7 +12,6 @@ import useDatabaseQuery, {
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
-import { trackAction, actions } from '../../analytics'
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
 
@@ -23,7 +22,7 @@ const useStyles = makeStyles({
   }
 })
 
-export default ({ assetId }) => {
+export default ({ assetId, onClick = null }) => {
   const userId = useFirebaseUserId()
   const [
     isFetchingEndorsements,
@@ -43,6 +42,12 @@ export default ({ assetId }) => {
 
   const onSaveBtnClick = async () => {
     try {
+      if (onClick) {
+        onClick({
+          newValue: true
+        })
+      }
+
       await save({
         [EndorsementFieldNames.asset]: createRef(
           CollectionNames.Assets,
@@ -53,11 +58,6 @@ export default ({ assetId }) => {
           userId
         ),
         [EndorsementFieldNames.createdAt]: new Date()
-      })
-
-      trackAction(actions.ENDORSE_ASSET, {
-        assetId,
-        userId
       })
     } catch (err) {
       console.error('Failed to save endorsement', err)

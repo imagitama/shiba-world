@@ -8,6 +8,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 
 import * as routes from '../../routes'
 import useUserRecord from '../../hooks/useUserRecord'
+import { trackAction } from '../../analytics'
 
 import Avatar, { sizes } from '../avatar'
 import Button from '../button'
@@ -71,7 +72,7 @@ const loggedOutMenuItems = [
   }
 ]
 
-export default ({ onClose = null, isMobile = false }) => {
+export default () => {
   const [, , user] = useUserRecord()
   const classes = useStyles()
   const userMenuLabelRef = useRef()
@@ -83,6 +84,7 @@ export default ({ onClose = null, isMobile = false }) => {
       closeAllDropdowns()
     } else {
       setOpenId('user')
+      trackAction('DesktopAccountMenu', 'Open user dropdown')
     }
   }
 
@@ -91,15 +93,11 @@ export default ({ onClose = null, isMobile = false }) => {
       closeAllDropdowns()
     } else {
       setOpenId('notifications')
+      trackAction('DesktopAccountMenu', 'Open notifications dropdown')
     }
   }
 
-  const closeAllDropdowns = () => {
-    if (onClose) {
-      onClose()
-    }
-    setOpenId(null)
-  }
+  const closeAllDropdowns = () => setOpenId(null)
 
   const menuItems = user ? loggedInMenuItems : loggedOutMenuItems
 
@@ -169,10 +167,7 @@ export default ({ onClose = null, isMobile = false }) => {
               vertical: 'top',
               horizontal: 'right'
             }}>
-            <NotificationsMenuChildren
-              onClose={closeAllDropdowns}
-              isMobile={isMobile}
-            />
+            <NotificationsMenuChildren onClose={closeAllDropdowns} />
           </Menu>
         </div>
       </ClickAwayListener>

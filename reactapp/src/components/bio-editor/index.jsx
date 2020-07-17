@@ -23,7 +23,7 @@ const useStyles = makeStyles({
   }
 })
 
-export default () => {
+export default ({ onSaveClick = null }) => {
   const classes = useStyles()
   const userId = useFirebaseUserId()
   const [isLoadingProfile, isErroredLoadingProfile, profile] = useDatabaseQuery(
@@ -48,6 +48,10 @@ export default () => {
 
   const onSaveBtnClick = async () => {
     try {
+      if (onSaveClick) {
+        onSaveClick()
+      }
+
       await save({
         [ProfileFieldNames.bio]: bioValue,
         [ProfileFieldNames.lastModifiedBy]: createRef(

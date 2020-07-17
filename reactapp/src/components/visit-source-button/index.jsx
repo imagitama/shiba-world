@@ -2,7 +2,6 @@ import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import LaunchIcon from '@material-ui/icons/Launch'
 
-import { trackAction, actions } from '../../analytics'
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
 
@@ -22,7 +21,8 @@ export default ({
   assetId,
   sourceUrl,
   isNoFilesAttached = false,
-  isLarge = false
+  isLarge = false,
+  onClick = null
 }) => {
   const classes = useStyles()
   const userId = useFirebaseUserId()
@@ -30,10 +30,12 @@ export default ({
 
   const onBtnClick = async () => {
     try {
-      trackAction(actions.VISIT_SOURCE, {
-        assetId,
-        sourceUrl
-      })
+      if (onClick) {
+        onClick({
+          assetId,
+          sourceUrl
+        })
+      }
 
       // If files are attached a different download button should be shown
       // so we dont want to double-up on tracking

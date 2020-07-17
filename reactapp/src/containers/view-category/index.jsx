@@ -7,6 +7,7 @@ import {
   assetOptions,
   getLabelForAssetSortFieldNameAndDirection
 } from '../../sorting'
+import { trackAction } from '../../analytics'
 
 import ErrorMessage from '../../components/error-message'
 import LoadingIndicator from '../../components/loading-indicator'
@@ -98,6 +99,11 @@ export default ({
   const onNewSortFieldAndDirection = (fieldName, direction) => {
     setActiveSortFieldName(fieldName)
     setActiveSortDirection(direction)
+    trackAction('AssetsList', 'Click sort by field and direction', {
+      categoryName,
+      fieldName,
+      direction
+    })
   }
 
   return (
@@ -125,6 +131,11 @@ export default ({
         fieldNameKey={storageKeys.assetsSortByFieldName}
         directionKey={storageKeys.assetsSortByDirection}
         onNewSortFieldAndDirection={onNewSortFieldAndDirection}
+        onOpenDropdown={() =>
+          trackAction('AssetsList', 'Open sort dropdown', {
+            categoryName
+          })
+        }
       />
       <Assets
         categoryName={categoryName}

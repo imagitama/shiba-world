@@ -14,9 +14,8 @@ import Button from '../button'
 
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
-import { trackAction, actions } from '../../analytics'
 
-export default () => {
+export default ({ onSaveClick = null }) => {
   const userId = useFirebaseUserId()
   const [isLoadingProfile, isErroredLoadingProfile, profile] = useDatabaseQuery(
     CollectionNames.Profiles,
@@ -58,6 +57,10 @@ export default () => {
 
   const onSaveBtnClick = async () => {
     try {
+      if (onSaveClick) {
+        onSaveClick()
+      }
+
       await save({
         ...formFieldValues,
         [ProfileFieldNames.lastModifiedBy]: createRef(
@@ -65,11 +68,6 @@ export default () => {
           userId
         ),
         [ProfileFieldNames.lastModifiedAt]: new Date()
-      })
-
-      trackAction(actions.EDIT_SOCIAL_MEDIA_USERNAMES, {
-        usernames: formFieldValues,
-        userId
       })
     } catch (err) {
       console.error('Failed to save social media fields to database', err)

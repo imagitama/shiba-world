@@ -4,13 +4,12 @@ import { Provider } from 'react-redux'
 import { ConnectedRouter } from 'connected-react-router'
 import firebase from 'firebase/app'
 import * as Sentry from '@sentry/browser'
-import { loggedInUserId } from './firebase'
 import ReactReduxFirebaseProvider from 'react-redux-firebase/lib/ReactReduxFirebaseProvider'
 import store, { history } from './store'
 import App from './App'
-import { trackAction, actions } from './analytics'
 import { inDevelopment } from './environment'
 import { changeSearchTerm, setDarkModeEnabled } from './modules/app'
+import './firebase'
 
 if (!inDevelopment()) {
   Sentry.init({
@@ -19,12 +18,7 @@ if (!inDevelopment()) {
   })
 }
 
-history.listen(location => {
-  trackAction(actions.NAVIGATE, {
-    location,
-    userId: loggedInUserId ? loggedInUserId.uid : null
-  })
-
+history.listen(() => {
   store.dispatch(changeSearchTerm())
 })
 

@@ -6,7 +6,7 @@ import { writeStorage } from '@rehooks/local-storage'
 import CloseIcon from '@material-ui/icons/Close'
 import Markdown from 'react-markdown'
 import useStorage, { keys } from '../../hooks/useStorage'
-import { trackAction, actions } from '../../analytics'
+import { trackAction } from '../../analytics'
 import Avatar, { sizes } from '../avatar'
 
 const useStyles = makeStyles(theme => ({
@@ -45,12 +45,10 @@ const useStyles = makeStyles(theme => ({
 export default ({ id, title, message, createdBy }) => {
   const classes = useStyles()
   const [hiddenNotices] = useStorage(keys.hiddenNotices, [])
+
   const onHideBtnClick = () => {
     writeStorage(keys.hiddenNotices, hiddenNotices.concat([id]))
-
-    trackAction(actions.HIDE_NOTICE, {
-      id
-    })
+    trackAction('Global', 'Click hide notice', id)
   }
 
   if (hiddenNotices.includes(id)) {

@@ -2,7 +2,6 @@ import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import GetAppIcon from '@material-ui/icons/GetApp'
 
-import { trackAction, actions } from '../../analytics'
 import { createRef } from '../../utils'
 import { handleError } from '../../error-handling'
 
@@ -19,16 +18,18 @@ const useStyles = makeStyles({
   }
 })
 
-export default ({ assetId, url, isLarge = false }) => {
+export default ({ assetId, url, isLarge = false, onClick = null }) => {
   const classes = useStyles()
   const userId = useFirebaseUserId()
   const [, , , saveToDatabase] = useDatabaseSave(CollectionNames.Downloads)
 
   const onDownloadBtnClick = async () => {
-    trackAction(actions.DOWNLOAD_ASSET, {
-      assetId,
-      url
-    })
+    if (onClick) {
+      onClick({
+        assetId,
+        url
+      })
+    }
 
     try {
       await saveToDatabase({

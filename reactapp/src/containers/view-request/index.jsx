@@ -13,7 +13,7 @@ import Heading from '../../components/heading'
 import FormattedDate from '../../components/formatted-date'
 import CommentList from '../../components/comment-list'
 import AddCommentForm from '../../components/add-comment-form'
-import ToggleIsClosedButton from '../../components/toggle-request-closed-button'
+import ToggleRequestClosedButton from '../../components/toggle-request-closed-button'
 import Button from '../../components/button'
 
 import useDatabaseQuery, {
@@ -27,7 +27,7 @@ import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import * as routes from '../../routes'
 import { handleError } from '../../error-handling'
-import { trackAction, actions } from '../../analytics'
+import { trackAction } from '../../analytics'
 import { createRef } from '../../utils'
 
 const useStyles = makeStyles({
@@ -80,11 +80,12 @@ function getCanUserEditRequest(request, user) {
 }
 
 function RequestEditor({ request, onDone }) {
+  const requestId = request.id
   const userId = useFirebaseUserId()
   const classes = useStyles()
   const [isSaving, isSaveSuccess, isSaveError, save] = useDatabaseSave(
     CollectionNames.Requests,
-    request.id
+    requestId
   )
   const [fieldData, setFieldData] = useState(request)
 
@@ -102,7 +103,17 @@ function RequestEditor({ request, onDone }) {
         Saved successfully
         <br />
         <br />
-        <Button onClick={() => onDone()}>Dismiss</Button>
+        <Button
+          onClick={() => {
+            onDone()
+            trackAction(
+              'ViewRequest',
+              'Click dismiss saved successfully button',
+              requestId
+            )
+          }}>
+          Dismiss
+        </Button>
       </SuccessMessage>
     )
   }
@@ -114,6 +125,8 @@ function RequestEditor({ request, onDone }) {
     })
 
   const onSaveBtnClick = async () => {
+    trackAction('ViewRequest', 'Click save button', requestId)
+
     // TODO: Output these invalid fields to user
     if (
       !fieldData[RequestsFieldNames.title] ||
@@ -125,17 +138,11 @@ function RequestEditor({ request, onDone }) {
     try {
       await save({
         ...fieldData,
-        [RequestsFieldNames.isClosed]: false,
         [RequestsFieldNames.lastModifiedBy]: createRef(
           CollectionNames.Users,
           userId
         ),
         [RequestsFieldNames.lastModifiedAt]: new Date()
-      })
-
-      trackAction(actions.EDIT_REQUEST, {
-        requestId: request.id,
-        userId
       })
     } catch (err) {
       console.error('Failed to edit request', err)
@@ -213,7 +220,6 @@ export default ({
   }
 
   const {
-    id,
     title,
     description,
     createdAt,
@@ -246,16 +252,44 @@ export default ({
       </div>
       {getCanUserEditRequest(result, user) && (
         <div>
-          <ToggleIsClosedButton requestId={id} />{' '}
-          <Button onClick={() => setIsInEditMode(!isInEditMode)}>
+          <ToggleRequestClosedButton
+            requestId={requestId}
+            onClick={({ newValue }) =>
+              trackAction(
+                'ViewRequest',
+                newValue === true
+                  ? 'Click close button'
+                  : 'Click unclose button',
+                requestId
+              )
+            }
+          />{' '}
+          <Button
+            onClick={() => {
+              const newValue = !isInEditMode
+              setIsInEditMode(newValue)
+              trackAction(
+                'ViewRequest',
+                newValue === true
+                  ? 'Click edit button'
+                  : 'Click stop editing button',
+                requestId
+              )
+            }}>
             Toggle Edit
           </Button>
         </div>
       )}
       <Heading variant="h2">Responses</Heading>
-      <CommentList collectionName={CollectionNames.Requests} parentId={id} />
+      <CommentList
+        collectionName={CollectionNames.Requests}
+        parentId={requestId}
+      />
       <Heading variant="h2">Add Response</Heading>
-      <AddCommentForm collectionName={CollectionNames.Requests} parentId={id} />
+      <AddCommentForm
+        collectionName={CollectionNames.Requests}
+        parentId={requestId}
+      />
     </>
   )
 }

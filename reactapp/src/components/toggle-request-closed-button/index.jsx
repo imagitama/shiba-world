@@ -7,13 +7,12 @@ import useDatabaseQuery, {
 } from '../../hooks/useDatabaseQuery'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
-import { trackAction, actions } from '../../analytics'
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
 
 import Button from '../button'
 
-export default ({ requestId }) => {
+export default ({ requestId, onClick = null }) => {
   const userId = useFirebaseUserId()
   const [isLoadingRequest, isErroredLoadingRequest, request] = useDatabaseQuery(
     CollectionNames.Requests,
@@ -46,18 +45,19 @@ export default ({ requestId }) => {
 
   const onBtnClick = async () => {
     try {
+      const newValue = !isClosed
+
+      if (onClick) {
+        onClick({ newValue })
+      }
+
       await save({
-        [RequestsFieldNames.isClosed]: !isClosed,
+        [RequestsFieldNames.isClosed]: newValue,
         [RequestsFieldNames.lastModifiedBy]: createRef(
           CollectionNames.Users,
           userId
         ),
         [RequestsFieldNames.lastModifiedAt]: new Date()
-      })
-
-      trackAction(isClosed ? actions.OPEN_REQUEST : actions.CLOSE_REQUEST, {
-        requestId,
-        userId
       })
     } catch (err) {
       console.error('Failed to toggle is closed', err)

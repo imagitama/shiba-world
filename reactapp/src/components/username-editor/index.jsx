@@ -6,7 +6,6 @@ import { CollectionNames, UserFieldNames } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
-import { trackAction, actions } from '../../analytics'
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
 
@@ -14,7 +13,7 @@ import Button from '../button'
 import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
 
-export default () => {
+export default ({ onSaveClick = null }) => {
   const userId = useFirebaseUserId()
   const [isLoadingUser, isErrorLoadingUser, user] = useUserRecord()
   const [isSaving, isSaveSuccess, isSaveError, save] = useDatabaseSave(
@@ -23,12 +22,7 @@ export default () => {
   )
   const [fieldValue, setFieldValue] = useState('')
 
-  // TODO: Show error?
-  if (!userId) {
-    return null
-  }
-
-  if (isLoadingUser) {
+  if (!userId || isLoadingUser) {
     return <LoadingIndicator />
   }
 
@@ -40,6 +34,14 @@ export default () => {
 
   const onSaveBtnClick = async () => {
     try {
+      if (onSaveClick) {
+        onSaveClick()
+      }
+
+      if (!fieldValue) {
+        return
+      }
+
       await save({
         [UserFieldNames.username]: fieldValue,
         [UserFieldNames.lastModifiedBy]: createRef(
@@ -47,11 +49,6 @@ export default () => {
           userId
         ),
         [UserFieldNames.lastModifiedAt]: new Date()
-      })
-
-      trackAction(actions.CHANGE_USERNAME, {
-        userId,
-        newUsername: fieldValue
       })
     } catch (err) {
       console.error(

@@ -10,11 +10,10 @@ import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import Button from '../button'
 
-import { trackAction, actions } from '../../analytics'
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
 
-export default ({ assetId }) => {
+export default ({ assetId, onClick = null }) => {
   const userId = useFirebaseUserId()
   const [, , user] = useUserRecord()
   const [isLoadingAsset, isErroredLoadingAsset, asset] = useDatabaseQuery(
@@ -38,18 +37,19 @@ export default ({ assetId }) => {
 
   const onBtnClick = async () => {
     try {
+      const newValue = !isDeleted
+
+      if (onClick) {
+        onClick({ newValue })
+      }
+
       await saveAsset({
-        [AssetFieldNames.isDeleted]: !isDeleted,
+        [AssetFieldNames.isDeleted]: newValue,
         [AssetFieldNames.lastModifiedBy]: createRef(
           CollectionNames.Users,
           userId
         ),
         [AssetFieldNames.lastModifiedAt]: new Date()
-      })
-
-      trackAction(isDeleted ? actions.RESTORE_ASSET : actions.DELETE_ASSET, {
-        assetId,
-        userId
       })
     } catch (err) {
       console.error('Failed to edit asset to delete or undelete', err)

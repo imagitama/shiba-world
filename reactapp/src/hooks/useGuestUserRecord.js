@@ -9,8 +9,6 @@ import { handleError } from '../error-handling'
 
 async function getData() {
   try {
-    console.log('Getting data...')
-
     isGettingData = true
 
     let knownGuestId = await getGuestIdFromStorage()
@@ -22,8 +20,6 @@ async function getData() {
     const snapshot = await guestDoc.get()
 
     if (!snapshot.exists) {
-      console.log('Does not exist - creating...')
-
       const ip = await getUserIp()
 
       // If IP lookup fails

@@ -115,7 +115,6 @@ export default () => {
           />
         )
       )}
-      {/* <div className={classes.comingSoonMsg}>More coming soon...</div> */}
     </div>
   )
 }

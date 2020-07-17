@@ -5,11 +5,14 @@ import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import ClickAwayListener from '@material-ui/core/ClickAwayListener'
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
+
 import useUserRecord from '../../hooks/useUserRecord'
+
 import navItems, {
   canShowMenuItem,
   getLabelForMenuItem
 } from '../../navigation'
+import { trackAction } from '../../analytics'
 
 const useStyles = makeStyles({
   root: {
@@ -105,7 +108,10 @@ export default () => {
                   href={url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={classes.menuItemLabel}>
+                  className={classes.menuItemLabel}
+                  onClick={() =>
+                    trackAction('DesktopMenu', 'Click external link', url)
+                  }>
                   {children}
                 </a>
               ) : (
@@ -127,7 +133,10 @@ export default () => {
                           )
                     }
                     isOpen={openMenuItem === id}
-                    onOpen={() => setOpenMenuItem(id)}
+                    onOpen={() => {
+                      setOpenMenuItem(id)
+                      trackAction('DesktopMenu', 'Open dropdown menu', id)
+                    }}
                     onClose={() => closeMenuDropdown()}
                   />
                 ) : (

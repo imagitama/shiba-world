@@ -16,6 +16,7 @@ import { scrollToTop } from '../../utils'
 import * as routes from '../../routes'
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
+import { trackAction } from '../../analytics'
 
 export default ({ match: { params } }) => {
   const assetId = params.assetId
@@ -44,6 +45,8 @@ export default ({ match: { params } }) => {
 
   const onEditorSubmit = async fields => {
     try {
+      trackAction('EditAsset', 'Click save button', assetId)
+
       scrollToTop()
 
       await save({
@@ -68,7 +71,11 @@ export default ({ match: { params } }) => {
         <SuccessMessage>
           Save success
           <br />
-          <Button url={routes.viewAssetWithVar.replace(':assetId', assetId)}>
+          <Button
+            url={routes.viewAssetWithVar.replace(':assetId', assetId)}
+            onClick={() =>
+              trackAction('EditAsset', 'Click edited asset button', assetId)
+            }>
             View Asset
           </Button>
         </SuccessMessage>

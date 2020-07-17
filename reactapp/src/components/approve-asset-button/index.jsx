@@ -9,11 +9,10 @@ import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import Button from '../button'
 
-import { trackAction, actions } from '../../analytics'
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
 
-export default ({ assetId }) => {
+export default ({ assetId, onClick = null }) => {
   // TODO: Check if they are editor! We are assuming the parent does this = not good
 
   const userId = useFirebaseUserId()
@@ -38,22 +37,20 @@ export default ({ assetId }) => {
 
   const onBtnClick = async () => {
     try {
+      const newValue = !isApproved
+
+      if (onClick) {
+        onClick({ newValue })
+      }
+
       await save({
-        [AssetFieldNames.isApproved]: !isApproved,
+        [AssetFieldNames.isApproved]: newValue,
         [AssetFieldNames.lastModifiedBy]: createRef(
           CollectionNames.Users,
           userId
         ),
         [AssetFieldNames.lastModifiedAt]: new Date()
       })
-
-      trackAction(
-        isApproved ? actions.UNAPPROVE_ASSET : actions.APPROVE_ASSET,
-        {
-          assetId,
-          userId: userId
-        }
-      )
     } catch (err) {
       console.error('Failed to approve or unapprove asset', err)
       handleError(err)

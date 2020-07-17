@@ -10,11 +10,10 @@ import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import { CollectionNames, UserFieldNames } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 
-import { trackAction, actions } from '../../analytics'
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
 
-export default () => {
+export default ({ onClick = null }) => {
   const myUserId = useFirebaseUserId()
   const [isLoadingUser, isErroredUser, user] = useUserRecord()
   const [isSaving, isSaveSuccess, isSaveError, save] = useDatabaseSave(
@@ -37,21 +36,20 @@ export default () => {
   const { [UserFieldNames.enabledAdultContent]: enabledAdultContent } = user
 
   const onCheckboxChange = async event => {
-    const newSettingValue = event.target.checked
+    const newValue = event.target.checked
 
     try {
+      if (onClick) {
+        onClick({ newValue })
+      }
+
       await save({
-        [UserFieldNames.enabledAdultContent]: newSettingValue,
+        [UserFieldNames.enabledAdultContent]: newValue,
         [UserFieldNames.lastModifiedBy]: createRef(
           CollectionNames.Users,
           myUserId
         ),
         [UserFieldNames.lastModifiedAt]: new Date()
-      })
-
-      trackAction(actions.TOGGLE_ENABLED_ADULT_CONTENT, {
-        newValue: newSettingValue,
-        userId: user.id
       })
     } catch (err) {
       console.error('Failed to save user to toggle adult flag', err)

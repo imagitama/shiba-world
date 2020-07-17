@@ -11,7 +11,12 @@ const useStyles = makeStyles({
   }
 })
 
-export default ({ urls }) => {
+export default ({
+  urls,
+  onOpen = null,
+  onMoveNext = null,
+  onMovePrev = null
+}) => {
   const [isOpen, setIsOpen] = useState(false)
   const [activePhotoIdx, setActivePhotoIdx] = useState(0)
   const classes = useStyles()
@@ -19,6 +24,9 @@ export default ({ urls }) => {
   function onThumbnailClick(idx) {
     setActivePhotoIdx(idx)
     setIsOpen(true)
+    if (onOpen) {
+      onOpen()
+    }
   }
 
   return (
@@ -29,12 +37,18 @@ export default ({ urls }) => {
           nextSrc={urls[(activePhotoIdx + 1) % urls.length]}
           prevSrc={urls[(activePhotoIdx + urls.length - 1) % urls.length]}
           onCloseRequest={() => setIsOpen(false)}
-          onMovePrevRequest={() =>
+          onMovePrevRequest={() => {
             setActivePhotoIdx((activePhotoIdx + urls.length - 1) % urls.length)
-          }
-          onMoveNextRequest={() =>
+            if (onMovePrev) {
+              onMovePrev()
+            }
+          }}
+          onMoveNextRequest={() => {
             setActivePhotoIdx((activePhotoIdx + 1) % urls.length)
-          }
+            if (onMoveNext) {
+              onMoveNext()
+            }
+          }}
         />
       )}
       {urls.map((url, idx) => (

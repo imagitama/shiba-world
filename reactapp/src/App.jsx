@@ -44,7 +44,6 @@ const AdminUsers = lazy(() => import('./containers/admin-users'))
 const AdminAssets = lazy(() => import('./containers/admin-assets'))
 const PrivacyPolicy = lazy(() => import('./containers/privacy-policy'))
 const Contributors = lazy(() => import('./containers/contributors'))
-const Unapproved = lazy(() => import('./containers/unapproved'))
 const ErrorContainer = lazy(() => import('./containers/error'))
 const News = lazy(() => import('./containers/news'))
 const Tags = lazy(() => import('./containers/tags'))
@@ -214,15 +213,6 @@ const MainContent = () => {
           meta={{
             title: 'People that have contributed',
             description: 'Thanks!'
-          }}
-        />
-        <RouteWithMeta
-          exact
-          path={routes.unapproved}
-          component={Unapproved}
-          meta={{
-            title: 'Unapproved assets',
-            description: ''
           }}
         />
         <Route exact path={routes.viewSpeciesWithVar} component={ViewSpecies} />

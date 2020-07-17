@@ -14,6 +14,7 @@ import useGuestUserRecord from '../../hooks/useGuestUserRecord'
 import { createRef } from '../../utils'
 import { handleError } from '../../error-handling'
 import { getHasVotedInPoll, setHasVotedInPoll } from '../../polls'
+import { trackAction } from '../../analytics'
 
 import LoadingIndicator from '../loading-indicator'
 import Button from '../button'
@@ -25,6 +26,11 @@ function Answers({ pollId, answers }) {
 
   const onAnswerClick = async answerText => {
     try {
+      trackAction('Poll', 'Click answer button', {
+        pollId,
+        answer: answerText
+      })
+
       if (!user && !guestUser) {
         console.warn('No user or guest user - should never happen')
         return

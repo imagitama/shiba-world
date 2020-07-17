@@ -1,4 +1,3 @@
-import { trackAction, actions } from '../analytics'
 import { keys } from '../hooks/useStorage'
 
 function getIfBrowserSetToDarkMode() {
@@ -79,16 +78,12 @@ export const openMenu = () => dispatch => {
   dispatch({
     type: OPEN_MENU
   })
-
-  trackAction(actions.OPEN_NAV_MENU)
 }
 
 export const closeMenu = () => dispatch => {
   dispatch({
     type: CLOSE_MENU
   })
-
-  trackAction(actions.CLOSE_NAV_MENU)
 }
 
 export const changeSearchTerm = searchTerm => dispatch => {
@@ -102,10 +97,6 @@ export const changeSearchTerm = searchTerm => dispatch => {
   if (!searchTerm) {
     return
   }
-
-  trackAction(actions.CHANGE_SEARCH_TERM, {
-    searchTerm
-  })
 }
 
 export const toggleDarkMode = () => dispatch => {
@@ -120,9 +111,5 @@ export const setDarkModeEnabled = newValue => dispatch => {
     payload: {
       newValue
     }
-  })
-
-  trackAction(actions.SET_DARK_MODE_ENABLED, {
-    newValue
   })
 }

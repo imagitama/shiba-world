@@ -15,6 +15,7 @@ import useDatabaseQuery, {
 } from '../../hooks/useDatabaseQuery'
 
 import * as routes from '../../routes'
+import { trackAction } from '../../analytics'
 
 import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
@@ -50,7 +51,15 @@ function AssetsTable({ assets }) {
               </TableCell>
               <TableCell>{createdBy.username}</TableCell>
               <TableCell>
-                <ApproveAssetButton assetId={id} />
+                <ApproveAssetButton
+                  assetId={id}
+                  onClick={({ newValue }) =>
+                    trackAction(
+                      'AdminAssets',
+                      newValue === true ? 'Approved asset' : 'Unapproved asset'
+                    )
+                  }
+                />
               </TableCell>
             </TableRow>
           ))}

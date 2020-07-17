@@ -16,6 +16,7 @@ import BodyText from '../body-text'
 
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
+import { trackAction } from '../../analytics'
 
 export default () => {
   const userId = useFirebaseUserId()
@@ -64,6 +65,8 @@ export default () => {
 
   const onSaveBtnClick = async () => {
     try {
+      trackAction('SetupProfile', 'Click save button')
+
       if (!fieldValue) {
         return
       }

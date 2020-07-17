@@ -25,14 +25,14 @@ import Button from '../button'
 import AssetThumbnail from '../asset-thumbnail'
 import VideoPlayer from '../video-player'
 import EndorsementList from '../endorsement-list'
-import ApproveBtn from '../approve-asset-button'
-import DeleteBtn from '../delete-asset-button'
-import PinBtn from '../pin-asset-button'
+import ApproveAssetButton from '../approve-asset-button'
+import DeleteAssetButton from '../delete-asset-button'
+import PinAssetButton from '../pin-asset-button'
 import ImageGallery from '../image-gallery'
 
 import * as routes from '../../routes'
 import speciesMeta from '../../species-meta'
-import { trackAction, actions } from '../../analytics'
+import { trackAction } from '../../analytics'
 import {
   getDescriptionForHtmlMeta,
   getOpenGraphUrlForRouteUrl,
@@ -164,6 +164,7 @@ const useStyles = makeStyles({
 })
 
 const allSpeciesLabel = 'All Species'
+const analyticsCategoryName = 'ViewAsset'
 
 function getSpeciesDisplayNameBySpeciesName(speciesName) {
   if (!speciesName) {
@@ -184,7 +185,7 @@ function ReportButton({ assetId, onClick }) {
 
   const onBtnClick = () => {
     onClick()
-    trackAction(actions.REPORT_ASSET, {
+    trackAction(analyticsCategoryName, 'Click report button', {
       assetId
     })
   }
@@ -244,7 +245,18 @@ function MobilePrimaryBtn({ downloadUrls, sourceUrl, assetId }) {
   return (
     <div className={classes.mobilePrimaryBtn}>
       {downloadUrls.length ? (
-        <DownloadAssetButton isLarge={true} />
+        <DownloadAssetButton
+          assetId={assetId}
+          url={downloadUrls[0]}
+          isLarge={true}
+          onClick={() =>
+            trackAction(
+              analyticsCategoryName,
+              'Click mobile primary button - download',
+              { url: downloadUrls[0], assetId }
+            )
+          }
+        />
       ) : sourceUrl ? (
         <>
           <VisitSourceButton
@@ -252,17 +264,21 @@ function MobilePrimaryBtn({ downloadUrls, sourceUrl, assetId }) {
             assetId={assetId}
             sourceUrl={sourceUrl}
             isNoFilesAttached={downloadUrls.length === 0}
+            onClick={() =>
+              trackAction(
+                analyticsCategoryName,
+                'Click mobile primary button - visit source',
+                { url: sourceUrl, assetId }
+              )
+            }
           />
-          {/* <span className={classes.noDownloadsMsg}>
-            (there are no available downloads for this asset)
-          </span> */}
         </>
       ) : null}
     </div>
   )
 }
 
-export default ({ assetId, small = false }) => {
+export default ({ assetId }) => {
   const [isLoading, isErrored, result] = useDatabaseQuery(
     CollectionNames.Assets,
     assetId
@@ -413,7 +429,27 @@ export default ({ assetId, small = false }) => {
           {imageUrls.length ? (
             <>
               <Heading variant="h2">Images</Heading>
-              <ImageGallery urls={imageUrls} />
+              <ImageGallery
+                urls={imageUrls}
+                onOpen={() =>
+                  trackAction(
+                    analyticsCategoryName,
+                    'Click attached image thumbnail to open gallery'
+                  )
+                }
+                onMoveNext={() =>
+                  trackAction(
+                    analyticsCategoryName,
+                    'Click go next image in gallery'
+                  )
+                }
+                onMovePrev={() =>
+                  trackAction(
+                    analyticsCategoryName,
+                    'Click go prev image in gallery'
+                  )
+                }
+              />
             </>
           ) : null}
 
@@ -514,7 +550,17 @@ export default ({ assetId, small = false }) => {
             )}
             {downloadUrls.length ? (
               <Control>
-                <DownloadAssetButton assetId={id} url={downloadUrls[0]} />
+                <DownloadAssetButton
+                  assetId={id}
+                  url={downloadUrls[0]}
+                  onClick={() =>
+                    trackAction(
+                      analyticsCategoryName,
+                      'Click download asset button',
+                      { url: downloadUrls[0], assetId: id }
+                    )
+                  }
+                />
               </Control>
             ) : null}
             <Control>
@@ -524,7 +570,18 @@ export default ({ assetId, small = false }) => {
               />
             </Control>
             <Control>
-              <EndorseAssetButton assetId={id} />
+              <EndorseAssetButton
+                assetId={id}
+                onClick={({ newValue }) =>
+                  trackAction(
+                    analyticsCategoryName,
+                    newValue === true
+                      ? 'Click endorse button'
+                      : 'Click disendorse button',
+                    id
+                  )
+                }
+              />
             </Control>
 
             {canEditAsset(user, createdBy) ? (
@@ -543,17 +600,39 @@ export default ({ assetId, small = false }) => {
             {canApproveAsset && <Heading variant="h4">Editor Actions</Heading>}
             {canApproveAsset(user) && (
               <Control>
-                <ApproveBtn assetId={assetId} />
+                <ApproveAssetButton assetId={assetId} />
               </Control>
             )}
             {canApproveAsset(user) && (
               <Control>
-                <DeleteBtn assetId={assetId} />
+                <DeleteAssetButton
+                  assetId={assetId}
+                  onClick={({ newValue }) =>
+                    trackAction(
+                      analyticsCategoryName,
+                      newValue === true
+                        ? 'Click delete asset button'
+                        : 'Click undelete asset button',
+                      assetId
+                    )
+                  }
+                />
               </Control>
             )}
             {canApproveAsset(user) && (
               <Control>
-                <PinBtn assetId={assetId} />
+                <PinAssetButton
+                  assetId={assetId}
+                  onClick={({ newValue }) =>
+                    trackAction(
+                      analyticsCategoryName,
+                      newValue === true
+                        ? 'Click pin asset button'
+                        : 'Click unpin asset button',
+                      assetId
+                    )
+                  }
+                />
               </Control>
             )}
           </div>
@@ -565,6 +644,11 @@ export default ({ assetId, small = false }) => {
       <AddCommentForm
         collectionName={CollectionNames.Assets}
         parentId={assetId}
+        onAddClick={() =>
+          trackAction(analyticsCategoryName, 'Click add comment button', {
+            assetId
+          })
+        }
       />
       <Heading variant="h2">Endorsements</Heading>
       <EndorsementList assetId={assetId} />

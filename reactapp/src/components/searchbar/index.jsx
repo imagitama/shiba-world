@@ -4,10 +4,12 @@ import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import InputBase from '@material-ui/core/InputBase'
 import ThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
+
 import { changeSearchTerm } from '../../modules/app'
 import { lightTheme } from '../../themes'
 import * as routes from '../../routes'
 import { convertSearchTermToUrlPath } from '../../utils'
+import { trackAction } from '../../analytics'
 
 const useStyles = makeStyles({
   root: {
@@ -46,6 +48,8 @@ export default () => {
     )
 
     dispatch(changeSearchTerm(newTerm))
+
+    trackAction('Searchbar', 'Change search term', newTerm)
   }
 
   return (

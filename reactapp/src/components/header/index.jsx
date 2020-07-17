@@ -15,6 +15,7 @@ import {
   mediaQueryForTablets,
   mediaQueryForDesktopsOnly
 } from '../../media-queries'
+import { trackAction } from '../../analytics'
 
 import Searchbar from '../searchbar'
 import MobileMenu from '../mobile-menu'
@@ -101,6 +102,11 @@ export default () => {
   const isMobile = useMediaQuery({ query: queryForMobiles })
   const dispatchOpenMenu = () => dispatch(openMenu())
 
+  const onToggleMobileMenuClick = () => {
+    dispatchOpenMenu()
+    trackAction('Header', 'Click open mobile menu button')
+  }
+
   return (
     <header className={classes.root}>
       <div className={classes.cols}>
@@ -132,7 +138,7 @@ export default () => {
         {isMobile && (
           <Button
             className={classes.menuToggleButton}
-            onClick={dispatchOpenMenu}>
+            onClick={onToggleMobileMenuClick}>
             <MenuIcon className={classes.menuToggleIcon} />
             <span hidden>Menu</span>
           </Button>

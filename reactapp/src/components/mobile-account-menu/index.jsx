@@ -7,6 +7,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 
 import * as routes from '../../routes'
 import useUserRecord from '../../hooks/useUserRecord'
+import { trackAction } from '../../analytics'
 
 import Avatar, { sizes } from '../avatar'
 import Button from '../button'
@@ -80,6 +81,7 @@ export default ({ onClose }) => {
       closeAllDropdowns()
     } else {
       setOpenId('user')
+      trackAction('MobileAccountMenu', 'Open user dropdown')
     }
   }
 
@@ -88,9 +90,9 @@ export default ({ onClose }) => {
       closeAllDropdowns()
     } else {
       setOpenId('notifications')
+      trackAction('MobileAccountMenu', 'Open notifications dropdown')
     }
   }
-
   const closeAllDropdowns = () => {
     onClose()
     setOpenId(null)

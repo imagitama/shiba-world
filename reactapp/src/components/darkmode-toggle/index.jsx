@@ -5,22 +5,22 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Checkbox from '@material-ui/core/Checkbox'
 import FormControl from '@material-ui/core/FormControl'
 import useStorage, { keys } from '../../hooks/useStorage'
-import { trackAction, actions } from '../../analytics'
 import { toggleDarkMode } from '../../modules/app'
 
-export default () => {
+export default ({ onClick = null }) => {
   const [isDarkModeEnabled] = useStorage(keys.darkModeEnabled, false)
   const dispatch = useDispatch()
 
   const onCheckboxChange = () => {
     const newValue = !isDarkModeEnabled
+
+    if (onClick) {
+      onClick({ newValue })
+    }
+
     writeStorage(keys.darkModeEnabled, newValue)
 
     dispatch(toggleDarkMode())
-
-    trackAction(actions.TOGGLE_DARK_MODE, {
-      newValue
-    })
   }
 
   return (

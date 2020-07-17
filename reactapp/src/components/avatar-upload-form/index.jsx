@@ -12,7 +12,6 @@ import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
-import { trackAction, actions } from '../../analytics'
 import defaultAvatarUrl from '../../assets/images/default-avatar.png'
 
 const useStyles = makeStyles({
@@ -37,7 +36,7 @@ const useStyles = makeStyles({
   }
 })
 
-export default () => {
+export default ({ onClick = null }) => {
   const userId = useFirebaseUserId()
   const classes = useStyles()
   const [, , user] = useUserRecord()
@@ -48,18 +47,21 @@ export default () => {
 
   const onDownloadUrl = async uploadedUrl => {
     try {
+      const avatarUrl = uploadedUrl
+
+      if (onClick) {
+        onClick({
+          avatarUrl
+        })
+      }
+
       await save({
-        [UserFieldNames.avatarUrl]: uploadedUrl,
+        [UserFieldNames.avatarUrl]: avatarUrl,
         [UserFieldNames.lastModifiedBy]: createRef(
           CollectionNames.Users,
           userId
         ),
         [UserFieldNames.lastModifiedAt]: new Date()
-      })
-
-      trackAction(actions.UPLOAD_AVATAR, {
-        avatarUrl: uploadedUrl,
-        userId
       })
     } catch (err) {
       console.error(err)

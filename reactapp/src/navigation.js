@@ -58,6 +58,7 @@ export default [
     label: 'Species',
     children: [
       {
+        id: 'all-species',
         label: 'All Species',
         url: routes.viewAllSpecies
       }

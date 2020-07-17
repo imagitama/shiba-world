@@ -3,7 +3,7 @@ import * as THREE from 'three/build/three.module'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 
-export default ({ url }) => {
+export default ({ url, onClick = null }) => {
   const containerRef = useRef()
   const requestIdRef = useRef()
 
@@ -84,6 +84,12 @@ export default ({ url }) => {
       renderer.setSize(300, 300)
       renderer.shadowMap.enabled = true
       container.appendChild(renderer.domElement)
+
+      renderer.domElement.addEventListener('click', () => {
+        if (onClick) {
+          onClick()
+        }
+      })
 
       controls = new OrbitControls(camera, renderer.domElement)
       controls.target.set(0, 100, 0)

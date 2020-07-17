@@ -18,8 +18,8 @@ import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import * as routes from '../../routes'
 import { handleError } from '../../error-handling'
-import { trackAction, actions } from '../../analytics'
 import { createRef } from '../../utils'
+import { trackAction } from '../../analytics'
 
 export default () => {
   const userId = useFirebaseUserId()
@@ -51,7 +51,14 @@ export default () => {
         <br />
         <br />
         <Button
-          url={routes.viewRequestWithVar.replace(':requestId', createdDocId)}>
+          url={routes.viewRequestWithVar.replace(':requestId', createdDocId)}
+          onClick={() =>
+            trackAction(
+              'CreateRequest',
+              'Click view created request button',
+              createdDocId
+            )
+          }>
           View Request
         </Button>
       </SuccessMessage>
@@ -65,6 +72,8 @@ export default () => {
     })
 
   const onCreateBtnClick = async () => {
+    trackAction('CreateRequest', 'Click create button')
+
     // TODO: Output this invalid data to user
     if (
       !fieldData[RequestsFieldNames.title] ||
@@ -86,11 +95,6 @@ export default () => {
       })
 
       setCreatedDocId(newDocId)
-
-      trackAction(actions.CREATE_REQUEST, {
-        requestId: newDocId,
-        userId
-      })
     } catch (err) {
       console.error('Failed to create request', err)
       handleError(err)

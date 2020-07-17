@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 
 import useDatabaseSave from '../../hooks/useDatabaseSave'
-import { trackAction, actions } from '../../analytics'
 import { CollectionNames } from '../../hooks/useDatabaseQuery'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
@@ -28,7 +27,7 @@ const useStyles = makeStyles({
   }
 })
 
-export default ({ collectionName, parentId }) => {
+export default ({ collectionName, parentId, onAddClick = null }) => {
   if (!collectionName) {
     throw new Error('Cannot render comment list: no collection name!')
   }
@@ -63,16 +62,15 @@ export default ({ collectionName, parentId }) => {
 
   const onAddCommentBtnClick = async () => {
     try {
-      const [documentId] = await save({
+      if (onAddClick) {
+        onAddClick()
+      }
+
+      await save({
         parent: createRef(collectionName, parentId),
         comment: textFieldValue,
         createdBy: createRef(CollectionNames.Users, userId),
         createdAt: new Date()
-      })
-
-      trackAction(actions.CREATE_COMMENT, {
-        parentId: documentId,
-        userId
       })
     } catch (err) {
       console.error('Failed to add comment', err)

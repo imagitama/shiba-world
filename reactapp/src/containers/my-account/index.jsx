@@ -18,6 +18,7 @@ import useUserRecord from '../../hooks/useUserRecord'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import * as routes from '../../routes'
+import { trackAction } from '../../analytics'
 
 function WelcomeMessage() {
   const [isLoading, isErrored, user] = useUserRecord()
@@ -41,6 +42,8 @@ function WelcomeMessage() {
   )
 }
 
+const analyticsCategoryName = 'MyAccount'
+
 export default () => {
   const userId = useFirebaseUserId()
 
@@ -54,21 +57,52 @@ export default () => {
       <WelcomeMessage />
 
       <Heading variant="h2">Username</Heading>
-      <UsernameEditor />
+      <UsernameEditor
+        onSaveClick={() =>
+          trackAction(analyticsCategoryName, 'Click save username')
+        }
+      />
 
       <Heading variant="h2">Avatar</Heading>
-      <AvatarUploadForm />
+      <AvatarUploadForm
+        onClick={() =>
+          trackAction(analyticsCategoryName, 'Click avatar upload form')
+        }
+      />
 
       <Heading variant="h2">Bio</Heading>
-      <BioEditor />
+      <BioEditor
+        onSaveClick={() =>
+          trackAction(analyticsCategoryName, 'Click save bio button')
+        }
+      />
+
       <Heading variant="h2">Profile settings</Heading>
-      <AdultContentToggle />
+      <AdultContentToggle
+        onClick={({ newValue }) =>
+          trackAction(
+            analyticsCategoryName,
+            newValue === true ? 'Enable adult content' : 'Disable adult content'
+          )
+        }
+      />
       <br />
-      <DarkModeToggle />
+      <DarkModeToggle
+        onClick={({ newValue }) =>
+          trackAction(
+            analyticsCategoryName,
+            newValue === true ? 'Enable dark mode' : 'Disable dark mode'
+          )
+        }
+      />
 
       <Heading variant="h2">Social Media</Heading>
       <p>These are shown to everyone on your profile.</p>
-      <SocialMediaUsernamesEditor />
+      <SocialMediaUsernamesEditor
+        onSaveClick={() =>
+          trackAction(analyticsCategoryName, 'Click save social media')
+        }
+      />
 
       <Heading variant="h2">Your Uploads</Heading>
       <MyUploads />

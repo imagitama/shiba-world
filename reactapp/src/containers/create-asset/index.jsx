@@ -15,6 +15,7 @@ import { scrollToTop } from '../../utils'
 import * as routes from '../../routes'
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
+import { trackAction } from '../../analytics'
 
 export default () => {
   const userId = useFirebaseUserId()
@@ -40,7 +41,14 @@ export default () => {
       <SuccessMessage>
         Asset created successfully <br />
         <Button
-          url={routes.viewAssetWithVar.replace(':assetId', newDocumentId)}>
+          url={routes.viewAssetWithVar.replace(':assetId', newDocumentId)}
+          onClick={() =>
+            trackAction(
+              'CreateAsset',
+              'Click view created asset button',
+              newDocumentId
+            )
+          }>
           View Asset
         </Button>
       </SuccessMessage>
@@ -51,9 +59,11 @@ export default () => {
     <>
       <AssetEditor
         onSubmit={async newFields => {
-          scrollToTop()
-
           try {
+            trackAction('CreateAsset', 'Click create button')
+
+            scrollToTop()
+
             const [docId] = await save({
               ...newFields,
               // need to initialize these so our queries work later
