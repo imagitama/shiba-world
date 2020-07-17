@@ -222,7 +222,7 @@ const mapReferences = async (doc, fetchChildren = true) => {
       }
       // Bad hack for the Notifications Added comment author field :)
       if (value && typeof value === 'object' && value.author) {
-        return [key, await mapReferences(value, false)]
+        return [key, await mapReferences(value)]
       }
       return [key, await Promise.resolve(value)]
     })
