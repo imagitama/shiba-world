@@ -10,7 +10,7 @@ import { trackAction } from '../../analytics'
 import Avatar, { sizes } from '../avatar'
 
 const useStyles = makeStyles(theme => ({
-  paper: {
+  root: {
     padding: theme.spacing(2, 2),
     marginBottom: '2rem',
     position: 'relative',
@@ -56,7 +56,7 @@ export default ({ id, title, message, createdBy }) => {
   }
 
   return (
-    <Paper className={classes.paper}>
+    <Paper className={classes.root}>
       <div className={classes.leftCol}>
         <Avatar
           url={createdBy.avatarUrl}

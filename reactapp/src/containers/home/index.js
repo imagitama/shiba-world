@@ -6,7 +6,6 @@ import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'
 import SpeciesBrowser from '../../components/species-browser'
 import AllTagsBrowser from '../../components/all-tags-browser'
-import Polls from '../../components/polls'
 import Paper from '../../components/paper'
 
 import * as routes from '../../routes'
@@ -195,8 +194,6 @@ export default () => {
 
   return (
     <>
-      <Polls />
-
       <Tiles />
 
       <Heading variant="h2">

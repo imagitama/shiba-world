@@ -103,7 +103,8 @@ export const HistoryFieldNames = {
 
 export const NoticesFieldNames = {
   order: 'order',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  isVisible: 'isVisible'
 }
 
 export const EndorsementFieldNames = {

@@ -2,14 +2,15 @@ import React from 'react'
 import useDatabaseQuery, {
   CollectionNames,
   NoticesFieldNames,
-  OrderDirections
+  OrderDirections,
+  Operators
 } from '../../hooks/useDatabaseQuery'
 import Notice from '../notice'
 
 export default () => {
   const [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.Notices,
-    undefined,
+    [[NoticesFieldNames.isVisible, Operators.EQUALS, true]],
     100,
     [NoticesFieldNames.order, OrderDirections.ASC]
   )

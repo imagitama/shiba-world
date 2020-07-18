@@ -26,6 +26,7 @@ import Notices from './components/notices'
 import ErrorBoundary from './components/error-boundary'
 import LoadingIndicator from './components/loading-indicator'
 import UnapprovedAssetsMessage from './components/unapproved-assets-message'
+import Polls from './components/polls'
 
 import useUserRecord from './hooks/useUserRecord'
 import useSearchTerm from './hooks/useSearchTerm'
@@ -264,6 +265,7 @@ export default () => {
         <main className="main">
           <Container maxWidth="lg">
             <Notices />
+            <Polls />
             <UnapprovedAssetsMessage />
             <MainContent />
           </Container>

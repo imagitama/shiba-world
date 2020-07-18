@@ -1,5 +1,7 @@
 import React, { Fragment } from 'react'
 import { ResponsiveContainer, PieChart, Pie, Legend, Cell } from 'recharts'
+import { makeStyles } from '@material-ui/core/styles'
+
 import Paper from '../paper'
 
 import useDatabaseSave from '../../hooks/useDatabaseSave'
@@ -15,9 +17,26 @@ import { createRef } from '../../utils'
 import { handleError } from '../../error-handling'
 import { getHasVotedInPoll, setHasVotedInPoll } from '../../polls'
 import { trackAction } from '../../analytics'
+import { mediaQueryForMobiles } from '../../media-queries'
 
 import LoadingIndicator from '../loading-indicator'
 import Button from '../button'
+
+const useStyles = makeStyles({
+  root: {
+    display: 'flex',
+    [mediaQueryForMobiles]: {
+      flexWrap: 'wrap',
+      flexDirection: 'column'
+    }
+  },
+  col: {
+    width: '100%'
+  },
+  pieChart: {
+    fontSize: '75%'
+  }
+})
 
 function Answers({ pollId, answers }) {
   const [, , user] = useUserRecord()
@@ -100,6 +119,7 @@ const colors = [
 ]
 
 function PollResults({ pollId, answers }) {
+  const classes = useStyles()
   const [isLoadingResults, , results] = useDatabaseQuery(
     CollectionNames.PollResponses,
     [
@@ -133,7 +153,7 @@ function PollResults({ pollId, answers }) {
   }))
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
+    <ResponsiveContainer width="100%" height={200} className={classes.pieChart}>
       <PieChart>
         <Pie
           data={chartData}
@@ -153,6 +173,7 @@ function PollResults({ pollId, answers }) {
 }
 
 export default ({ poll: { id: pollId, question, description, answers } }) => {
+  const classes = useStyles()
   const [isLoadingUser, , user] = useUserRecord()
   const [isLoadingGuest, , guestUser] = useGuestUserRecord()
 
@@ -194,10 +215,14 @@ export default ({ poll: { id: pollId, question, description, answers } }) => {
   }
 
   return (
-    <Paper>
-      <strong>{question}</strong>
-      <p>{description}</p>
-      <Results />
+    <Paper className={classes.root}>
+      <div className={classes.col}>
+        <strong>{question}</strong>
+        <p>{description}</p>
+      </div>
+      <div className={classes.col}>
+        <Results />
+      </div>
     </Paper>
   )
 }
