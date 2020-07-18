@@ -125,7 +125,8 @@ const useStyles = makeStyles({
     margin: '2rem 0 1rem',
     '& A': { textDecoration: 'underline' },
     // fix embedded urls causing content to break out of mobile layout
-    wordBreak: 'break-all'
+    wordBreak: 'break-all',
+    '& img': { maxWidth: '100%' }
   },
   downloadButton: {
     '& a': {
