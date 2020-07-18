@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, Fragment } from 'react'
 import { Helmet } from 'react-helmet'
+import { Link } from 'react-router-dom'
 
 import categoryMeta from '../../category-meta'
 import {
@@ -8,6 +9,9 @@ import {
   getLabelForAssetSortFieldNameAndDirection
 } from '../../sorting'
 import { trackAction } from '../../analytics'
+import speciesMeta from '../../species-meta'
+import * as routes from '../../routes'
+import { species } from '../../tags'
 
 import ErrorMessage from '../../components/error-message'
 import LoadingIndicator from '../../components/loading-indicator'
@@ -23,7 +27,8 @@ import useDatabaseQuery, {
   Operators,
   CollectionNames,
   OrderDirections,
-  AssetFieldNames
+  AssetFieldNames,
+  AssetCategories
 } from '../../hooks/useDatabaseQuery'
 import useStorage, { keys as storageKeys } from '../../hooks/useStorage'
 
@@ -35,7 +40,58 @@ function getDescriptionByCategoryName(categoryName) {
   return categoryMeta[categoryName].shortDescription
 }
 
-function Assets({ categoryName, sortByFieldName, sortByDirection }) {
+function AvatarAssetResults({ assets }) {
+  let otherSpecies = [[species.otherSpecies, []]]
+
+  const assetsBySpecies = assets.reduce((obj, asset) => {
+    if (
+      asset.species &&
+      asset.species.length &&
+      asset.species[0] !== species.otherSpecies
+    ) {
+      const key = asset.species[0]
+
+      return {
+        ...obj,
+        [key]: obj[key] ? obj[key].concat([asset]) : [asset]
+      }
+    } else {
+      // Quick and dirty way to ensure Other Species comes last
+      otherSpecies[0][1].push(asset)
+      return obj
+    }
+  }, {})
+
+  return (
+    <>
+      {Object.entries(assetsBySpecies)
+        .sort(([nameA], [nameB]) => nameA.localeCompare(nameB))
+        .concat(otherSpecies)
+        .map(([speciesName, assetsForSpecies]) => (
+          <Fragment key={speciesName}>
+            <Heading variant="h2">
+              <Link
+                to={routes.viewSpeciesWithVar.replace(
+                  ':speciesName',
+                  speciesName
+                )}>
+                {speciesMeta[speciesName].name}
+              </Link>
+            </Heading>
+            <BodyText>{speciesMeta[speciesName].shortDescription}</BodyText>
+
+            <AssetResults assets={assetsForSpecies} showPinned />
+          </Fragment>
+        ))}
+    </>
+  )
+}
+
+function Assets({
+  categoryName,
+  sortByFieldName = null,
+  sortByDirection = null
+}) {
   const [, , user] = useUserRecord()
 
   let whereClauses = [
@@ -58,7 +114,9 @@ function Assets({ categoryName, sortByFieldName, sortByDirection }) {
     CollectionNames.Assets,
     whereClauses.length ? whereClauses : undefined,
     undefined,
-    [sortByFieldName, sortByDirection]
+    sortByFieldName && sortByDirection
+      ? [sortByFieldName, sortByDirection]
+      : undefined
   )
 
   if (isLoading) {
@@ -75,6 +133,10 @@ function Assets({ categoryName, sortByFieldName, sortByDirection }) {
 
   if (!results.length) {
     return <NoResultsMessage />
+  }
+
+  if (categoryName === AssetCategories.avatar) {
+    return <AvatarAssetResults assets={results} />
   }
 
   return <AssetResults assets={results} />
@@ -122,26 +184,33 @@ export default ({
         {getDisplayNameByCategoryName(categoryName)}
       </Heading>
       <BodyText>{getDescriptionByCategoryName(categoryName)}</BodyText>
-      <SortDropdown
-        options={assetOptions}
-        label={getLabelForAssetSortFieldNameAndDirection(
-          activeSortFieldName || assetsSortByFieldName,
-          activeSortDirection || assetsSortByDirection
-        )}
-        fieldNameKey={storageKeys.assetsSortByFieldName}
-        directionKey={storageKeys.assetsSortByDirection}
-        onNewSortFieldAndDirection={onNewSortFieldAndDirection}
-        onOpenDropdown={() =>
-          trackAction('AssetsList', 'Open sort dropdown', {
-            categoryName
-          })
-        }
-      />
-      <Assets
-        categoryName={categoryName}
-        sortByFieldName={activeSortFieldName || assetsSortByFieldName}
-        sortByDirection={activeSortDirection || assetsSortByDirection}
-      />
+
+      {categoryName === AssetCategories.avatar ? (
+        <Assets categoryName={AssetCategories.avatar} />
+      ) : (
+        <>
+          <SortDropdown
+            options={assetOptions}
+            label={getLabelForAssetSortFieldNameAndDirection(
+              activeSortFieldName || assetsSortByFieldName,
+              activeSortDirection || assetsSortByDirection
+            )}
+            fieldNameKey={storageKeys.assetsSortByFieldName}
+            directionKey={storageKeys.assetsSortByDirection}
+            onNewSortFieldAndDirection={onNewSortFieldAndDirection}
+            onOpenDropdown={() =>
+              trackAction('AssetsList', 'Open sort dropdown', {
+                categoryName
+              })
+            }
+          />
+          <Assets
+            categoryName={categoryName}
+            sortByFieldName={activeSortFieldName || assetsSortByFieldName}
+            sortByDirection={activeSortDirection || assetsSortByDirection}
+          />
+        </>
+      )}
       <Heading variant="h2">Tags</Heading>
       <AllTagsBrowser lazyLoad />
     </>

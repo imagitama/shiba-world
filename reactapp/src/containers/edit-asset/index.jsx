@@ -74,7 +74,11 @@ export default ({ match: { params } }) => {
           <Button
             url={routes.viewAssetWithVar.replace(':assetId', assetId)}
             onClick={() =>
-              trackAction('EditAsset', 'Click edited asset button', assetId)
+              trackAction(
+                'EditAsset',
+                'Click view edited asset button',
+                assetId
+              )
             }>
             View Asset
           </Button>

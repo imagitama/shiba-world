@@ -55,7 +55,8 @@ const Species = ({
   title,
   description,
   backupThumbnailUrl,
-  optimizedThumbnailUrl
+  optimizedThumbnailUrl,
+  onSpeciesClick = null
 }) => {
   const classes = useStyles()
   const url = routes.viewSpeciesWithVar.replace(':speciesName', name)
@@ -64,7 +65,14 @@ const Species = ({
     <div className={classes.speciesItem}>
       <Card>
         <CardActionArea>
-          <Link to={url} className={classes.contentWrapper}>
+          <Link
+            to={url}
+            className={classes.contentWrapper}
+            onClick={() => {
+              if (onSpeciesClick) {
+                onSpeciesClick(name)
+              }
+            }}>
             <div className={classes.thumbnailWrapper}>
               <picture>
                 <source srcSet={optimizedThumbnailUrl} type="image/webp" />
@@ -91,7 +99,7 @@ const Species = ({
   )
 }
 
-export default () => {
+export default ({ onSpeciesClick = null }) => {
   const classes = useStyles()
   return (
     <div className={classes.speciesBrowser}>
@@ -112,6 +120,7 @@ export default () => {
             description={shortDescription}
             optimizedThumbnailUrl={optimizedThumbnailUrl}
             backupThumbnailUrl={backupThumbnailUrl}
+            onSpeciesClick={onSpeciesClick}
           />
         )
       )}

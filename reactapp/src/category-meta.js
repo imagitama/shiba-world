@@ -33,7 +33,7 @@ export default {
   [AssetCategories.avatar]: {
     name: 'Avatars',
     nameSingular: 'Avatar',
-    shortDescription: `Download the base model or find links to download them.`,
+    shortDescription: `Download base models or find links to download them.`,
     imageUrl: avatarImageUrl,
     optimizedImageUrl: avatarOptimizedImageUrl
   },
