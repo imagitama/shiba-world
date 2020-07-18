@@ -7,6 +7,8 @@ import backupKangarooImageUrl from './assets/images/species/kangaroo.png'
 import backupRacoonImageUrl from './assets/images/species/racoon.png'
 import backupNargacugaImageUrl from './assets/images/species/nargacuga.png'
 import backupOtherSpeciesImageUrl from './assets/images/species/other-species.png'
+import backupImpimImageUrl from './assets/images/species/impim.png'
+import backupProtogenImageUrl from './assets/images/species/protogen.png'
 
 import optimizedShibaInuImageUrl from './assets/images/species/optimized/shiba_inu.webp'
 import optimizedAvaliImageUrl from './assets/images/species/optimized/avali.webp'
@@ -17,11 +19,25 @@ import optimizedKangarooImageUrl from './assets/images/species/optimized/kangaro
 import optimizedRacoonImageUrl from './assets/images/species/optimized/racoon.webp'
 import optimizedNargacugaImageUrl from './assets/images/species/optimized/nargacuga.webp'
 import optimizedOtherSpeciesImageUrl from './assets/images/species/optimized/other-species.webp'
+import optimizedImpimImageUrl from './assets/images/species/optimized/impim.webp'
+import optimizedProtogenImageUrl from './assets/images/species/optimized/protogen.webp'
 
-import { species } from './tags'
+export const speciesName = {
+  shiba: 'shiba',
+  avali: 'avali',
+  bestBoi: 'best-boi',
+  sergal: 'sergal',
+  rexouium: 'rexouium',
+  kangaroo: 'kangaroo',
+  racoon: 'racoon',
+  nargacuga: 'nargacuga',
+  impim: 'impim',
+  protogen: 'protogen',
+  otherSpecies: 'other-species'
+}
 
 export default {
-  [species.Shiba]: {
+  [speciesName.shiba]: {
     name: 'Shiba Inu',
     shortDescription: 'A cute squishy anthropomorphic shiba inu.',
     description: `An anthropomorphic avatar created by [Pikapetey](https://www.patreon.com/pikapetey). It costs $5 and you can purchase it by visiting links in the Avatars section for this species. We recommend the Corpse shiba over the original model as it contains performance improvements and bug fixes.
@@ -31,7 +47,7 @@ Useful links:
     backupThumbnailUrl: backupShibaInuImageUrl,
     optimizedThumbnailUrl: optimizedShibaInuImageUrl
   },
-  [species.Avali]: {
+  [speciesName.avali]: {
     name: 'Avali',
     shortDescription: `A small fluffy bird-like creature from a RimWorld mod.`,
     description: `The Avali are a race of small fluffy nomadic pack hunters with bad temper and specific comfort temperature range.
@@ -43,7 +59,7 @@ Useful links:
     backupThumbnailUrl: backupAvaliImageUrl,
     optimizedThumbnailUrl: optimizedAvaliImageUrl
   },
-  [species.BestBoi]: {
+  [speciesName.bestBoi]: {
     name: 'Best Boi',
     shortDescription: `A fox-like creature that is the best of the bois.`,
     description: `The foxdragon is a fox-like creature that stands on their hind legs. They were created for VRChat.
@@ -56,7 +72,7 @@ Useful links:
     backupThumbnailUrl: backupBestBoiImageUrl,
     optimizedThumbnailUrl: optimizedBestBoiImageUrl
   },
-  [species.sergal]: {
+  [speciesName.sergal]: {
     name: 'Sergal',
     shortDescription: `A tall, shark-like fictional alien species.`,
     description: `The sergal is a fictional alien species created by [Mick Ono](https://en.wikifur.com/wiki/Trancy_MICK). They have a shark-like head and are nicknamed "cheese wedge" by some.
@@ -67,7 +83,7 @@ Useful links:
     backupThumbnailUrl: backupSergalImageUrl,
     optimizedThumbnailUrl: optimizedSergalImageUrl
   },
-  [species.rexouium]: {
+  [speciesName.rexouium]: {
     name: 'Rexouium',
     shortDescription: `A tall fictional species with long ears and whiskers.`,
     description: `A tall fictional species with the name meaning king (rex) care-taker (ouium). Created by [RacoonRezillo](https://www.furaffinity.net/view/36134921). They are the king care-takers of their world. They can climb well and are fast.
@@ -77,7 +93,7 @@ Useful links:
     backupThumbnailUrl: backupRexouiumImageUrl,
     optimizedThumbnailUrl: optimizedRexouiumImageUrl
   },
-  [species.kangaroo]: {
+  [speciesName.kangaroo]: {
     name: 'Kangaroo',
     shortDescription: `A smooth, curvy anthro kangaroo.`,
     description: `An anthropomorphic kangaroo avatar created by [Spaghet](https://gumroad.com/spaghet_vr).
@@ -87,7 +103,7 @@ Useful links:
     backupThumbnailUrl: backupKangarooImageUrl,
     optimizedThumbnailUrl: optimizedKangarooImageUrl
   },
-  [species.racoon]: {
+  [speciesName.racoon]: {
     name: 'Racoon',
     shortDescription: `A big-eyed anthro racoon.`,
     description: `An anthropomorphic racoon model created by [YellowStumps](https://www.furaffinity.net/user/yellowstumps).
@@ -98,7 +114,7 @@ Useful links:
     backupThumbnailUrl: backupRacoonImageUrl,
     optimizedThumbnailUrl: optimizedRacoonImageUrl
   },
-  [species.nargacuga]: {
+  [speciesName.nargacuga]: {
     name: 'Nargacuga',
     shortDescription: 'A wyvern from Monster Hunter.',
     description: `An anthropomorphic large monster from the game [Monster Hunter](https://store.steampowered.com/app/582010/MONSTER_HUNTER_WORLD/).
@@ -108,7 +124,26 @@ Useful links:
     backupThumbnailUrl: backupNargacugaImageUrl,
     optimizedThumbnailUrl: optimizedNargacugaImageUrl
   },
-  [species.otherSpecies]: {
+  [speciesName.impim]: {
+    name: 'Impim',
+    shortDescription: 'A hooded figure with a large mouth of teeth and talons.',
+    description:
+      'A fictional species created by [Kunmao](https://www.deviantart.com/kunmao) that generally are hooded and have talons like birds.',
+    backupThumbnailUrl: backupImpimImageUrl,
+    optimizedThumbnailUrl: optimizedImpimImageUrl,
+    thumbnailSourceUrl: 'https://www.pinterest.com.au/pin/504825439479823733/'
+  },
+  [speciesName.protogen]: {
+    name: 'Protogen',
+    shortDescription: 'A raptor-like artificial being made mostly of machine.',
+    description:
+      'A robotic and artificial species from another universe. They are approximately 40% machine and generally have a visor that can display emotions as their face. An open-species created by Malice-risu (FurAffinity has since been closed).',
+    backupThumbnailUrl: backupProtogenImageUrl,
+    optimizedThumbnailUrl: optimizedProtogenImageUrl,
+    thumbnailSourceUrl:
+      'https://www.deviantart.com/popstarfrufru/art/First-Protogen-Art-783472436'
+  },
+  [speciesName.otherSpecies]: {
     name: 'Other Species',
     shortDescription: `Assets that have tags not matching the popular ones.`,
     description: `Assets that have tags not matching the popular ones.`,

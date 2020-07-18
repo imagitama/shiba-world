@@ -79,6 +79,17 @@ export default ({
           content={getOpenGraphUrlForRouteUrl(species.backupThumbnailUrl)}
         />
       </Helmet>
+      <div className={classes.thumbnailWrapper}>
+        <picture>
+          <source srcSet={species.optimizedThumbnailUrl} type="image/webp" />
+          <source srcSet={species.backupThumbnailUrl} type="image/png" />
+          <img
+            src={species.backupThumbnailUrl}
+            alt={`Thumbnail for species ${species.name}`}
+            className={classes.thumbnail}
+          />
+        </picture>
+      </div>
       <Heading variant="h1">
         <Link
           to={routes.viewSpeciesWithVar.replace(':speciesName', speciesName)}>

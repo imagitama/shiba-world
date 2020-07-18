@@ -9,9 +9,8 @@ import {
   getLabelForAssetSortFieldNameAndDirection
 } from '../../sorting'
 import { trackAction } from '../../analytics'
-import speciesMeta from '../../species-meta'
+import speciesMeta, { speciesName } from '../../species-meta'
 import * as routes from '../../routes'
-import { species } from '../../tags'
 
 import ErrorMessage from '../../components/error-message'
 import LoadingIndicator from '../../components/loading-indicator'
@@ -41,15 +40,15 @@ function getDescriptionByCategoryName(categoryName) {
 }
 
 function AvatarAssetResults({ assets }) {
-  let otherSpecies = [[species.otherSpecies, []]]
+  let otherSpecies = [[speciesName.otherSpecies, []]]
 
   const assetsBySpecies = assets.reduce((obj, asset) => {
     if (
-      asset.species &&
-      asset.species.length &&
-      asset.species[0] !== species.otherSpecies
+      asset[AssetFieldNames.species] &&
+      asset[AssetFieldNames.species].length &&
+      asset[AssetFieldNames.species][0] !== speciesName.otherSpecies
     ) {
-      const key = asset.species[0]
+      const key = asset[AssetFieldNames.species][0]
 
       return {
         ...obj,
