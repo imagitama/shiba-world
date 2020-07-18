@@ -12,6 +12,9 @@ const getRecordSelector = fieldToSubscribeTo => {
   return ({ user }) => {
     if (user.record) {
       if (fieldToSubscribeTo) {
+        if (fieldToSubscribeTo === 'id') {
+          return user.id
+        }
         return user.record.get(fieldToSubscribeTo)
       }
       return user.record.toJS()

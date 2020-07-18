@@ -25,6 +25,7 @@ import Button from '../button'
 const useStyles = makeStyles({
   root: {
     display: 'flex',
+    marginBottom: '1rem',
     [mediaQueryForMobiles]: {
       flexWrap: 'wrap',
       flexDirection: 'column'
@@ -202,18 +203,6 @@ export default ({ poll: { id: pollId, question, description, answers } }) => {
         ]
   )
 
-  function Results() {
-    if (isLoadingUser || isLoadingGuest || isLoadingVotes) {
-      return <LoadingIndicator />
-    }
-
-    if ((votesForUser && votesForUser.length) || hasVotedInPoll) {
-      return <PollResults pollId={pollId} answers={answers} />
-    }
-
-    return <Answers pollId={pollId} answers={answers} />
-  }
-
   return (
     <Paper className={classes.root}>
       <div className={classes.col}>
@@ -221,7 +210,13 @@ export default ({ poll: { id: pollId, question, description, answers } }) => {
         <p>{description}</p>
       </div>
       <div className={classes.col}>
-        <Results />
+        {isLoadingUser || isLoadingGuest || isLoadingVotes ? (
+          <LoadingIndicator />
+        ) : (votesForUser && votesForUser.length) || hasVotedInPoll ? (
+          <PollResults pollId={pollId} answers={answers} />
+        ) : (
+          <Answers pollId={pollId} answers={answers} />
+        )}
       </div>
     </Paper>
   )
