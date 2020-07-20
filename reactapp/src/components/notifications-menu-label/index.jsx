@@ -13,10 +13,13 @@ import { createRef } from '../../utils'
 const useStyles = makeStyles({
   root: {
     display: 'flex' // fix icon alignment
+  },
+  icon: {
+    color: '#FFF'
   }
 })
 
-export default () => {
+export default ({ isMobile = false }) => {
   const classes = useStyles()
   const userId = useFirebaseUserId()
   const [, , results] = useDatabaseQuery(
@@ -35,7 +38,7 @@ export default () => {
   return (
     <span className={classes.root}>
       <Badge badgeContent={results ? results.length : null} color="primary">
-        <NotificationsIcon />
+        <NotificationsIcon className={isMobile === false ? classes.icon : ''} />
       </Badge>
     </span>
   )

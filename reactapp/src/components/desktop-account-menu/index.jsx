@@ -38,6 +38,9 @@ const useStyles = makeStyles({
     '&:hover': {
       cursor: 'pointer'
     }
+  },
+  dropdownIcon: {
+    color: '#FFF'
   }
 })
 

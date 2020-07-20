@@ -115,7 +115,7 @@ export default ({ onClose }) => {
           <div
             className={classes.notifications}
             onClick={() => toggleNotificationsDropdown()}>
-            <NotificationsMenuLabel />
+            <NotificationsMenuLabel isMobile />
           </div>
         )}
         <div

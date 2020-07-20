@@ -20,6 +20,14 @@ const createTheme = isDark =>
       },
       background: {
         default: isDark ? '#282828' : 'hsl(25, 1%, 90%)'
+      },
+      paper: {
+        hover: {
+          shadow: isDark ? '#FFF' : '#000'
+        },
+        selected: {
+          shadow: isDark ? '#FFF' : '#000'
+        }
       }
     },
     overrides: {

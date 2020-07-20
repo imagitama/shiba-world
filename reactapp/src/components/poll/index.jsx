@@ -36,6 +36,9 @@ const useStyles = makeStyles({
   },
   pieChart: {
     fontSize: '75%'
+  },
+  answerBtn: {
+    marginBottom: '0.25rem'
   }
 })
 
@@ -86,8 +89,9 @@ function Answers({ pollId, answers }) {
 }
 
 function Answer({ answer, onClick }) {
+  const classes = useStyles()
   return (
-    <Button onClick={onClick} color="default">
+    <Button onClick={onClick} color="default" className={classes.answerBtn}>
       {answer}
     </Button>
   )
