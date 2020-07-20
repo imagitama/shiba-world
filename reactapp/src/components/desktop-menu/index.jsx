@@ -17,7 +17,8 @@ import { trackAction } from '../../analytics'
 const useStyles = makeStyles({
   root: {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   menuItem: {
     color: '#FFF', // TODO: Get from theme

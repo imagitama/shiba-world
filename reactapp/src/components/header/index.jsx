@@ -70,6 +70,16 @@ const useStyles = makeStyles({
   desktopMenu: {
     width: '100%'
   },
+  logoWrapper: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    padding: '1rem',
+    [mediaQueryForMobiles]: {
+      position: 'relative',
+      padding: 0
+    }
+  },
   logo: {
     '& path': {
       fill: '#FFF'
@@ -109,29 +119,23 @@ export default () => {
 
   return (
     <header className={classes.root}>
-      <div className={classes.cols}>
-        <div className={classes.leftCol}>
-          <Link
-            to={routes.home}
-            className={classes.logo}
-            title="Go to the homepage of VRCArena">
-            <Logo className={classes.logo} />
-          </Link>
-        </div>
-        <div className={classes.rightCol}>
-          <div className={classes.searchBar}>
-            <div className={classes.searchBarInner}>
-              <Searchbar />
-            </div>
-          </div>
+      <div className={classes.logoWrapper}>
+        <Link to={routes.home} title="Go to the homepage of VRCArena">
+          <Logo className={classes.logo} />
+        </Link>
+      </div>
 
-          {!isMobile && (
-            <div className={classes.desktopMenu}>
-              <DesktopMenu />
-            </div>
-          )}
+      <div className={classes.searchBar}>
+        <div className={classes.searchBarInner}>
+          <Searchbar />
         </div>
       </div>
+
+      {!isMobile && (
+        <div className={classes.desktopMenu}>
+          <DesktopMenu />
+        </div>
+      )}
 
       <div className={classes.floatingMenu}>
         {!isMobile && <DesktopAccountMenu />}
