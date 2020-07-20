@@ -34,6 +34,14 @@ const useStyles = makeStyles({
     '& p:last-child': {
       marginBottom: 0
     }
+  },
+  thumbnailWrapper: {
+    width: '200px',
+    height: '200px',
+    '& img': {
+      width: '100%',
+      height: '100%'
+    }
   }
 })
 
@@ -80,15 +88,21 @@ export default ({
         />
       </Helmet>
       <div className={classes.thumbnailWrapper}>
-        <picture>
-          <source srcSet={species.optimizedThumbnailUrl} type="image/webp" />
-          <source srcSet={species.backupThumbnailUrl} type="image/png" />
-          <img
-            src={species.backupThumbnailUrl}
-            alt={`Thumbnail for species ${species.name}`}
-            className={classes.thumbnail}
-          />
-        </picture>
+        <a
+          href={species.thumbnailSourceUrl}
+          title={`Visit the source of the thumbnail for ${species.name}`}
+          target="_blank"
+          rel="noopener noreferrer">
+          <picture>
+            <source srcSet={species.optimizedThumbnailUrl} type="image/webp" />
+            <source srcSet={species.backupThumbnailUrl} type="image/png" />
+            <img
+              src={species.backupThumbnailUrl}
+              alt={`Thumbnail for species ${species.name}`}
+              className={classes.thumbnail}
+            />
+          </picture>
+        </a>
       </div>
       <Heading variant="h1">
         <Link

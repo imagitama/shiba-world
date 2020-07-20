@@ -45,19 +45,21 @@ export default {
 Useful links:
 - [Shiba retexture Trello](https://trello.com/b/8K6zOgCP/public-shibas)`,
     backupThumbnailUrl: backupShibaInuImageUrl,
-    optimizedThumbnailUrl: optimizedShibaInuImageUrl
+    optimizedThumbnailUrl: optimizedShibaInuImageUrl,
+    thumbnailSourceUrl: 'https://www.furaffinity.net/view/21647002'
   },
   [speciesName.avali]: {
     name: 'Avali',
     shortDescription: `A small fluffy bird-like creature from a RimWorld mod.`,
     description: `The Avali are a race of small fluffy nomadic pack hunters with bad temper and specific comfort temperature range.
     
-They were originally a [RimWorld mod](https://rimworldbase.com/avali-mod/) but have since been made into a VRChat avatar and is very popular amongst players.
+They were originally found in the game Spore and made into a Starbound mod, but have since been made into a VRChat avatar and is very popular amongst players.
 
 Useful links:
 - [The Official Avali Wiki](https://avali.fandom.com/wiki/The_Official_Avali_Wiki)`,
     backupThumbnailUrl: backupAvaliImageUrl,
-    optimizedThumbnailUrl: optimizedAvaliImageUrl
+    optimizedThumbnailUrl: optimizedAvaliImageUrl,
+    thumbnailSourceUrl: 'https://avali.fandom.com/wiki/Character_Creation_Tips'
   },
   [speciesName.bestBoi]: {
     name: 'Best Boi',
@@ -70,7 +72,9 @@ Useful links:
 - [Best Boi Twitter](https://twitter.com/bestboip)
 - [Best Boi VRChat world](https://vrchat.com/home/world/wrld_05be1d4a-72ae-489b-93bd-489d2b78abc5)`,
     backupThumbnailUrl: backupBestBoiImageUrl,
-    optimizedThumbnailUrl: optimizedBestBoiImageUrl
+    optimizedThumbnailUrl: optimizedBestBoiImageUrl,
+    thumbnailSourceUrl:
+      'https://www.deviantart.com/ankiyua/art/Best-boi-art-02-741041941'
   },
   [speciesName.sergal]: {
     name: 'Sergal',
@@ -81,7 +85,9 @@ Useful links:
 - [Wikifur Sergal page](https://en.wikifur.com/wiki/Sergal)
 - [VR Sergal Friends Discord](https://discord.gg/zaQfcwP)`,
     backupThumbnailUrl: backupSergalImageUrl,
-    optimizedThumbnailUrl: optimizedSergalImageUrl
+    optimizedThumbnailUrl: optimizedSergalImageUrl,
+    thumbnailSourceUrl:
+      'https://www.weasyl.com/~zephyrue/submissions/1076745/sergal'
   },
   [speciesName.rexouium]: {
     name: 'Rexouium',
@@ -91,7 +97,8 @@ Useful links:
 Useful links:
 - [VRChat World](https://www.vrchat.com/home/launch?worldId=wrld_3a278e64-36c3-4c19-9e2a-f8bac7bbd9c4)`,
     backupThumbnailUrl: backupRexouiumImageUrl,
-    optimizedThumbnailUrl: optimizedRexouiumImageUrl
+    optimizedThumbnailUrl: optimizedRexouiumImageUrl,
+    thumbnailSourceUrl: ''
   },
   [speciesName.kangaroo]: {
     name: 'Kangaroo',
@@ -101,7 +108,8 @@ Useful links:
 Useful links:
 - [Kanga World](https://www.vrcw.net/world/detail/wrld_4366831d-ada2-4f68-8ab8-6df1d118e50c)`,
     backupThumbnailUrl: backupKangarooImageUrl,
-    optimizedThumbnailUrl: optimizedKangarooImageUrl
+    optimizedThumbnailUrl: optimizedKangarooImageUrl,
+    thumbnailSourceUrl: 'https://www.pinterest.com.au/pin/342273640424505008'
   },
   [speciesName.racoon]: {
     name: 'Racoon',
@@ -112,7 +120,9 @@ Useful links:
 - [FurAffinity page](https://www.furaffinity.net/view/32997273)
 - [Download the base model](https://drive.google.com/drive/folders/1gny4og32AwilVQcjhSFa-PsxbYEwbXBd)`,
     backupThumbnailUrl: backupRacoonImageUrl,
-    optimizedThumbnailUrl: optimizedRacoonImageUrl
+    optimizedThumbnailUrl: optimizedRacoonImageUrl,
+    thumbnailSourceUrl:
+      'https://twitter.com/Kern_raccoon/status/1214875749116596224'
   },
   [speciesName.nargacuga]: {
     name: 'Nargacuga',
@@ -122,7 +132,8 @@ Useful links:
 Useful links:
 - [Wiki page](https://monsterhunterworld.wiki.fextralife.com/Nargacuga)`,
     backupThumbnailUrl: backupNargacugaImageUrl,
-    optimizedThumbnailUrl: optimizedNargacugaImageUrl
+    optimizedThumbnailUrl: optimizedNargacugaImageUrl,
+    thumbnailSourceUrl: 'https://www.zerochan.net/1016240'
   },
   [speciesName.impim]: {
     name: 'Impim',
