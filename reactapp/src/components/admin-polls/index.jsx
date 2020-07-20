@@ -40,6 +40,7 @@ function Responses({ pollId }) {
       <tbody>
         {results.map(({ id, createdBy, answer, otherText }) => (
           <tr key={id}>
+            <td>{id}</td>
             <td>
               {createdBy[GuestUsersFieldNames.ipAddress]
                 ? createdBy[GuestUsersFieldNames.ipAddress]

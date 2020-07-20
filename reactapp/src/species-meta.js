@@ -98,7 +98,8 @@ Useful links:
 - [VRChat World](https://www.vrchat.com/home/launch?worldId=wrld_3a278e64-36c3-4c19-9e2a-f8bac7bbd9c4)`,
     backupThumbnailUrl: backupRexouiumImageUrl,
     optimizedThumbnailUrl: optimizedRexouiumImageUrl,
-    thumbnailSourceUrl: ''
+    thumbnailSourceUrl:
+      'https://discordapp.com/channels/705082643015794839/706588479890391232/733443794833244181'
   },
   [speciesName.kangaroo]: {
     name: 'Kangaroo',
