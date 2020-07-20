@@ -57,9 +57,10 @@ async function lookupGuestIdWithIpAddress(ipAddress) {
     .where(GuestUsersFieldNames.ipAddress, Operators.EQUALS, ipAddress)
     .get()
 
-  if (docs.length > 1) {
-    throw new Error(`Multiple docs found with IP address ${ipAddress}`)
-  }
+  // Comment this out to fix error https://sentry.io/organizations/imagitama/issues/1788950185
+  // if (docs.length > 1) {
+  //   throw new Error(`Multiple docs found with IP address ${ipAddress}`)
+  // }
 
   if (!docs.length) {
     return null
