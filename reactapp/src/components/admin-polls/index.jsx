@@ -38,14 +38,17 @@ function Responses({ pollId }) {
   return (
     <table>
       <tbody>
-        {results.map(({ id, createdBy, answer }) => (
+        {results.map(({ id, createdBy, answer, otherText }) => (
           <tr key={id}>
             <td>
               {createdBy[GuestUsersFieldNames.ipAddress]
                 ? createdBy[GuestUsersFieldNames.ipAddress]
                 : createdBy[UserFieldNames.username]}
             </td>
-            <td>{answer}</td>
+            <td>
+              {answer}
+              {otherText ? ` - ${otherText}` : ''}
+            </td>
           </tr>
         ))}
       </tbody>

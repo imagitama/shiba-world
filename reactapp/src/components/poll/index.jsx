@@ -1,6 +1,7 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState } from 'react'
 import { ResponsiveContainer, PieChart, Pie, Legend, Cell } from 'recharts'
 import { makeStyles } from '@material-ui/core/styles'
+import TextField from '@material-ui/core/TextField'
 
 import Paper from '../paper'
 
@@ -42,16 +43,19 @@ const useStyles = makeStyles({
   }
 })
 
-function Answers({ pollId, answers }) {
+function Answers({ pollId, answers, isOtherAllowed = false }) {
   const [, , user] = useUserRecord()
   const [, , guestUser] = useGuestUserRecord()
   const [isSaving, , , save] = useDatabaseSave(CollectionNames.PollResponses)
+  const [isEnteringOther, setIsEnteringOther] = useState(false)
+  const [otherText, setOtherText] = useState('')
 
-  const onAnswerClick = async answerText => {
+  const onAnswerClick = async (answerText, otherText = '') => {
     try {
       trackAction('Poll', 'Click answer button', {
         pollId,
-        answer: answerText
+        answer: answerText,
+        otherText
       })
 
       if (!user && !guestUser) {
@@ -64,6 +68,7 @@ function Answers({ pollId, answers }) {
       await save({
         poll: createRef(CollectionNames.Polls, pollId),
         answer: answerText,
+        otherText,
         createdBy: user
           ? createRef(CollectionNames.Users, user.id)
           : createRef(CollectionNames.GuestUsers, guestUser.id),
@@ -81,11 +86,42 @@ function Answers({ pollId, answers }) {
     return <LoadingIndicator />
   }
 
-  return answers.map(answerText => (
-    <Fragment key={answerText}>
-      <Answer answer={answerText} onClick={() => onAnswerClick(answerText)} />{' '}
-    </Fragment>
-  ))
+  if (isEnteringOther) {
+    return (
+      <>
+        <TextField
+          variant="filled"
+          onChange={e => setOtherText(e.target.value)}
+          value={otherText}
+          label="Enter your answer"
+        />{' '}
+        <Button
+          onClick={() => onAnswerClick('Other', otherText)}
+          color="primary">
+          Save
+        </Button>{' '}
+        <Button onClick={() => setIsEnteringOther(false)} color="default">
+          Cancel
+        </Button>
+      </>
+    )
+  }
+
+  return (
+    <>
+      {answers.map(answerText => (
+        <Fragment key={answerText}>
+          <Answer
+            answer={answerText}
+            onClick={() => onAnswerClick(answerText)}
+          />{' '}
+        </Fragment>
+      ))}
+      {isOtherAllowed && (
+        <Answer answer="Other" onClick={() => setIsEnteringOther(true)} />
+      )}
+    </>
+  )
 }
 
 function Answer({ answer, onClick }) {
@@ -177,7 +213,9 @@ function PollResults({ pollId, answers }) {
   )
 }
 
-export default ({ poll: { id: pollId, question, description, answers } }) => {
+export default ({
+  poll: { id: pollId, question, description, answers, isOtherAllowed }
+}) => {
   const classes = useStyles()
   const [isLoadingUser, , user] = useUserRecord()
   const [isLoadingGuest, , guestUser] = useGuestUserRecord()
@@ -219,7 +257,11 @@ export default ({ poll: { id: pollId, question, description, answers } }) => {
         ) : (votesForUser && votesForUser.length) || hasVotedInPoll ? (
           <PollResults pollId={pollId} answers={answers} />
         ) : (
-          <Answers pollId={pollId} answers={answers} />
+          <Answers
+            pollId={pollId}
+            answers={answers}
+            isOtherAllowed={isOtherAllowed}
+          />
         )}
       </div>
     </Paper>
