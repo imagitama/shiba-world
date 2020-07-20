@@ -116,7 +116,12 @@ export default () => {
                   {children}
                 </a>
               ) : (
-                <Link to={url} className={classes.menuItemLabel}>
+                <Link
+                  to={url}
+                  className={classes.menuItemLabel}
+                  onClick={() =>
+                    trackAction('DesktopMenu', 'Click menu item', id)
+                  }>
                   {children}
                 </Link>
               )

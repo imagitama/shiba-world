@@ -12,7 +12,6 @@ import { ReactComponent as Logo } from '../../assets/images/logo.svg'
 import {
   queryForMobiles,
   mediaQueryForMobiles,
-  mediaQueryForTablets,
   mediaQueryForDesktopsOnly
 } from '../../media-queries'
 import { trackAction } from '../../analytics'
@@ -21,6 +20,9 @@ import Searchbar from '../searchbar'
 import MobileMenu from '../mobile-menu'
 import DesktopMenu from '../desktop-menu'
 import DesktopAccountMenu from '../desktop-account-menu'
+
+// when the navigation cannot get any smaller
+const mediaQueryForMaxMenuWidth = '@media (max-width: 1100px)'
 
 const useStyles = makeStyles({
   root: {
@@ -59,9 +61,6 @@ const useStyles = makeStyles({
   searchBarInner: {
     width: '50%',
     margin: '0.5rem auto 0',
-    [mediaQueryForTablets]: {
-      margin: '0'
-    },
     [mediaQueryForMobiles]: {
       width: '100%',
       marginBottom: '0.5rem'
@@ -86,6 +85,10 @@ const useStyles = makeStyles({
     },
     height: '100px',
     width: 'auto',
+    transition: 'all 100ms',
+    [mediaQueryForMaxMenuWidth]: {
+      height: '75px'
+    },
     [mediaQueryForMobiles]: {
       height: '75px'
     }

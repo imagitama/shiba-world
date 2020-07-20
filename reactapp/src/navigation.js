@@ -48,11 +48,11 @@ export function getLabelForMenuItem(Label) {
 }
 
 export default [
-  {
-    id: 'news',
-    label: 'News',
-    url: routes.news
-  },
+  ...Object.entries(categoriesMeta).map(([name, meta]) => ({
+    id: `category-${name}`,
+    label: meta.name,
+    url: routes.viewCategoryWithVar.replace(':categoryName', name)
+  })),
   {
     id: 'species',
     label: 'Species',
@@ -64,30 +64,21 @@ export default [
       }
     ].concat(
       Object.entries(speciesMeta).map(([name, meta]) => ({
-        id: name,
+        id: `species-${name}`,
         label: meta.name,
         url: routes.viewSpeciesWithVar.replace(':speciesName', name)
       }))
     )
   },
   {
-    id: 'categories',
-    label: 'Categories',
-    children: Object.entries(categoriesMeta).map(([name, meta]) => ({
-      id: name,
-      label: meta.name,
-      url: routes.viewCategoryWithVar.replace(':categoryName', name)
-    }))
-  },
-  {
-    id: 'users',
-    url: routes.users,
-    label: 'Users'
-  },
-  {
     id: 'more',
     label: 'More',
     children: [
+      {
+        id: 'users',
+        url: routes.users,
+        label: 'Users'
+      },
       {
         id: 'activity',
         url: routes.activity,
