@@ -3,6 +3,7 @@ const admin = require('firebase-admin')
 const algoliasearch = require('algoliasearch')
 const diff = require('deep-diff')
 const Twit = require('twit')
+const fetch = require('node-fetch')
 
 const config = functions.config()
 
@@ -348,6 +349,32 @@ async function updateTweetRecordInDatabase(recordId, tweetId) {
   })
 }
 
+// DISCORD
+
+const DISCORD_ACTIVITY_WEBHOOK_URL = config.discord.activity_webhook_url
+
+const VRCARENA_BASE_URL = 'https://www.vrcarena.com'
+const routes = {
+  viewAssetWithVar: '/assets/:assetId',
+}
+
+async function emitToDiscordActivity(message, embeds) {
+  const resp = await fetch(DISCORD_ACTIVITY_WEBHOOK_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      content: message,
+      embeds,
+    }),
+  })
+
+  if (!resp.ok) {
+    throw new Error(`Response not OK! ${resp.status} ${resp.statusText}`)
+  }
+}
+
 exports.onAssetCreated = functions.firestore
   .document('assets/{assetId}')
   .onCreate(async (doc) => {
@@ -364,6 +391,25 @@ exports.onAssetCreated = functions.firestore
 
     if (isNotApproved(docData)) {
       await notifyUsersOfUnapprovedAsset(doc.id, docData)
+
+      if (!isPrivate(docData)) {
+        const author = await docData[AssetFieldNames.createdBy].get()
+
+        await emitToDiscordActivity(
+          `Created asset "${docData[AssetFieldNames.title]}" by ${author.get(
+            UserFieldNames.username
+          )}`,
+          [
+            {
+              title: 'View Asset',
+              url: `${VRCARENA_BASE_URL}${routes.viewAssetWithVar.replace(
+                ':assetId',
+                doc.id
+              )}`,
+            },
+          ]
+        )
+      }
 
       return Promise.resolve()
     }
@@ -506,6 +552,8 @@ exports.onUserSignup = functions.auth.user().onCreate(async (user) => {
   await profileRecord.set({
     bio: '',
   })
+
+  await emitToDiscordActivity(`User ${uid} signed up`, [])
 
   return storeInHistory(`User signup`, userRecord)
 })

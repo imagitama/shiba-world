@@ -9,7 +9,7 @@
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
     "prettier": "prettier --write index.js",
-    "load-config": "firebase functions:config:set algolia=\"$(cat .algoliaconfig.json)\" && firebase functions:config:set twitter=\"$(cat .twitterconfig.json)\""
+    "load-config": "firebase functions:config:set algolia=\"$(cat .algoliaconfig.json)\" && firebase functions:config:set twitter=\"$(cat .twitterconfig.json)\" && firebase functions:config:set discord=\"$(cat .discordconfig.json)\""
   },
   "engines": {
     "node": "8"
@@ -19,6 +19,7 @@
     "deep-diff": "^1.0.2",
     "firebase-admin": "^8.10.0",
     "firebase-functions": "^3.6.1",
+    "node-fetch": "^2.6.0",
     "twit": "^2.2.11"
   },
   "devDependencies": {
