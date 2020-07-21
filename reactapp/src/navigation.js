@@ -3,8 +3,9 @@ import TwitterIcon from '@material-ui/icons/Twitter'
 import * as routes from './routes'
 import speciesMeta from './species-meta'
 import categoriesMeta from './category-meta'
-import { TWITTER_URL } from './config'
+import { TWITTER_URL, DISCORD_URL } from './config'
 import { UserFieldNames } from './hooks/useDatabaseQuery'
+import { ReactComponent as DiscordIcon } from './assets/images/icons/discord.svg'
 
 export function canShowMenuItem(menuItem, user) {
   if (menuItem.requiresAuth && !user) {
@@ -111,6 +112,11 @@ export default [
     id: 'twitter',
     label: TwitterIcon,
     url: TWITTER_URL
+  },
+  {
+    id: 'discord',
+    label: DiscordIcon,
+    url: DISCORD_URL
   },
   {
     id: 'admin',

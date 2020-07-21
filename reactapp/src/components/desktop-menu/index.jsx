@@ -35,6 +35,9 @@ const useStyles = makeStyles({
     alignItems: 'center',
     '&:hover': {
       cursor: 'pointer'
+    },
+    '& svg': {
+      width: '1em'
     }
   },
   twitterBtn: {
