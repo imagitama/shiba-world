@@ -347,6 +347,8 @@ export default ({ assetId }) => {
     .filter(isUrlAVideo)
     .filter(fileUrl => fileUrl !== thumbnailUrl)
 
+  const isApprover = canApproveAsset(user)
+
   return (
     <div className={classes.root}>
       <Helmet>
@@ -598,13 +600,13 @@ export default ({ assetId }) => {
                 </Control>
               </>
             ) : null}
-            {canApproveAsset && <Heading variant="h4">Editor Actions</Heading>}
-            {canApproveAsset(user) && (
+            {isApprover && <Heading variant="h4">Editor Actions</Heading>}
+            {isApprover && (
               <Control>
                 <ApproveAssetButton assetId={assetId} />
               </Control>
             )}
-            {canApproveAsset(user) && (
+            {isApprover && (
               <Control>
                 <DeleteAssetButton
                   assetId={assetId}
@@ -620,7 +622,7 @@ export default ({ assetId }) => {
                 />
               </Control>
             )}
-            {canApproveAsset(user) && (
+            {isApprover && (
               <Control>
                 <PinAssetButton
                   assetId={assetId}
@@ -654,7 +656,7 @@ export default ({ assetId }) => {
       <Heading variant="h2">Endorsements</Heading>
       <EndorsementList assetId={assetId} />
 
-      {canApproveAsset(user) && (
+      {isApprover && (
         <>
           <Heading variant="h2">Downloads (Editors Only)</Heading>
           <DownloadList assetId={assetId} />

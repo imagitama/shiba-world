@@ -13,9 +13,11 @@ import LoadingIndicator from '../loading-indicator'
 import AssetResults from '../asset-results'
 import ErrorMessage from '../error-message'
 import Button from '../button'
-import NoResultsMessage from '../no-results-message'
+import Heading from '../heading'
+import BodyText from '../body-text'
 
 import * as routes from '../../routes'
+import categoryMeta from '../../category-meta'
 
 function getViewMoreLinkUrl(speciesName, categoryName) {
   if (speciesName && categoryName) {
@@ -29,7 +31,13 @@ function getViewMoreLinkUrl(speciesName, categoryName) {
   throw new Error('Cannot get view more link url: no category name!')
 }
 
-export default ({ speciesName, limit = 10, categoryName, showPinned }) => {
+export default ({
+  speciesName = null,
+  categoryName = null,
+  showPinned,
+  limit = 10,
+  title = ''
+}) => {
   const [, , user] = useUserRecord()
 
   let whereClauses = [
@@ -71,13 +79,30 @@ export default ({ speciesName, limit = 10, categoryName, showPinned }) => {
     return <ErrorMessage>Failed to get recent assets</ErrorMessage>
   }
 
+  // Some species only have avatars so it looks very empty
+  if (!results.length) {
+    return null
+  }
+
   return (
     <>
-      {results.length ? (
-        <AssetResults assets={results} showPinned={showPinned} />
-      ) : (
-        <NoResultsMessage />
-      )}
+      <Heading variant="h2">
+        <Link
+          to={
+            speciesName
+              ? routes.viewSpeciesCategoryWithVar
+                  .replace(':speciesName', speciesName)
+                  .replace(':categoryName', categoryName)
+              : routes.viewCategoryWithVar.replace(
+                  ':categoryName',
+                  categoryName
+                )
+          }>
+          {title || categoryMeta[categoryName].name}
+        </Link>
+      </Heading>
+      <BodyText>{categoryMeta[categoryName].shortDescription}</BodyText>
+      <AssetResults assets={results} showPinned={showPinned} />
       <div style={{ textAlign: 'center', marginTop: '1rem' }}>
         {speciesName && categoryName && (
           <Link
