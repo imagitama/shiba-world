@@ -43,6 +43,8 @@ const useStyles = makeStyles({
   }
 })
 
+const ANSWER_TEXT_OTHER = 'Other'
+
 function Answers({ pollId, answers, isOtherAllowed = false }) {
   const [, , user] = useUserRecord()
   const [, , guestUser] = useGuestUserRecord()
@@ -96,7 +98,7 @@ function Answers({ pollId, answers, isOtherAllowed = false }) {
           label="Enter your answer"
         />{' '}
         <Button
-          onClick={() => onAnswerClick('Other', otherText)}
+          onClick={() => onAnswerClick(ANSWER_TEXT_OTHER, otherText)}
           color="primary">
           Save
         </Button>{' '}
@@ -118,7 +120,10 @@ function Answers({ pollId, answers, isOtherAllowed = false }) {
         </Fragment>
       ))}
       {isOtherAllowed && (
-        <Answer answer="Other" onClick={() => setIsEnteringOther(true)} />
+        <Answer
+          answer={ANSWER_TEXT_OTHER}
+          onClick={() => setIsEnteringOther(true)}
+        />
       )}
     </>
   )
@@ -159,7 +164,7 @@ const colors = [
   '#000000'
 ]
 
-function PollResults({ pollId, answers }) {
+function PollResults({ pollId, answers, isOtherAllowed }) {
   const classes = useStyles()
   const [isLoadingResults, , results] = useDatabaseQuery(
     CollectionNames.PollResponses,
@@ -188,10 +193,12 @@ function PollResults({ pollId, answers }) {
     {}
   )
 
-  const chartData = answers.map(answerText => ({
-    name: answerText,
-    value: answerTally[answerText] || 0
-  }))
+  const chartData = answers
+    .concat(isOtherAllowed ? [ANSWER_TEXT_OTHER] : [])
+    .map(answerText => ({
+      name: answerText,
+      value: answerTally[answerText] || 0
+    }))
 
   return (
     <ResponsiveContainer width="100%" height={200} className={classes.pieChart}>
@@ -255,7 +262,11 @@ export default ({
         {isLoadingUser || isLoadingGuest || isLoadingVotes ? (
           <LoadingIndicator />
         ) : (votesForUser && votesForUser.length) || hasVotedInPoll ? (
-          <PollResults pollId={pollId} answers={answers} />
+          <PollResults
+            pollId={pollId}
+            answers={answers}
+            isOtherAllowed={isOtherAllowed}
+          />
         ) : (
           <Answers
             pollId={pollId}
