@@ -1,3 +1,4 @@
 {
-  "activity_webhook_url": ""
+  "activity_webhook_url": "",
+  "editor_notifications_webhook_url": ""
 }

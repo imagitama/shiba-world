@@ -9,7 +9,10 @@
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
     "prettier": "prettier --write index.js",
-    "load-config": "firebase functions:config:set algolia=\"$(cat .algoliaconfig.json)\" && firebase functions:config:set twitter=\"$(cat .twitterconfig.json)\" && firebase functions:config:set discord=\"$(cat .discordconfig.json)\""
+    "load-algolia-config": "firebase functions:config:set algolia=\"$(cat .algoliaconfig.json)\"",
+    "load-twitter-config": "firebase functions:config:set twitter=\"$(cat .twitterconfig.json)\"",
+    "load-discord-config": "firebase functions:config:set discord=\"$(cat .discordconfig.json)\"",
+    "load-config": "npm run load-algolia-config && npm run load-twitter-config && npm run load-discord-config"
   },
   "engines": {
     "node": "8"

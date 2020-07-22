@@ -119,6 +119,17 @@ const NotificationsFieldNames = {
   createdAt: 'createdAt',
 }
 
+const RequestsFieldNames = {
+  title: 'title',
+  description: 'description',
+  isClosed: 'isClosed',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt',
+  isDeleted: 'isDeleted',
+}
+
 function isNotApproved(docData) {
   return docData.isApproved === false
 }
@@ -352,14 +363,18 @@ async function updateTweetRecordInDatabase(recordId, tweetId) {
 // DISCORD
 
 const DISCORD_ACTIVITY_WEBHOOK_URL = config.discord.activity_webhook_url
+const DISCORD_EDITOR_NOTIFICATIONS_WEBHOOK_URL =
+  config.discord.editor_notifications_webhook_url
 
 const VRCARENA_BASE_URL = 'https://www.vrcarena.com'
 const routes = {
   viewAssetWithVar: '/assets/:assetId',
+  viewRequestWithVar: '/requests/:requestId',
+  viewUserWithVar: '/users/:userId',
 }
 
-async function emitToDiscordActivity(message, embeds) {
-  const resp = await fetch(DISCORD_ACTIVITY_WEBHOOK_URL, {
+async function emitToDiscord(webhookUrl, message, embeds = []) {
+  const resp = await fetch(webhookUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -372,6 +387,48 @@ async function emitToDiscordActivity(message, embeds) {
 
   if (!resp.ok) {
     throw new Error(`Response not OK! ${resp.status} ${resp.statusText}`)
+  }
+}
+
+async function emitToDiscordActivity(message, embeds) {
+  return emitToDiscord(DISCORD_ACTIVITY_WEBHOOK_URL, message, embeds)
+}
+
+async function emitToDiscordEditorNotifications(message, embeds) {
+  return emitToDiscord(
+    DISCORD_EDITOR_NOTIFICATIONS_WEBHOOK_URL,
+    message,
+    embeds
+  )
+}
+
+function getEmbedForViewAsset(assetId) {
+  return {
+    title: 'View Asset',
+    url: `${VRCARENA_BASE_URL}${routes.viewAssetWithVar.replace(
+      ':assetId',
+      assetId
+    )}`,
+  }
+}
+
+function getEmbedForViewProfile(userId) {
+  return {
+    title: 'View Profile',
+    url: `${VRCARENA_BASE_URL}${routes.viewUserWithVar.replace(
+      ':userId',
+      userId
+    )}`,
+  }
+}
+
+function getEmbedForViewRequest(requestId) {
+  return {
+    title: 'View Request',
+    url: `${VRCARENA_BASE_URL}${routes.viewRequestWithVar.replace(
+      ':requestId',
+      requestId
+    )}`,
   }
 }
 
@@ -395,19 +452,11 @@ exports.onAssetCreated = functions.firestore
       if (!isPrivate(docData)) {
         const author = await docData[AssetFieldNames.createdBy].get()
 
-        await emitToDiscordActivity(
+        await emitToDiscordEditorNotifications(
           `Created asset "${docData[AssetFieldNames.title]}" by ${author.get(
             UserFieldNames.username
           )}`,
-          [
-            {
-              title: 'View Asset',
-              url: `${VRCARENA_BASE_URL}${routes.viewAssetWithVar.replace(
-                ':assetId',
-                doc.id
-              )}`,
-            },
-          ]
+          [getEmbedForViewAsset(doc.id)]
         )
       }
 
@@ -445,20 +494,14 @@ exports.onAssetUpdated = functions.firestore
       return Promise.resolve()
     }
 
+    // has become private TODO: Make a func
     if (beforeDocData.isPrivate !== true && docData.isPrivate === true) {
       return deleteDocFromIndex(doc)
     }
 
+    // has become deleted TODO: make a func
     if (beforeDocData.isDeleted !== true && docData.isDeleted === true) {
       return deleteDocFromIndex(doc)
-    }
-
-    if (hasAssetJustBeenApproved(beforeDocData, docData)) {
-      await storeInNotifications(
-        'Approved asset',
-        beforeDoc.ref,
-        docData.createdBy
-      )
     }
 
     if (isPrivate(docData)) {
@@ -469,13 +512,38 @@ exports.onAssetUpdated = functions.firestore
       return Promise.resolve()
     }
 
-    if (hasAssetJustBeenApproved(beforeDocData, docData) && !isAdult(docData)) {
-      const author = await docData.createdBy.get()
+    if (hasAssetJustBeenApproved(beforeDocData, docData)) {
+      await storeInNotifications(
+        'Approved asset',
+        beforeDoc.ref,
+        docData.createdBy
+      )
 
-      await insertTweetRecordInDatabase(
-        `"${docData.title}" posted by ${author.get(
-          UserFieldNames.username
-        )} https://www.vrcarena.com/assets/${doc.id}`
+      if (!isAdult(docData)) {
+        const author = await docData.createdBy.get()
+        const viewAssetUrl = `${VRCARENA_BASE_URL}${routes.viewAssetWithVar.replace(
+          ':assetId',
+          doc.id
+        )}`
+
+        await insertTweetRecordInDatabase(
+          `"${docData.title}" posted by ${author.get(UserFieldNames.username)} `
+        )
+
+        await emitToDiscordActivity(
+          `Asset "${docData.title}" posted by ${author.get(
+            UserFieldNames.username
+          )} has been approved`,
+          [getEmbedForViewAsset(doc.id)]
+        )
+      }
+    } else {
+      const editorDoc = await docData.lastModifiedBy.get()
+      await emitToDiscordActivity(
+        `Asset "${doc.get(
+          AssetFieldNames.title
+        )}" has been edited by ${editorDoc.get(UserFieldNames.username)}`,
+        [getEmbedForViewAsset(doc.id)]
       )
     }
 
@@ -485,6 +553,7 @@ exports.onAssetUpdated = functions.firestore
   })
 
 function isUserDocument(doc) {
+  // TODO: Check what collection it is in - users can have empty username!
   return !!doc.get(UserFieldNames.username)
 }
 
@@ -506,6 +575,30 @@ exports.onCommentCreated = functions.firestore
         author: docData[CommentFieldNames.createdBy],
       }
     )
+
+    const commenterDoc = await docData[CommentFieldNames.createdBy].get()
+
+    if (isUserDocument(parentDoc)) {
+      await emitToDiscordActivity(
+        `User ${commenterDoc.get(
+          UserFieldNames.username
+        )} has commented on user profile for ${parentDoc.get(
+          UserFieldNames.username
+        )}`,
+        [getEmbedForViewProfile(parentDoc.id)]
+      )
+    } else if (
+      !isPrivate(docData) &&
+      !isNotApproved(docData) &&
+      !isDeleted(docData)
+    ) {
+      await emitToDiscordActivity(
+        `User ${commenterDoc.get(
+          UserFieldNames.username
+        )} has commented on asset "${parentDoc.get(AssetFieldNames.title)}"`,
+        [getEmbedForViewAsset(parentDoc.id)]
+      )
+    }
 
     return storeInHistory(
       'Created comment',
@@ -553,7 +646,9 @@ exports.onUserSignup = functions.auth.user().onCreate(async (user) => {
     bio: '',
   })
 
-  await emitToDiscordActivity(`User ${uid} signed up`, [])
+  await emitToDiscordActivity(`User ${uid} signed up`, [
+    getEmbedForViewProfile(uid),
+  ])
 
   return storeInHistory(`User signup`, userRecord)
 })
@@ -580,6 +675,15 @@ exports.onRequestCreated = functions.firestore
   .document('requests/{requestId}')
   .onCreate(async (doc) => {
     const docData = doc.data()
+
+    const creatorDoc = await docData[RequestsFieldNames.createdBy].get()
+
+    await emitToDiscordActivity(
+      `${creatorDoc.get(UserFieldNames.username)} created request "${doc.get(
+        RequestsFieldNames.title
+      )}"`,
+      [getEmbedForViewRequest(doc.id)]
+    )
 
     return storeInHistory(
       'Created request',
