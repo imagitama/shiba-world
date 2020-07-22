@@ -151,10 +151,13 @@ export async function getGuestIdFromStorage() {
 
   const ipAddress = await getUserIp()
 
-  const guestIdFromDatabase = await lookupGuestIdWithIpAddress(ipAddress)
+  // Rare but it can happen (https://sentry.io/organizations/imagitama/issues/1795702728/?project=5249930&query=is%3Aunresolved)
+  if (ipAddress) {
+    const guestIdFromDatabase = await lookupGuestIdWithIpAddress(ipAddress)
 
-  if (guestIdFromDatabase) {
-    return Promise.resolve(guestIdFromDatabase)
+    if (guestIdFromDatabase) {
+      return Promise.resolve(guestIdFromDatabase)
+    }
   }
 
   const newGuestId = generateGuestId()
