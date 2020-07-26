@@ -27,11 +27,12 @@ function getAlgoliaClient() {
 function convertDocToAlgoliaRecord(docId, doc) {
   return {
     objectID: docId,
-    title: doc.title,
-    description: doc.description,
-    thumbnailUrl: doc.thumbnailUrl,
-    isAdult: doc.isAdult,
-    tags: doc.tags,
+    title: doc[AssetFieldNames.title],
+    description: doc[AssetFieldNames.description],
+    thumbnailUrl: doc[AssetFieldNames.thumbnailUrl],
+    authorName: doc[AssetFieldNames.authorName],
+    isAdult: doc[AssetFieldNames.isAdult],
+    tags: doc[AssetFieldNames.tags],
   }
 }
 
@@ -50,6 +51,12 @@ function deleteDocFromIndex(doc) {
 admin.initializeApp()
 const db = admin.firestore()
 db.settings({ ignoreUndefinedProperties: true })
+
+const Operators = {
+  EQUALS: '==',
+  GREATER_THAN: '>',
+  ARRAY_CONTAINS: 'array-contains',
+}
 
 const CollectionNames = {
   Users: 'users',
@@ -80,6 +87,11 @@ const AssetFieldNames = {
   isPrivate: 'isPrivate',
   lastModifiedBy: 'lastModifiedBy',
   lastModifiedAt: 'lastModifiedAt',
+  thumbnailUrl: 'thumbnailUrl',
+  fileUrls: 'fileUrls',
+  description: 'description',
+  authorName: 'authorName',
+  children: 'children',
 }
 
 const CommentFieldNames = {
@@ -723,3 +735,28 @@ exports.onTweetCreated = functions.firestore
 
     await updateTweetRecordInDatabase(doc.id, tweetId)
   })
+
+async function insertAssetsIntoIndex() {
+  const { docs } = await db
+    .collection(CollectionNames.Assets)
+    .where(AssetFieldNames.isApproved, Operators.EQUALS, true)
+    .where(AssetFieldNames.isDeleted, Operators.EQUALS, false)
+    .get()
+
+  const algoliaObjects = docs.map((doc) =>
+    convertDocToAlgoliaRecord(doc.id, doc.data())
+  )
+
+  await getAlgoliaClient()
+    .initIndex(ALGOLIA_INDEX_NAME)
+    .saveObjects(algoliaObjects)
+}
+
+exports.syncIndex = functions.https.onRequest(async (req, res) => {
+  try {
+    await insertAssetsIntoIndex()
+    res.status(200).send('Index has been synced')
+  } catch (err) {
+    res.status(500).send(`Error: ${err.message}`)
+  }
+})
