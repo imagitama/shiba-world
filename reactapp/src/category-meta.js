@@ -6,6 +6,7 @@ import articleImageUrl from './assets/images/categories/article.png'
 import avatarImageUrl from './assets/images/categories/avatar.png'
 import tutorialImageUrl from './assets/images/categories/tutorial.png'
 import worldImageUrl from './assets/images/categories/world.png'
+import toolImageUrl from './assets/images/categories/tool.png'
 
 import accessoryOptimizedImageUrl from './assets/images/categories/optimized/accessory.webp'
 import animationOptimizedImageUrl from './assets/images/categories/optimized/animation.webp'
@@ -13,6 +14,7 @@ import articleOptimizedImageUrl from './assets/images/categories/optimized/artic
 import avatarOptimizedImageUrl from './assets/images/categories/optimized/avatar.webp'
 import tutorialOptimizedImageUrl from './assets/images/categories/optimized/tutorial.webp'
 import worldOptimizedImageUrl from './assets/images/categories/optimized/world.webp'
+import toolOptimizedImageUrl from './assets/images/categories/optimized/tool.webp'
 
 export default {
   [AssetCategories.accessory]: {
@@ -57,5 +59,12 @@ export default {
     shortDescription: `Worlds you can visit that are related to the species of VRChat.`,
     imageUrl: worldImageUrl,
     optimizedImageUrl: worldOptimizedImageUrl
+  },
+  [AssetCategories.tool]: {
+    name: 'Tools',
+    nameSingular: 'Tool',
+    shortDescription: 'Utilities and tools to help you build VRChat mods.',
+    imageUrl: toolImageUrl,
+    optimizedImageUrl: toolOptimizedImageUrl
   }
 }
