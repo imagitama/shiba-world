@@ -217,7 +217,13 @@ function CreatedByMessage({ authorName, createdBy, categoryName }) {
   return (
     <span className={classes.createdByInTitle}>
       {authorName ? (
-        `by ${authorName}`
+        <>
+          by{' '}
+          <Link
+            to={routes.viewAuthorWithVar.replace(':authorName', authorName)}>
+            {authorName}
+          </Link>
+        </>
       ) : (
         <>
           {getLabelForNonAuthorName(categoryName)} by{' '}
