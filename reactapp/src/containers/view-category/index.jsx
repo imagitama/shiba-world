@@ -1,6 +1,9 @@
 import React, { useState, Fragment } from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
+import CheckBoxIcon from '@material-ui/icons/CheckBox'
+import { makeStyles } from '@material-ui/core/styles'
 
 import categoryMeta from '../../category-meta'
 import {
@@ -20,6 +23,7 @@ import BodyText from '../../components/body-text'
 import SortDropdown from '../../components/sort-dropdown'
 import AllTagsBrowser from '../../components/all-tags-browser'
 import NoResultsMessage from '../../components/no-results-message'
+import Button from '../../components/button'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import useDatabaseQuery, {
@@ -30,6 +34,22 @@ import useDatabaseQuery, {
   AssetCategories
 } from '../../hooks/useDatabaseQuery'
 import useStorage, { keys as storageKeys } from '../../hooks/useStorage'
+import { mediaQueryForMobiles } from '../../media-queries'
+
+const useStyles = makeStyles({
+  root: {
+    position: 'relative'
+  },
+  groupAvatarsBySpeciesBtn: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    [mediaQueryForMobiles]: {
+      position: 'relative',
+      margin: '0.5rem 0'
+    }
+  }
+})
 
 function getDisplayNameByCategoryName(categoryName) {
   return categoryMeta[categoryName].name
@@ -89,7 +109,8 @@ function AvatarAssetResults({ assets }) {
 function Assets({
   categoryName,
   sortByFieldName = null,
-  sortByDirection = null
+  sortByDirection = null,
+  groupAvatarsBySpecies = false
 }) {
   const [, , user] = useUserRecord()
 
@@ -134,7 +155,7 @@ function Assets({
     return <NoResultsMessage />
   }
 
-  if (categoryName === AssetCategories.avatar) {
+  if (groupAvatarsBySpecies && categoryName === AssetCategories.avatar) {
     return <AvatarAssetResults assets={results} />
   }
 
@@ -156,6 +177,8 @@ export default ({
   )
   const [activeSortFieldName, setActiveSortFieldName] = useState()
   const [activeSortDirection, setActiveSortDirection] = useState()
+  const classes = useStyles()
+  const [groupAvatarsBySpecies, setGroupAvatarsBySpecies] = useState(true)
 
   const onNewSortFieldAndDirection = (fieldName, direction) => {
     setActiveSortFieldName(fieldName)
@@ -179,37 +202,64 @@ export default ({
           content={getDescriptionByCategoryName(categoryName)}
         />
       </Helmet>
-      <Heading variant="h1">
-        {getDisplayNameByCategoryName(categoryName)}
-      </Heading>
-      <BodyText>{getDescriptionByCategoryName(categoryName)}</BodyText>
 
-      {categoryName === AssetCategories.avatar ? (
-        <Assets categoryName={AssetCategories.avatar} />
-      ) : (
-        <>
-          <SortDropdown
-            options={assetOptions}
-            label={getLabelForAssetSortFieldNameAndDirection(
-              activeSortFieldName || assetsSortByFieldName,
-              activeSortDirection || assetsSortByDirection
-            )}
-            fieldNameKey={storageKeys.assetsSortByFieldName}
-            directionKey={storageKeys.assetsSortByDirection}
-            onNewSortFieldAndDirection={onNewSortFieldAndDirection}
-            onOpenDropdown={() =>
-              trackAction('AssetsList', 'Open sort dropdown', {
-                categoryName
-              })
-            }
-          />
-          <Assets
-            categoryName={categoryName}
-            sortByFieldName={activeSortFieldName || assetsSortByFieldName}
-            sortByDirection={activeSortDirection || assetsSortByDirection}
-          />
-        </>
-      )}
+      <div className={classes.root}>
+        <Heading variant="h1">
+          {getDisplayNameByCategoryName(categoryName)}
+        </Heading>
+        <BodyText>{getDescriptionByCategoryName(categoryName)}</BodyText>
+
+        {categoryName === AssetCategories.avatar && (
+          <Button
+            className={classes.groupAvatarsBySpeciesBtn}
+            onClick={() => {
+              const newVal = !groupAvatarsBySpecies
+              setGroupAvatarsBySpecies(newVal)
+              trackAction(
+                'AssetsList',
+                'Click on group avatars by species',
+                newVal
+              )
+            }}
+            color={groupAvatarsBySpecies ? 'primary' : 'default'}
+            icon={
+              groupAvatarsBySpecies ? (
+                <CheckBoxIcon />
+              ) : (
+                <CheckBoxOutlineBlankIcon />
+              )
+            }>
+            Group by species
+          </Button>
+        )}
+
+        {groupAvatarsBySpecies && categoryName === AssetCategories.avatar ? (
+          <Assets categoryName={AssetCategories.avatar} groupAvatarsBySpecies />
+        ) : (
+          <>
+            <SortDropdown
+              options={assetOptions}
+              label={getLabelForAssetSortFieldNameAndDirection(
+                activeSortFieldName || assetsSortByFieldName,
+                activeSortDirection || assetsSortByDirection
+              )}
+              fieldNameKey={storageKeys.assetsSortByFieldName}
+              directionKey={storageKeys.assetsSortByDirection}
+              onNewSortFieldAndDirection={onNewSortFieldAndDirection}
+              onOpenDropdown={() =>
+                trackAction('AssetsList', 'Open sort dropdown', {
+                  categoryName
+                })
+              }
+            />
+            <Assets
+              categoryName={categoryName}
+              sortByFieldName={activeSortFieldName || assetsSortByFieldName}
+              sortByDirection={activeSortDirection || assetsSortByDirection}
+            />
+          </>
+        )}
+      </div>
       <Heading variant="h2">Tags</Heading>
       <AllTagsBrowser lazyLoad />
     </>
