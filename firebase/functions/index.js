@@ -414,13 +414,17 @@ async function emitToDiscordEditorNotifications(message, embeds) {
   )
 }
 
+function getUrlForViewAsset(assetId) {
+  return `${VRCARENA_BASE_URL}${routes.viewAssetWithVar.replace(
+    ':assetId',
+    assetId
+  )}`
+}
+
 function getEmbedForViewAsset(assetId) {
   return {
     title: 'View Asset',
-    url: `${VRCARENA_BASE_URL}${routes.viewAssetWithVar.replace(
-      ':assetId',
-      assetId
-    )}`,
+    url: getUrlForViewAsset(assetId),
   }
 }
 
@@ -533,13 +537,11 @@ exports.onAssetUpdated = functions.firestore
 
       if (!isAdult(docData)) {
         const author = await docData.createdBy.get()
-        const viewAssetUrl = `${VRCARENA_BASE_URL}${routes.viewAssetWithVar.replace(
-          ':assetId',
-          doc.id
-        )}`
 
         await insertTweetRecordInDatabase(
-          `"${docData.title}" posted by ${author.get(UserFieldNames.username)} `
+          `"${docData.title}" posted by ${author.get(
+            UserFieldNames.username
+          )} ${getUrlForViewAsset(doc.id)}`
         )
 
         await emitToDiscordActivity(
