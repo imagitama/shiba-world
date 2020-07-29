@@ -9,7 +9,9 @@ import ReportIcon from '@material-ui/icons/Report'
 
 import useDatabaseQuery, {
   CollectionNames,
-  AssetCategories
+  AssetCategories,
+  AuthorFieldNames,
+  AssetFieldNames
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 
@@ -211,16 +213,26 @@ function getLabelForNonAuthorName(categoryName) {
   }
 }
 
-function CreatedByMessage({ authorName, createdBy, categoryName }) {
+function CreatedByMessage({ author, authorName, createdBy, categoryName }) {
   const classes = useStyles()
 
   return (
     <span className={classes.createdByInTitle}>
-      {authorName ? (
+      {author ? (
+        <>
+          by{' '}
+          <Link to={routes.viewAuthorWithVar.replace(':authorId', author.id)}>
+            {author[AuthorFieldNames.name]}
+          </Link>
+        </>
+      ) : authorName ? (
         <>
           by{' '}
           <Link
-            to={routes.viewAuthorWithVar.replace(':authorName', authorName)}>
+            to={routes.viewAuthorByNameWithVar.replace(
+              ':authorName',
+              authorName
+            )}>
             {authorName}
           </Link>
         </>
@@ -332,6 +344,7 @@ export default ({ assetId }) => {
     isAdult,
     isPrivate,
     authorName,
+    [AssetFieldNames.author]: author,
     children
   } = result
 
@@ -399,6 +412,7 @@ export default ({ assetId }) => {
             </Link>{' '}
             <CreatedByMessage
               authorName={authorName}
+              author={author}
               createdBy={createdBy}
               categoryName={category}
             />

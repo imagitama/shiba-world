@@ -31,7 +31,8 @@ export const CollectionNames = {
   Notifications: 'notifications',
   Polls: 'polls',
   PollResponses: 'pollResponses',
-  GuestUsers: 'guestUsers'
+  GuestUsers: 'guestUsers',
+  Authors: 'authors'
 }
 
 export const AssetFieldNames = {
@@ -52,7 +53,8 @@ export const AssetFieldNames = {
   thumbnailUrl: 'thumbnailUrl',
   fileUrls: 'fileUrls',
   description: 'description',
-  authorName: 'authorName',
+  authorName: 'authorName', // deprecated
+  author: 'author',
   children: 'children'
 }
 
@@ -157,6 +159,12 @@ export const PollResponsesFieldNames = {
 export const GuestUsersFieldNames = {
   ipAddress: 'ipAddress',
   createdAt: 'createdAt'
+}
+
+export const AuthorFieldNames = {
+  name: 'name',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy'
 }
 
 function getWhereClausesAsString(whereClauses) {

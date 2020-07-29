@@ -9,17 +9,22 @@ import FormField, { formFieldType } from './components/form-field'
 import InvalidMessage from './components/invalid-message'
 import FileAttacher from './components/file-attacher'
 import ChildrenInput from './components/children-input'
+import AuthorInput from './components/author-input'
 
 import Heading from '../heading'
 import ThumbnailUploader from '../thumbnail-uploader'
 import Button from '../button'
 import TagChip from '../tag-chip'
 
-import { AssetFieldNames, AssetCategories } from '../../hooks/useDatabaseQuery'
+import {
+  AssetFieldNames,
+  AssetCategories,
+  CollectionNames
+} from '../../hooks/useDatabaseQuery'
 import useCategoryMeta from '../../hooks/useCategoryMeta'
 import categoryMeta from '../../category-meta'
 import speciesMeta from '../../species-meta'
-import { scrollToTop } from '../../utils'
+import { scrollToTop, createRef } from '../../utils'
 
 const useStyles = makeStyles({
   controls: { marginTop: '2rem', textAlign: 'center' }
@@ -152,6 +157,7 @@ export default ({
     videoUrl = '',
     isPrivate = false,
     authorName = '',
+    author,
     children = []
   } = asset
 
@@ -168,6 +174,7 @@ export default ({
     videoUrl,
     isPrivate,
     authorName,
+    author,
     children
   })
   const [
@@ -366,11 +373,14 @@ export default ({
         }
       />
       <Heading variant="h3">Additional settings</Heading>
-      <FormField
-        label="Author Name"
-        value={fieldData[AssetFieldNames.authorName]}
-        hint="Optional. The name of the original author. If the user has signed up to this site please ask a staff member to switch the uploader to them."
-        onChange={newVal => onFieldChange(AssetFieldNames.authorName, newVal)}
+      <AuthorInput
+        author={fieldData[AssetFieldNames.author]}
+        onNewAuthorId={newAuthorId =>
+          onFieldChange(
+            AssetFieldNames.author,
+            createRef(CollectionNames.Authors, newAuthorId)
+          )
+        }
       />
       <br />
       <ChildrenInput

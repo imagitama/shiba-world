@@ -31,7 +31,8 @@ export const createRequest = '/requests/create'
 export const streams = '/streams'
 export const about = '/about'
 export const adultAssets = '/adult-assets'
-export const viewAuthorWithVar = '/author/:authorName'
+export const viewAuthorWithVar = '/authors/:authorId'
+export const viewAuthorByNameWithVar = '/author-by-name/:authorName'
 
 // Outdated routes
 export const browseAssets = '/browse'
