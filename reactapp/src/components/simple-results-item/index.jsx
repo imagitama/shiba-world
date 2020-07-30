@@ -46,8 +46,8 @@ export default ({
   url,
   title,
   description,
-  author,
-  date,
+  author = null,
+  date = null,
   thumbnailUrl = ''
 }) => {
   const classes = useStyles()
@@ -69,11 +69,15 @@ export default ({
             <Heading variant="h3" className={classes.heading}>
               <Link to={url}>{title}</Link>
             </Heading>
-            Posted by{' '}
-            <Link to={routes.viewUserWithVar.replace(':userId', author.id)}>
-              {author.username}
-            </Link>{' '}
-            <FormattedDate date={date} />
+            {author ? (
+              <>
+                Posted by{' '}
+                <Link to={routes.viewUserWithVar.replace(':userId', author.id)}>
+                  {author.username}
+                </Link>
+              </>
+            ) : null}{' '}
+            {date ? <FormattedDate date={date} /> : null}
           </div>
           <Markdown source={description} />
           <div className={classes.controls}>

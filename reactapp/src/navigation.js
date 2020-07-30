@@ -76,6 +76,11 @@ export default [
     label: 'More',
     children: [
       {
+        id: 'authors',
+        url: routes.authors,
+        label: 'Authors'
+      },
+      {
         id: 'users',
         url: routes.users,
         label: 'Users'

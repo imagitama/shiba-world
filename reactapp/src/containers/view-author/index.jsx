@@ -1,6 +1,7 @@
 import React from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
+import { makeStyles } from '@material-ui/core/styles'
 
 import * as routes from '../../routes'
 
@@ -9,6 +10,7 @@ import LoadingIndicator from '../../components/loading-indicator'
 import AssetResults from '../../components/asset-results'
 import Heading from '../../components/heading'
 import NoResultsMessage from '../../components/no-results-message'
+import Button from '../../components/button'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import useDatabaseQuery, {
@@ -18,6 +20,7 @@ import useDatabaseQuery, {
   AuthorFieldNames
 } from '../../hooks/useDatabaseQuery'
 import { createRef } from '../../utils'
+import { trackAction } from '../../analytics'
 
 function AssetsByAuthorId({ authorId }) {
   const [, , user] = useUserRecord()
@@ -62,52 +65,27 @@ function AssetsByAuthorId({ authorId }) {
   return <AssetResults assets={results} />
 }
 
-function AssetsByAuthorName({ authorName, authorId }) {
-  const [, , user] = useUserRecord()
-
-  let whereClauses = [
-    [AssetFieldNames.isApproved, Operators.EQUALS, true],
-    [AssetFieldNames.isAdult, Operators.EQUALS, false],
-    [AssetFieldNames.isDeleted, Operators.EQUALS, false],
-    [AssetFieldNames.authorName, Operators.EQUALS, authorName],
-    [AssetFieldNames.isPrivate, Operators.EQUALS, false]
-  ]
-
-  // NSFW content is super risky and firebase doesnt have a != operator
-  // so default to adult content just to be sure
-  if (user && user.enabledAdultContent === true) {
-    whereClauses = whereClauses.filter(
-      ([fieldName]) => fieldName !== AssetFieldNames.isAdult
-    )
+const useStyles = makeStyles({
+  findMoreAuthorsBtn: {
+    marginTop: '3rem',
+    textAlign: 'center'
   }
+})
 
-  const [isLoading, isErrored, results] = useDatabaseQuery(
-    CollectionNames.Assets,
-    whereClauses
+function FindMoreAuthorsBtn() {
+  const classes = useStyles()
+
+  return (
+    <div className={classes.findMoreAuthorsBtn}>
+      <Button
+        url={routes.authors}
+        onClick={() =>
+          trackAction('ViewAuthor', 'Click find more authors button')
+        }>
+        Find More Authors
+      </Button>
+    </div>
   )
-
-  if (isLoading) {
-    return <LoadingIndicator />
-  }
-
-  if (isErrored) {
-    return <ErrorMessage>Failed to get assets for author</ErrorMessage>
-  }
-
-  const resultsWithoutDupes = results.filter(result => {
-    if (result.author) {
-      if (result.author.id === authorId) {
-        return false
-      }
-    }
-    return true
-  })
-
-  if (!resultsWithoutDupes.length) {
-    return <NoResultsMessage />
-  }
-
-  return <AssetResults assets={resultsWithoutDupes} />
 }
 
 export default ({
@@ -150,8 +128,7 @@ export default ({
         </Link>
       </Heading>
       <AssetsByAuthorId authorId={authorId} />
-      <Heading variant="h2">More Results</Heading>
-      <AssetsByAuthorName authorName={name} authorId={authorId} />
+      <FindMoreAuthorsBtn />
     </>
   )
 }

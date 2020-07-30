@@ -61,7 +61,7 @@ const Streams = lazy(() => import('./containers/streams'))
 const About = lazy(() => import('./containers/about'))
 const AdultAssets = lazy(() => import('./containers/adult-assets'))
 const ViewAuthor = lazy(() => import('./containers/view-author'))
-const ViewAuthorByName = lazy(() => import('./containers/view-author-by-name'))
+const Authors = lazy(() => import('./containers/authors'))
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
   return (
@@ -245,12 +245,8 @@ const MainContent = () => {
         <Route exact path={routes.streams} component={Streams} />
         <Route exact path={routes.about} component={About} />
         <Route exact path={routes.adultAssets} component={AdultAssets} />
+        <Route exact path={routes.authors} component={Authors} />
         <Route exact path={routes.viewAuthorWithVar} component={ViewAuthor} />
-        <Route
-          exact
-          path={routes.viewAuthorByNameWithVar}
-          component={ViewAuthorByName}
-        />
         <Route
           component={() => (
             <ErrorContainer code={404} message="Page not found" />

@@ -213,7 +213,7 @@ function getLabelForNonAuthorName(categoryName) {
   }
 }
 
-function CreatedByMessage({ author, authorName, createdBy, categoryName }) {
+function CreatedByMessage({ author, createdBy, categoryName }) {
   const classes = useStyles()
 
   return (
@@ -223,17 +223,6 @@ function CreatedByMessage({ author, authorName, createdBy, categoryName }) {
           by{' '}
           <Link to={routes.viewAuthorWithVar.replace(':authorId', author.id)}>
             {author[AuthorFieldNames.name]}
-          </Link>
-        </>
-      ) : authorName ? (
-        <>
-          by{' '}
-          <Link
-            to={routes.viewAuthorByNameWithVar.replace(
-              ':authorName',
-              authorName
-            )}>
-            {authorName}
           </Link>
         </>
       ) : (
@@ -343,7 +332,6 @@ export default ({ assetId }) => {
     isDeleted,
     isAdult,
     isPrivate,
-    authorName,
     [AssetFieldNames.author]: author,
     children
   } = result
@@ -411,7 +399,6 @@ export default ({ assetId }) => {
               {title}
             </Link>{' '}
             <CreatedByMessage
-              authorName={authorName}
               author={author}
               createdBy={createdBy}
               categoryName={category}
