@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react'
-import Paper from '@material-ui/core/Paper'
 import TextField from '@material-ui/core/TextField'
 import { makeStyles } from '@material-ui/core/styles'
+import { firestore } from 'firebase/app'
 
-import useDatabaseDocument from '../../../../hooks/useDatabaseDocument'
+import useAlgoliaSearch, { Indexes } from '../../../../hooks/useAlgoliaSearch'
 import {
   CollectionNames,
   formatRawDoc
 } from '../../../../hooks/useDatabaseQuery'
 import Button from '../../../button'
-import AssetResultsItem from '../../../asset-results-item'
+import Paper from '../../../paper'
+import Heading from '../../../heading'
 
 const useStyles = makeStyles({
-  root: {
-    padding: '1rem'
+  heading: {
+    margin: 0
   }
 })
 
@@ -50,59 +51,105 @@ function addChildAsset(assets, childAsset) {
   return assets.concat([childAsset])
 }
 
+function SearchForm({ searchTerm, onSelectId }) {
+  const [isSearching, isErrored, results] = useAlgoliaSearch(
+    Indexes.Assets,
+    searchTerm
+  )
+
+  if (isSearching) {
+    return 'Searching...'
+  }
+
+  if (isErrored) {
+    return 'Errored'
+  }
+
+  if (!results) {
+    return null
+  }
+
+  if (!results.length) {
+    return 'No results!'
+  }
+
+  return (
+    <>
+      {results.map(result => (
+        <Button
+          key={result.id}
+          onClick={() => onSelectId(result.id)}
+          variant="default">
+          {result.title}
+        </Button>
+      ))}
+    </>
+  )
+}
+
+function convertDocIdToDocRef(docId) {
+  return firestore()
+    .collection(CollectionNames.Assets)
+    .doc(docId)
+}
+
+function AddChildForm({ onAddDoc }) {
+  const [searchTerm, setSearchTerm] = useState('')
+
+  const onSelectId = docId => {
+    const docRef = convertDocIdToDocRef(docId)
+    onAddDoc(docRef)
+  }
+
+  return (
+    <>
+      {searchTerm && (
+        <SearchForm searchTerm={searchTerm} onSelectId={onSelectId} />
+      )}
+      <br />
+      Search:
+      <TextField
+        onChange={e => setSearchTerm(e.target.value)}
+        value={searchTerm}
+      />
+    </>
+  )
+}
+
 export default ({ assetChildren, onChange }) => {
-  const [assetIdValue, setAssetIdValue] = useState('')
-  const [assetDoc] = useDatabaseDocument(CollectionNames.Assets, assetIdValue)
-  const [assetRecord, setAssetRecord] = useState(null)
   const classes = useStyles()
 
-  useEffect(() => {
-    if (!assetDoc) {
-      return
-    }
-
-    async function main() {
-      const record = await assetDoc.get()
-      const formattedRecord = await formatRawDoc(record)
-      setAssetRecord(formattedRecord)
-    }
-
-    main()
-  }, [assetIdValue, assetDoc === null])
-
-  const onAddBtnClick = () => {
-    onChange(addChildAsset(assetChildren, assetDoc))
+  const onAddDoc = doc => {
+    onChange(addChildAsset(assetChildren, doc))
   }
 
   return (
     <Paper className={classes.root}>
-      <strong>Linked Assets</strong>
-      <br />
+      <Heading variant="h3" className={classes.heading}>
+        Linked Assets
+      </Heading>
       <p>
         Link other assets to this asset and they will be listed on the same
-        page. This feature is a W.I.P. and might not work 100%.
+        page.
       </p>
-      Current links:
+      <strong>Current links:</strong>
       <div>
-        {assetChildren.map(childAssetDoc => (
-          <ChildAsset
-            key={childAssetDoc.id}
-            assetDoc={childAssetDoc}
-            onDelete={() =>
-              onChange(removeChildAsset(assetChildren, childAssetDoc))
-            }
-          />
-        ))}
+        {assetChildren && assetChildren.length
+          ? assetChildren.map(childAssetDoc => (
+              <ChildAsset
+                key={childAssetDoc.id}
+                assetDoc={childAssetDoc}
+                onDelete={() =>
+                  onChange(removeChildAsset(assetChildren, childAssetDoc))
+                }
+              />
+            ))
+          : 'No links yet'}
       </div>
-      Add a new link by entering a valid ID:
-      <TextField
-        onChange={e => setAssetIdValue(e.target.value)}
-        value={assetIdValue}
-      />
       <br />
-      {assetRecord ? <AssetResultsItem asset={assetRecord} /> : null}
+      <strong>Add child:</strong>
       <br />
-      <Button onClick={onAddBtnClick}>Add</Button>
+      <AddChildForm onAddDoc={onAddDoc} />
     </Paper>
   )
 }

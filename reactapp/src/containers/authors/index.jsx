@@ -10,16 +10,18 @@ import AuthorResults from '../../components/author-results'
 import NoResultsMessage from '../../components/no-results-message'
 
 import useDatabaseQuery, {
-  CollectionNames
-  // RequestsFieldNames,
-  // Operators
+  CollectionNames,
+  AuthorFieldNames,
+  OrderDirections
 } from '../../hooks/useDatabaseQuery'
 import * as routes from '../../routes'
 
 function Authors() {
   const [isLoading, isErrored, results] = useDatabaseQuery(
-    CollectionNames.Authors
-    //[[RequestsFieldNames.isDeleted, Operators.EQUALS, false]]
+    CollectionNames.Authors,
+    undefined,
+    undefined,
+    [AuthorFieldNames.name, OrderDirections.ASC]
   )
 
   if (isLoading) {

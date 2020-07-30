@@ -1,19 +1,32 @@
 import React, { useState } from 'react'
 import TextField from '@material-ui/core/TextField'
+import { makeStyles } from '@material-ui/core/styles'
+
 import useDatabaseQuery, {
   CollectionNames,
-  AuthorFieldNames
+  AuthorFieldNames,
+  OrderDirections
 } from '../../../../hooks/useDatabaseQuery'
 import useDatabaseSave from '../../../../hooks/useDatabaseSave'
 import useFirebaseUserId from '../../../../hooks/useFirebaseUserId'
 import Button from '../../../button'
 import Paper from '../../../paper'
+import Heading from '../../../heading'
 import { createRef } from '../../../../utils'
 import { handleError } from '../../../../error-handling'
 
+const useStyles = makeStyles({
+  heading: {
+    margin: 0
+  }
+})
+
 function AuthorList({ onSelect }) {
   const [isLoading, isErrored, results] = useDatabaseQuery(
-    CollectionNames.Authors
+    CollectionNames.Authors,
+    undefined,
+    undefined,
+    [AuthorFieldNames.name, OrderDirections.ASC]
   )
 
   if (isLoading) {
@@ -29,23 +42,15 @@ function AuthorList({ onSelect }) {
   }
 
   return (
-    <ul>
+    <>
       {results.map(result => (
-        <li
+        <Button
           key={result.id}
           onClick={() => onSelect(result)}
-          style={{ cursor: 'pointer' }}>
+          variant="default">
           {result[AuthorFieldNames.name]}
-        </li>
+        </Button>
       ))}
-    </ul>
-  )
-}
-
-function AuthorResult({ author }) {
-  return (
-    <>
-      <strong>{author[AuthorFieldNames.name]}</strong>
     </>
   )
 }
@@ -107,17 +112,20 @@ export default ({ onNewAuthorId, author = null }) => {
   const [isAuthorListExpanded, setIsAuthorListExpanded] = useState(false)
   const [isAddAuthorFormVisible, setIsAddAuthorFormVisible] = useState(false)
   const [selectedAuthor, setSelectedAuthor] = useState(null)
+  const classes = useStyles()
 
   return (
     <Paper>
-      <strong>Author</strong>
-      <br />
-      <br />
-      {author || selectedAuthor ? (
-        <AuthorResult author={selectedAuthor || author} />
-      ) : (
-        'No author selected'
-      )}
+      <Heading variant="h3" className={classes.heading}>
+        Author
+      </Heading>
+      <p>
+        Select an author from the list below. Create a new one if you cannot
+        find the author. This feature is new and will be improved over time.
+      </p>
+      {author || selectedAuthor
+        ? `Selected author "${author ? author.name : selectedAuthor.name}"`
+        : 'No author selected'}
       <br />
       <br />
       {isAuthorListExpanded ? (
@@ -138,8 +146,10 @@ export default ({ onNewAuthorId, author = null }) => {
       {isAddAuthorFormVisible ? (
         <AddAuthorForm />
       ) : (
-        <Button onClick={() => setIsAddAuthorFormVisible(true)}>
-          Create Author
+        <Button
+          onClick={() => setIsAddAuthorFormVisible(true)}
+          variant="default">
+          Create New Author
         </Button>
       )}
     </Paper>

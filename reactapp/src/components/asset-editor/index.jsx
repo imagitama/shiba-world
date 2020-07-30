@@ -157,7 +157,7 @@ export default ({
     videoUrl = '',
     isPrivate = false,
     authorName = '',
-    author,
+    author = null,
     children = []
   } = asset
 

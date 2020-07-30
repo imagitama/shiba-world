@@ -39,7 +39,12 @@ export default (indexName, keywords, filters = undefined) => {
             : {}
         )
 
-        setResults(hits)
+        const hitsWithId = hits.map(hit => ({
+          ...hit,
+          id: hit.objectID
+        }))
+
+        setResults(hitsWithId)
         setIsLoading(false)
         setIsErrored(false)
       } catch (err) {
