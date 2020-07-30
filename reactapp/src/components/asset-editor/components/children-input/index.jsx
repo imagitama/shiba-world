@@ -129,7 +129,7 @@ export default ({ assetChildren, onChange }) => {
         Linked Assets
       </Heading>
       <p>
-        Link other assets to this asset and they will be listed on the same
+        Link other assets to this one. All links will be listed on the asset's
         page.
       </p>
       <strong>Current links:</strong>
@@ -147,7 +147,7 @@ export default ({ assetChildren, onChange }) => {
           : 'No links yet'}
       </div>
       <br />
-      <strong>Add child:</strong>
+      <strong>Add link:</strong>
       <br />
       <AddChildForm onAddDoc={onAddDoc} />
     </Paper>
