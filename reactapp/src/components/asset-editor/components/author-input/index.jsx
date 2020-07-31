@@ -108,6 +108,16 @@ function AddAuthorForm() {
   )
 }
 
+function getSelectedAuthorName(author, selectedAuthor) {
+  if (selectedAuthor) {
+    return selectedAuthor.name
+  }
+  if (author) {
+    return author.name
+  }
+  return 'NONE'
+}
+
 export default ({ onNewAuthorId, author = null }) => {
   const [isAuthorListExpanded, setIsAuthorListExpanded] = useState(false)
   const [isAddAuthorFormVisible, setIsAddAuthorFormVisible] = useState(false)
@@ -124,7 +134,7 @@ export default ({ onNewAuthorId, author = null }) => {
         find the author. This feature is new and will be improved over time.
       </p>
       {author || selectedAuthor
-        ? `Selected author "${author ? author.name : selectedAuthor.name}"`
+        ? `Selected author "${getSelectedAuthorName(author, selectedAuthor)}"`
         : 'No author selected'}
       <br />
       <br />
