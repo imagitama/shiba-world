@@ -13,6 +13,7 @@ import useDatabaseQuery, {
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import useGuestUserRecord from '../../hooks/useGuestUserRecord'
+import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import { createRef } from '../../utils'
 import { handleError } from '../../error-handling'
@@ -165,6 +166,7 @@ const colors = [
 ]
 
 function PollResults({ pollId, answers, isOtherAllowed }) {
+  const userId = useFirebaseUserId()
   const classes = useStyles()
   const [isLoadingResults, , results] = useDatabaseQuery(
     CollectionNames.PollResponses,
@@ -193,10 +195,19 @@ function PollResults({ pollId, answers, isOtherAllowed }) {
     {}
   )
 
+  const loggedInUsersPollResponse = results.find(
+    result => result[PollResponsesFieldNames.createdBy].id === userId
+  )
+
   const chartData = answers
     .concat(isOtherAllowed ? [ANSWER_TEXT_OTHER] : [])
     .map(answerText => ({
-      name: answerText,
+      name: `${answerText}${
+        loggedInUsersPollResponse &&
+        loggedInUsersPollResponse[PollResponsesFieldNames.answer] === answerText
+          ? '*'
+          : ''
+      }`,
       value: answerTally[answerText] || 0
     }))
 
