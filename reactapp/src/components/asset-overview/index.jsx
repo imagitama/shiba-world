@@ -53,6 +53,7 @@ import IsPrivateMessage from './components/is-private-message'
 import FileList from './components/file-list'
 import ReportMessage from './components/report-message'
 import PikapeteyDiscordMessage from './components/pikapetey-discord-message'
+import WorkInProgressMessage from './components/work-in-progress-message'
 import ChildrenAssets from './components/children-assets'
 import DownloadList from './components/download-list'
 
@@ -321,7 +322,7 @@ export default ({ assetId }) => {
     species,
     createdAt,
     createdBy,
-    tags,
+    [AssetFieldNames.tags]: tags,
     fileUrls,
     thumbnailUrl,
     isApproved,
@@ -385,6 +386,7 @@ export default ({ assetId }) => {
       {isApproved === false && <NotApprovedMessage />}
       {isDeleted === true && <DeletedMessage />}
       {isPrivate === true && <IsPrivateMessage />}
+      {tags && tags.includes('wip') && <WorkInProgressMessage />}
       {getIsPikapeteyDiscordSourceUrl(sourceUrl) ? (
         <PikapeteyDiscordMessage />
       ) : null}
