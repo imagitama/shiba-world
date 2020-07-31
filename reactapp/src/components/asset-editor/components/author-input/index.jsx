@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import TextField from '@material-ui/core/TextField'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -108,21 +108,28 @@ function AddAuthorForm() {
   )
 }
 
-function getSelectedAuthorName(author, selectedAuthor) {
-  if (selectedAuthor) {
-    return selectedAuthor.name
-  }
-  if (author) {
-    return author.name
-  }
-  return 'NONE'
-}
-
-export default ({ onNewAuthorId, author = null }) => {
+export default ({ onNewAuthorId, authorRef = null }) => {
   const [isAuthorListExpanded, setIsAuthorListExpanded] = useState(false)
   const [isAddAuthorFormVisible, setIsAddAuthorFormVisible] = useState(false)
   const [selectedAuthor, setSelectedAuthor] = useState(null)
   const classes = useStyles()
+
+  useEffect(() => {
+    if (!authorRef) {
+      return
+    }
+
+    async function retrieveAuthorNameFromRef() {
+      try {
+        const doc = await authorRef.get()
+        setSelectedAuthor(doc.data())
+      } catch (err) {
+        handleError(err)
+      }
+    }
+
+    retrieveAuthorNameFromRef()
+  }, [authorRef === null])
 
   return (
     <Paper>
@@ -133,14 +140,17 @@ export default ({ onNewAuthorId, author = null }) => {
         Select an author from the list below. Create a new one if you cannot
         find the author. This feature is new and will be improved over time.
       </p>
-      {author || selectedAuthor
-        ? `Selected author "${getSelectedAuthorName(author, selectedAuthor)}"`
+      {selectedAuthor
+        ? `Selected author "${selectedAuthor.name}"`
         : 'No author selected'}
       <br />
       <br />
       {isAuthorListExpanded ? (
         <AuthorList
           onSelect={doc => {
+            // useDatabaseQuery spits out nicely formatted data
+            // pass the ID up to the main editor so it can do a createRef() for us
+            // TODO: Do not use useDatabaseQuery() or modify hook to allow not mapping refs?
             onNewAuthorId(doc.id)
             setSelectedAuthor(doc)
             setIsAuthorListExpanded(false)

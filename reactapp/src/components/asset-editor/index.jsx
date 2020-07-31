@@ -156,7 +156,6 @@ export default ({
     sourceUrl = '',
     videoUrl = '',
     isPrivate = false,
-    authorName = '',
     author = null,
     children = []
   } = asset
@@ -173,7 +172,6 @@ export default ({
     sourceUrl,
     videoUrl,
     isPrivate,
-    authorName,
     author,
     children
   })
@@ -374,7 +372,7 @@ export default ({
       />
       <Heading variant="h3">Additional settings</Heading>
       <AuthorInput
-        author={fieldData[AssetFieldNames.author]}
+        authorRef={fieldData[AssetFieldNames.author]}
         onNewAuthorId={newAuthorId =>
           onFieldChange(
             AssetFieldNames.author,

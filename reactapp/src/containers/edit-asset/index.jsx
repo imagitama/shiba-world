@@ -7,7 +7,7 @@ import Button from '../../components/button'
 import NoPermissionMessage from '../../components/no-permission-message'
 import ErrorMessage from '../../components/error-message'
 
-import useDatabase from '../../hooks/useDatabase'
+import useDatabaseEdit from '../../hooks/useDatabaseEdit'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { CollectionNames, AssetFieldNames } from '../../hooks/useDatabaseQuery'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
@@ -21,7 +21,7 @@ import { trackAction } from '../../analytics'
 export default ({ match: { params } }) => {
   const assetId = params.assetId
   const userId = useFirebaseUserId()
-  const [isLoadingAsset, isErroredLoadingAsset, asset] = useDatabase(
+  const [isLoadingAsset, isErroredLoadingAsset, asset] = useDatabaseEdit(
     CollectionNames.Assets,
     assetId
   )
