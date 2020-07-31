@@ -97,6 +97,7 @@ export default ({
     <>
       <Heading variant="h1">Upload {nameSingular}</Heading>
       <Heading variant="h2">Select a species</Heading>
+      <p>This is optional - you can select none and click Done.</p>
       <div className={classes.items}>
         {Object.entries(speciesMeta).map(([name, meta]) => (
           <Item
