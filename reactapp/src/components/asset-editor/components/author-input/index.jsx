@@ -12,7 +12,7 @@ import useFirebaseUserId from '../../../../hooks/useFirebaseUserId'
 import Button from '../../../button'
 import Paper from '../../../paper'
 import Heading from '../../../heading'
-import { createRef } from '../../../../utils'
+import { createRef, isRef } from '../../../../utils'
 import { handleError } from '../../../../error-handling'
 
 const useStyles = makeStyles({
@@ -115,7 +115,7 @@ export default ({ onNewAuthorId, authorRef = null }) => {
   const classes = useStyles()
 
   useEffect(() => {
-    if (!authorRef) {
+    if (!authorRef || isRef(authorRef)) {
       return
     }
 
