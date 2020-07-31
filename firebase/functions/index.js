@@ -551,7 +551,7 @@ exports.onAssetUpdated = functions.firestore
           [getEmbedForViewAsset(doc.id)]
         )
       }
-    } else {
+    } else if (!isAdult(docData)) {
       const editorDoc = await docData.lastModifiedBy.get()
       await emitToDiscordActivity(
         `Asset "${doc.get(
