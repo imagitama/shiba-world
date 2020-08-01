@@ -1,5 +1,5 @@
-import React, { lazy, Suspense } from 'react'
-import { Route, Switch, Redirect } from 'react-router-dom'
+import React, { lazy, Suspense, useEffect } from 'react'
+import { Route, Switch, Redirect, useLocation } from 'react-router-dom'
 import Container from '@material-ui/core/Container'
 import ThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -31,6 +31,8 @@ import Polls from './components/polls'
 import useUserRecord from './hooks/useUserRecord'
 import useSearchTerm from './hooks/useSearchTerm'
 import useIsLoggedIn from './hooks/useIsLoggedIn'
+
+import { scrollToTop } from './utils'
 
 // Lazy load these to improve performance (downloading and processing JS)
 const Login = lazy(() => import('./containers/login'))
@@ -86,6 +88,11 @@ const MainContent = () => {
   const searchTerm = useSearchTerm()
   const isLoggedIn = useIsLoggedIn()
   const [, , username] = useUserRecord(UserFieldNames.username)
+  const location = useLocation()
+
+  useEffect(() => {
+    scrollToTop(false)
+  }, [location.pathname])
 
   if (searchTerm) {
     return <SearchResults />
