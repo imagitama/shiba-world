@@ -55,7 +55,8 @@ export const AssetFieldNames = {
   description: 'description',
   authorName: 'authorName', // deprecated
   author: 'author',
-  children: 'children'
+  children: 'children',
+  ownedBy: 'ownedBy'
 }
 
 export const AssetCategories = {

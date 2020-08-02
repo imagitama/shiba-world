@@ -32,14 +32,20 @@ export function parseSearchTermFromUrlPath(urlPath) {
   return window.decodeURIComponent(urlPath)
 }
 
-export function canEditAsset(currentUser, createdBy) {
+export function canEditAsset(currentUser, createdBy, ownedBy) {
   if (!currentUser) {
     return false
   }
-  if (currentUser.id === createdBy.id) {
+  if (ownedBy && currentUser.id === ownedBy.id) {
+    return true
+  }
+  if (!ownedBy && currentUser.id === createdBy.id) {
     return true
   }
   if (currentUser.isEditor) {
+    return true
+  }
+  if (currentUser.isAdmin) {
     return true
   }
   return false

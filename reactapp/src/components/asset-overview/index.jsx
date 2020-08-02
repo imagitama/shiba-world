@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography'
 import { Helmet } from 'react-helmet'
 import EditIcon from '@material-ui/icons/Edit'
 import ReportIcon from '@material-ui/icons/Report'
+import AccessibilityIcon from '@material-ui/icons/Accessibility'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -56,6 +57,7 @@ import PikapeteyDiscordMessage from './components/pikapetey-discord-message'
 import WorkInProgressMessage from './components/work-in-progress-message'
 import ChildrenAssets from './components/children-assets'
 import DownloadList from './components/download-list'
+import OwnerEditor from './components/owner-editor'
 
 import DownloadAssetButton from '../download-asset-button'
 import VisitSourceButton from '../visit-source-button'
@@ -294,7 +296,8 @@ export default ({ assetId }) => {
   )
   const classes = useStyles()
   const [, , user] = useUserRecord()
-  const [isReportMessageOpen, setIsReportMessageOpen] = useState()
+  const [isReportMessageOpen, setIsReportMessageOpen] = useState(false)
+  const [isOwnerEditorOpen, setIsOwnerEditorOpen] = useState(false)
 
   useEffect(() => {
     if (result && !result.title) {
@@ -334,7 +337,8 @@ export default ({ assetId }) => {
     isAdult,
     isPrivate,
     [AssetFieldNames.author]: author,
-    children
+    children,
+    [AssetFieldNames.ownedBy]: ownedBy
   } = result
 
   if (!title) {
@@ -542,6 +546,14 @@ export default ({ assetId }) => {
               )}
             </Typography>
           )}
+          {ownedBy && (
+            <Typography component="p" style={{ margin: '1rem 0' }}>
+              Owned by{' '}
+              <Link to={routes.viewUserWithVar.replace(':userId', ownedBy.id)}>
+                {ownedBy.username}
+              </Link>
+            </Typography>
+          )}
           {isAdult && (
             <Typography component="p" style={{ margin: '1rem 0' }}>
               Marked as NSFW
@@ -596,7 +608,7 @@ export default ({ assetId }) => {
               />
             </Control>
 
-            {canEditAsset(user, createdBy) ? (
+            {canEditAsset(user, createdBy, ownedBy) ? (
               <>
                 <Heading variant="h4">Owner Actions</Heading>
                 <Control>
@@ -607,6 +619,17 @@ export default ({ assetId }) => {
                     Edit Asset
                   </Button>
                 </Control>
+                {!isOwnerEditorOpen && (
+                  <Control>
+                    <Button
+                      onClick={() => setIsOwnerEditorOpen(true)}
+                      color="default"
+                      icon={<AccessibilityIcon />}>
+                      Change Owner
+                    </Button>
+                  </Control>
+                )}
+                {isOwnerEditorOpen && <OwnerEditor assetId={assetId} />}
               </>
             ) : null}
             {isApprover && <Heading variant="h4">Editor Actions</Heading>}

@@ -10,17 +10,17 @@ import ErrorMessage from '../../components/error-message'
 import useDatabaseEdit from '../../hooks/useDatabaseEdit'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { CollectionNames, AssetFieldNames } from '../../hooks/useDatabaseQuery'
-import useFirebaseUserId from '../../hooks/useFirebaseUserId'
+import useUserRecord from '../../hooks/useUserRecord'
 
 import { scrollToTop } from '../../utils'
 import * as routes from '../../routes'
 import { handleError } from '../../error-handling'
-import { createRef } from '../../utils'
+import { createRef, canEditAsset } from '../../utils'
 import { trackAction } from '../../analytics'
 
 export default ({ match: { params } }) => {
   const assetId = params.assetId
-  const userId = useFirebaseUserId()
+  const [isLoadingUser, isErroredLoadingUser, user] = useUserRecord()
   const [isLoadingAsset, isErroredLoadingAsset, asset] = useDatabaseEdit(
     CollectionNames.Assets,
     assetId
@@ -31,16 +31,22 @@ export default ({ match: { params } }) => {
     assetId
   )
 
-  if (!userId) {
-    return <NoPermissionMessage />
-  }
-
-  if (isLoadingAsset || !asset) {
+  if (isLoadingAsset || !asset || isLoadingUser) {
     return <LoadingIndicator message="Loading asset..." />
   }
 
-  if (isErroredLoadingAsset) {
+  if (isErroredLoadingAsset || isErroredLoadingUser) {
     return <ErrorMessage>Failed to load the asset</ErrorMessage>
+  }
+
+  if (
+    !canEditAsset(
+      user,
+      asset[AssetFieldNames.createdBy],
+      asset[AssetFieldNames.ownedBy]
+    )
+  ) {
+    return <NoPermissionMessage />
   }
 
   const onEditorSubmit = async fields => {
@@ -53,7 +59,7 @@ export default ({ match: { params } }) => {
         ...fields,
         [AssetFieldNames.lastModifiedBy]: createRef(
           CollectionNames.Users,
-          userId
+          user.id
         ),
         [AssetFieldNames.lastModifiedAt]: new Date()
       })
