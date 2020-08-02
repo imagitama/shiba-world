@@ -14,6 +14,19 @@ export default [
     default: ''
   },
   {
+    name: AuthorFieldNames.websiteUrl,
+    label: 'Website URL',
+    type: 'text',
+    default: ''
+  },
+  {
+    name: AuthorFieldNames.email,
+    label: 'Email',
+    type: 'text',
+    default: '',
+    hint: 'Warning: Bots can find this URL so your spam inbox will be flooded!'
+  },
+  {
     name: AuthorFieldNames.twitterUsername,
     label: 'Twitter Username (without @)',
     type: 'text',
@@ -23,7 +36,23 @@ export default [
     name: AuthorFieldNames.gumroadUsername,
     label: 'Gumroad Username',
     type: 'text',
+    default: '',
+    hint:
+      'eg. Tosca is "xtosca" which is from their profile URL https://gumroad.com/xtosca'
+  },
+  {
+    name: AuthorFieldNames.discordUsername,
+    label: 'Discord Username',
+    type: 'text',
     default: ''
+  },
+  {
+    name: AuthorFieldNames.discordServerInviteUrl,
+    label: 'Discord Server Invite URL',
+    type: 'text',
+    default: '',
+    hint:
+      'A URL people can visit to join your Discord server. eg. https://discord.gg/gpD7fq'
   },
   {
     name: AuthorFieldNames.categories,

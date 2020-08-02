@@ -164,8 +164,12 @@ export const GuestUsersFieldNames = {
 export const AuthorFieldNames = {
   name: 'name',
   description: 'description',
+  websiteUrl: 'websiteUrl',
+  email: 'email',
   twitterUsername: 'twitterUsername',
   gumroadUsername: 'gumroadUsername',
+  discordUsername: 'discordUsername',
+  discordServerInviteUrl: 'discordServerInviteUrl',
   categories: 'categories',
   createdAt: 'createdAt',
   createdBy: 'createdBy'

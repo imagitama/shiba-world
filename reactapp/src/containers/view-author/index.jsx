@@ -7,6 +7,7 @@ import EditIcon from '@material-ui/icons/Edit'
 
 import * as routes from '../../routes'
 import categoryMeta from '../../category-meta'
+import { ReactComponent as DiscordIcon } from '../../assets/images/icons/discord.svg'
 
 import ErrorMessage from '../../components/error-message'
 import LoadingIndicator from '../../components/loading-indicator'
@@ -72,6 +73,13 @@ const useStyles = makeStyles({
   findMoreAuthorsBtn: {
     marginTop: '3rem',
     textAlign: 'center'
+  },
+  icon: {
+    '& svg': {
+      verticalAlign: 'middle',
+      width: 'auto',
+      height: '1em'
+    }
   }
 })
 
@@ -107,6 +115,7 @@ export default ({
     CollectionNames.Authors,
     authorId
   )
+  const classes = useStyles()
 
   if (isLoading) {
     return <LoadingIndicator />
@@ -123,6 +132,10 @@ export default ({
   const {
     [AuthorFieldNames.name]: name,
     [AuthorFieldNames.categories]: categories = [],
+    [AuthorFieldNames.discordServerInviteUrl]: discordServerInviteUrl,
+    [AuthorFieldNames.discordUsername]: discordUsername,
+    [AuthorFieldNames.websiteUrl]: websiteUrl,
+    [AuthorFieldNames.email]: email,
     [AuthorFieldNames.twitterUsername]: twitterUsername,
     [AuthorFieldNames.gumroadUsername]: gumroadUsername
   } = result
@@ -144,10 +157,60 @@ export default ({
       </Heading>
 
       {categories.length ? (
-        <Heading variant="h2">
+        <>
+          <Heading variant="h2">Specializing In</Heading>
           {categories.map(categoryName => categoryMeta[categoryName].name)}
-        </Heading>
+        </>
       ) : null}
+
+      <Heading variant="h2">Connect</Heading>
+
+      {discordUsername && (
+        <>
+          <span className={classes.icon}>
+            <DiscordIcon />
+          </span>{' '}
+          {discordUsername}
+          <br />
+          <br />
+        </>
+      )}
+
+      {websiteUrl && (
+        <>
+          <Button
+            url={websiteUrl}
+            onClick={() =>
+              trackAction(
+                analyticsCategory,
+                'Click view website button',
+                authorId
+              )
+            }
+            color="default"
+            icon={<LaunchIcon />}>
+            Visit Website
+          </Button>{' '}
+        </>
+      )}
+
+      {email && (
+        <>
+          <Button
+            url={`mailto:${email}`}
+            onClick={() =>
+              trackAction(
+                analyticsCategory,
+                'Click send email button',
+                authorId
+              )
+            }
+            color="default"
+            icon={<LaunchIcon />}>
+            Send Email
+          </Button>{' '}
+        </>
+      )}
 
       {twitterUsername && (
         <>
@@ -181,6 +244,24 @@ export default ({
             color="default"
             icon={<LaunchIcon />}>
             Visit Gumroad
+          </Button>{' '}
+        </>
+      )}
+
+      {discordServerInviteUrl && (
+        <>
+          <Button
+            url={discordServerInviteUrl}
+            onClick={() =>
+              trackAction(
+                analyticsCategory,
+                'Click join discord server button',
+                authorId
+              )
+            }
+            color="default"
+            icon={<LaunchIcon />}>
+            Join Discord Server
           </Button>{' '}
         </>
       )}
