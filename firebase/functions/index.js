@@ -142,6 +142,16 @@ const RequestsFieldNames = {
   isDeleted: 'isDeleted',
 }
 
+const AuthorFieldNames = {
+  name: 'name',
+  description: 'description',
+  twitterUsername: 'twitterUsername',
+  gumroadUsername: 'gumroadUsername',
+  categories: 'categories',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+}
+
 function isNotApproved(docData) {
   return docData.isApproved === false
 }
@@ -227,9 +237,13 @@ function replaceReferencesWithString(object) {
   for (const key in object) {
     const val = object[key]
 
-    if (typeof val === 'object' && val.id) {
+    if (val && typeof val === 'object' && val.id) {
       newObject[key] = replaceReferenceWithString(val)
-    } else if (val.hasOwnProperty('_seconds')) {
+    } else if (
+      val &&
+      typeof val === 'object' &&
+      val.hasOwnProperty('_seconds')
+    ) {
       const newVal = secondsToDate(val._seconds)
       newObject[key] = newVal.toString()
     } else {
@@ -548,6 +562,16 @@ exports.onAssetUpdated = functions.firestore
       return Promise.resolve()
     }
 
+    async function getAuthorName() {
+      if (docData.author) {
+        const authorDoc = await docData.author.get()
+        return authorDoc.get(AuthorFieldNames.name)
+      }
+      return Promise.resolve('(no author)')
+    }
+
+    const authorName = await getAuthorName()
+
     if (hasAssetJustBeenApproved(beforeDocData, docData)) {
       await storeInNotifications(
         'Approved asset',
@@ -556,18 +580,20 @@ exports.onAssetUpdated = functions.firestore
       )
 
       if (!isAdult(docData)) {
-        const author = await docData.createdBy.get()
+        const createdByDoc = await docData.createdBy.get()
 
         await insertTweetRecordInDatabase(
-          `"${docData.title}" posted by ${author.get(
+          `"${docData.title}" by ${authorName} (posted by ${createdByDoc.get(
             UserFieldNames.username
-          )} ${getUrlForViewAsset(doc.id)}`
+          )}) ${getUrlForViewAsset(doc.id)}`
         )
 
         await emitToDiscordActivity(
-          `Asset "${docData.title}" posted by ${author.get(
+          `Asset "${
+            docData.title
+          }" by ${authorName} (posted by ${createdByDoc.get(
             UserFieldNames.username
-          )} has been approved`,
+          )}) has been approved`,
           [getEmbedForViewAsset(doc.id)]
         )
       }
