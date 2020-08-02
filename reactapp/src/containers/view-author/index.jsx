@@ -2,8 +2,11 @@ import React from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
+import LaunchIcon from '@material-ui/icons/Launch'
+import EditIcon from '@material-ui/icons/Edit'
 
 import * as routes from '../../routes'
+import categoryMeta from '../../category-meta'
 
 import ErrorMessage from '../../components/error-message'
 import LoadingIndicator from '../../components/loading-indicator'
@@ -88,11 +91,18 @@ function FindMoreAuthorsBtn() {
   )
 }
 
+function canEditAuthor(user) {
+  return user.isEditor || user.isAdmin
+}
+
+const analyticsCategory = 'ViewAuthor'
+
 export default ({
   match: {
     params: { authorId }
   }
 }) => {
+  const [, , user] = useUserRecord()
   const [isLoading, isErrored, result] = useDatabaseQuery(
     CollectionNames.Authors,
     authorId
@@ -110,7 +120,12 @@ export default ({
     return <NoResultsMessage />
   }
 
-  const { [AuthorFieldNames.name]: name } = result
+  const {
+    [AuthorFieldNames.name]: name,
+    [AuthorFieldNames.categories]: categories = [],
+    [AuthorFieldNames.twitterUsername]: twitterUsername,
+    [AuthorFieldNames.gumroadUsername]: gumroadUsername
+  } = result
 
   return (
     <>
@@ -127,6 +142,60 @@ export default ({
           {name}
         </Link>
       </Heading>
+
+      {categories.length ? (
+        <Heading variant="h2">
+          {categories.map(categoryName => categoryMeta[categoryName].name)}
+        </Heading>
+      ) : null}
+
+      {twitterUsername && (
+        <>
+          <Button
+            url={`https://twitter.com/${twitterUsername}`}
+            onClick={() =>
+              trackAction(
+                analyticsCategory,
+                'Click view twitter button',
+                authorId
+              )
+            }
+            color="default"
+            icon={<LaunchIcon />}>
+            Visit Twitter
+          </Button>{' '}
+        </>
+      )}
+
+      {gumroadUsername && (
+        <>
+          <Button
+            url={`https://gumroad.com/${gumroadUsername}`}
+            onClick={() =>
+              trackAction(
+                analyticsCategory,
+                'Click view gumroad button',
+                authorId
+              )
+            }
+            color="default"
+            icon={<LaunchIcon />}>
+            Visit Gumroad
+          </Button>{' '}
+        </>
+      )}
+
+      {canEditAuthor(user) && (
+        <Button
+          url={routes.editAuthorWithVar.replace(':authorId', authorId)}
+          icon={<EditIcon />}
+          onClick={() =>
+            trackAction(analyticsCategory, 'Click edit author button', authorId)
+          }>
+          Edit
+        </Button>
+      )}
+      <Heading variant="h2">Assets</Heading>
       <AssetsByAuthorId authorId={authorId} />
       <FindMoreAuthorsBtn />
     </>

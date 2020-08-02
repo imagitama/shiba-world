@@ -26,6 +26,10 @@ export default (collectionName, documentId) => {
   const [result, setResult] = useState(null)
 
   useEffect(() => {
+    if (!documentId) {
+      return
+    }
+
     const getData = async () => {
       setIsLoading(true)
 
@@ -56,7 +60,7 @@ export default (collectionName, documentId) => {
     }
 
     getData()
-  }, [])
+  }, [documentId])
 
   return [isLoading, isErrored, result]
 }

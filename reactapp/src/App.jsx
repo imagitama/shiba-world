@@ -63,6 +63,7 @@ const Streams = lazy(() => import('./containers/streams'))
 const About = lazy(() => import('./containers/about'))
 const AdultAssets = lazy(() => import('./containers/adult-assets'))
 const ViewAuthor = lazy(() => import('./containers/view-author'))
+const EditAuthor = lazy(() => import('./containers/edit-author'))
 const Authors = lazy(() => import('./containers/authors'))
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
@@ -253,6 +254,7 @@ const MainContent = () => {
         <Route exact path={routes.about} component={About} />
         <Route exact path={routes.adultAssets} component={AdultAssets} />
         <Route exact path={routes.authors} component={Authors} />
+        <Route exact path={routes.editAuthorWithVar} component={EditAuthor} />
         <Route exact path={routes.viewAuthorWithVar} component={ViewAuthor} />
         <Route
           component={() => (

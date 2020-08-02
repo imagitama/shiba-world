@@ -163,6 +163,10 @@ export const GuestUsersFieldNames = {
 
 export const AuthorFieldNames = {
   name: 'name',
+  description: 'description',
+  twitterUsername: 'twitterUsername',
+  gumroadUsername: 'gumroadUsername',
+  categories: 'categories',
   createdAt: 'createdAt',
   createdBy: 'createdBy'
 }

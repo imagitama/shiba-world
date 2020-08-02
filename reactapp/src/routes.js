@@ -33,6 +33,7 @@ export const about = '/about'
 export const adultAssets = '/adult-assets'
 export const authors = '/authors'
 export const viewAuthorWithVar = '/authors/:authorId'
+export const editAuthorWithVar = '/authors/:authorId/edit'
 
 // Outdated routes
 export const browseAssets = '/browse'
