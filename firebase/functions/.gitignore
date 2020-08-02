@@ -2,3 +2,4 @@ node_modules/
 .algoliaconfig.json
 .twitterconfig.json
 .discordconfig.json
+.runtimeconfig.json

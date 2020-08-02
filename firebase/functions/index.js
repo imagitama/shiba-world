@@ -24,22 +24,37 @@ function getAlgoliaClient() {
   return algoliaClient
 }
 
-function convertDocToAlgoliaRecord(docId, doc) {
+function convertAssetDocToAlgoliaRecord(docId, doc, authorName) {
   return {
     objectID: docId,
     title: doc[AssetFieldNames.title],
     description: doc[AssetFieldNames.description],
     thumbnailUrl: doc[AssetFieldNames.thumbnailUrl],
-    authorName: doc[AssetFieldNames.authorName],
     isAdult: doc[AssetFieldNames.isAdult],
     tags: doc[AssetFieldNames.tags],
+    authorName,
   }
 }
 
-function insertDocIntoIndex(doc, docData) {
+async function retrieveAuthorNameFromAssetData(docData, defaultName = '') {
+  if (docData[AssetFieldNames.author]) {
+    if (!docData[AssetFieldNames.author].get) {
+      return Promise.reject(
+        new Error(`Doc "${docData.title}" does not have valid author`)
+      )
+    }
+    const authorDoc = await docData[AssetFieldNames.author].get()
+    return authorDoc.get(AuthorFieldNames.name)
+  }
+  return Promise.resolve(defaultName)
+}
+
+async function insertAssetDocIntoIndex(doc, docData) {
+  const authorName = await retrieveAuthorNameFromAssetData(docData)
+
   return getAlgoliaClient()
     .initIndex(ALGOLIA_INDEX_NAME)
-    .saveObject(convertDocToAlgoliaRecord(doc.id, docData))
+    .saveObject(convertAssetDocToAlgoliaRecord(doc.id, docData, authorName))
 }
 
 function deleteDocFromIndex(doc) {
@@ -92,6 +107,7 @@ const AssetFieldNames = {
   description: 'description',
   authorName: 'authorName',
   children: 'children',
+  author: 'author',
 }
 
 const CommentFieldNames = {
@@ -496,16 +512,23 @@ exports.onAssetCreated = functions.firestore
       docData.createdBy
     )
 
+    const authorName = await retrieveAuthorNameFromAssetData(
+      docData,
+      '(no author)'
+    )
+
     if (isNotApproved(docData)) {
       await notifyUsersOfUnapprovedAsset(doc.id, docData)
 
       if (!isPrivate(docData)) {
-        const author = await docData[AssetFieldNames.createdBy].get()
+        const createdByDoc = await docData[AssetFieldNames.createdBy].get()
 
         await emitToDiscordEditorNotifications(
-          `Created asset "${docData[AssetFieldNames.title]}" by ${author.get(
+          `Created asset "${
+            docData[AssetFieldNames.title]
+          }" by ${authorName} (posted by ${createdByDoc.get(
             UserFieldNames.username
-          )}`,
+          )})`,
           [getEmbedForViewAsset(doc.id)]
         )
       }
@@ -519,7 +542,7 @@ exports.onAssetCreated = functions.firestore
 
     await addTagsToCache(docData.tags)
 
-    return insertDocIntoIndex(doc, docData)
+    return insertAssetDocIntoIndex(doc, docData)
   })
 
 exports.onAssetUpdated = functions.firestore
@@ -562,15 +585,10 @@ exports.onAssetUpdated = functions.firestore
       return Promise.resolve()
     }
 
-    async function getAuthorName() {
-      if (docData.author) {
-        const authorDoc = await docData.author.get()
-        return authorDoc.get(AuthorFieldNames.name)
-      }
-      return Promise.resolve('(no author)')
-    }
-
-    const authorName = await getAuthorName()
+    const authorName = await retrieveAuthorNameFromAssetData(
+      docData,
+      '(no author)'
+    )
 
     if (hasAssetJustBeenApproved(beforeDocData, docData)) {
       await storeInNotifications(
@@ -609,7 +627,7 @@ exports.onAssetUpdated = functions.firestore
 
     await addTagsToCache(docData.tags)
 
-    return insertDocIntoIndex(doc, docData)
+    return insertAssetDocIntoIndex(doc, docData)
   })
 
 function isUserDocument(doc) {
@@ -790,11 +808,16 @@ async function insertAssetsIntoIndex() {
   const { docs } = await db
     .collection(CollectionNames.Assets)
     .where(AssetFieldNames.isApproved, Operators.EQUALS, true)
+    .where(AssetFieldNames.isPrivate, Operators.EQUALS, false)
     .where(AssetFieldNames.isDeleted, Operators.EQUALS, false)
     .get()
 
-  const algoliaObjects = docs.map((doc) =>
-    convertDocToAlgoliaRecord(doc.id, doc.data())
+  const algoliaObjects = await Promise.all(
+    docs.map(async (doc) => {
+      const docData = doc.data()
+      const authorName = await retrieveAuthorNameFromAssetData(docData)
+      return convertAssetDocToAlgoliaRecord(doc.id, docData, authorName)
+    })
   )
 
   await getAlgoliaClient()
@@ -807,6 +830,7 @@ exports.syncIndex = functions.https.onRequest(async (req, res) => {
     await insertAssetsIntoIndex()
     res.status(200).send('Index has been synced')
   } catch (err) {
+    console.error(err)
     res.status(500).send(`Error: ${err.message}`)
   }
 })
@@ -816,6 +840,7 @@ exports.syncTags = functions.https.onRequest(async (req, res) => {
     await rebuildTagsCache()
     res.status(200).send('Tags have been synced')
   } catch (err) {
+    console.error(err)
     res.status(500).send(`Error: ${err.message}`)
   }
 })
