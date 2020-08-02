@@ -100,7 +100,7 @@ function FindMoreAuthorsBtn() {
 }
 
 function canEditAuthor(user) {
-  return user.isEditor || user.isAdmin
+  return user && (user.isEditor || user.isAdmin)
 }
 
 const analyticsCategory = 'ViewAuthor'
