@@ -303,15 +303,20 @@ async function getAllTags() {
   }, [])
 }
 
+const summariesIdTags = 'tags'
+const tagsKeyAllTags = 'allTags'
+
 async function addTagsToCache(tags) {
   if (!tags) {
     return
   }
 
-  const tagsDoc = await db.collection(CollectionNames.Summaries).doc('tags')
+  const tagsDoc = await db
+    .collection(CollectionNames.Summaries)
+    .doc(summariesIdTags)
   const tagsRecord = await tagsDoc.get()
   let allTags = []
-  const knownTags = tagsRecord.get('allTags')
+  const knownTags = tagsRecord.get(tagsKeyAllTags)
 
   if (knownTags) {
     allTags = knownTags.concat(tags)
@@ -324,7 +329,22 @@ async function addTagsToCache(tags) {
   )
 
   return tagsDoc.set({
-    allTags: allTagsWithoutDupes,
+    [tagsKeyAllTags]: allTagsWithoutDupes,
+  })
+}
+
+async function rebuildTagsCache() {
+  const tagsDoc = await db
+    .collection(CollectionNames.Summaries)
+    .doc(summariesIdTags)
+  const allTags = await getAllTags()
+
+  const allTagsWithoutDupes = allTags.filter(
+    (tag, idx) => allTags.indexOf(tag) === idx
+  )
+
+  return tagsDoc.set({
+    [tagsKeyAllTags]: allTagsWithoutDupes,
   })
 }
 
@@ -577,6 +597,7 @@ exports.onCommentCreated = functions.firestore
     const docData = doc.data()
 
     const parentDoc = await docData[CommentFieldNames.parent].get()
+    const parentDocData = parentDoc.data()
     const originalAuthor = isUserDocument(parentDoc)
       ? docData[CommentFieldNames.parent]
       : parentDoc.get(AssetFieldNames.createdBy)
@@ -602,9 +623,10 @@ exports.onCommentCreated = functions.firestore
         [getEmbedForViewProfile(parentDoc.id)]
       )
     } else if (
-      !isPrivate(docData) &&
-      !isNotApproved(docData) &&
-      !isDeleted(docData)
+      !isPrivate(parentDocData) &&
+      !isNotApproved(parentDocData) &&
+      !isDeleted(parentDocData) &&
+      !isAdult(parentDocData)
     ) {
       await emitToDiscordActivity(
         `User ${commenterDoc.get(
@@ -758,6 +780,15 @@ exports.syncIndex = functions.https.onRequest(async (req, res) => {
   try {
     await insertAssetsIntoIndex()
     res.status(200).send('Index has been synced')
+  } catch (err) {
+    res.status(500).send(`Error: ${err.message}`)
+  }
+})
+
+exports.syncTags = functions.https.onRequest(async (req, res) => {
+  try {
+    await rebuildTagsCache()
+    res.status(200).send('Tags have been synced')
   } catch (err) {
     res.status(500).send(`Error: ${err.message}`)
   }
