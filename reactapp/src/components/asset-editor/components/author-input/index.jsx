@@ -73,6 +73,10 @@ function AddAuthorForm() {
 
   const onSaveBtnClick = async () => {
     try {
+      if (!formFields[AuthorFieldNames.name]) {
+        return
+      }
+
       await save({
         ...formFields,
         [AuthorFieldNames.createdAt]: new Date(),

@@ -198,6 +198,10 @@ function getIsGettingSingleRecord(whereClauses) {
 const secondsToDate = seconds => new Date(seconds * 1000)
 
 const mapDates = doc => {
+  if (!doc) {
+    return doc
+  }
+
   const entries = Object.entries(doc)
 
   const newDoc = entries.reduce((finalDoc, [key, value]) => {
@@ -223,6 +227,10 @@ const getDataFromReference = async record => {
 }
 
 const mapReferences = async (doc, fetchChildren = true) => {
+  if (!doc) {
+    return doc
+  }
+
   if (!fetchChildren) {
     return doc
   }
@@ -258,6 +266,10 @@ function isFirebaseDoc(value) {
 }
 
 async function mapDocArrays(doc, fetchChildren = true) {
+  if (!doc) {
+    return doc
+  }
+
   if (!fetchChildren) {
     return doc
   }
@@ -304,11 +316,15 @@ async function mapDocArrays(doc, fetchChildren = true) {
 // the 2nd arg is to avoid an infinite loop with fetching children who then have children that refer to the parent
 export async function formatRawDocs(docs, fetchChildren = true) {
   const docsWithDates = docs
-    .map(doc => ({
-      ...doc.data(),
-      id: doc.id,
-      parentPath: doc.ref.parent.path
-    }))
+    .map(doc =>
+      !doc.exists
+        ? null
+        : {
+            ...doc.data(),
+            id: doc.id,
+            parentPath: doc.ref.parent.path
+          }
+    )
     .map(mapDates)
 
   const mappedRefs = await Promise.all(

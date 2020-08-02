@@ -117,7 +117,7 @@ export default ({
   }
 
   if (!result) {
-    return <NoResultsMessage />
+    return <ErrorMessage>The author does not exist</ErrorMessage>
   }
 
   const {
