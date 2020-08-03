@@ -10,6 +10,7 @@ import InvalidMessage from './components/invalid-message'
 import FileAttacher from './components/file-attacher'
 import ChildrenInput from './components/children-input'
 import AuthorInput from './components/author-input'
+import PopularTagsSelector from './components/popular-tags-selector'
 
 import Heading from '../heading'
 import ThumbnailUploader from '../thumbnail-uploader'
@@ -326,9 +327,16 @@ export default ({
         onChange={newVal => onFieldChange(AssetFieldNames.sourceUrl, newVal)}
       />
       <Heading variant="h3">Tags</Heading>
-      {fieldData[AssetFieldNames.tags].map(tag => (
-        <TagChip key={tag} tagName={tag} />
-      ))}
+      Click a popular tag to add it:{' '}
+      <PopularTagsSelector
+        currentTags={fieldData[AssetFieldNames.tags]}
+        onSelect={tagName =>
+          onFieldChange(
+            AssetFieldNames.tags,
+            fieldData[AssetFieldNames.tags].concat([tagName])
+          )
+        }
+      />
       <FormField
         label="Tags"
         value={fieldData[AssetFieldNames.tags].join('\n')}
@@ -340,6 +348,10 @@ export default ({
         multiline
         rows={10}
       />
+      <br />
+      {fieldData[AssetFieldNames.tags].map(tag => (
+        <TagChip key={tag} tagName={tag} isDisabled />
+      ))}
       {fieldData[AssetFieldNames.category] === AssetCategories.tutorial && (
         <>
           <Heading variant="h2">Video</Heading>

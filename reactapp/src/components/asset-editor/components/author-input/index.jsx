@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
 import TextField from '@material-ui/core/TextField'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -44,12 +44,11 @@ function AuthorList({ onSelect }) {
   return (
     <>
       {results.map(result => (
-        <Button
-          key={result.id}
-          onClick={() => onSelect(result)}
-          variant="default">
-          {result[AuthorFieldNames.name]}
-        </Button>
+        <Fragment key={result.id}>
+          <Button onClick={() => onSelect(result)} color="default">
+            {result[AuthorFieldNames.name]}
+          </Button>{' '}
+        </Fragment>
       ))}
     </>
   )
@@ -170,9 +169,7 @@ export default ({ onNewAuthorId, authorRef = null }) => {
       {isAddAuthorFormVisible ? (
         <AddAuthorForm />
       ) : (
-        <Button
-          onClick={() => setIsAddAuthorFormVisible(true)}
-          variant="default">
+        <Button onClick={() => setIsAddAuthorFormVisible(true)} color="default">
           Create New Author
         </Button>
       )}
