@@ -365,7 +365,9 @@ export default ({ assetId }) => {
     <div className={classes.root}>
       <Helmet>
         <title>
-          {title} | Uploaded by {createdBy.username} | VRCArena
+          {title} |{' '}
+          {author ? `By ${author.name}` : `Uploaded by ${createdBy.username}`} |
+          VRCArena
         </title>
         <meta
           name="description"
