@@ -178,7 +178,8 @@ export default ({ userId }) => {
     return <LoadingIndicator />
   }
 
-  if (isErroredLoadingUser || isErroredLoadingProfile) {
+  // Profiles are optional and do not exist until they "set it up" so null check here
+  if (isErroredLoadingUser || isErroredLoadingProfile || !profile) {
     return (
       <ErrorMessage>Failed to load their account or user profile</ErrorMessage>
     )
