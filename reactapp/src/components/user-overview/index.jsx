@@ -194,6 +194,7 @@ export default ({ userId }) => {
   const {
     bio,
     vrchatUsername,
+    vrchatUserId,
     discordUsername,
     twitterUsername,
     telegramUsername,
@@ -234,7 +235,15 @@ export default ({ userId }) => {
         <Heading variant="h2">Social Media</Heading>
       ) : null}
       {vrchatUsername && (
-        <SocialMediaLink icon={VrChatIcon} label={vrchatUsername} />
+        <SocialMediaLink
+          icon={VrChatIcon}
+          label={vrchatUsername}
+          url={
+            vrchatUserId
+              ? `https://vrchat.com/home/user/${vrchatUserId}`
+              : undefined
+          }
+        />
       )}
       {discordUsername && (
         <SocialMediaLink icon={DiscordIcon} label={discordUsername} />

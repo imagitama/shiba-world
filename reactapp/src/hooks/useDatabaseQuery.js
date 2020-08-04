@@ -82,7 +82,8 @@ export const UserFieldNames = {
 }
 
 export const ProfileFieldNames = {
-  vrchatUsername: 'vrchatUsername',
+  vrchatUserId: 'vrchatUserId',
+  vrchatUsername: 'vrchatUsername', // deprecated
   discordUsername: 'discordUsername',
   twitterUsername: 'twitterUsername',
   telegramUsername: 'telegramUsername',
