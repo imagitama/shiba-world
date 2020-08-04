@@ -6,7 +6,6 @@ import Typography from '@material-ui/core/Typography'
 import { Helmet } from 'react-helmet'
 import EditIcon from '@material-ui/icons/Edit'
 import ReportIcon from '@material-ui/icons/Report'
-import AccessibilityIcon from '@material-ui/icons/Accessibility'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -57,8 +56,8 @@ import PikapeteyDiscordMessage from './components/pikapetey-discord-message'
 import WorkInProgressMessage from './components/work-in-progress-message'
 import ChildrenAssets from './components/children-assets'
 import DownloadList from './components/download-list'
-import OwnerEditor from './components/owner-editor'
 
+import OwnerEditor from '../owner-editor'
 import DownloadAssetButton from '../download-asset-button'
 import VisitSourceButton from '../visit-source-button'
 
@@ -297,7 +296,6 @@ export default ({ assetId }) => {
   const classes = useStyles()
   const [, , user] = useUserRecord()
   const [isReportMessageOpen, setIsReportMessageOpen] = useState(false)
-  const [isOwnerEditorOpen, setIsOwnerEditorOpen] = useState(false)
 
   useEffect(() => {
     if (result && !result.title) {
@@ -621,17 +619,13 @@ export default ({ assetId }) => {
                     Edit Asset
                   </Button>
                 </Control>
-                {!isOwnerEditorOpen && (
-                  <Control>
-                    <Button
-                      onClick={() => setIsOwnerEditorOpen(true)}
-                      color="default"
-                      icon={<AccessibilityIcon />}>
-                      Change Owner
-                    </Button>
-                  </Control>
-                )}
-                {isOwnerEditorOpen && <OwnerEditor assetId={assetId} />}
+                <Control>
+                  <OwnerEditor
+                    collectionName={CollectionNames.Assets}
+                    id={assetId}
+                    actionCategory="ViewAsset"
+                  />
+                </Control>
               </>
             ) : null}
             {isApprover && <Heading variant="h4">Editor Actions</Heading>}

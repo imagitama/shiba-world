@@ -173,7 +173,8 @@ export const AuthorFieldNames = {
   discordServerInviteUrl: 'discordServerInviteUrl',
   categories: 'categories',
   createdAt: 'createdAt',
-  createdBy: 'createdBy'
+  createdBy: 'createdBy',
+  ownedBy: 'ownedBy'
 }
 
 function getWhereClausesAsString(whereClauses) {

@@ -1,5 +1,6 @@
 import firebase from 'firebase/app'
 import 'firebase/firestore'
+import { AuthorFieldNames } from './hooks/useDatabaseQuery'
 
 export function scrollToTop(isSmooth) {
   window.scrollTo({
@@ -46,6 +47,28 @@ export function canEditAsset(currentUser, createdBy, ownedBy) {
     return true
   }
   if (currentUser.isAdmin) {
+    return true
+  }
+  return false
+}
+
+export function canEditAuthor(user, author) {
+  if (!user) {
+    return false
+  }
+  if (user.isAdmin || user.isEditor) {
+    return true
+  }
+  if (
+    author[AuthorFieldNames.ownedBy] &&
+    user.id === author[AuthorFieldNames.ownedBy].id
+  ) {
+    return true
+  }
+  if (
+    !author[AuthorFieldNames.ownedBy] &&
+    user.id === author[AuthorFieldNames.createdBy].id
+  ) {
     return true
   }
   return false

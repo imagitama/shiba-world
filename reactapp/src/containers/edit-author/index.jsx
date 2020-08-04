@@ -6,14 +6,11 @@ import ErrorMessage from '../../components/error-message'
 import NoPermissionMessage from '../../components/no-permission-message'
 import LoadingIndicator from '../../components/loading-indicator'
 
-import { CollectionNames } from '../../hooks/useDatabaseQuery'
+import useDatabaseQuery, { CollectionNames } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 
 import * as routes from '../../routes'
-
-function canEditAuthor(user) {
-  return user && (user.isEditor || user.isAdmin)
-}
+import { canEditAuthor } from '../../utils'
 
 export default ({
   match: {
@@ -21,16 +18,20 @@ export default ({
   }
 }) => {
   const [isLoading, isErrored, user] = useUserRecord()
+  const [isLoadingAuthor, isErroredLoadingAuthor, result] = useDatabaseQuery(
+    CollectionNames.Authors,
+    authorId
+  )
 
-  if (isLoading) {
+  if (isLoading || isLoadingAuthor) {
     return <LoadingIndicator />
   }
 
-  if (isErrored) {
+  if (isErrored || isErroredLoadingAuthor) {
     return <ErrorMessage />
   }
 
-  if (!canEditAuthor(user)) {
+  if (!canEditAuthor(user, result)) {
     return <NoPermissionMessage />
   }
 

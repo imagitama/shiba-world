@@ -15,6 +15,7 @@ import AssetResults from '../../components/asset-results'
 import Heading from '../../components/heading'
 import NoResultsMessage from '../../components/no-results-message'
 import Button from '../../components/button'
+import OwnerEditor from '../../components/owner-editor'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import useDatabaseQuery, {
@@ -23,7 +24,7 @@ import useDatabaseQuery, {
   AssetFieldNames,
   AuthorFieldNames
 } from '../../hooks/useDatabaseQuery'
-import { createRef } from '../../utils'
+import { createRef, canEditAuthor } from '../../utils'
 import { trackAction } from '../../analytics'
 
 function AssetsByAuthorId({ authorId }) {
@@ -70,6 +71,9 @@ function AssetsByAuthorId({ authorId }) {
 }
 
 const useStyles = makeStyles({
+  subtitle: {
+    marginTop: '0'
+  },
   findMoreAuthorsBtn: {
     marginTop: '3rem',
     textAlign: 'center'
@@ -99,11 +103,28 @@ function FindMoreAuthorsBtn() {
   )
 }
 
-function canEditAuthor(user) {
-  return user && (user.isEditor || user.isAdmin)
-}
-
 const analyticsCategory = 'ViewAuthor'
+
+function showConnectHeading(author) {
+  const {
+    [AuthorFieldNames.discordServerInviteUrl]: discordServerInviteUrl,
+    [AuthorFieldNames.discordUsername]: discordUsername,
+    [AuthorFieldNames.websiteUrl]: websiteUrl,
+    [AuthorFieldNames.email]: email,
+    [AuthorFieldNames.twitterUsername]: twitterUsername,
+    [AuthorFieldNames.gumroadUsername]: gumroadUsername
+  } = author
+
+  // not sustainable but it works for now
+  return (
+    discordServerInviteUrl ||
+    discordUsername ||
+    websiteUrl ||
+    email ||
+    twitterUsername ||
+    gumroadUsername
+  )
+}
 
 export default ({
   match: {
@@ -137,7 +158,8 @@ export default ({
     [AuthorFieldNames.websiteUrl]: websiteUrl,
     [AuthorFieldNames.email]: email,
     [AuthorFieldNames.twitterUsername]: twitterUsername,
-    [AuthorFieldNames.gumroadUsername]: gumroadUsername
+    [AuthorFieldNames.gumroadUsername]: gumroadUsername,
+    [AuthorFieldNames.ownedBy]: ownedBy
   } = result
 
   return (
@@ -156,6 +178,15 @@ export default ({
         </Link>
       </Heading>
 
+      {ownedBy && (
+        <Heading variant="h2" className={classes.subtitle}>
+          by{' '}
+          <Link to={routes.viewUserWithVar.replace(':userId', ownedBy.id)}>
+            {ownedBy.username}
+          </Link>
+        </Heading>
+      )}
+
       {categories.length ? (
         <>
           <Heading variant="h2">Specializing In</Heading>
@@ -163,7 +194,7 @@ export default ({
         </>
       ) : null}
 
-      <Heading variant="h2">Connect</Heading>
+      {showConnectHeading(result) && <Heading variant="h2">Connect</Heading>}
 
       {discordUsername && (
         <>
@@ -266,15 +297,26 @@ export default ({
         </>
       )}
 
-      {canEditAuthor(user) && (
-        <Button
-          url={routes.editAuthorWithVar.replace(':authorId', authorId)}
-          icon={<EditIcon />}
-          onClick={() =>
-            trackAction(analyticsCategory, 'Click edit author button', authorId)
-          }>
-          Edit
-        </Button>
+      {canEditAuthor(user, result) && (
+        <>
+          <Button
+            url={routes.editAuthorWithVar.replace(':authorId', authorId)}
+            icon={<EditIcon />}
+            onClick={() =>
+              trackAction(
+                analyticsCategory,
+                'Click edit author button',
+                authorId
+              )
+            }>
+            Edit
+          </Button>{' '}
+          <OwnerEditor
+            collectionName={CollectionNames.Authors}
+            id={authorId}
+            actionCategory="ViewAuthor"
+          />
+        </>
       )}
       <Heading variant="h2">Assets</Heading>
       <AssetsByAuthorId authorId={authorId} />
