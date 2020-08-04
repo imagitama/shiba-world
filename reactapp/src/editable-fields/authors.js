@@ -44,7 +44,9 @@ export default [
     name: AuthorFieldNames.discordUsername,
     label: 'Discord Username',
     type: 'text',
-    default: ''
+    default: '',
+    hint:
+      'Your personal Discord username. Usually contains a hash and 4 digits ie PeanutBuddha#1234'
   },
   {
     name: AuthorFieldNames.discordServerInviteUrl,
@@ -52,7 +54,15 @@ export default [
     type: 'text',
     default: '',
     hint:
-      'A URL people can visit to join your Discord server. eg. https://discord.gg/gpD7fq'
+      'A URL people can visit to join your Discord server. eg. https://discord.gg/gpD7fq Is hidden if server ID is provided'
+  },
+  {
+    name: AuthorFieldNames.discordServerId,
+    label: 'Discord Server ID',
+    type: 'text',
+    default: '',
+    hint:
+      'Enable widgets for your server and copy the server ID so that a nice looking server overview can be displayed for you.'
   },
   {
     name: AuthorFieldNames.categories,

@@ -16,6 +16,7 @@ import Heading from '../../components/heading'
 import NoResultsMessage from '../../components/no-results-message'
 import Button from '../../components/button'
 import OwnerEditor from '../../components/owner-editor'
+import DiscordServerWidget from '../../components/discord-server-widget'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import useDatabaseQuery, {
@@ -105,27 +106,6 @@ function FindMoreAuthorsBtn() {
 
 const analyticsCategory = 'ViewAuthor'
 
-function showConnectHeading(author) {
-  const {
-    [AuthorFieldNames.discordServerInviteUrl]: discordServerInviteUrl,
-    [AuthorFieldNames.discordUsername]: discordUsername,
-    [AuthorFieldNames.websiteUrl]: websiteUrl,
-    [AuthorFieldNames.email]: email,
-    [AuthorFieldNames.twitterUsername]: twitterUsername,
-    [AuthorFieldNames.gumroadUsername]: gumroadUsername
-  } = author
-
-  // not sustainable but it works for now
-  return (
-    discordServerInviteUrl ||
-    discordUsername ||
-    websiteUrl ||
-    email ||
-    twitterUsername ||
-    gumroadUsername
-  )
-}
-
 export default ({
   match: {
     params: { authorId }
@@ -159,6 +139,7 @@ export default ({
     [AuthorFieldNames.email]: email,
     [AuthorFieldNames.twitterUsername]: twitterUsername,
     [AuthorFieldNames.gumroadUsername]: gumroadUsername,
+    [AuthorFieldNames.discordServerId]: discordServerId,
     [AuthorFieldNames.ownedBy]: ownedBy
   } = result
 
@@ -193,8 +174,6 @@ export default ({
           {categories.map(categoryName => categoryMeta[categoryName].name)}
         </>
       ) : null}
-
-      {showConnectHeading(result) && <Heading variant="h2">Connect</Heading>}
 
       {discordUsername && (
         <>
@@ -279,7 +258,7 @@ export default ({
         </>
       )}
 
-      {discordServerInviteUrl && (
+      {discordServerInviteUrl && !discordServerId && (
         <>
           <Button
             url={discordServerInviteUrl}
@@ -297,8 +276,16 @@ export default ({
         </>
       )}
 
+      {discordServerId && (
+        <DiscordServerWidget
+          serverId={discordServerId}
+          joinActionCategory={analyticsCategory}
+        />
+      )}
+
       {canEditAuthor(user, result) && (
         <>
+          <Heading variant="h2">Actions</Heading>
           <Button
             url={routes.editAuthorWithVar.replace(':authorId', authorId)}
             icon={<EditIcon />}
