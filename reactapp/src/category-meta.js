@@ -7,7 +7,7 @@ import avatarImageUrl from './assets/images/categories/avatar.png'
 import tutorialImageUrl from './assets/images/categories/tutorial.png'
 import worldImageUrl from './assets/images/categories/world.png'
 import toolImageUrl from './assets/images/categories/tool.png'
-import alterationImageUrl from './assets/images/categories/tool.png'
+import alterationImageUrl from './assets/images/categories/alteration.png'
 
 import accessoryOptimizedImageUrl from './assets/images/categories/optimized/accessory.webp'
 import animationOptimizedImageUrl from './assets/images/categories/optimized/animation.webp'
@@ -16,7 +16,7 @@ import avatarOptimizedImageUrl from './assets/images/categories/optimized/avatar
 import tutorialOptimizedImageUrl from './assets/images/categories/optimized/tutorial.webp'
 import worldOptimizedImageUrl from './assets/images/categories/optimized/world.webp'
 import toolOptimizedImageUrl from './assets/images/categories/optimized/tool.webp'
-import alterationOptimizedImageUrl from './assets/images/categories/optimized/tool.webp'
+import alterationOptimizedImageUrl from './assets/images/categories/optimized/alteration.webp'
 
 export default {
   [AssetCategories.accessory]: {
