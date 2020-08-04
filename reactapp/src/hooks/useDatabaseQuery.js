@@ -174,6 +174,8 @@ export const AuthorFieldNames = {
   categories: 'categories',
   createdAt: 'createdAt',
   createdBy: 'createdBy',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt',
   ownedBy: 'ownedBy',
   discordServerId: 'discordServerId'
 }

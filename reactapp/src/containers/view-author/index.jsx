@@ -140,7 +140,9 @@ export default ({
     [AuthorFieldNames.twitterUsername]: twitterUsername,
     [AuthorFieldNames.gumroadUsername]: gumroadUsername,
     [AuthorFieldNames.discordServerId]: discordServerId,
-    [AuthorFieldNames.ownedBy]: ownedBy
+    [AuthorFieldNames.ownedBy]: ownedBy,
+    [AuthorFieldNames.createdBy]: createdBy,
+    [AuthorFieldNames.lastModifiedBy]: lastModifiedBy
   } = result
 
   return (
@@ -158,15 +160,6 @@ export default ({
           {name}
         </Link>
       </Heading>
-
-      {ownedBy && (
-        <Heading variant="h2" className={classes.subtitle}>
-          by{' '}
-          <Link to={routes.viewUserWithVar.replace(':userId', ownedBy.id)}>
-            {ownedBy.username}
-          </Link>
-        </Heading>
-      )}
 
       {categories.length ? (
         <>
@@ -307,6 +300,34 @@ export default ({
       )}
       <Heading variant="h2">Assets</Heading>
       <AssetsByAuthorId authorId={authorId} />
+
+      <Heading variant="h2">Meta</Heading>
+      {ownedBy && (
+        <div>
+          Owned by{' '}
+          <Link to={routes.viewUserWithVar.replace(':userId', ownedBy.id)}>
+            {ownedBy.username}
+          </Link>
+        </div>
+      )}
+
+      <div>
+        Created by{' '}
+        <Link to={routes.viewUserWithVar.replace(':userId', createdBy.id)}>
+          {createdBy.username}
+        </Link>
+      </div>
+
+      {lastModifiedBy && (
+        <div>
+          Last modified by{' '}
+          <Link
+            to={routes.viewUserWithVar.replace(':userId', lastModifiedBy.id)}>
+            {lastModifiedBy.username}
+          </Link>
+        </div>
+      )}
+
       <FindMoreAuthorsBtn />
     </>
   )
