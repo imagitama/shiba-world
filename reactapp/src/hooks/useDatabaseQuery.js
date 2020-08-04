@@ -66,7 +66,8 @@ export const AssetCategories = {
   avatar: 'avatar',
   article: 'article',
   world: 'world',
-  tool: 'tool'
+  tool: 'tool',
+  alteration: 'alteration'
 }
 
 export const UserFieldNames = {
@@ -83,7 +84,7 @@ export const UserFieldNames = {
 
 export const ProfileFieldNames = {
   vrchatUserId: 'vrchatUserId',
-  vrchatUsername: 'vrchatUsername', // deprecated
+  vrchatUsername: 'vrchatUsername',
   discordUsername: 'discordUsername',
   twitterUsername: 'twitterUsername',
   telegramUsername: 'telegramUsername',

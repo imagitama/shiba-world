@@ -113,13 +113,9 @@ Useful links:
     thumbnailSourceUrl: 'https://www.pinterest.com.au/pin/342273640424505008'
   },
   [speciesName.racoon]: {
-    name: 'Racoon',
-    shortDescription: `A big-eyed anthro racoon.`,
-    description: `An anthropomorphic racoon model created by [YellowStumps](https://www.furaffinity.net/user/yellowstumps).
-    
-Useful links:
-- [FurAffinity page](https://www.furaffinity.net/view/32997273)
-- [Download the base model](https://drive.google.com/drive/folders/1gny4og32AwilVQcjhSFa-PsxbYEwbXBd)`,
+    name: 'Raccoon',
+    shortDescription: `An anthro raccoon.`,
+    description: `An anthropomorphic raccoon model.`,
     backupThumbnailUrl: backupRacoonImageUrl,
     optimizedThumbnailUrl: optimizedRacoonImageUrl,
     thumbnailSourceUrl:
