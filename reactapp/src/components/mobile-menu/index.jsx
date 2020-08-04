@@ -41,7 +41,10 @@ const useStyles = makeStyles({
     color: 'inherit'
   },
   label: {
-    flex: 1
+    flex: 1,
+    '& svg': {
+      height: '1em'
+    }
   },
   subMenuItem: {
     paddingLeft: '2rem'
