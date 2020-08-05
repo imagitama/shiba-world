@@ -25,3 +25,7 @@ export function getUrlForTwitchByUsername(username) {
 export function getUrlForGumroadUsername(username) {
   return `https://gumroad.com/${username}`
 }
+
+export function getUrlForPatreonByUsername(username) {
+  return `https://patreon.com/${username}`
+}

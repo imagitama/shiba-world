@@ -65,6 +65,13 @@ export default [
       'Enable widgets for your server and copy the server ID so that a nice looking server overview can be displayed for you.'
   },
   {
+    name: AuthorFieldNames.patreonUsername,
+    label: 'Patreon username',
+    type: 'text',
+    default: '',
+    hint: 'The name in the URL like https://patreon.com/[username]'
+  },
+  {
     name: AuthorFieldNames.categories,
     label: 'Categories',
     type: 'multichoice',

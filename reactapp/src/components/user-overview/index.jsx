@@ -166,7 +166,8 @@ export default ({ userId }) => {
     twitterUsername,
     telegramUsername,
     youtubeChannelId,
-    twitchUsername
+    twitchUsername,
+    patreonUsername
   } = profile
 
   return (
@@ -201,7 +202,8 @@ export default ({ userId }) => {
           twitterUsername: twitterUsername,
           telegramUsername: telegramUsername,
           youtubeChannelId: youtubeChannelId,
-          twitchUsername: twitchUsername
+          twitchUsername: twitchUsername,
+          patreonUsername: patreonUsername
         }}
         actionCategory="ViewUser"
       />

@@ -10,6 +10,7 @@ import { ReactComponent as DiscordIcon } from '../../assets/images/icons/discord
 import { ReactComponent as VrChatIcon } from '../../assets/images/icons/vrchat.svg'
 import { ReactComponent as TwitchIcon } from '../../assets/images/icons/twitch.svg'
 import { ReactComponent as GumroadIcon } from '../../assets/images/icons/gumroad.svg'
+import { ReactComponent as PatreonIcon } from '../../assets/images/icons/patreon.svg'
 
 import {
   getUrlForVrChatUserId,
@@ -17,7 +18,8 @@ import {
   getUrlForTelegramUsername,
   getUrlForYouTubeChannelByChannelId,
   getUrlForTwitchByUsername,
-  getUrlForGumroadUsername
+  getUrlForGumroadUsername,
+  getUrlForPatreonByUsername
 } from '../../social-media'
 import { trackAction } from '../../analytics'
 
@@ -105,7 +107,8 @@ export default ({
     twitterUsername,
     telegramUsername,
     youtubeChannelId,
-    twitchUsername
+    twitchUsername,
+    patreonUsername
   }
 }) => {
   const items = [
@@ -165,6 +168,12 @@ export default ({
       label: twitchUsername,
       url: getUrlForTwitchByUsername(twitchUsername),
       type: 'twitch'
+    },
+    {
+      icon: PatreonIcon,
+      label: patreonUsername,
+      url: getUrlForPatreonByUsername(patreonUsername),
+      type: 'patreon'
     }
   ]
   return (

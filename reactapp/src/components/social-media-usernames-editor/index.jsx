@@ -60,7 +60,8 @@ export default ({ onSaveClick = null }) => {
     [ProfileFieldNames.twitterUsername]: '',
     [ProfileFieldNames.telegramUsername]: '',
     [ProfileFieldNames.youtubeChannelId]: '',
-    [ProfileFieldNames.twitchUsername]: ''
+    [ProfileFieldNames.twitchUsername]: '',
+    [ProfileFieldNames.patreonUsername]: ''
   })
 
   useEffect(() => {
@@ -81,7 +82,9 @@ export default ({ onSaveClick = null }) => {
       [ProfileFieldNames.youtubeChannelId]:
         profile[ProfileFieldNames.youtubeChannelId] || '',
       [ProfileFieldNames.twitchUsername]:
-        profile[ProfileFieldNames.twitchUsername] || ''
+        profile[ProfileFieldNames.twitchUsername] || '',
+      [ProfileFieldNames.patreonUsername]:
+        profile[ProfileFieldNames.patreonUsername] || ''
     })
   }, [profile && profile.id])
 
@@ -194,6 +197,17 @@ export default ({ onSaveClick = null }) => {
           updateFormFieldValue(ProfileFieldNames.twitchUsername, e.target.value)
         }
       />
+      <Label>Patreon username</Label>
+      <TextField
+        value={formFieldValues.patreonUsername}
+        onChange={e =>
+          updateFormFieldValue(
+            ProfileFieldNames.patreonUsername,
+            e.target.value
+          )
+        }
+      />
+      <Hint>The name in the URL like https://patreon.com/[username]</Hint>
       <div className={classes.controls}>
         {isSaving && 'Saving...'}
         {isSaveSuccess
