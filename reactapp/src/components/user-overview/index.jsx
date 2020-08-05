@@ -1,15 +1,9 @@
 import React from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
-import TwitterIcon from '@material-ui/icons/Twitter'
-import TelegramIcon from '@material-ui/icons/Telegram'
-import YouTubeIcon from '@material-ui/icons/YouTube'
 import { makeStyles } from '@material-ui/core/styles'
 import Markdown from 'react-markdown'
 
-import { ReactComponent as DiscordIcon } from '../../assets/images/icons/discord.svg'
-import { ReactComponent as VrChatIcon } from '../../assets/images/icons/vrchat.svg'
-import { ReactComponent as TwitchIcon } from '../../assets/images/icons/twitch.svg'
 import defaultAvatarUrl from '../../assets/images/default-avatar.png'
 
 import useDatabaseQuery, {
@@ -27,6 +21,7 @@ import AssetResults from '../asset-results'
 import Message from '../message'
 import CommentList from '../comment-list'
 import AddCommentForm from '../add-comment-form'
+import SocialMediaList from '../social-media-list'
 
 import * as routes from '../../routes'
 import { createRef } from '../../utils'
@@ -106,34 +101,6 @@ const AssetsForUser = ({ userId }) => {
   }
 
   return <AssetResults assets={results} showCategory />
-}
-
-function SocialMediaLink({ icon: Icon, url, label }) {
-  const classes = useStyles()
-
-  const FinalIcon = () => (
-    <>
-      <Icon className={classes.icon} /> {label}
-    </>
-  )
-
-  if (url) {
-    return (
-      <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={classes.socialMediaItem}>
-        <FinalIcon />
-      </a>
-    )
-  }
-
-  return (
-    <span className={`${classes.socialMediaItem} ${classes.notUrl}`}>
-      <FinalIcon />
-    </span>
-  )
 }
 
 function Avatar({ username, url }) {
@@ -226,52 +193,18 @@ export default ({ userId }) => {
           </div>
         </>
       )}
-      {vrchatUsername ||
-      discordUsername ||
-      twitterUsername ||
-      telegramUsername ||
-      youtubeChannelId ||
-      twitchUsername ? (
-        <Heading variant="h2">Social Media</Heading>
-      ) : null}
-      {vrchatUsername && (
-        <SocialMediaLink
-          icon={VrChatIcon}
-          label={vrchatUsername}
-          url={
-            vrchatUserId
-              ? `https://vrchat.com/home/user/${vrchatUserId}`
-              : undefined
-          }
-        />
-      )}
-      {discordUsername && (
-        <SocialMediaLink icon={DiscordIcon} label={discordUsername} />
-      )}
-      {twitterUsername && (
-        <SocialMediaLink
-          icon={TwitterIcon}
-          label={`@${twitterUsername}`}
-          url={`https://twitter.com/${twitterUsername}`}
-        />
-      )}
-      {telegramUsername && (
-        <SocialMediaLink icon={TelegramIcon} label={`@${telegramUsername}`} />
-      )}
-      {youtubeChannelId && (
-        <SocialMediaLink
-          icon={YouTubeIcon}
-          label="Channel"
-          url={`https://www.youtube.com/channel/${youtubeChannelId}`}
-        />
-      )}
-      {twitchUsername && (
-        <SocialMediaLink
-          icon={TwitchIcon}
-          label={twitchUsername}
-          url={`https://twitch.tv/${twitchUsername}`}
-        />
-      )}
+      <SocialMediaList
+        socialMedia={{
+          vrchatUsername: vrchatUsername,
+          vrchatUserId: vrchatUserId,
+          discordUsername: discordUsername,
+          twitterUsername: twitterUsername,
+          telegramUsername: telegramUsername,
+          youtubeChannelId: youtubeChannelId,
+          twitchUsername: twitchUsername
+        }}
+        actionCategory="ViewUser"
+      />
       <Heading variant="h2">Comments</Heading>
       <CommentList collectionName={CollectionNames.Users} parentId={userId} />
       <AddCommentForm

@@ -1,13 +1,11 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
-import LaunchIcon from '@material-ui/icons/Launch'
 import EditIcon from '@material-ui/icons/Edit'
 
 import * as routes from '../../routes'
 import categoryMeta from '../../category-meta'
-import { ReactComponent as DiscordIcon } from '../../assets/images/icons/discord.svg'
 
 import ErrorMessage from '../../components/error-message'
 import LoadingIndicator from '../../components/loading-indicator'
@@ -17,6 +15,7 @@ import NoResultsMessage from '../../components/no-results-message'
 import Button from '../../components/button'
 import OwnerEditor from '../../components/owner-editor'
 import DiscordServerWidget from '../../components/discord-server-widget'
+import SocialMediaList from '../../components/social-media-list'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import useDatabaseQuery, {
@@ -72,8 +71,10 @@ function AssetsByAuthorId({ authorId }) {
 }
 
 const useStyles = makeStyles({
-  subtitle: {
-    marginTop: '0'
+  categories: {
+    marginTop: '0',
+    marginBottom: '1rem',
+    fontSize: '150%'
   },
   findMoreAuthorsBtn: {
     marginTop: '3rem',
@@ -133,12 +134,6 @@ export default ({
   const {
     [AuthorFieldNames.name]: name,
     [AuthorFieldNames.categories]: categories = [],
-    [AuthorFieldNames.discordServerInviteUrl]: discordServerInviteUrl,
-    [AuthorFieldNames.discordUsername]: discordUsername,
-    [AuthorFieldNames.websiteUrl]: websiteUrl,
-    [AuthorFieldNames.email]: email,
-    [AuthorFieldNames.twitterUsername]: twitterUsername,
-    [AuthorFieldNames.gumroadUsername]: gumroadUsername,
     [AuthorFieldNames.discordServerId]: discordServerId,
     [AuthorFieldNames.ownedBy]: ownedBy,
     [AuthorFieldNames.createdBy]: createdBy,
@@ -160,114 +155,26 @@ export default ({
           {name}
         </Link>
       </Heading>
+      <div className={classes.categories}>
+        {categories.map((categoryName, idx) => (
+          <Fragment key={categoryName}>
+            {idx !== 0 && ', '}
+            <Link
+              key={categoryName}
+              to={routes.viewCategoryWithVar.replace(
+                ':categoryName',
+                categoryName
+              )}>
+              {categoryMeta[categoryName].name}
+            </Link>
+          </Fragment>
+        ))}
+      </div>
 
-      {categories.length ? (
-        <>
-          <Heading variant="h2">Specializing In</Heading>
-          {categories.map(categoryName => categoryMeta[categoryName].name)}
-        </>
-      ) : null}
-
-      {discordUsername && (
-        <>
-          <span className={classes.icon}>
-            <DiscordIcon />
-          </span>{' '}
-          {discordUsername}
-          <br />
-          <br />
-        </>
-      )}
-
-      {websiteUrl && (
-        <>
-          <Button
-            url={websiteUrl}
-            onClick={() =>
-              trackAction(
-                analyticsCategory,
-                'Click view website button',
-                authorId
-              )
-            }
-            color="default"
-            icon={<LaunchIcon />}>
-            Visit Website
-          </Button>{' '}
-        </>
-      )}
-
-      {email && (
-        <>
-          <Button
-            url={`mailto:${email}`}
-            onClick={() =>
-              trackAction(
-                analyticsCategory,
-                'Click send email button',
-                authorId
-              )
-            }
-            color="default"
-            icon={<LaunchIcon />}>
-            Send Email
-          </Button>{' '}
-        </>
-      )}
-
-      {twitterUsername && (
-        <>
-          <Button
-            url={`https://twitter.com/${twitterUsername}`}
-            onClick={() =>
-              trackAction(
-                analyticsCategory,
-                'Click view twitter button',
-                authorId
-              )
-            }
-            color="default"
-            icon={<LaunchIcon />}>
-            Visit Twitter
-          </Button>{' '}
-        </>
-      )}
-
-      {gumroadUsername && (
-        <>
-          <Button
-            url={`https://gumroad.com/${gumroadUsername}`}
-            onClick={() =>
-              trackAction(
-                analyticsCategory,
-                'Click view gumroad button',
-                authorId
-              )
-            }
-            color="default"
-            icon={<LaunchIcon />}>
-            Visit Gumroad
-          </Button>{' '}
-        </>
-      )}
-
-      {discordServerInviteUrl && !discordServerId && (
-        <>
-          <Button
-            url={discordServerInviteUrl}
-            onClick={() =>
-              trackAction(
-                analyticsCategory,
-                'Click join discord server button',
-                authorId
-              )
-            }
-            color="default"
-            icon={<LaunchIcon />}>
-            Join Discord Server
-          </Button>{' '}
-        </>
-      )}
+      <SocialMediaList
+        socialMedia={result}
+        actionCategory={analyticsCategory}
+      />
 
       {discordServerId && (
         <DiscordServerWidget
