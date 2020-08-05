@@ -34,37 +34,86 @@ import useIsLoggedIn from './hooks/useIsLoggedIn'
 
 import { scrollToTop } from './utils'
 
+const catchChunkDeaths = functionToImport =>
+  functionToImport().catch(err => {
+    if (err.message.includes('Loading chunk')) {
+      // Warning: this could cause an infinite loop :)
+      window.location.reload()
+    }
+    throw err
+  })
+
 // Lazy load these to improve performance (downloading and processing JS)
-const Login = lazy(() => import('./containers/login'))
-const SignUp = lazy(() => import('./containers/signup'))
-const Logout = lazy(() => import('./containers/logout'))
-const CreateAsset = lazy(() => import('./containers/create-asset'))
-const EditAsset = lazy(() => import('./containers/edit-asset'))
-const MyAccount = lazy(() => import('./containers/my-account'))
-const Admin = lazy(() => import('./containers/admin'))
-const AdminHistory = lazy(() => import('./containers/admin-history'))
-const AdminUsers = lazy(() => import('./containers/admin-users'))
-const AdminAssets = lazy(() => import('./containers/admin-assets'))
-const AdminPolls = lazy(() => import('./containers/admin-polls'))
-const PrivacyPolicy = lazy(() => import('./containers/privacy-policy'))
-const Contributors = lazy(() => import('./containers/contributors'))
-const ErrorContainer = lazy(() => import('./containers/error'))
-const News = lazy(() => import('./containers/news'))
-const Tags = lazy(() => import('./containers/tags'))
-const Search = lazy(() => import('./containers/search'))
-const ViewUser = lazy(() => import('./containers/view-user'))
-const Stats = lazy(() => import('./containers/stats'))
-const Users = lazy(() => import('./containers/users'))
-const Activity = lazy(() => import('./containers/activity'))
-const Requests = lazy(() => import('./containers/requests'))
-const CreateRequest = lazy(() => import('./containers/create-request'))
-const ViewRequest = lazy(() => import('./containers/view-request'))
-const Streams = lazy(() => import('./containers/streams'))
-const About = lazy(() => import('./containers/about'))
-const AdultAssets = lazy(() => import('./containers/adult-assets'))
-const ViewAuthor = lazy(() => import('./containers/view-author'))
-const EditAuthor = lazy(() => import('./containers/edit-author'))
-const Authors = lazy(() => import('./containers/authors'))
+const Login = lazy(() => catchChunkDeaths(() => import('./containers/login')))
+const SignUp = lazy(() => catchChunkDeaths(() => import('./containers/signup')))
+const Logout = lazy(() => catchChunkDeaths(() => import('./containers/logout')))
+const CreateAsset = lazy(() =>
+  catchChunkDeaths(() => import('./containers/create-asset'))
+)
+const EditAsset = lazy(() =>
+  catchChunkDeaths(() => import('./containers/edit-asset'))
+)
+const MyAccount = lazy(() =>
+  catchChunkDeaths(() => import('./containers/my-account'))
+)
+const Admin = lazy(() => catchChunkDeaths(() => import('./containers/admin')))
+const AdminHistory = lazy(() =>
+  catchChunkDeaths(() => import('./containers/admin-history'))
+)
+const AdminUsers = lazy(() =>
+  catchChunkDeaths(() => import('./containers/admin-users'))
+)
+const AdminAssets = lazy(() =>
+  catchChunkDeaths(() => import('./containers/admin-assets'))
+)
+const AdminPolls = lazy(() =>
+  catchChunkDeaths(() => import('./containers/admin-polls'))
+)
+const PrivacyPolicy = lazy(() =>
+  catchChunkDeaths(() => import('./containers/privacy-policy'))
+)
+const Contributors = lazy(() =>
+  catchChunkDeaths(() => import('./containers/contributors'))
+)
+const ErrorContainer = lazy(() =>
+  catchChunkDeaths(() => import('./containers/error'))
+)
+const News = lazy(() => catchChunkDeaths(() => import('./containers/news')))
+const Tags = lazy(() => catchChunkDeaths(() => import('./containers/tags')))
+const Search = lazy(() => catchChunkDeaths(() => import('./containers/search')))
+const ViewUser = lazy(() =>
+  catchChunkDeaths(() => import('./containers/view-user'))
+)
+const Stats = lazy(() => catchChunkDeaths(() => import('./containers/stats')))
+const Users = lazy(() => catchChunkDeaths(() => import('./containers/users')))
+const Activity = lazy(() =>
+  catchChunkDeaths(() => import('./containers/activity'))
+)
+const Requests = lazy(() =>
+  catchChunkDeaths(() => import('./containers/requests'))
+)
+const CreateRequest = lazy(() =>
+  catchChunkDeaths(() => import('./containers/create-request'))
+)
+const ViewRequest = lazy(() =>
+  catchChunkDeaths(() => import('./containers/view-request'))
+)
+const Streams = lazy(() =>
+  catchChunkDeaths(() => import('./containers/streams'))
+)
+const About = lazy(() => catchChunkDeaths(() => import('./containers/about')))
+const AdultAssets = lazy(() =>
+  catchChunkDeaths(() => import('./containers/adult-assets'))
+)
+const ViewAuthor = lazy(() =>
+  catchChunkDeaths(() => import('./containers/view-author'))
+)
+const EditAuthor = lazy(() =>
+  catchChunkDeaths(() => import('./containers/edit-author'))
+)
+const Authors = lazy(() =>
+  catchChunkDeaths(() => import('./containers/authors'))
+)
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
   return (
