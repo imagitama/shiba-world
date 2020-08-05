@@ -146,6 +146,12 @@ export default ({
         categoryName={AssetCategories.world}
         title="Recent Worlds"
       />
+      <RecentAssets
+        speciesName={speciesName}
+        limit={5}
+        categoryName={AssetCategories.alteration}
+        title="Recent Alterations"
+      />
       <Heading variant="h2">Tags</Heading>
       <AllTagsBrowser lazyLoad />
     </>
