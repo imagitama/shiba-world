@@ -9,6 +9,9 @@ import backupNargacugaImageUrl from './assets/images/species/nargacuga.png'
 import backupOtherSpeciesImageUrl from './assets/images/species/other-species.png'
 import backupImpimImageUrl from './assets/images/species/impim.png'
 import backupProtogenImageUrl from './assets/images/species/protogen.png'
+import hobkinProtogenImageUrl from './assets/images/species/hobkin.png'
+import dutchAngelDragonProtogenImageUrl from './assets/images/species/dutch_angel_dragon.png'
+import nanachiProtogenImageUrl from './assets/images/species/nanachi.png'
 
 import optimizedShibaInuImageUrl from './assets/images/species/optimized/shiba_inu.webp'
 import optimizedAvaliImageUrl from './assets/images/species/optimized/avali.webp'
@@ -21,6 +24,9 @@ import optimizedNargacugaImageUrl from './assets/images/species/optimized/nargac
 import optimizedOtherSpeciesImageUrl from './assets/images/species/optimized/other-species.webp'
 import optimizedImpimImageUrl from './assets/images/species/optimized/impim.webp'
 import optimizedProtogenImageUrl from './assets/images/species/optimized/protogen.webp'
+import optimizedHobkinProtogenImageUrl from './assets/images/species/optimized/hobkin.webp'
+import optimizedDutchAngelDragonProtogenImageUrl from './assets/images/species/optimized/dutch_angel_dragon.webp'
+import optimizedNanachiProtogenImageUrl from './assets/images/species/optimized/nanachi.webp'
 
 export const speciesName = {
   shiba: 'shiba',
@@ -33,6 +39,9 @@ export const speciesName = {
   nargacuga: 'nargacuga',
   impim: 'impim',
   protogen: 'protogen',
+  hobkin: 'hobkin',
+  dutchAngelDragon: 'dutchAngelDragon',
+  nanachi: 'nanachi',
   otherSpecies: 'other-species'
 }
 
@@ -150,6 +159,39 @@ Useful links:
     optimizedThumbnailUrl: optimizedProtogenImageUrl,
     thumbnailSourceUrl:
       'https://www.deviantart.com/popstarfrufru/art/First-Protogen-Art-783472436'
+  },
+  [speciesName.nanachi]: {
+    name: 'Nanachi',
+    shortDescription: 'A character from the anime Made in Abyss.',
+    description: `A rabbit-like character taken from the anime Made in Abyss.
+    
+- [Fandom Wiki page](https://madeinabyss.fandom.com/wiki/Nanachi)`,
+    backupThumbnailUrl: nanachiProtogenImageUrl,
+    optimizedThumbnailUrl: optimizedNanachiProtogenImageUrl,
+    thumbnailSourceUrl:
+      'https://www.besthdwallpaper.com/anime/made-in-abyss-nanachi-dt_en-US-20337.html'
+  },
+  [speciesName.dutchAngelDragon]: {
+    name: 'Dutch Angel Dragon',
+    shortDescription: 'A serpant and dragon-like fictional creature.',
+    description: `A fictional species created by [Ino89777](https://www.furaffinity.net/user/ino89777).
+      
+- [community wbsite](https://www.dutchangeldragons.com)
+- [community Twitter](https://twitter.com/bestboip)
+- [community Discord](https://discord.gg/sRrXpyZ)`,
+    backupThumbnailUrl: dutchAngelDragonProtogenImageUrl,
+    optimizedThumbnailUrl: optimizedDutchAngelDragonProtogenImageUrl,
+    thumbnailSourceUrl: 'https://www.pinterest.com.au/pin/836614068261952904'
+  },
+  [speciesName.hobkin]: {
+    name: 'Hobkin',
+    shortDescription: 'A short, rabbit-like fantasy creature.',
+    description:
+      'A fictional species created by [Hobbert](https://www.patreon.com/Hobbert) that is rabbit-like.',
+    backupThumbnailUrl: hobkinProtogenImageUrl,
+    optimizedThumbnailUrl: optimizedHobkinProtogenImageUrl,
+    thumbnailSourceUrl:
+      'https://twitter.com/komdogad/status/1246913839066726400'
   },
   [speciesName.otherSpecies]: {
     name: 'Other Species',
