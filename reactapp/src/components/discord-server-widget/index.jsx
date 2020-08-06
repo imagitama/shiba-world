@@ -51,7 +51,7 @@ const useStyles = makeStyles({
 
 export default ({ serverId, joinActionCategory }) => {
   const [result, setResult] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [isErrored, setIsErrored] = useState(false)
   const classes = useStyles()
 
@@ -75,9 +75,10 @@ export default ({ serverId, joinActionCategory }) => {
         setIsErrored(false)
       })
       .catch(err => {
-        handleError(err)
         setIsErrored(true)
         setIsLoading(false)
+        console.error(err)
+        handleError(err)
       })
   }, [serverId])
 
@@ -85,12 +86,17 @@ export default ({ serverId, joinActionCategory }) => {
     return null
   }
 
-  if (isLoading || !result) {
+  if (isLoading) {
     return <LoadingIndicator />
   }
 
   if (isErrored) {
-    return <ErrorMessage>Failed to talk to Discord</ErrorMessage>
+    return (
+      <ErrorMessage>
+        Failed to talk to Discord. Are you sure you have entered the correct
+        server ID and enabled widgets?
+      </ErrorMessage>
+    )
   }
 
   const { name, instant_invite, members, presence_count } = result
