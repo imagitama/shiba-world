@@ -7,6 +7,7 @@ import BodyText from '../../components/body-text'
 import SpeciesBrowser from '../../components/species-browser'
 import AllTagsBrowser from '../../components/all-tags-browser'
 import Paper from '../../components/paper'
+import Polls from '../../components/polls'
 
 import * as routes from '../../routes'
 import categoryMeta from '../../category-meta'
@@ -24,7 +25,7 @@ import animationTileBgOptimized from './assets/tiles/animation_optimized.webp'
 
 const useStyles = makeStyles({
   root: {
-    marginTop: '1rem'
+    margin: '1rem 0'
   },
   tiles: {
     display: 'flex',
@@ -195,6 +196,8 @@ export default () => {
   return (
     <>
       <Tiles />
+
+      <Polls />
 
       <Heading variant="h2">
         <Link to={routes.viewAllSpecies}>Species</Link>
