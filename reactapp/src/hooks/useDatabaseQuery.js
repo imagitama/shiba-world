@@ -79,7 +79,9 @@ export const UserFieldNames = {
   lastModifiedAt: 'lastModifiedAt',
   avatarUrl: 'avatarUrl',
   createdBy: 'createdBy',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  isBanned: 'isBanned',
+  banReason: 'banReason'
 }
 
 export const ProfileFieldNames = {

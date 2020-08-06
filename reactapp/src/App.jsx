@@ -26,6 +26,7 @@ import Notices from './components/notices'
 import ErrorBoundary from './components/error-boundary'
 import LoadingIndicator from './components/loading-indicator'
 import UnapprovedAssetsMessage from './components/unapproved-assets-message'
+import BannedNotice from './components/banned-notice'
 
 import useUserRecord from './hooks/useUserRecord'
 import useSearchTerm from './hooks/useSearchTerm'
@@ -329,6 +330,7 @@ export default () => {
         <PageHeader />
         <main className="main">
           <Container maxWidth="lg">
+            <BannedNotice />
             <Notices />
             <UnapprovedAssetsMessage />
             <MainContent />

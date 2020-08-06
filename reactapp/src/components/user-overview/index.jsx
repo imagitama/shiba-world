@@ -10,7 +10,8 @@ import useDatabaseQuery, {
   CollectionNames,
   AssetFieldNames,
   Operators,
-  OrderDirections
+  OrderDirections,
+  UserFieldNames
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 
@@ -57,6 +58,9 @@ const useStyles = makeStyles({
     '& img': {
       maxWidth: '100%'
     }
+  },
+  isBanned: {
+    textDecoration: 'line-through'
   }
 })
 
@@ -154,7 +158,10 @@ export default ({ userId }) => {
     )
   }
 
-  const { username = '' } = user
+  const {
+    [UserFieldNames.username]: username = '',
+    [UserFieldNames.isBanned]: isBanned
+  } = user
 
   if (!username) {
     return <ErrorMessage>User does not appear to exist</ErrorMessage>
@@ -182,7 +189,9 @@ export default ({ userId }) => {
         />
       </Helmet>
       <Avatar username={user.username} url={user.avatarUrl} />
-      <Heading variant="h1" className={classes.username}>
+      <Heading
+        variant="h1"
+        className={`${classes.username} ${isBanned ? classes.isBanned : ''}`}>
         <Link to={routes.viewUserWithVar.replace(':userId', userId)}>
           {username}
         </Link>
