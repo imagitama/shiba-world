@@ -16,11 +16,13 @@ import NoResultsMessage from '../../components/no-results-message'
 import useDatabaseQuery, {
   CollectionNames,
   HistoryFieldNames,
-  OrderDirections
+  OrderDirections,
+  AuthorFieldNames
 } from '../../hooks/useDatabaseQuery'
 import * as routes from '../../routes'
 
 function FormattedUserName({ message, parent, createdBy }) {
+  console.log(message, createdBy)
   if (message === 'User signup') {
     return (
       <Link to={routes.viewUserWithVar.replace(':userId', parent.id)}>
@@ -49,6 +51,8 @@ function getUrlForRelevantData(collectionName, result) {
       return routes.viewRequestWithVar.replace(':requestId', result.id)
     case CollectionNames.Users:
       return routes.viewUserWithVar.replace(':userId', result.id)
+    case CollectionNames.Authors:
+      return routes.viewAuthorWithVar.replace(':authorId', result.id)
     default:
       return '#'
   }
@@ -59,6 +63,8 @@ function getLabelForRelevantData(collectionName, result) {
     case CollectionNames.Assets:
     case CollectionNames.Requests:
       return result.title
+    case CollectionNames.Authors:
+      return result[AuthorFieldNames.name]
     case CollectionNames.Users:
       return result.username
     default:
@@ -99,6 +105,28 @@ function FormattedMessage({ message, parent, createdBy, data }) {
           />
         </>
       )
+
+    case 'Edited author':
+      return (
+        <>
+          edited the author{' '}
+          <LinkToRelevantData
+            collectionName={CollectionNames.Authors}
+            result={parent}
+          />
+        </>
+      )
+    case 'Created author':
+      return (
+        <>
+          created the author{' '}
+          <LinkToRelevantData
+            collectionName={CollectionNames.Authors}
+            result={parent}
+          />
+        </>
+      )
+
     case 'Edited user':
       if (createdBy && createdBy.id === parent.id) {
         return <>edited their own account</>

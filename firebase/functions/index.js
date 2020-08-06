@@ -166,6 +166,8 @@ const AuthorFieldNames = {
   categories: 'categories',
   createdAt: 'createdAt',
   createdBy: 'createdBy',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt',
 }
 
 function isNotApproved(docData) {
@@ -791,6 +793,40 @@ exports.onRequestEdited = functions.firestore
         ),
       },
       docData.lastModifiedBy
+    )
+  })
+
+exports.onAuthorCreated = functions.firestore
+  .document('authors/{authorId}')
+  .onCreate(async (doc) => {
+    const docData = doc.data()
+
+    return storeInHistory(
+      'Created author',
+      doc.ref,
+      {
+        fields: replaceReferencesWithString(docData),
+      },
+      docData[AuthorFieldNames.createdBy]
+    )
+  })
+
+exports.onAuthorEdited = functions.firestore
+  .document('authors/{authorId}')
+  .onUpdate(async ({ before: beforeDoc, after: doc }) => {
+    const beforeDocData = beforeDoc.data()
+    const docData = doc.data()
+
+    await storeInHistory(
+      'Edited author',
+      doc.ref,
+      {
+        diff: getDifferenceInObjects(
+          replaceReferencesWithString(beforeDocData),
+          replaceReferencesWithString(docData)
+        ),
+      },
+      docData[AuthorFieldNames.lastModifiedBy]
     )
   })
 
