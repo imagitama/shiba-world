@@ -113,6 +113,9 @@ const EditAuthor = lazy(() =>
 const Authors = lazy(() =>
   catchChunkDeaths(() => import('./containers/authors'))
 )
+const EditUser = lazy(() =>
+  catchChunkDeaths(() => import('./containers/edit-user'))
+)
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
   return (
@@ -291,6 +294,7 @@ const MainContent = () => {
         <Route exact path={routes.tagsWithVar} component={Tags} />
         <Route exact path={routes.searchWithVar} component={Search} />
         <Route exact path={routes.viewAllSpecies} component={ViewAllSpecies} />
+        <Route exact path={routes.editUserWithVar} component={EditUser} />
         <Route exact path={routes.viewUserWithVar} component={ViewUser} />
         <Route exact path={routes.stats} component={Stats} />
         <Route exact path={routes.users} component={Users} />

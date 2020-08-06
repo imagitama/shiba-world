@@ -64,6 +64,10 @@ export default ({
   const [formFields, setFormFields] = useState(null)
   const classes = useStyles()
 
+  if (!(collectionName in editableFields)) {
+    throw new Error(`Collection name ${collectionName} not in editable fields!`)
+  }
+
   const fields = editableFields[collectionName]
 
   useEffect(() => {

@@ -22,10 +22,12 @@ import Message from '../message'
 import CommentList from '../comment-list'
 import AddCommentForm from '../add-comment-form'
 import SocialMediaList from '../social-media-list'
+import Button from '../button'
 
 import * as routes from '../../routes'
 import { createRef } from '../../utils'
 import { trackAction } from '../../analytics'
+import { canEditUsers } from '../../permissions'
 
 const useStyles = makeStyles({
   socialMediaItem: {
@@ -185,6 +187,11 @@ export default ({ userId }) => {
           {username}
         </Link>
       </Heading>
+      {canEditUsers(user) && (
+        <Button url={routes.editUserWithVar.replace(':userId', userId)}>
+          Edit User
+        </Button>
+      )}
       {isStaffMember(user) && <StaffMemberMessage />}
       {bio && (
         <>
