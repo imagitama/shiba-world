@@ -6,3 +6,10 @@ export function canEditUsers(user) {
   }
   return user[UserFieldNames.isAdmin] || user[UserFieldNames.isEditor]
 }
+
+export function canEditComments(user) {
+  if (!user) {
+    return
+  }
+  return user[UserFieldNames.isAdmin] || user[UserFieldNames.isEditor]
+}
