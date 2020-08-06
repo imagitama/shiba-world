@@ -198,6 +198,7 @@ function isStaffMember(user) {
 }
 
 export default ({ userId }) => {
+  const [, , currentUser] = useUserRecord()
   const [isLoadingUser, isErroredLoadingUser, user] = useDatabaseQuery(
     CollectionNames.Users,
     userId
@@ -241,7 +242,7 @@ export default ({ userId }) => {
           {username}
         </Link>
       </Heading>
-      {canEditUsers(user) && (
+      {canEditUsers(currentUser) && (
         <Button url={routes.editUserWithVar.replace(':userId', userId)}>
           Edit User
         </Button>
