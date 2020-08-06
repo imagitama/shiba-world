@@ -24,8 +24,8 @@ import worldTileBgOptimized from './assets/tiles/world_optimized.webp'
 import animationTileBgOptimized from './assets/tiles/animation_optimized.webp'
 
 const useStyles = makeStyles({
-  root: {
-    margin: '1rem 0'
+  polls: {
+    marginTop: '1rem'
   },
   tiles: {
     display: 'flex',
@@ -42,7 +42,7 @@ const useStyles = makeStyles({
     backgroundSize: 'cover',
     padding: 0,
     [mediaQueryForMobiles]: {
-      marginBottom: '1rem'
+      marginBottom: '0.5rem'
     }
   },
   [AssetCategories.accessory]: {
@@ -63,7 +63,7 @@ const useStyles = makeStyles({
   center: {
     margin: '0 1rem',
     [mediaQueryForMobiles]: {
-      margin: '0 0 1rem'
+      margin: '0 0 0.5rem'
     }
   },
   primary: {
@@ -72,7 +72,10 @@ const useStyles = makeStyles({
       marginBottom: 0
     },
     '& $tile': {
-      minHeight: '20rem'
+      minHeight: '20rem',
+      [mediaQueryForMobiles]: {
+        minHeight: '10rem'
+      }
     }
   },
   secondary: {
@@ -100,7 +103,10 @@ const useStyles = makeStyles({
     fontSize: '200%',
     display: 'block',
     width: '100%',
-    textAlign: 'center'
+    textAlign: 'center',
+    [mediaQueryForMobiles]: {
+      fontSize: '150%'
+    }
   },
   subtitle: {
     marginTop: '0.5rem',
@@ -187,6 +193,7 @@ function Tiles() {
 }
 
 export default () => {
+  const classes = useStyles()
   const searchTerm = useSearchTerm()
 
   if (searchTerm) {
@@ -197,7 +204,7 @@ export default () => {
     <>
       <Tiles />
 
-      <Polls />
+      <Polls className={classes.polls} />
 
       <Heading variant="h2">
         <Link to={routes.viewAllSpecies}>Species</Link>

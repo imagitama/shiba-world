@@ -6,7 +6,7 @@ import useDatabaseQuery, {
 } from '../../hooks/useDatabaseQuery'
 import Poll from '../poll'
 
-export default () => {
+export default ({ className = '' }) => {
   const [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.Polls,
     [[PollsFieldNames.isClosed, Operators.EQUALS, false]],
@@ -22,7 +22,7 @@ export default () => {
   }
 
   return (
-    <div>
+    <div className={className}>
       {results.map(poll => (
         <Poll key={poll.id} poll={poll} />
       ))}
