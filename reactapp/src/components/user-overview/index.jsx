@@ -123,6 +123,67 @@ function Avatar({ username, url }) {
   )
 }
 
+function Profile({ userId }) {
+  const [isLoadingProfile, isErroredLoadingProfile, profile] = useDatabaseQuery(
+    CollectionNames.Profiles,
+    userId
+  )
+  const classes = useStyles()
+
+  if (isLoadingProfile) {
+    return <LoadingIndicator />
+  }
+
+  // Profiles are optional and do not exist until they "set it up" so null check here
+  if (isErroredLoadingProfile) {
+    return (
+      <ErrorMessage>Failed to load their account or user profile</ErrorMessage>
+    )
+  }
+
+  if (!profile) {
+    return 'No profile yet'
+  }
+
+  const {
+    bio,
+    vrchatUsername,
+    vrchatUserId,
+    discordUsername,
+    twitterUsername,
+    telegramUsername,
+    youtubeChannelId,
+    twitchUsername,
+    patreonUsername
+  } = profile
+
+  return (
+    <>
+      {bio && (
+        <>
+          <Heading variant="h2">Bio</Heading>
+          <div className={classes.bio}>
+            <Markdown source={bio} />
+          </div>
+        </>
+      )}
+      <SocialMediaList
+        socialMedia={{
+          vrchatUsername: vrchatUsername,
+          vrchatUserId: vrchatUserId,
+          discordUsername: discordUsername,
+          twitterUsername: twitterUsername,
+          telegramUsername: telegramUsername,
+          youtubeChannelId: youtubeChannelId,
+          twitchUsername: twitchUsername,
+          patreonUsername: patreonUsername
+        }}
+        actionCategory="ViewUser"
+      />
+    </>
+  )
+}
+
 function StaffMemberMessage() {
   return (
     <Message>
@@ -141,18 +202,14 @@ export default ({ userId }) => {
     CollectionNames.Users,
     userId
   )
-  const [isLoadingProfile, isErroredLoadingProfile, profile] = useDatabaseQuery(
-    CollectionNames.Profiles,
-    userId
-  )
   const classes = useStyles()
 
-  if (isLoadingUser || isLoadingProfile) {
+  if (isLoadingUser) {
     return <LoadingIndicator />
   }
 
   // Profiles are optional and do not exist until they "set it up" so null check here
-  if (isErroredLoadingUser || isErroredLoadingProfile || !profile) {
+  if (isErroredLoadingUser) {
     return (
       <ErrorMessage>Failed to load their account or user profile</ErrorMessage>
     )
@@ -166,18 +223,6 @@ export default ({ userId }) => {
   if (!username) {
     return <ErrorMessage>User does not appear to exist</ErrorMessage>
   }
-
-  const {
-    bio,
-    vrchatUsername,
-    vrchatUserId,
-    discordUsername,
-    twitterUsername,
-    telegramUsername,
-    youtubeChannelId,
-    twitchUsername,
-    patreonUsername
-  } = profile
 
   return (
     <>
@@ -202,27 +247,7 @@ export default ({ userId }) => {
         </Button>
       )}
       {isStaffMember(user) && <StaffMemberMessage />}
-      {bio && (
-        <>
-          <Heading variant="h2">Bio</Heading>
-          <div className={classes.bio}>
-            <Markdown source={bio} />
-          </div>
-        </>
-      )}
-      <SocialMediaList
-        socialMedia={{
-          vrchatUsername: vrchatUsername,
-          vrchatUserId: vrchatUserId,
-          discordUsername: discordUsername,
-          twitterUsername: twitterUsername,
-          telegramUsername: telegramUsername,
-          youtubeChannelId: youtubeChannelId,
-          twitchUsername: twitchUsername,
-          patreonUsername: patreonUsername
-        }}
-        actionCategory="ViewUser"
-      />
+      <Profile userId={userId} />
       <Heading variant="h2">Comments</Heading>
       <CommentList collectionName={CollectionNames.Users} parentId={userId} />
       <AddCommentForm
