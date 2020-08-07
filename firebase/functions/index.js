@@ -133,6 +133,8 @@ const UserFieldNames = {
   username: 'username',
   isEditor: 'isEditor',
   isAdmin: 'isAdmin',
+  isBanned: 'isBanned',
+  banReason: 'banReason',
   enabledAdultContent: 'enabledAdultContent',
   lastModifiedBy: 'lastModifiedBy',
   lastModifiedAt: 'lastModifiedAt',
@@ -719,6 +721,8 @@ exports.onUserSignup = functions.auth.user().onCreate(async (user) => {
   await userRecord.set({
     isAdmin: false,
     isEditor: false,
+    [UserFieldNames.isBanned]: false,
+    [UserFieldNames.banReason]: '',
     username: '',
   })
 
