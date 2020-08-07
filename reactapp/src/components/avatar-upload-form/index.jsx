@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
-import FileUploader from '../file-uploader'
+import ImageUploader from '../image-uploader'
 
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { CollectionNames, UserFieldNames } from '../../hooks/useDatabaseQuery'
@@ -21,8 +21,8 @@ const useStyles = makeStyles({
     height: '200px'
   },
   image: {
-    width: '100%',
-    height: '100%'
+    width: '200px',
+    height: '200px'
   },
   msg: {
     position: 'absolute',
@@ -80,9 +80,10 @@ export default ({ onClick = null }) => {
   const { [UserFieldNames.avatarUrl]: avatarUrl } = user
 
   return (
-    <FileUploader
+    <ImageUploader
       onDownloadUrl={onDownloadUrl}
-      directoryPath={`avatars/${userId}`}>
+      directoryPath={`avatars/${userId}`}
+      thumbnailWidthAndHeight={200}>
       <div className={classes.container}>
         <img
           src={avatarUrl ? avatarUrl : defaultAvatarUrl}
@@ -91,6 +92,6 @@ export default ({ onClick = null }) => {
         />
         <div className={classes.msg}>Click to edit</div>
       </div>
-    </FileUploader>
+    </ImageUploader>
   )
 }

@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import Paper from '@material-ui/core/Paper'
 import ReactCrop from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
 import Button from '../button'
@@ -9,18 +8,32 @@ import BodyText from '../body-text'
 import { handleError } from '../../error-handling'
 
 const useStyles = makeStyles({
-  root: {
-    padding: '1rem'
+  container: {
+    position: 'relative'
+  },
+  input: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    opacity: 0,
+    zIndex: 100
   }
 })
-
-const thumbnailWidthAndHeight = 300
 
 function renameJpgToPng(path) {
   return path.replace('.jpeg', '.png').replace('.jpg', '.png')
 }
 
-function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
+export default ({
+  onDownloadUrl,
+  onCroppedImagePreviewUrl = null,
+  directoryPath = '',
+  filePrefix = '',
+  thumbnailWidthAndHeight = 300,
+  children
+}) => {
   const [cropX, setCropX] = useState(0)
   const [cropY, setCropY] = useState(0)
   const [width, setWidth] = useState(0)
@@ -30,7 +43,7 @@ function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
   const [uploadedUrl, setUploadedUrl] = useState(null)
   const imageRef = useRef()
   const selectedFileRef = useRef()
-  const [croppedImagePreviewUrl, setCroppedImagePreviewUrl] = useState('')
+  const classes = useStyles()
 
   useEffect(() => {
     if (!imageRef.current) {
@@ -41,7 +54,9 @@ function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
       try {
         const canvas = await cropImageElementAndGetCanvas()
         const url = canvas.toDataURL('image/jpeg')
-        setCroppedImagePreviewUrl(url)
+        if (onCroppedImagePreviewUrl) {
+          onCroppedImagePreviewUrl(url)
+        }
       } catch (err) {
         console.error('Failed to generate cropped image preview url', err)
         handleError(err)
@@ -122,7 +137,7 @@ function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
       )
 
       setUploadedUrl(uploadedUrl)
-      onUploaded(uploadedUrl)
+      onDownloadUrl(uploadedUrl)
     } catch (err) {
       console.error('Failed to crop image', err)
       handleError(err)
@@ -150,11 +165,24 @@ function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
   }
 
   if (!imageSrc) {
+    if (children) {
+      return (
+        <div className={classes.container}>
+          <input
+            className={classes.input}
+            type="file"
+            onChange={event => onFileChange(event.target.files)}
+            multiple={false}
+          />
+          {children}
+        </div>
+      )
+    }
+
     return (
       <>
         <BodyText>
-          Select a JPG or PNG and you will be able to crop it to{' '}
-          {thumbnailWidthAndHeight}x{thumbnailWidthAndHeight}
+          Select a JPG or PNG and you will be able to crop it to 300x300
         </BodyText>
         <input
           type="file"
@@ -167,7 +195,6 @@ function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
 
   return (
     <>
-      Now crop the image:
       <ReactCrop
         src={imageSrc}
         onChange={newCrop => {
@@ -191,28 +218,11 @@ function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
           unit: width && height ? 'px' : '%'
         }}
       />
-      Output:
-      <img
-        src={croppedImagePreviewUrl}
-        width={thumbnailWidthAndHeight}
-        height={thumbnailWidthAndHeight}
-        alt="Uploaded preview"
-      />
       <br />
       <Button onClick={onCancelBtnClick} color="default">
         Cancel
       </Button>
       <Button onClick={onPerformCropBtnClick}>Submit</Button>
     </>
-  )
-}
-
-export default props => {
-  const classes = useStyles()
-
-  return (
-    <Paper className={classes.root}>
-      <Output {...props} />
-    </Paper>
   )
 }
