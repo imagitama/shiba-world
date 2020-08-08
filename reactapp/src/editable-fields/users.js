@@ -17,7 +17,11 @@ export default [
   {
     name: UserFieldNames.avatarUrl,
     label: 'Avatar image URL',
-    type: fieldTypes.text,
+    type: fieldTypes.imageUpload,
+    fieldProperties: {
+      width: 200,
+      height: 200
+    },
     hint: 'Should be 200 x 200 png',
     default: ''
   },

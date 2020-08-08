@@ -43,6 +43,9 @@ export default ({
         cancelBtnAction="Click cancel button"
         successUrl={routes.viewUserWithVar.replace(':userId', userId)}
         cancelUrl={routes.viewUserWithVar.replace(':userId', userId)}
+        extraFormData={{
+          userId
+        }}
       />
     </>
   )

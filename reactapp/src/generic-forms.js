@@ -4,5 +4,6 @@ export const fieldTypes = {
   multichoice: 'multichoice',
   checkbox: 'checkbox',
   date: 'date',
-  ref: 'ref'
+  ref: 'ref',
+  imageUpload: 'imageUpload'
 }

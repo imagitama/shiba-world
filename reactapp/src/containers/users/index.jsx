@@ -4,10 +4,19 @@ import UserList from '../../components/user-list'
 import Heading from '../../components/heading'
 import ErrorMessage from '../../components/error-message'
 import LoadingIndicator from '../../components/loading-indicator'
-import useDatabaseQuery, { CollectionNames } from '../../hooks/useDatabaseQuery'
+import useDatabaseQuery, {
+  CollectionNames,
+  UserFieldNames
+} from '../../hooks/useDatabaseQuery'
 
 function isUserStaff(user) {
   return user.isAdmin || user.isEditor
+}
+
+function sortByAlpha(users) {
+  return users.sort((userA, userB) =>
+    userA[UserFieldNames.username].localeCompare(userB[UserFieldNames.username])
+  )
 }
 
 export default () => {
@@ -54,9 +63,9 @@ export default () => {
         Staff members can approve, edit and delete assets. Click their name to
         find their social media to ask them for help about assets.
       </p>
-      <UserList users={staffUsers} />
+      <UserList users={sortByAlpha(staffUsers)} />
       <Heading variant="h2">Users</Heading>
-      <UserList users={nonStaffUsers} />
+      <UserList users={sortByAlpha(nonStaffUsers)} />
     </>
   )
 }

@@ -22,6 +22,7 @@ import CheckboxInput from './components/checkbox-input'
 import TextInput from './components/text-input'
 import TextMarkdownInput from './components/text-markdown-input'
 import MultichoiceInput from './components/multichoice-input'
+import ImageUploadInput from './components/image-upload-input'
 
 function getInputForFieldType(type) {
   switch (type) {
@@ -33,6 +34,8 @@ function getInputForFieldType(type) {
       return CheckboxInput
     case fieldTypes.multichoice:
       return MultichoiceInput
+    case fieldTypes.imageUpload:
+      return ImageUploadInput
     default:
       throw new Error(`Invalid field type "${type}"`)
   }
@@ -53,7 +56,8 @@ export default ({
   viewBtnAction = '',
   cancelBtnAction = '',
   successUrl = '',
-  cancelUrl = ''
+  cancelUrl = '',
+  extraFormData = {}
 }) => {
   const userId = useFirebaseUserId()
   const [isLoading, isErrored, result] = useDatabaseEdit(collectionName, id)
@@ -146,6 +150,7 @@ export default ({
               value={formFields[name] || defaultValue}
               {...rest}
               onChange={newVal => onFieldChange(name, newVal)}
+              extraFormData={extraFormData}
             />
           </Field>
         )

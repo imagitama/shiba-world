@@ -182,7 +182,8 @@ export default ({
     return (
       <>
         <BodyText>
-          Select a JPG or PNG and you will be able to crop it to 300x300
+          Select a JPG or PNG and you will be able to crop it to{' '}
+          {thumbnailWidthAndHeight}x{thumbnailWidthAndHeight}
         </BodyText>
         <input
           type="file"
