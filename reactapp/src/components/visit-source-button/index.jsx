@@ -17,9 +17,69 @@ const useStyles = makeStyles({
   }
 })
 
+function isVrchatAvatarUrl(url) {
+  return url.includes('vrchat.com/home/avatar')
+}
+
+function isVrchatWorldUrl(url) {
+  return (
+    url.includes('vrchat.com/home/world') ||
+    url.includes('vrchat.com/home/launch?worldId')
+  )
+}
+
+function isGumroadUrl(url) {
+  return url.includes('gumroad.com')
+}
+
+function isTwitterUrl(url) {
+  return url.includes('twitter.com')
+}
+
+function isPatreonUrl(url) {
+  return url.includes('patreon.com')
+}
+
+function isDiscordUrl(url) {
+  return url.includes('discordapp.com')
+}
+
+function getButtonLabel(category, sourceUrl, isNoFilesAttached) {
+  if (!isNoFilesAttached) {
+    return 'Visit Source'
+  }
+
+  if (isGumroadUrl(sourceUrl)) {
+    return 'View Gumroad'
+  }
+
+  if (isTwitterUrl(sourceUrl)) {
+    return 'View Source Tweet'
+  }
+
+  if (isVrchatAvatarUrl(sourceUrl)) {
+    return 'View VRChat Avatar'
+  }
+
+  if (isVrchatWorldUrl(sourceUrl)) {
+    return 'View VRChat World'
+  }
+
+  if (isPatreonUrl(sourceUrl)) {
+    return 'View Patreon'
+  }
+
+  if (isDiscordUrl(sourceUrl)) {
+    return 'View Discord'
+  }
+
+  return 'Download from Source'
+}
+
 export default ({
   assetId,
   sourceUrl,
+  categoryName,
   isNoFilesAttached = false,
   isLarge = false,
   onClick = null
@@ -61,7 +121,7 @@ export default ({
       onClick={onBtnClick}
       size={isLarge ? 'large' : ''}
       className={isLarge ? classes.large : ''}>
-      {isNoFilesAttached ? 'Download from Source' : 'Visit Source'}
+      {getButtonLabel(categoryName, sourceUrl, isNoFilesAttached)}
     </Button>
   )
 }

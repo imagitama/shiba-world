@@ -248,7 +248,7 @@ function Control({ children }) {
   return <div className={classes.control}>{children}</div>
 }
 
-function MobilePrimaryBtn({ downloadUrls, sourceUrl, assetId }) {
+function MobilePrimaryBtn({ downloadUrls, sourceUrl, assetId, categoryName }) {
   const classes = useStyles()
 
   // TODO: Use media query hook instead of css to show/hide
@@ -273,6 +273,7 @@ function MobilePrimaryBtn({ downloadUrls, sourceUrl, assetId }) {
             isLarge={true}
             assetId={assetId}
             sourceUrl={sourceUrl}
+            categoryName={categoryName}
             isNoFilesAttached={downloadUrls.length === 0}
             onClick={() =>
               trackAction(
@@ -417,6 +418,7 @@ export default ({ assetId }) => {
         downloadUrls={downloadUrls}
         sourceUrl={sourceUrl}
         assetId={assetId}
+        categoryName={category}
       />
 
       <div className={classes.cols}>
@@ -568,6 +570,7 @@ export default ({ assetId }) => {
                 <VisitSourceButton
                   assetId={assetId}
                   sourceUrl={sourceUrl}
+                  categoryName={category}
                   isNoFilesAttached={downloadUrls.length === 0}
                 />
               </Control>
