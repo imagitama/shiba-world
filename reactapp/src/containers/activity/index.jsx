@@ -22,7 +22,6 @@ import useDatabaseQuery, {
 import * as routes from '../../routes'
 
 function FormattedUserName({ message, parent, createdBy }) {
-  console.log(message, createdBy)
   if (message === 'User signup') {
     return (
       <Link to={routes.viewUserWithVar.replace(':userId', parent.id)}>

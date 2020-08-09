@@ -344,10 +344,7 @@ export default ({
           'Help users find your assets using filters and searching. One tag per line. All lowercase.'
         }
         onChange={newVal => onFieldChange(AssetFieldNames.tags, newVal)}
-        convertToValidField={text =>
-          !console.log(text, text.toLowerCase()) &&
-          text.toLowerCase().split('\n')
-        }
+        convertToValidField={text => text.toLowerCase().split('\n')}
         multiline
         rows={10}
       />

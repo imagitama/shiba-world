@@ -140,9 +140,11 @@ export default function AssetItem({
             <Typography variant="h5" component="h2">
               {title}
             </Typography>
-            <div className={classes.date}>
-              <FormattedDate date={createdAt} />
-            </div>
+            {createdAt && (
+              <div className={classes.date}>
+                <FormattedDate date={createdAt} />
+              </div>
+            )}
             <Typography variant="body2" color="textSecondary" component="p">
               {truncateTextAndAddEllipsis(description)}
             </Typography>

@@ -143,7 +143,6 @@ export default () => {
               <MenuItem
                 key={name}
                 onClick={() => {
-                  console.log(name)
                   dispatch(changeSearchIndexName(name))
                   setIsIndexDropdownOpen(false)
                   trackAction(
