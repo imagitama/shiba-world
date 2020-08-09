@@ -16,6 +16,7 @@ import AllTagsBrowser from '../../components/all-tags-browser'
 import NoResultsMessage from '../../components/no-results-message'
 
 import * as routes from '../../routes'
+import { searchIndexNameLabels, searchIndexNames } from '../../modules/app'
 
 function Assets({ tagName }) {
   const [, , user] = useUserRecord()
@@ -51,7 +52,9 @@ function Assets({ tagName }) {
   if (!results.length) {
     return (
       <NoResultsMessage
-        callToActionUrl={routes.searchWithVar.replace(':searchTerm', tagName)}
+        callToActionUrl={routes.searchWithVar
+          .replace(':indexName', searchIndexNameLabels[searchIndexNames.ASSETS])
+          .replace(':searchTerm', tagName)}
         callToActionLabel="Try search instead"
       />
     )

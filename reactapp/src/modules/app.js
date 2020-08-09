@@ -23,9 +23,56 @@ function getDarkModeEnabledInitialState() {
   return false
 }
 
+export const searchIndexNames = {
+  ASSETS: 'prod_ASSETS',
+  AUTHORS: 'prod_AUTHORS'
+}
+
+export const searchIndexNameLabels = {
+  [searchIndexNames.ASSETS]: 'assets',
+  [searchIndexNames.AUTHORS]: 'authors'
+}
+
+function isSearchRoute() {
+  return window.location.pathname.includes('search')
+}
+
+function getInitialSearchIndexName() {
+  if (isSearchRoute()) {
+    const chunks = window.location.pathname.split('/')
+    const foundSearchIndexLabel = chunks[2]
+    const foundSearchIndex = Object.entries(searchIndexNameLabels).find(
+      ([, label]) => label === foundSearchIndexLabel
+    )
+
+    if (!foundSearchIndex) {
+      throw new Error(
+        `Found search index label "${foundSearchIndexLabel}" but no exist: ${Object.values(
+          searchIndexNameLabels
+        )}`
+      )
+    }
+
+    return foundSearchIndex[0]
+  }
+
+  return searchIndexNames.ASSETS
+}
+
+function getInitialSearchTerm() {
+  if (isSearchRoute()) {
+    const chunks = window.location.pathname.split('/')
+    const foundSearchIndexLabel = chunks[3]
+    return foundSearchIndexLabel
+  }
+
+  return ''
+}
+
 const initialState = {
   isMenuOpen: false,
-  searchTerm: '',
+  searchTerm: getInitialSearchTerm(),
+  searchIndexName: getInitialSearchIndexName(),
   darkModeEnabled: getDarkModeEnabledInitialState()
 }
 
@@ -34,6 +81,7 @@ const CLOSE_MENU = 'CLOSE_MENU'
 const CHANGE_SEARCH_TERM = 'CHANGE_SEARCH_TERM'
 const TOGGLE_DARK_MODE = 'TOGGLE_DARK_MODE'
 const SET_DARK_MODE_ENABLED = 'SET_DARK_MODE_ENABLED'
+const CHANGE_SEARCH_INDEX_NAME = 'CHANGE_SEARCH_INDEX_NAME'
 
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -53,6 +101,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         searchTerm: action.payload.searchTerm
+      }
+
+    case CHANGE_SEARCH_INDEX_NAME:
+      return {
+        ...state,
+        searchIndexName: action.payload.searchIndexName
       }
 
     case TOGGLE_DARK_MODE:
@@ -97,6 +151,15 @@ export const changeSearchTerm = searchTerm => dispatch => {
   if (!searchTerm) {
     return
   }
+}
+
+export const changeSearchIndexName = searchIndexName => dispatch => {
+  dispatch({
+    type: CHANGE_SEARCH_INDEX_NAME,
+    payload: {
+      searchIndexName
+    }
+  })
 }
 
 export const toggleDarkMode = () => dispatch => {

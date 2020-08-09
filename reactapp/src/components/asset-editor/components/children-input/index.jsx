@@ -3,7 +3,7 @@ import TextField from '@material-ui/core/TextField'
 import { makeStyles } from '@material-ui/core/styles'
 import { firestore } from 'firebase/app'
 
-import useAlgoliaSearch, { Indexes } from '../../../../hooks/useAlgoliaSearch'
+import useAlgoliaSearch from '../../../../hooks/useAlgoliaSearch'
 import {
   CollectionNames,
   formatRawDoc
@@ -11,6 +11,7 @@ import {
 import Button from '../../../button'
 import Paper from '../../../paper'
 import Heading from '../../../heading'
+import { searchIndexNames } from '../../../../modules/app'
 
 const useStyles = makeStyles({
   heading: {
@@ -53,7 +54,7 @@ function addChildAsset(assets, childAsset) {
 
 function SearchForm({ searchTerm, onSelectId }) {
   const [isSearching, isErrored, results] = useAlgoliaSearch(
-    Indexes.Assets,
+    searchIndexNames.ASSETS,
     searchTerm
   )
 

@@ -1,20 +1,25 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import useAlgoliaSearch, { Indexes } from '../../hooks/useAlgoliaSearch'
+import useAlgoliaSearch from '../../hooks/useAlgoliaSearch'
 import useUserRecord from '../../hooks/useUserRecord'
 import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
 import SearchResult from '../search-result'
+import SearchResultAuthor from '../search-result-author'
 import NoResultsMessage from '../no-results-message'
+import { searchIndexNames } from '../../modules/app'
 
 export default () => {
-  const { searchTerm } = useSelector(({ app: { searchTerm } }) => ({
-    searchTerm
-  }))
+  const { searchTerm, searchIndexName } = useSelector(
+    ({ app: { searchTerm, searchIndexName } }) => ({
+      searchTerm,
+      searchIndexName
+    })
+  )
   const [, , user] = useUserRecord()
 
   const [isLoading, isErrored, hits] = useAlgoliaSearch(
-    Indexes.Assets,
+    searchIndexName,
     searchTerm,
     user && user.enabledAdultContent ? undefined : 'isAdult != 1'
   )
@@ -37,9 +42,13 @@ export default () => {
 
   return (
     <>
-      {hits.map(hit => (
-        <SearchResult key={hit.objectID} hit={hit} />
-      ))}
+      {hits.map(hit =>
+        searchIndexName === searchIndexNames.ASSETS ? (
+          <SearchResult key={hit.objectID} hit={hit} />
+        ) : (
+          <SearchResultAuthor key={hit.objectID} hit={hit} />
+        )
+      )}
     </>
   )
 }

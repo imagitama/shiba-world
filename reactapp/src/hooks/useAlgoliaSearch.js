@@ -2,11 +2,6 @@ import { useEffect, useState, useRef } from 'react'
 import createAlgoliaSearchClient from 'algoliasearch'
 import { handleError } from '../error-handling'
 
-export const Indexes = {
-  // TODO: Prod/etc. should come from env vars
-  Assets: 'prod_ASSETS'
-}
-
 let client
 
 export default (indexName, keywords, filters = undefined) => {
@@ -15,6 +10,7 @@ export default (indexName, keywords, filters = undefined) => {
   const [isErrored, setIsErrored] = useState(false)
   const timerRef = useRef()
   const indexRef = useRef()
+  const activeIndexNameRef = useRef()
 
   useEffect(() => {
     if (!client) {
@@ -24,8 +20,12 @@ export default (indexName, keywords, filters = undefined) => {
       )
     }
 
-    if (!indexRef.current) {
-      indexRef.current = client.initIndex(indexName)
+    if (
+      !activeIndexNameRef.current ||
+      activeIndexNameRef.current !== indexName
+    ) {
+      activeIndexNameRef.current = indexName
+      indexRef.current = client.initIndex(activeIndexNameRef.current)
     }
 
     async function doIt() {

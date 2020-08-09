@@ -33,6 +33,7 @@ import useSearchTerm from './hooks/useSearchTerm'
 import useIsLoggedIn from './hooks/useIsLoggedIn'
 
 import { scrollToTop } from './utils'
+import { searchIndexNameLabels } from './modules/app'
 
 const catchChunkDeaths = functionToImport =>
   functionToImport().catch(err => {
@@ -294,6 +295,13 @@ const MainContent = () => {
         <Route exact path={routes.news} component={News} />
         <Route exact path={routes.tagsWithVar} component={Tags} />
         <Route exact path={routes.searchWithVar} component={Search} />
+        <Redirect
+          from={routes.searchWithVarOld}
+          to={routes.searchWithVar.replace(
+            ':indexName',
+            searchIndexNameLabels.ASSETS
+          )}
+        />
         <Route exact path={routes.viewAllSpecies} component={ViewAllSpecies} />
         <Route exact path={routes.editUserWithVar} component={EditUser} />
         <Route exact path={routes.viewUserWithVar} component={ViewUser} />

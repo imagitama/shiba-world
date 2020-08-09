@@ -11,7 +11,9 @@ const config = functions.config()
 
 const ALGOLIA_APP_ID = config.algolia.app_id
 const ALGOLIA_ADMIN_KEY = config.algolia.admin_api_key
-const ALGOLIA_INDEX_NAME = 'prod_ASSETS'
+const ALGOLIA_INDEX_NAME_ASSETS = 'prod_ASSETS'
+const ALGOLIA_INDEX_NAME_USERS = 'prod_USERS'
+const ALGOLIA_INDEX_NAME_AUTHORS = 'prod_AUTHORS'
 
 let algoliaClient
 
@@ -36,6 +38,15 @@ function convertAssetDocToAlgoliaRecord(docId, doc, authorName) {
   }
 }
 
+function convertAuthorDocToAlgoliaRecord(docId, doc) {
+  return {
+    objectID: docId,
+    name: doc[AuthorFieldNames.name],
+    description: doc[AuthorFieldNames.description],
+    categories: doc[AuthorFieldNames.categories],
+  }
+}
+
 async function retrieveAuthorNameFromAssetData(docData, defaultName = '') {
   if (docData[AssetFieldNames.author]) {
     if (!docData[AssetFieldNames.author].get) {
@@ -53,12 +64,20 @@ async function insertAssetDocIntoIndex(doc, docData) {
   const authorName = await retrieveAuthorNameFromAssetData(docData)
 
   return getAlgoliaClient()
-    .initIndex(ALGOLIA_INDEX_NAME)
+    .initIndex(ALGOLIA_INDEX_NAME_ASSETS)
     .saveObject(convertAssetDocToAlgoliaRecord(doc.id, docData, authorName))
 }
 
+async function insertAuthorDocIntoIndex(doc, docData) {
+  return getAlgoliaClient()
+    .initIndex(ALGOLIA_INDEX_NAME_AUTHORS)
+    .saveObject(convertAuthorDocToAlgoliaRecord(doc.id, docData))
+}
+
 function deleteDocFromIndex(doc) {
-  return getAlgoliaClient().initIndex(ALGOLIA_INDEX_NAME).deleteObject(doc.id)
+  return getAlgoliaClient()
+    .initIndex(ALGOLIA_INDEX_NAME_ASSETS)
+    .deleteObject(doc.id)
 }
 
 // FIREBASE
@@ -85,6 +104,7 @@ const CollectionNames = {
   Summaries: 'summaries',
   Tweets: 'tweets',
   Notifications: 'notifications',
+  Authors: 'authors',
 }
 
 const AssetFieldNames = {
@@ -805,7 +825,7 @@ exports.onAuthorCreated = functions.firestore
   .onCreate(async (doc) => {
     const docData = doc.data()
 
-    return storeInHistory(
+    await storeInHistory(
       'Created author',
       doc.ref,
       {
@@ -813,6 +833,8 @@ exports.onAuthorCreated = functions.firestore
       },
       docData[AuthorFieldNames.createdBy]
     )
+
+    return insertAuthorDocIntoIndex(doc, docData)
   })
 
 exports.onAuthorEdited = functions.firestore
@@ -832,6 +854,8 @@ exports.onAuthorEdited = functions.firestore
       },
       docData[AuthorFieldNames.lastModifiedBy]
     )
+
+    return insertAuthorDocIntoIndex(doc, docData)
   })
 
 exports.onTweetCreated = functions.firestore
@@ -861,13 +885,29 @@ async function insertAssetsIntoIndex() {
   )
 
   await getAlgoliaClient()
-    .initIndex(ALGOLIA_INDEX_NAME)
+    .initIndex(ALGOLIA_INDEX_NAME_ASSETS)
+    .saveObjects(algoliaObjects)
+}
+
+async function insertAuthorsIntoIndex() {
+  const { docs } = await db.collection(CollectionNames.Authors).get()
+
+  const algoliaObjects = await Promise.all(
+    docs.map(async (doc) => {
+      const docData = doc.data()
+      return convertAuthorDocToAlgoliaRecord(doc.id, docData)
+    })
+  )
+
+  await getAlgoliaClient()
+    .initIndex(ALGOLIA_INDEX_NAME_AUTHORS)
     .saveObjects(algoliaObjects)
 }
 
 exports.syncIndex = functions.https.onRequest(async (req, res) => {
   try {
     await insertAssetsIntoIndex()
+    await insertAuthorsIntoIndex()
     res.status(200).send('Index has been synced')
   } catch (err) {
     console.error(err)
