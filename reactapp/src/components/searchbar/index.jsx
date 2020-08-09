@@ -7,6 +7,7 @@ import ThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
+import ClickAwayListener from '@material-ui/core/ClickAwayListener'
 
 import {
   changeSearchTerm,
@@ -19,7 +20,7 @@ import * as routes from '../../routes'
 import { convertSearchTermToUrlPath } from '../../utils'
 import { trackAction } from '../../analytics'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   root: {
     padding: '2px 2px 2px 24px',
     borderRadius: '3rem',
@@ -38,12 +39,12 @@ const useStyles = makeStyles(theme => ({
     padding: 10,
     display: 'flex',
     alignItems: 'center',
-    color: theme.palette.text.secondary,
+    color: 'rgba(0, 0, 0, 0.4)',
     '&:hover': {
       cursor: 'pointer'
     }
   }
-}))
+})
 
 function getLabelForSearchIndexName(searchIndexName) {
   switch (searchIndexName) {
@@ -107,54 +108,56 @@ export default () => {
 
   return (
     <ThemeProvider theme={lightTheme}>
-      <Paper className={classes.root}>
-        <InputBase
-          className={classes.input}
-          placeholder={getPlaceholderForSearchIndexName(searchIndexName)}
-          autoFocus={true}
-          autoComplete="false"
-          onChange={onSearchTermInputChange}
-          defaultValue={searchTerm || ''}
-        />
-        <span
-          className={classes.dropdown}
-          ref={dropdownMenuBtnRef}
-          onClick={() => {
-            setIsIndexDropdownOpen(!isIndexDropdownOpen)
-            trackAction('Searchbar', 'Open search index dropdown')
-          }}>
-          {getLabelForSearchIndexName(searchIndexName)} <ArrowDropDownIcon />
-        </span>
-        <Menu
-          anchorEl={dropdownMenuBtnRef.current}
-          getContentAnchorEl={null}
-          open={isIndexDropdownOpen}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right'
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right'
-          }}>
-          {Object.values(searchIndexNames).map(name => (
-            <MenuItem
-              key={name}
-              onClick={() => {
-                console.log(name)
-                dispatch(changeSearchIndexName(name))
-                setIsIndexDropdownOpen(false)
-                trackAction(
-                  'Searchbar',
-                  'Change search index name',
-                  searchIndexNameLabels[name]
-                )
-              }}>
-              {getLabelForSearchIndexName(name)}
-            </MenuItem>
-          ))}
-        </Menu>
-      </Paper>
+      <ClickAwayListener onClickAway={() => setIsIndexDropdownOpen(false)}>
+        <Paper className={classes.root}>
+          <InputBase
+            className={classes.input}
+            placeholder={getPlaceholderForSearchIndexName(searchIndexName)}
+            autoFocus={true}
+            autoComplete="false"
+            onChange={onSearchTermInputChange}
+            defaultValue={searchTerm || ''}
+          />
+          <span
+            className={classes.dropdown}
+            ref={dropdownMenuBtnRef}
+            onClick={() => {
+              setIsIndexDropdownOpen(!isIndexDropdownOpen)
+              trackAction('Searchbar', 'Open search index dropdown')
+            }}>
+            {getLabelForSearchIndexName(searchIndexName)} <ArrowDropDownIcon />
+          </span>
+          <Menu
+            anchorEl={dropdownMenuBtnRef.current}
+            getContentAnchorEl={null}
+            open={isIndexDropdownOpen}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right'
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right'
+            }}>
+            {Object.values(searchIndexNames).map(name => (
+              <MenuItem
+                key={name}
+                onClick={() => {
+                  console.log(name)
+                  dispatch(changeSearchIndexName(name))
+                  setIsIndexDropdownOpen(false)
+                  trackAction(
+                    'Searchbar',
+                    'Change search index name',
+                    searchIndexNameLabels[name]
+                  )
+                }}>
+                {getLabelForSearchIndexName(name)}
+              </MenuItem>
+            ))}
+          </Menu>
+        </Paper>
+      </ClickAwayListener>
     </ThemeProvider>
   )
 }
