@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import EditIcon from '@material-ui/icons/Edit'
+import Markdown from 'react-markdown'
 
 import * as routes from '../../routes'
 import categoryMeta from '../../category-meta'
@@ -133,6 +134,7 @@ export default ({
 
   const {
     [AuthorFieldNames.name]: name,
+    [AuthorFieldNames.description]: description,
     [AuthorFieldNames.categories]: categories = [],
     [AuthorFieldNames.discordServerId]: discordServerId,
     [AuthorFieldNames.ownedBy]: ownedBy,
@@ -170,6 +172,8 @@ export default ({
           </Fragment>
         ))}
       </div>
+
+      {description && <Markdown source={description} />}
 
       <SocialMediaList
         socialMedia={result}
