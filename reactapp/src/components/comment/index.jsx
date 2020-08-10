@@ -37,12 +37,6 @@ const useStyles = makeStyles({
   },
   deletedMessage: {
     fontStyle: 'italic'
-  },
-  controls: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    padding: '1rem'
   }
 })
 
