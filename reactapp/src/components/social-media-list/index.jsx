@@ -108,29 +108,34 @@ export default ({
     telegramUsername,
     youtubeChannelId,
     twitchUsername,
-    patreonUsername
+    patreonUsername,
+    discordServerInviteUrl
   }
 }) => {
   const items = [
     {
+      id: 'website',
       icon: LanguageIcon,
       label: websiteUrl ? 'Visit Website' : undefined,
       url: websiteUrl,
       type: 'website'
     },
     {
+      id: 'email',
       icon: EmailIcon,
       label: email ? 'Send Email' : undefined,
       url: `mailto:${email}`,
       type: 'email'
     },
     {
+      id: 'gumroad',
       icon: GumroadIcon,
       label: gumroadUsername ? 'Gumroad' : undefined,
       url: getUrlForGumroadUsername(gumroadUsername),
       type: 'gumroad'
     },
     {
+      id: 'vrchatUsername',
       icon: VrChatIcon,
       label: vrchatUsername
         ? vrchatUsername
@@ -141,35 +146,48 @@ export default ({
       type: 'vrchat'
     },
     {
+      id: 'discordUsername',
       icon: DiscordIcon,
       label: discordUsername,
       type: 'discord'
     },
     {
+      id: 'discordServerInviteUrl',
+      icon: DiscordIcon,
+      label: discordServerInviteUrl ? 'Join Discord Server' : undefined,
+      url: discordServerInviteUrl,
+      type: 'discord'
+    },
+    {
+      id: 'twitterUsername',
       icon: TwitterIcon,
       label: twitterUsername ? `@${twitterUsername}` : undefined,
       url: getUrlForTwitterUsername(twitterUsername),
       type: 'twitter'
     },
     {
+      id: 'telegramUsername',
       icon: TelegramIcon,
       label: telegramUsername ? `@${telegramUsername}` : undefined,
       url: getUrlForTelegramUsername(telegramUsername),
       type: 'telegram'
     },
     {
+      id: 'youtubeChannelId',
       icon: YouTubeIcon,
       label: youtubeChannelId ? `YouTube Channel` : undefined,
       url: getUrlForYouTubeChannelByChannelId(youtubeChannelId),
       type: 'youtube'
     },
     {
+      id: 'twitchUsername',
       icon: TwitchIcon,
       label: twitchUsername,
       url: getUrlForTwitchByUsername(twitchUsername),
       type: 'twitch'
     },
     {
+      id: 'patreonUsername',
       icon: PatreonIcon,
       label: patreonUsername,
       url: getUrlForPatreonByUsername(patreonUsername),
@@ -180,7 +198,7 @@ export default ({
     <div>
       {items.map((item, idx) => (
         <SocialMediaListItem
-          key={idx}
+          key={item.id}
           item={item}
           actionCategory={actionCategory}
         />
