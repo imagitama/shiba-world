@@ -210,7 +210,7 @@ export default ({ userId }) => {
   }
 
   // Profiles are optional and do not exist until they "set it up" so null check here
-  if (isErroredLoadingUser) {
+  if (isErroredLoadingUser || !user) {
     return (
       <ErrorMessage>Failed to load their account or user profile</ErrorMessage>
     )
