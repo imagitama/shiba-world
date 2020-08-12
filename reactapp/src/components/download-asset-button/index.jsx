@@ -49,7 +49,7 @@ export default ({ assetId, url, isLarge = false, onClick = null }) => {
       url={url}
       icon={<GetAppIcon />}
       onClick={onDownloadBtnClick}
-      size={isLarge ? 'large' : ''}>
+      size={isLarge ? 'large' : undefined}>
       Download
     </Button>
   )

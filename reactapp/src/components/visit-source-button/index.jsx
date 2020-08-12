@@ -119,7 +119,7 @@ export default ({
       url={sourceUrl}
       icon={<LaunchIcon />}
       onClick={onBtnClick}
-      size={isLarge ? 'large' : ''}
+      size={isLarge ? 'large' : undefined}
       className={isLarge ? classes.large : ''}>
       {getButtonLabel(categoryName, sourceUrl, isNoFilesAttached)}
     </Button>

@@ -32,7 +32,8 @@ export const CollectionNames = {
   Polls: 'polls',
   PollResponses: 'pollResponses',
   GuestUsers: 'guestUsers',
-  Authors: 'authors'
+  Authors: 'authors',
+  DiscordServers: 'discordServers'
 }
 
 export const AssetFieldNames = {
@@ -57,7 +58,8 @@ export const AssetFieldNames = {
   author: 'author',
   children: 'children',
   ownedBy: 'ownedBy',
-  isPinned: 'isPinned'
+  isPinned: 'isPinned',
+  discordServer: 'discordServer'
 }
 
 export const AssetCategories = {
@@ -188,6 +190,13 @@ export const AuthorFieldNames = {
   lastModifiedAt: 'lastModifiedAt',
   ownedBy: 'ownedBy',
   discordServerId: 'discordServerId'
+}
+
+export const DiscordServerFieldNames = {
+  name: 'name',
+  widgetId: 'widgetId',
+  iconUrl: 'iconUrl',
+  inviteUrl: 'inviteUrl'
 }
 
 function getWhereClausesAsString(whereClauses) {

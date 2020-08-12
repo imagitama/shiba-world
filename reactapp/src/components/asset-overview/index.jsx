@@ -11,7 +11,8 @@ import useDatabaseQuery, {
   CollectionNames,
   AssetCategories,
   AuthorFieldNames,
-  AssetFieldNames
+  AssetFieldNames,
+  DiscordServerFieldNames
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 
@@ -248,7 +249,45 @@ function Control({ children }) {
   return <div className={classes.control}>{children}</div>
 }
 
-function MobilePrimaryBtn({ downloadUrls, sourceUrl, assetId, categoryName }) {
+function DiscordServerInfo({ discordServer }) {
+  if (!discordServer) {
+    return null
+  }
+
+  const {
+    [DiscordServerFieldNames.name]: name,
+    // [DiscordServerFieldNames.widgetId]: widgetId,
+    // [DiscordServerFieldNames.iconUrl]: iconUrl,
+    [DiscordServerFieldNames.inviteUrl]: inviteUrl
+  } = discordServer
+
+  return (
+    <>
+      To download this asset you must be a member of {name}:{' '}
+      <a
+        href={inviteUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={() =>
+          trackAction(
+            analyticsCategoryName,
+            'Click join discord server link',
+            discordServer.id
+          )
+        }>
+        Join
+      </a>
+    </>
+  )
+}
+
+function MobilePrimaryBtn({
+  downloadUrls,
+  sourceUrl,
+  assetId,
+  categoryName,
+  discordServer
+}) {
   const classes = useStyles()
 
   // TODO: Use media query hook instead of css to show/hide
@@ -285,6 +324,7 @@ function MobilePrimaryBtn({ downloadUrls, sourceUrl, assetId, categoryName }) {
           />
         </>
       ) : null}
+      <DiscordServerInfo discordServer={discordServer} />
     </div>
   )
 }
@@ -337,7 +377,8 @@ export default ({ assetId }) => {
     isPrivate,
     [AssetFieldNames.author]: author,
     children,
-    [AssetFieldNames.ownedBy]: ownedBy
+    [AssetFieldNames.ownedBy]: ownedBy,
+    [AssetFieldNames.discordServer]: discordServer
   } = result
 
   if (!title) {
@@ -419,6 +460,7 @@ export default ({ assetId }) => {
         sourceUrl={sourceUrl}
         assetId={assetId}
         categoryName={category}
+        discordServer={discordServer}
       />
 
       <div className={classes.cols}>
@@ -590,6 +632,7 @@ export default ({ assetId }) => {
                 />
               </Control>
             ) : null}
+            <DiscordServerInfo discordServer={discordServer} />
             <Control>
               <ReportButton
                 assetId={id}
