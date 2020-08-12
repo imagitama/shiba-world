@@ -6,7 +6,12 @@ import { makeStyles } from '@material-ui/core/styles'
 const useStyles = makeStyles({
   icon: {
     marginLeft: '0.5rem',
-    display: 'flex' // fix line height issue
+    display: 'flex', // fix line height issue
+    // fix non-Material icons
+    '& svg': {
+      width: '1em',
+      height: '1em'
+    }
   }
 })
 

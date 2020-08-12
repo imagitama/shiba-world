@@ -61,6 +61,7 @@ import DownloadList from './components/download-list'
 import OwnerEditor from '../owner-editor'
 import DownloadAssetButton from '../download-asset-button'
 import VisitSourceButton from '../visit-source-button'
+import ChangeDiscordServerForm from '../change-discord-server-form'
 
 const useStyles = makeStyles({
   root: {
@@ -166,6 +167,10 @@ const useStyles = makeStyles({
     opacity: '0.5',
     display: 'block',
     textAlign: 'center'
+  },
+  discordServerInfo: {
+    fontSize: '75%',
+    marginBottom: '0.5rem'
   }
 })
 
@@ -250,6 +255,8 @@ function Control({ children }) {
 }
 
 function DiscordServerInfo({ discordServer }) {
+  const classes = useStyles()
+
   if (!discordServer) {
     return null
   }
@@ -258,26 +265,51 @@ function DiscordServerInfo({ discordServer }) {
     [DiscordServerFieldNames.name]: name,
     // [DiscordServerFieldNames.widgetId]: widgetId,
     // [DiscordServerFieldNames.iconUrl]: iconUrl,
-    [DiscordServerFieldNames.inviteUrl]: inviteUrl
+    [DiscordServerFieldNames.inviteUrl]: inviteUrl,
+    [DiscordServerFieldNames.requiresPatreon]: requiresPatreon,
+    [DiscordServerFieldNames.patreonUrl]: patreonUrl
   } = discordServer
 
   return (
-    <>
-      To download this asset you must be a member of {name}:{' '}
-      <a
-        href={inviteUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={() =>
-          trackAction(
-            analyticsCategoryName,
-            'Click join discord server link',
-            discordServer.id
-          )
-        }>
-        Join
-      </a>
-    </>
+    <div className={classes.discordServerInfo}>
+      To download this asset you must be a member of Discord server "{name}"
+      <br />
+      {requiresPatreon ? (
+        <>
+          You must be a Patreon:{' '}
+          <a
+            href={patreonUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() =>
+              trackAction(
+                analyticsCategoryName,
+                'Click join Patreon link for Discord server',
+                discordServer.id
+              )
+            }>
+            Join Here
+          </a>
+        </>
+      ) : (
+        <>
+          You must accept this invite:{' '}
+          <a
+            href={inviteUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() =>
+              trackAction(
+                analyticsCategoryName,
+                'Click join Discord server link',
+                discordServer.id
+              )
+            }>
+            Join Here
+          </a>
+        </>
+      )}
+    </div>
   )
 }
 
@@ -667,6 +699,13 @@ export default ({ assetId }) => {
                 </Control>
                 <Control>
                   <OwnerEditor
+                    collectionName={CollectionNames.Assets}
+                    id={assetId}
+                    actionCategory="ViewAsset"
+                  />
+                </Control>
+                <Control>
+                  <ChangeDiscordServerForm
                     collectionName={CollectionNames.Assets}
                     id={assetId}
                     actionCategory="ViewAsset"

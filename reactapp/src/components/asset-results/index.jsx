@@ -10,8 +10,6 @@ export default ({ assets, showCategory = false, showPinned = false }) => {
   const classes = useStyles()
   let allAssets
 
-  console.log(assets)
-
   if (showPinned) {
     const { pinnedAssets, unpinnedAssets } = assets.reduce(
       ({ pinnedAssets, unpinnedAssets }, asset) => {

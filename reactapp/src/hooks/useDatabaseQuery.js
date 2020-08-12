@@ -196,7 +196,9 @@ export const DiscordServerFieldNames = {
   name: 'name',
   widgetId: 'widgetId',
   iconUrl: 'iconUrl',
-  inviteUrl: 'inviteUrl'
+  inviteUrl: 'inviteUrl',
+  requiresPatreon: 'requiresPatreon',
+  patreonUrl: 'patreonUrl'
 }
 
 function getWhereClausesAsString(whereClauses) {
@@ -246,6 +248,7 @@ const mapDates = doc => {
 }
 
 const getDataFromReference = async record => {
+  console.debug(`get ${record.id}`)
   const result = await record.get()
   return {
     ...result.data(),

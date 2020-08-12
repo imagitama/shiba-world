@@ -41,7 +41,7 @@ function isPatreonUrl(url) {
 }
 
 function isDiscordUrl(url) {
-  return url.includes('discordapp.com')
+  return url.includes('discordapp.com') || url.includes('discord.com')
 }
 
 function getButtonLabel(category, sourceUrl, isNoFilesAttached) {
@@ -50,7 +50,7 @@ function getButtonLabel(category, sourceUrl, isNoFilesAttached) {
   }
 
   if (isGumroadUrl(sourceUrl)) {
-    return 'View Gumroad'
+    return 'Visit Gumroad source'
   }
 
   if (isTwitterUrl(sourceUrl)) {
@@ -66,11 +66,11 @@ function getButtonLabel(category, sourceUrl, isNoFilesAttached) {
   }
 
   if (isPatreonUrl(sourceUrl)) {
-    return 'View Patreon'
+    return 'Go to Patreon source'
   }
 
   if (isDiscordUrl(sourceUrl)) {
-    return 'View Discord'
+    return 'Go to Discord source'
   }
 
   return 'Download from Source'
