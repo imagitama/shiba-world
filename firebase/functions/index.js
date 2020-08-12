@@ -34,6 +34,8 @@ function convertAssetDocToAlgoliaRecord(docId, doc, authorName) {
     thumbnailUrl: doc[AssetFieldNames.thumbnailUrl],
     isAdult: doc[AssetFieldNames.isAdult],
     tags: doc[AssetFieldNames.tags],
+    species: doc[AssetFieldNames.species],
+    category: doc[AssetFieldNames.category],
     authorName,
   }
 }
