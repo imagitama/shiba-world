@@ -194,6 +194,7 @@ export const AuthorFieldNames = {
 
 export const DiscordServerFieldNames = {
   name: 'name',
+  description: 'description',
   widgetId: 'widgetId',
   iconUrl: 'iconUrl',
   inviteUrl: 'inviteUrl',

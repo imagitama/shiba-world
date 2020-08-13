@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 import EditIcon from '@material-ui/icons/Edit'
 import LaunchIcon from '@material-ui/icons/Launch'
-// import Markdown from 'react-markdown'
+import Markdown from 'react-markdown'
 
 import * as routes from '../../routes'
 
@@ -50,6 +50,7 @@ export default ({
 
   const {
     [DiscordServerFieldNames.name]: name,
+    [DiscordServerFieldNames.description]: description,
     [DiscordServerFieldNames.widgetId]: widgetId,
     // [DiscordServerFieldNames.iconUrl]: iconUrl,
     [DiscordServerFieldNames.inviteUrl]: inviteUrl,
@@ -78,7 +79,7 @@ export default ({
         </Link>
       </Heading>
 
-      {species && species.length && (
+      {species && species.length ? (
         <Heading variant="h2">
           {species.map((speciesName, idx) => (
             <Fragment key={speciesName}>
@@ -93,9 +94,9 @@ export default ({
             </Fragment>
           ))}
         </Heading>
-      )}
+      ) : null}
 
-      {/* {description && <Markdown source={description} />} */}
+      {description && <Markdown source={description} />}
 
       {inviteUrl && (
         <Button

@@ -11,6 +11,13 @@ export default [
       'The name of the server. This will be automatically populated at some point'
   },
   {
+    name: DiscordServerFieldNames.description,
+    label: 'Description',
+    type: 'textMarkdown',
+    default: '',
+    hint: 'A description of the server.'
+  },
+  {
     name: DiscordServerFieldNames.widgetId,
     label: 'Widget ID',
     default: '',
