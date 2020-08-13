@@ -4,7 +4,7 @@ import * as routes from './routes'
 import speciesMeta from './species-meta'
 import categoriesMeta from './category-meta'
 import { TWITTER_URL, DISCORD_URL } from './config'
-import { UserFieldNames } from './hooks/useDatabaseQuery'
+import { UserFieldNames, AssetCategories } from './hooks/useDatabaseQuery'
 import { ReactComponent as DiscordIcon } from './assets/images/icons/discord.svg'
 
 export function canShowMenuItem(menuItem, user) {
@@ -49,11 +49,18 @@ export function getLabelForMenuItem(Label) {
 }
 
 export default [
-  ...Object.entries(categoriesMeta).map(([name, meta]) => ({
-    id: `category-${name}`,
-    label: meta.name,
-    url: routes.viewCategoryWithVar.replace(':categoryName', name)
-  })),
+  {
+    id: 'news',
+    url: routes.news,
+    label: 'News'
+  },
+  ...Object.entries(categoriesMeta)
+    .filter(([name]) => name !== AssetCategories.article)
+    .map(([name, meta]) => ({
+      id: `category-${name}`,
+      label: meta.name,
+      url: routes.viewCategoryWithVar.replace(':categoryName', name)
+    })),
   {
     id: 'species',
     label: 'Species',

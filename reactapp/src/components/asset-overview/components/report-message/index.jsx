@@ -18,6 +18,11 @@ export default ({ assetId }) => {
       How to report this asset:
       <ul>
         <li>
+          join the VRCArena{' '}
+          <a href="https://discord.com/invite/UVs9V58">Discord server</a> and
+          send a message in #feedback
+        </li>
+        <li>
           contact a <Link to={routes.users}>staff member</Link> via social media
         </li>
         <li>
@@ -36,8 +41,8 @@ export default ({ assetId }) => {
       Common reasons for reporting:
       <ul>
         <li>typo</li>
-        <li>incorrect source</li>
-        <li>you own the asset and want it removed</li>
+        <li>incorrect or broken source</li>
+        <li>you own the asset and want to claim it to make changes</li>
         <li>you have better images</li>
       </ul>
     </Paper>
