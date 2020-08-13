@@ -198,7 +198,12 @@ export const DiscordServerFieldNames = {
   iconUrl: 'iconUrl',
   inviteUrl: 'inviteUrl',
   requiresPatreon: 'requiresPatreon',
-  patreonUrl: 'patreonUrl'
+  patreonUrl: 'patreonUrl',
+  species: 'species',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy'
 }
 
 function getWhereClausesAsString(whereClauses) {

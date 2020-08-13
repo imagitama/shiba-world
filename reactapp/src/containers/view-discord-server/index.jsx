@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 import EditIcon from '@material-ui/icons/Edit'
@@ -21,6 +21,7 @@ import useDatabaseQuery, {
 } from '../../hooks/useDatabaseQuery'
 import { canEditDiscordServer } from '../../utils'
 import { trackAction } from '../../analytics'
+import speciesMeta from '../../species-meta'
 
 const analyticsCategory = 'ViewDiscordServer'
 
@@ -53,7 +54,8 @@ export default ({
     // [DiscordServerFieldNames.iconUrl]: iconUrl,
     [DiscordServerFieldNames.inviteUrl]: inviteUrl,
     [DiscordServerFieldNames.requiresPatreon]: requiresPatreon,
-    [DiscordServerFieldNames.patreonUrl]: patreonUrl
+    [DiscordServerFieldNames.patreonUrl]: patreonUrl,
+    [DiscordServerFieldNames.species]: species
   } = result
 
   return (
@@ -75,6 +77,23 @@ export default ({
           {name}
         </Link>
       </Heading>
+
+      {species && species.length && (
+        <Heading variant="h2">
+          {species.map((speciesName, idx) => (
+            <Fragment key={speciesName}>
+              {idx !== 0 && ', '}
+              <Link
+                to={routes.viewSpeciesWithVar.replace(
+                  ':speciesName',
+                  speciesName
+                )}>
+                {speciesMeta[speciesName].name}
+              </Link>
+            </Fragment>
+          ))}
+        </Heading>
+      )}
 
       {/* {description && <Markdown source={description} />} */}
 
