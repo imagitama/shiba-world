@@ -36,6 +36,10 @@ export const adultAssets = '/adult-assets'
 export const authors = '/authors'
 export const viewAuthorWithVar = '/authors/:authorId'
 export const editAuthorWithVar = '/authors/:authorId/edit'
+export const discordServers = '/discord-servers'
+export const viewDiscordServerWithVar = '/discord-servers/:discordServerId'
+export const editDiscordServerWithVar = '/discord-servers/:discordServerId/edit'
+export const createDiscordServer = '/discord-servers/create'
 
 // Outdated routes
 export const browseAssets = '/browse'

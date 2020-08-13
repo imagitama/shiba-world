@@ -685,6 +685,18 @@ export default ({ assetId }) => {
                 }
               />
             </Control>
+            {discordServer && (
+              <Control>
+                <Button
+                  url={routes.viewDiscordServerWithVar.replace(
+                    ':discordServerId',
+                    discordServer.id
+                  )}
+                  color="default">
+                  Discord Server Info
+                </Button>
+              </Control>
+            )}
 
             {canEditAsset(user, createdBy, ownedBy) ? (
               <>

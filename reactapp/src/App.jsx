@@ -118,6 +118,15 @@ const Authors = lazy(() =>
 const EditUser = lazy(() =>
   catchChunkDeaths(() => import('./containers/edit-user'))
 )
+const DiscordServers = lazy(() =>
+  catchChunkDeaths(() => import('./containers/discord-servers'))
+)
+const ViewDiscordServer = lazy(() =>
+  catchChunkDeaths(() => import('./containers/view-discord-server'))
+)
+const EditDiscordServer = lazy(() =>
+  catchChunkDeaths(() => import('./containers/edit-discord-server'))
+)
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
   return (
@@ -317,6 +326,22 @@ const MainContent = () => {
         <Route exact path={routes.authors} component={Authors} />
         <Route exact path={routes.editAuthorWithVar} component={EditAuthor} />
         <Route exact path={routes.viewAuthorWithVar} component={ViewAuthor} />
+        <Route
+          exact
+          path={routes.createDiscordServer}
+          component={EditDiscordServer}
+        />
+        <Route
+          exact
+          path={routes.editDiscordServerWithVar}
+          component={EditDiscordServer}
+        />
+        <Route
+          exact
+          path={routes.viewDiscordServerWithVar}
+          component={ViewDiscordServer}
+        />
+        <Route exact path={routes.discordServers} component={DiscordServers} />
         <Route
           component={() => (
             <ErrorContainer code={404} message="Page not found" />

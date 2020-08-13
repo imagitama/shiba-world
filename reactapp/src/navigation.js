@@ -108,6 +108,11 @@ export default [
         url: routes.requests
       },
       {
+        id: 'discord-servers',
+        label: 'Discord Servers',
+        url: routes.discordServers
+      },
+      {
         id: 'about',
         url: routes.about,
         label: 'About'

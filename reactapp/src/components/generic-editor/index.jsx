@@ -57,22 +57,33 @@ export default ({
   cancelBtnAction = '',
   successUrl = '',
   cancelUrl = '',
-  extraFormData = {}
+  extraFormData = {},
+  getSuccessUrl = () => null
 }) => {
+  if (!(collectionName in editableFields)) {
+    throw new Error(`Collection name ${collectionName} not in editable fields!`)
+  }
+
+  const fields = editableFields[collectionName]
+
   const userId = useFirebaseUserId()
   const [isLoading, isErrored, result] = useDatabaseEdit(collectionName, id)
   const [isSaving, isSuccess, isFailed, save] = useDatabaseSave(
     collectionName,
     id
   )
-  const [formFields, setFormFields] = useState(null)
+  const [formFields, setFormFields] = useState(
+    id
+      ? null
+      : fields.reduce((newFormFields, fieldConfig) => {
+          return {
+            ...newFormFields,
+            [fieldConfig.name]: fieldConfig.default
+          }
+        }, {})
+  )
   const classes = useStyles()
-
-  if (!(collectionName in editableFields)) {
-    throw new Error(`Collection name ${collectionName} not in editable fields!`)
-  }
-
-  const fields = editableFields[collectionName]
+  const [createdDocId, setCreatedDocId] = useState(null)
 
   useEffect(() => {
     if (!result) {
@@ -101,11 +112,13 @@ export default ({
 
       scrollToTop()
 
-      await save({
+      const [newId] = await save({
         ...formFields,
         lastModifiedBy: createRef(CollectionNames.Users, userId),
         lastModifiedAt: new Date()
       })
+
+      setCreatedDocId(newId)
     } catch (err) {
       console.error(`Failed to save ${id} to ${collectionName}`, err)
       handleError(err)
@@ -131,7 +144,7 @@ export default ({
         <br />
         <br />
         <Button
-          url={successUrl}
+          url={id ? successUrl : getSuccessUrl(createdDocId)}
           onClick={() => trackAction(analyticsCategory, viewBtnAction, id)}>
           View
         </Button>

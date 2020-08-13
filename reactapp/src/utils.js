@@ -74,6 +74,16 @@ export function canEditAuthor(user, author) {
   return false
 }
 
+export function canEditDiscordServer(user) {
+  if (!user) {
+    return false
+  }
+  if (user.isAdmin || user.isEditor) {
+    return true
+  }
+  return false
+}
+
 export function canApproveAsset(currentUser) {
   if (!currentUser) {
     return false
