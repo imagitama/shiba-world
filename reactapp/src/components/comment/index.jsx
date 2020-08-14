@@ -100,13 +100,14 @@ export default ({
     <Card className={classes.root}>
       <div className={classes.container} title={id}>
         <CardContent className={classes.content}>
-          {isDeleted ? (
+          {isDeleted && (
             <span className={classes.deletedMessage}>
               This comment has been deleted.
             </span>
-          ) : (
-            <Markdown source={comment} />
           )}
+          {!isDeleted || canEditComments(user) ? (
+            <Markdown source={comment} />
+          ) : null}
           <Typography variant="body2" color="textSecondary" component="p">
             <FormattedDate date={createdAt} /> by{' '}
             <Link to={routes.viewUserWithVar.replace(':userId', createdBy.id)}>
