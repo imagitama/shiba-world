@@ -73,7 +73,8 @@ export default () => {
             title: hit.title,
             description: hit.description,
             thumbnailUrl: hit.thumbnailUrl,
-            isApproved: true
+            isApproved: true,
+            _highlightResult: hit._highlightResult
           }))}
         />
       ) : (

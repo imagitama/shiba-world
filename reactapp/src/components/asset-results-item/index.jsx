@@ -100,6 +100,43 @@ const CategoryChip = ({ categoryName }) => {
   )
 }
 
+function HighlightResult({ _highlightResult }) {
+  let results = []
+
+  Object.entries(_highlightResult).forEach(([nameOfProp, valueOfProp]) => {
+    let nameOfMatchingProp
+    let valueOfMatchProp
+
+    if (Array.isArray(valueOfProp)) {
+      valueOfProp.forEach(subValue => {
+        if (subValue.matchLevel !== 'none') {
+          nameOfMatchingProp = nameOfProp
+          valueOfMatchProp = subValue.matchedWords[0]
+        }
+      })
+    } else {
+      if (valueOfProp.matchLevel !== 'none') {
+        nameOfMatchingProp = nameOfProp
+        valueOfMatchProp = valueOfProp.matchedWords[0]
+      }
+    }
+
+    if (nameOfMatchingProp && valueOfMatchProp) {
+      results.push({
+        name: nameOfMatchingProp,
+        value: valueOfMatchProp
+      })
+    }
+  })
+
+  return results.map(result => (
+    <>
+      <br />
+      {result.name} => {result.value}
+    </>
+  ))
+}
+
 export default function AssetItem({
   asset: {
     id,
@@ -111,7 +148,8 @@ export default function AssetItem({
     isPrivate,
     category,
     isPinned,
-    createdAt
+    createdAt,
+    _highlightResult
   },
   showCategory = false,
   showPinned = false
@@ -148,6 +186,9 @@ export default function AssetItem({
             <Typography variant="body2" color="textSecondary" component="p">
               {truncateTextAndAddEllipsis(description)}
             </Typography>
+            {_highlightResult && (
+              <HighlightResult _highlightResult={_highlightResult} />
+            )}
           </CardContent>
         </Link>
       </CardActionArea>
