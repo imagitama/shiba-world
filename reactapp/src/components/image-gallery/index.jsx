@@ -6,6 +6,7 @@ import 'react-image-lightbox/style.css'
 const useStyles = makeStyles({
   thumbnail: {
     maxHeight: 200,
+    maxWidth: '100%',
     margin: '0 0.5rem 0.5rem 0',
     '&:hover': { cursor: 'pointer ' }
   }
