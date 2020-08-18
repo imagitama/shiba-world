@@ -13,7 +13,8 @@
     "load-algolia-config": "firebase functions:config:set algolia=\"$(cat .algoliaconfig.json)\"",
     "load-twitter-config": "firebase functions:config:set twitter=\"$(cat .twitterconfig.json)\"",
     "load-discord-config": "firebase functions:config:set discord=\"$(cat .discordconfig.json)\"",
-    "load-config": "npm run load-algolia-config && npm run load-twitter-config && npm run load-discord-config"
+    "load-global-config": "firebase functions:config:set global=\"$(cat .globalconfig.json)\"",
+    "load-config": "npm run load-algolia-config && npm run load-twitter-config && npm run load-discord-config && npm run load-global-config"
   },
   "engines": {
     "node": "8"

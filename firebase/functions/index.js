@@ -9,6 +9,7 @@ const config = functions.config()
 
 // ALGOLIA
 
+const IS_ALGOLIA_ENABLED = config.global.isAlgoliaEnabled !== 'false'
 const ALGOLIA_APP_ID = config.algolia.app_id
 const ALGOLIA_ADMIN_KEY = config.algolia.admin_api_key
 const ALGOLIA_INDEX_NAME_ASSETS = 'prod_ASSETS'
@@ -73,24 +74,40 @@ async function retrieveAuthorNameFromAssetData(docData, defaultName = '') {
 async function insertAssetDocIntoIndex(doc, docData) {
   const authorName = await retrieveAuthorNameFromAssetData(docData)
 
+  if (!IS_ALGOLIA_ENABLED) {
+    return Promise.resolve()
+  }
+
   return getAlgoliaClient()
     .initIndex(ALGOLIA_INDEX_NAME_ASSETS)
     .saveObject(convertAssetDocToAlgoliaRecord(doc.id, docData, authorName))
 }
 
 async function insertAuthorDocIntoIndex(doc, docData) {
+  if (!IS_ALGOLIA_ENABLED) {
+    return Promise.resolve()
+  }
+
   return getAlgoliaClient()
     .initIndex(ALGOLIA_INDEX_NAME_AUTHORS)
     .saveObject(convertAuthorDocToAlgoliaRecord(doc.id, docData))
 }
 
 async function insertUserDocIntoIndex(doc, docData) {
+  if (!IS_ALGOLIA_ENABLED) {
+    return Promise.resolve()
+  }
+
   return getAlgoliaClient()
     .initIndex(ALGOLIA_INDEX_NAME_USERS)
     .saveObject(convertUserDocToAlgoliaRecord(doc.id, docData))
 }
 
 function deleteDocFromIndex(doc) {
+  if (!IS_ALGOLIA_ENABLED) {
+    return Promise.resolve()
+  }
+
   return getAlgoliaClient()
     .initIndex(ALGOLIA_INDEX_NAME_ASSETS)
     .deleteObject(doc.id)
@@ -423,6 +440,7 @@ async function rebuildTagsCache() {
 
 // TWITTER
 
+const IS_TWITTER_ENABLED = config.global.isTwitterEnabled !== 'false'
 const TWITTER_CONSUMER_KEY = config.twitter.consumer_key
 const TWITTER_CONSUMER_SECRET = config.twitter.consumer_secret
 const TWITTER_ACCESS_TOKEN_KEY = config.twitter.access_token_key
@@ -444,6 +462,10 @@ function getTwitterClient() {
 }
 
 async function sendTweet(status) {
+  if (!IS_TWITTER_ENABLED) {
+    return Promise.resolve('1234')
+  }
+
   return getTwitterClient()
     .post('statuses/update', {
       status,
@@ -467,6 +489,7 @@ async function updateTweetRecordInDatabase(recordId, tweetId) {
 
 // DISCORD
 
+const IS_DISCORD_ENABLED = config.global.isDiscordEnabled !== 'false'
 const DISCORD_ACTIVITY_WEBHOOK_URL = config.discord.activity_webhook_url
 const DISCORD_EDITOR_NOTIFICATIONS_WEBHOOK_URL =
   config.discord.editor_notifications_webhook_url
@@ -479,6 +502,10 @@ const routes = {
 }
 
 async function emitToDiscord(webhookUrl, message, embeds = []) {
+  if (!IS_DISCORD_ENABLED) {
+    return Promise.resolve()
+  }
+
   const resp = await fetch(webhookUrl, {
     method: 'POST',
     headers: {
