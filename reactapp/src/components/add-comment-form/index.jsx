@@ -5,6 +5,7 @@ import TextField from '@material-ui/core/TextField'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { CollectionNames } from '../../hooks/useDatabaseQuery'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
+import useAlgoliaSearch from '../../hooks/useAlgoliaSearch'
 
 import ErrorMessage from '../error-message'
 import SuccessMessage from '../success-message'
@@ -14,6 +15,7 @@ import Message from '../message'
 
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
+import { searchIndexNames } from '../../modules/app'
 
 const useStyles = makeStyles({
   root: {
@@ -24,8 +26,53 @@ const useStyles = makeStyles({
   },
   button: {
     marginTop: '0.5rem'
+  },
+  tagHint: {
+    fontSize: '75%'
   }
 })
+
+function UserList({ searchTerm, onClickUser }) {
+  const [isSearching, isErrored, results] = useAlgoliaSearch(
+    searchIndexNames.USERS,
+    searchTerm
+  )
+
+  if (isSearching) {
+    return <LoadingIndicator />
+  }
+
+  if (isErrored) {
+    return <ErrorMessage>Failed to search users</ErrorMessage>
+  }
+
+  if (!results || !results.length) {
+    return <ErrorMessage>No results</ErrorMessage>
+  }
+
+  return (
+    <ul>
+      {results.map(result => (
+        <li
+          key={result.objectID}
+          onClick={() => onClickUser(result.objectID, result.username)}>
+          {result.username}
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+function getSearchTerm(text) {
+  // Check if there are spaces as that is how we know the search is "complete"
+  if (!text || !text.includes('@') || text.includes(' ')) {
+    return ''
+  }
+
+  const chunks = text.split('@')
+
+  return chunks[1]
+}
 
 export default ({ collectionName, parentId, onAddClick = null }) => {
   if (!collectionName) {
@@ -78,6 +125,12 @@ export default ({ collectionName, parentId, onAddClick = null }) => {
     }
   }
 
+  const userSearchTerm = getSearchTerm(textFieldValue)
+
+  const onClickUser = (userId, username) => {
+    setTextFieldValue(textFieldValue.replace(userSearchTerm, username))
+  }
+
   return (
     <div className={classes.root}>
       <TextField
@@ -89,6 +142,15 @@ export default ({ collectionName, parentId, onAddClick = null }) => {
         rows={5}
         variant="filled"
       />
+      {userSearchTerm ? (
+        <UserList searchTerm={userSearchTerm} onClickUser={onClickUser} />
+      ) : (
+        <span className={classes.tagHint}>
+          Start your message with @ and you can tag a user which will notify
+          them of your comment (does not support usernames with spaces)
+          <br />
+        </span>
+      )}
       <Button className={classes.button} onClick={onAddCommentBtnClick}>
         Add Comment
       </Button>

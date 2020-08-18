@@ -9,7 +9,8 @@ import useDatabaseQuery, {
   NotificationsFieldNames,
   Operators,
   OrderDirections,
-  AssetFieldNames
+  AssetFieldNames,
+  UserFieldNames
 } from '../../hooks/useDatabaseQuery'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
@@ -48,12 +49,12 @@ const useStyles = makeStyles({
 })
 
 function Message({ parent, message, data }) {
+  const collectionName = getCollectionNameForResult(parent)
+
   switch (message) {
     case 'Approved asset':
       return `Your asset "${parent[AssetFieldNames.title]}" was approved`
     case 'Created comment':
-      const collectionName = getCollectionNameForResult(parent)
-
       switch (collectionName) {
         case CollectionNames.Assets:
           return `${
@@ -63,6 +64,23 @@ function Message({ parent, message, data }) {
           return `${
             data && data.author ? data.author.username : 'Someone'
           } commented on your profile`
+        default:
+          return '????'
+      }
+    case 'Tagged user':
+      switch (collectionName) {
+        case CollectionNames.Assets:
+          return `${
+            data && data.author
+              ? data.author[UserFieldNames.username]
+              : 'Someone'
+          } tagged you in a comment of asset "${parent[AssetFieldNames.title]}"`
+        case CollectionNames.Users:
+          return `${
+            data && data.author
+              ? data.author[UserFieldNames.username]
+              : 'Someone'
+          } tagged you in a comment for user ${parent[UserFieldNames.username]}`
         default:
           return '????'
       }
@@ -88,6 +106,8 @@ function getLinkUrl(parent) {
   switch (collectionName) {
     case CollectionNames.Assets:
       return routes.viewAssetWithVar.replace(':assetId', parent.id)
+    case CollectionNames.Users:
+      return routes.viewUserWithVar.replace(':userId', parent.id)
     default:
       return '/#unknown'
   }

@@ -164,6 +164,7 @@ const AssetFieldNames = {
 }
 
 const CommentFieldNames = {
+  comment: 'comment',
   parent: 'parent',
   createdBy: 'createdBy',
 }
@@ -274,6 +275,37 @@ async function storeInNotifications(
     [NotificationsFieldNames.isRead]: false,
     [NotificationsFieldNames.data]: data,
     [NotificationsFieldNames.createdAt]: new Date(),
+  })
+}
+
+async function getTaggedNotificationRecipientByUsername(username) {
+  return db
+    .collection(CollectionNames.Users)
+    .where(UserFieldNames.username, Operators.EQUALS, username)
+    .get()
+}
+
+async function notifyTaggedUserIfNeeded(commentMessage, parentRef, taggerRef) {
+  if (commentMessage[0] !== '@') {
+    return Promise.resolve()
+  }
+
+  const commentMessageWithAtSymbol = commentMessage.substr(1)
+
+  // Does NOT support username with spaces yet
+  const chunks = commentMessageWithAtSymbol.split(' ')
+  const username = chunks[0]
+
+  const recipientRefs = await getTaggedNotificationRecipientByUsername(username)
+
+  if (recipientRefs.empty || recipientRefs.docs.length !== 1) {
+    return Promise.resolve()
+  }
+
+  const recipientRef = recipientRefs.docs[0].ref
+
+  await storeInNotifications('Tagged user', parentRef, recipientRef, {
+    author: taggerRef,
   })
 }
 
@@ -728,6 +760,12 @@ exports.onCommentCreated = functions.firestore
     const commenterDoc = await docData[CommentFieldNames.createdBy].get()
 
     if (isUserDocument(parentDoc)) {
+      await notifyTaggedUserIfNeeded(
+        docData[CommentFieldNames.comment],
+        docData[CommentFieldNames.parent],
+        docData[CommentFieldNames.createdBy]
+      )
+
       await emitToDiscordActivity(
         `User ${commenterDoc.get(
           UserFieldNames.username
@@ -742,6 +780,12 @@ exports.onCommentCreated = functions.firestore
       !isDeleted(parentDocData) &&
       !isAdult(parentDocData)
     ) {
+      await notifyTaggedUserIfNeeded(
+        docData[CommentFieldNames.comment],
+        docData[CommentFieldNames.parent],
+        docData[CommentFieldNames.createdBy]
+      )
+
       await emitToDiscordActivity(
         `User ${commenterDoc.get(
           UserFieldNames.username
