@@ -52,6 +52,8 @@ function getLabelForSearchIndexName(searchIndexName) {
       return 'Assets'
     case searchIndexNames.AUTHORS:
       return 'Authors'
+    case searchIndexNames.USERS:
+      return 'Users'
     default:
       return '?'
   }
@@ -63,6 +65,8 @@ function getPlaceholderForSearchIndexName(searchIndexName) {
       return 'Search assets'
     case searchIndexNames.AUTHORS:
       return 'Search authors'
+    case searchIndexNames.USERS:
+      return 'Search users'
     default:
       return '?'
   }

@@ -25,12 +25,14 @@ function getDarkModeEnabledInitialState() {
 
 export const searchIndexNames = {
   ASSETS: 'prod_ASSETS',
-  AUTHORS: 'prod_AUTHORS'
+  AUTHORS: 'prod_AUTHORS',
+  USERS: 'prod_USERS'
 }
 
 export const searchIndexNameLabels = {
   [searchIndexNames.ASSETS]: 'assets',
-  [searchIndexNames.AUTHORS]: 'authors'
+  [searchIndexNames.AUTHORS]: 'authors',
+  [searchIndexNames.USERS]: 'users'
 }
 
 function isSearchRoute() {

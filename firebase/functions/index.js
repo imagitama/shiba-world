@@ -49,6 +49,14 @@ function convertAuthorDocToAlgoliaRecord(docId, doc) {
   }
 }
 
+function convertUserDocToAlgoliaRecord(docId, doc) {
+  return {
+    objectID: docId,
+    username: doc[UserFieldNames.username],
+    avatarUrl: doc[UserFieldNames.avatarUrl],
+  }
+}
+
 async function retrieveAuthorNameFromAssetData(docData, defaultName = '') {
   if (docData[AssetFieldNames.author]) {
     if (!docData[AssetFieldNames.author].get) {
@@ -74,6 +82,12 @@ async function insertAuthorDocIntoIndex(doc, docData) {
   return getAlgoliaClient()
     .initIndex(ALGOLIA_INDEX_NAME_AUTHORS)
     .saveObject(convertAuthorDocToAlgoliaRecord(doc.id, docData))
+}
+
+async function insertUserDocIntoIndex(doc, docData) {
+  return getAlgoliaClient()
+    .initIndex(ALGOLIA_INDEX_NAME_USERS)
+    .saveObject(convertUserDocToAlgoliaRecord(doc.id, docData))
 }
 
 function deleteDocFromIndex(doc) {
@@ -155,11 +169,14 @@ const UserFieldNames = {
   username: 'username',
   isEditor: 'isEditor',
   isAdmin: 'isAdmin',
-  isBanned: 'isBanned',
-  banReason: 'banReason',
   enabledAdultContent: 'enabledAdultContent',
   lastModifiedBy: 'lastModifiedBy',
   lastModifiedAt: 'lastModifiedAt',
+  avatarUrl: 'avatarUrl',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  isBanned: 'isBanned',
+  banReason: 'banReason',
 }
 
 const NotificationsFieldNames = {
@@ -722,6 +739,8 @@ exports.onUserUpdated = functions.firestore
   .onUpdate(async ({ before: beforeDoc, after: doc }) => {
     const docData = doc.data()
 
+    await insertUserDocIntoIndex(doc, docData)
+
     return storeInHistory(
       'Edited user',
       doc.ref,
@@ -906,10 +925,26 @@ async function insertAuthorsIntoIndex() {
     .saveObjects(algoliaObjects)
 }
 
+async function insertUsersIntoIndex() {
+  const { docs } = await db.collection(CollectionNames.Users).get()
+
+  const algoliaObjects = await Promise.all(
+    docs.map(async (doc) => {
+      const docData = doc.data()
+      return convertUserDocToAlgoliaRecord(doc.id, docData)
+    })
+  )
+
+  await getAlgoliaClient()
+    .initIndex(ALGOLIA_INDEX_NAME_USERS)
+    .saveObjects(algoliaObjects)
+}
+
 exports.syncIndex = functions.https.onRequest(async (req, res) => {
   try {
     await insertAssetsIntoIndex()
     await insertAuthorsIntoIndex()
+    await insertUsersIntoIndex()
     res.status(200).send('Index has been synced')
   } catch (err) {
     console.error(err)

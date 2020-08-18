@@ -11,6 +11,7 @@ import AuthorResults from '../author-results'
 import NoResultsMessage from '../no-results-message'
 import Button from '../button'
 import PageControls from '../page-controls'
+import UserList from '../user-list'
 
 import { searchIndexNames } from '../../modules/app'
 import * as routes from '../../routes'
@@ -64,9 +65,9 @@ export default () => {
     )
   }
 
-  return (
-    <>
-      {searchIndexName === searchIndexNames.ASSETS ? (
+  switch (searchIndexName) {
+    case searchIndexNames.ASSETS:
+      return (
         <AssetResults
           assets={hits.map(hit => ({
             id: hit.objectID,
@@ -77,7 +78,9 @@ export default () => {
             _highlightResult: hit._highlightResult
           }))}
         />
-      ) : (
+      )
+    case searchIndexNames.AUTHORS:
+      return (
         <>
           <AuthorResults
             authors={hits.map(hit => ({
@@ -89,7 +92,17 @@ export default () => {
           />
           <ViewAllAuthorsBtn />
         </>
-      )}
-    </>
-  )
+      )
+    case searchIndexNames.USERS:
+      return (
+        <UserList
+          users={hits.map(hit => ({
+            id: hit.objectID,
+            username: hit.username
+          }))}
+        />
+      )
+    default:
+      return 'Unknown search index to show results for'
+  }
 }
