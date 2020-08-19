@@ -1,9 +1,10 @@
-import React, { Fragment } from 'react'
+import React, { useState, Fragment } from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 import EditIcon from '@material-ui/icons/Edit'
 import LaunchIcon from '@material-ui/icons/Launch'
 import Markdown from 'react-markdown'
+import SyncIcon from '@material-ui/icons/Sync'
 
 import * as routes from '../../routes'
 
@@ -22,8 +23,48 @@ import useDatabaseQuery, {
 import { canEditDiscordServer } from '../../utils'
 import { trackAction } from '../../analytics'
 import speciesMeta from '../../species-meta'
+import { handleError } from '../../error-handling'
+import { callFunction } from '../../firebase'
 
 const analyticsCategory = 'ViewDiscordServer'
+
+function SyncDiscordServerButton({ discordServerId }) {
+  const [isLoading, setIsLoading] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(null)
+
+  const onClick = async () => {
+    try {
+      if (isLoading) {
+        return
+      }
+
+      setIsLoading(true)
+      setIsSuccess(false)
+
+      await callFunction('syncDiscordServerById', {
+        id: discordServerId
+      })
+
+      setIsLoading(false)
+      setIsSuccess(true)
+    } catch (err) {
+      handleError(err)
+      setIsSuccess(false)
+    }
+  }
+
+  return (
+    <Button onClick={onClick} icon={<SyncIcon />}>
+      {isLoading
+        ? 'Working...'
+        : isSuccess === true
+        ? 'Synced'
+        : isSuccess === false
+        ? 'Failed to sync'
+        : 'Sync'}
+    </Button>
+  )
+}
 
 export default ({
   match: {
@@ -52,7 +93,7 @@ export default ({
     [DiscordServerFieldNames.name]: name,
     [DiscordServerFieldNames.description]: description,
     [DiscordServerFieldNames.widgetId]: widgetId,
-    // [DiscordServerFieldNames.iconUrl]: iconUrl,
+    [DiscordServerFieldNames.iconUrl]: iconUrl,
     [DiscordServerFieldNames.inviteUrl]: inviteUrl,
     [DiscordServerFieldNames.requiresPatreon]: requiresPatreon,
     [DiscordServerFieldNames.patreonUrl]: patreonUrl,
@@ -68,6 +109,8 @@ export default ({
           content={`View the Discord server named ${name}`}
         />
       </Helmet>
+
+      {iconUrl && <img src={iconUrl} alt={`Icon for server ${name}`} />}
 
       <Heading variant="h1">
         <Link
@@ -156,7 +199,8 @@ export default ({
               )
             }>
             Edit
-          </Button>
+          </Button>{' '}
+          <SyncDiscordServerButton discordServerId={discordServerId} />
         </>
       )}
 

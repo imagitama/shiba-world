@@ -2,6 +2,7 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
 import 'firebase/database'
+import 'firebase/functions'
 import * as Sentry from '@sentry/browser'
 
 const firebaseConfig = {
@@ -44,3 +45,10 @@ auth.onAuthStateChanged(user => {
     loggedInUserId = null
   }
 })
+
+export const callFunction = (name, data) => {
+  return firebase
+    .app()
+    .functions()
+    .httpsCallable(name)(data)
+}

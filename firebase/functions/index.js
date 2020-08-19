@@ -113,6 +113,48 @@ function deleteDocFromIndex(doc) {
     .deleteObject(doc.id)
 }
 
+// DISCORD
+
+const DISCORD_BOT_TOKEN = config.discord.bot_token
+const discordApiUrl = 'https://discordapp.com/api/v6'
+
+async function queryDiscordApi(endpoint) {
+  const url = `${discordApiUrl}/${endpoint}`
+  return fetch(url, {
+    headers: {
+      Authorization: `Bot ${DISCORD_BOT_TOKEN}`,
+    },
+  }).then((resp) => {
+    if (!resp.ok) {
+      throw new Error(
+        `Response from discord api not OK! Status ${resp.status} ${resp.statusText} ${url}`
+      )
+    }
+    return resp.json()
+  })
+}
+
+function getInviteCodeFromUrl(inviteUrl) {
+  return inviteUrl.split('/').pop()
+}
+
+async function getInviteFromDiscordApiByCode(inviteCode) {
+  return queryDiscordApi(`invites/${inviteCode}`)
+}
+
+function getDiscordServerIcon(guildId, iconHash) {
+  if (!guildId) {
+    throw new Error(`No guild id!`)
+  }
+
+  if (!iconHash) {
+    return ''
+  }
+
+  // https://discord.com/developers/docs/reference#image-formatting
+  return `https://cdn.discordapp.com/icons/${guildId}/${iconHash}.png`
+}
+
 // FIREBASE
 
 admin.initializeApp()
@@ -138,6 +180,7 @@ const CollectionNames = {
   Tweets: 'tweets',
   Notifications: 'notifications',
   Authors: 'authors',
+  DiscordServers: 'discordServers',
 }
 
 const AssetFieldNames = {
@@ -227,6 +270,21 @@ const AuthorFieldNames = {
   createdBy: 'createdBy',
   lastModifiedBy: 'lastModifiedBy',
   lastModifiedAt: 'lastModifiedAt',
+}
+
+const DiscordServerFieldNames = {
+  name: 'name',
+  description: 'description',
+  widgetId: 'widgetId',
+  iconUrl: 'iconUrl',
+  inviteUrl: 'inviteUrl',
+  requiresPatreon: 'requiresPatreon',
+  patreonUrl: 'patreonUrl',
+  species: 'species',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
 }
 
 function isNotApproved(docData) {
@@ -1010,6 +1068,50 @@ async function insertUsersIntoIndex() {
     .initIndex(ALGOLIA_INDEX_NAME_USERS)
     .saveObjects(algoliaObjects)
 }
+
+async function syncDiscordServerById(id) {
+  const doc = db.collection(CollectionNames.DiscordServers).doc(id)
+  const retrievedDoc = await doc.get()
+  const inviteUrl = retrievedDoc.get(DiscordServerFieldNames.inviteUrl)
+
+  if (!inviteUrl) {
+    throw new Error('No invite URL for id')
+  }
+
+  const inviteCode = getInviteCodeFromUrl(inviteUrl)
+
+  const invite = await getInviteFromDiscordApiByCode(inviteCode)
+
+  await doc.set(
+    {
+      [DiscordServerFieldNames.name]: invite.guild.name,
+      [DiscordServerFieldNames.description]: invite.guild.description,
+      [DiscordServerFieldNames.iconUrl]: getDiscordServerIcon(
+        invite.guild.id,
+        invite.guild.icon
+      ),
+    },
+    {
+      merge: true,
+    }
+  )
+}
+
+exports.syncDiscordServerById = functions.https.onCall(async (data) => {
+  try {
+    const id = data.id
+
+    if (!id) {
+      throw new Error('Need to pass id')
+    }
+
+    await syncDiscordServerById(id)
+    return { message: 'Discord server has been synced' }
+  } catch (err) {
+    console.error(err)
+    throw new functions.https.HttpsError('failed-to-sync', err.message)
+  }
+})
 
 exports.syncIndex = functions.https.onRequest(async (req, res) => {
   try {
