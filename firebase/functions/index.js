@@ -723,6 +723,14 @@ exports.onAssetUpdated = functions.firestore
       docData.lastModifiedBy
     )
 
+    // has become unapproved
+    if (
+      beforeDocData[AssetFieldNames.isApproved] === true &&
+      docData[AssetFieldNames.isApproved] === false
+    ) {
+      await deleteDocFromIndex(doc)
+    }
+
     if (isNotApproved(docData)) {
       return Promise.resolve()
     }
