@@ -380,11 +380,7 @@ export default ({ assetId }) => {
     return <LoadingIndicator />
   }
 
-  if (
-    isErrored ||
-    result === null ||
-    (!user && result && result.isApproved === false)
-  ) {
+  if (isErrored || result === null) {
     return <ErrorMessage>Failed to load asset</ErrorMessage>
   }
 

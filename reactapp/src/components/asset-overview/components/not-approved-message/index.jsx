@@ -15,8 +15,8 @@ export default () => {
     <Paper className={classes.root}>
       <strong>This asset has not been approved yet. It:</strong>
       <ul>
-        <li>does not show up in search results</li>
-        <li>is not visible to logged out users</li>
+        <li>does not show up in any results anywhere</li>
+        <li>is only accessible by direct link</li>
       </ul>
     </Paper>
   )

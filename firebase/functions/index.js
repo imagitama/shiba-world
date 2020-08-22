@@ -825,13 +825,13 @@ exports.onCommentCreated = functions.firestore
 
     const commenterDoc = await docData[CommentFieldNames.createdBy].get()
 
-    if (isUserDocument(parentDoc)) {
-      await notifyTaggedUserIfNeeded(
-        docData[CommentFieldNames.comment],
-        docData[CommentFieldNames.parent],
-        docData[CommentFieldNames.createdBy]
-      )
+    await notifyTaggedUserIfNeeded(
+      docData[CommentFieldNames.comment],
+      docData[CommentFieldNames.parent],
+      docData[CommentFieldNames.createdBy]
+    )
 
+    if (isUserDocument(parentDoc)) {
       await emitToDiscordActivity(
         `User ${commenterDoc.get(
           UserFieldNames.username
@@ -846,12 +846,6 @@ exports.onCommentCreated = functions.firestore
       !isDeleted(parentDocData) &&
       !isAdult(parentDocData)
     ) {
-      await notifyTaggedUserIfNeeded(
-        docData[CommentFieldNames.comment],
-        docData[CommentFieldNames.parent],
-        docData[CommentFieldNames.createdBy]
-      )
-
       await emitToDiscordActivity(
         `User ${commenterDoc.get(
           UserFieldNames.username
