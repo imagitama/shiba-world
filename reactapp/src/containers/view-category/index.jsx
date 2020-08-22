@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react'
+import React, { useState, useEffect, Fragment } from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
@@ -35,6 +35,7 @@ import useDatabaseQuery, {
 } from '../../hooks/useDatabaseQuery'
 import useStorage, { keys as storageKeys } from '../../hooks/useStorage'
 import { mediaQueryForMobiles } from '../../media-queries'
+import { scrollTo } from '../../utils'
 
 const useStyles = makeStyles({
   root: {
@@ -59,7 +60,29 @@ function getDescriptionByCategoryName(categoryName) {
   return categoryMeta[categoryName].shortDescription
 }
 
+let avatarsScrollPosition
+
 function AvatarAssetResults({ assets }) {
+  // Because the avatars page is very long and the most popular page of the site
+  // track the user's scroll so they can click on avatars and return and not have
+  // to scroll again
+  useEffect(() => {
+    if (avatarsScrollPosition) {
+      scrollTo(avatarsScrollPosition)
+      avatarsScrollPosition = null
+    }
+
+    const onScroll = () => {
+      avatarsScrollPosition = window.scrollY
+    }
+
+    window.addEventListener('scroll', onScroll)
+
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+    }
+  }, [])
+
   let otherSpecies = [[speciesName.otherSpecies, []]]
 
   const assetsBySpecies = assets.reduce((obj, asset) => {

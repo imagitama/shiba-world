@@ -3,8 +3,12 @@ import 'firebase/firestore'
 import { AuthorFieldNames } from './hooks/useDatabaseQuery'
 
 export function scrollToTop(isSmooth) {
+  return scrollTo(0, isSmooth)
+}
+
+export function scrollTo(x, isSmooth) {
   window.scrollTo({
-    top: 0,
+    top: x,
     left: 0,
     behavior: isSmooth ? 'smooth' : 'auto'
   })
