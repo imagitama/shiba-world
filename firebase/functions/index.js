@@ -1139,6 +1139,7 @@ exports.syncTags = functions.https.onRequest(async (req, res) => {
 })
 
 const BACKUP_BUCKET_NAME = config.global.backupBucketName
+const backupTimeoutSeconds = 540 // default 60 sec
 
 async function backupDatabaseToStorage() {
   if (!BACKUP_BUCKET_NAME) {
@@ -1198,17 +1199,22 @@ async function backupDatabaseToStorage() {
   }
 }
 
-exports.manualBackup = functions.https.onRequest(async (req, res) => {
-  try {
-    const { collectionNames } = await backupDatabaseToStorage()
-    res
-      .status(200)
-      .send(`Backed up these collections: ${collectionNames.join(', ')}`)
-  } catch (err) {
-    console.error(err)
-    res.status(500).send(`Error: ${err.message}`)
-  }
-})
+exports.manualBackup = functions
+  .runWith({
+    timeoutSeconds: backupTimeoutSeconds,
+    memory: '1GB',
+  })
+  .https.onRequest(async (req, res) => {
+    try {
+      const { collectionNames } = await backupDatabaseToStorage()
+      res
+        .status(200)
+        .send(`Backed up these collections: ${collectionNames.join(', ')}`)
+    } catch (err) {
+      console.error(err)
+      res.status(500).send(`Error: ${err.message}`)
+    }
+  })
 
 exports.scheduledFunctionPlainEnglish1 = functions.pubsub
   .schedule('every 1 day')
