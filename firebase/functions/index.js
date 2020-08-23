@@ -4,6 +4,7 @@ const algoliasearch = require('algoliasearch')
 const diff = require('deep-diff')
 const Twit = require('twit')
 const fetch = require('node-fetch')
+const { firestoreExport } = require('node-firestore-import-export')
 
 const config = functions.config()
 
@@ -1136,3 +1137,79 @@ exports.syncTags = functions.https.onRequest(async (req, res) => {
     res.status(500).send(`Error: ${err.message}`)
   }
 })
+
+const BACKUP_BUCKET_NAME = config.global.backupBucketName
+
+async function backupDatabaseToStorage() {
+  if (!BACKUP_BUCKET_NAME) {
+    throw new Error('No backup bucket name specified')
+  }
+
+  const collectionRefs = await db.listCollections()
+
+  const backups = await Promise.all(
+    collectionRefs.map((collectionRef) =>
+      firestoreExport(collectionRef).then((backupData) => ({
+        collectionName: collectionRef.id,
+        data: backupData,
+      }))
+    )
+  )
+
+  const date = new Date()
+  const dateAsString = `${date.getDate()}-${date.getMonth()}-${date
+    .getFullYear()
+    .toString()
+    .padStart(2, '0')}_${date
+    .getHours()
+    .toString()
+    .padStart(2, '0')}-${date
+    .getMinutes()
+    .toString()
+    .padStart(2, '0')}-${date.getSeconds().toString().padStart(2, '0')}`
+
+  const file = admin
+    .storage()
+    .bucket(BACKUP_BUCKET_NAME)
+    .file(`backups/${dateAsString}/db.json`)
+
+  // The nodejs module does not do a complete export so rebuild the structure
+  // it expects when importing
+  const dataToJsonify = {
+    __collections__: backups.reduce(
+      (obj, backupItem) =>
+        Object.assign({}, obj, {
+          [backupItem.collectionName]: backupItem.data,
+        }),
+      {}
+    ),
+  }
+
+  const json = JSON.stringify(dataToJsonify, null, '  ')
+
+  await file.save(json, {
+    metadata: {
+      contentType: 'application/json',
+    },
+  })
+
+  return {
+    collectionNames: backups.map((backupItem) => backupItem.collectionName),
+  }
+}
+
+exports.manualBackup = functions.https.onRequest(async (req, res) => {
+  try {
+    const { collectionNames } = await backupDatabaseToStorage()
+    res
+      .status(200)
+      .send(`Backed up these collections: ${collectionNames.join(', ')}`)
+  } catch (err) {
+    console.error(err)
+    res.status(500).send(`Error: ${err.message}`)
+  }
+})
+
+exports.scheduledFunctionPlainEnglish1 = functions.pubsub
+  .schedule('every 1 day')
+  .onRun(async () => backupDatabaseToStorage())

@@ -1,5 +1,6 @@
 {
   "isAlgoliaEnabled": "true",
   "isDiscordEnabled": "true",
-  "isTwitterEnabled": "true"
+  "isTwitterEnabled": "true",
+  "backupBucketName": ""
 }
