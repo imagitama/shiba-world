@@ -1200,12 +1200,14 @@ async function backupDatabaseToStorage() {
   }
 }
 
+const backupRunWithOptions = {
+  timeoutSeconds: backupTimeoutSeconds,
+  memory: '1GB',
+}
+
 if (IS_BACKUP_ENABLED) {
   exports.manualBackup = functions
-    .runWith({
-      timeoutSeconds: backupTimeoutSeconds,
-      memory: '1GB',
-    })
+    .runWith(backupRunWithOptions)
     .https.onRequest(async (req, res) => {
       try {
         const { collectionNames } = await backupDatabaseToStorage()
@@ -1218,7 +1220,8 @@ if (IS_BACKUP_ENABLED) {
       }
     })
 
-  exports.automatedBackup = functions.pubsub
-    .schedule('every 1 day')
+  exports.automatedBackup = functions
+    .runWith(backupRunWithOptions)
+    .pubsub.schedule('0 0 * * *') // daily at midnight
     .onRun(async () => backupDatabaseToStorage())
 }
