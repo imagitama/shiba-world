@@ -1138,6 +1138,7 @@ exports.syncTags = functions.https.onRequest(async (req, res) => {
   }
 })
 
+const IS_BACKUP_ENABLED = config.global.isBackupEnabled !== 'false'
 const BACKUP_BUCKET_NAME = config.global.backupBucketName
 const backupTimeoutSeconds = 540 // default 60 sec
 
@@ -1199,23 +1200,25 @@ async function backupDatabaseToStorage() {
   }
 }
 
-exports.manualBackup = functions
-  .runWith({
-    timeoutSeconds: backupTimeoutSeconds,
-    memory: '1GB',
-  })
-  .https.onRequest(async (req, res) => {
-    try {
-      const { collectionNames } = await backupDatabaseToStorage()
-      res
-        .status(200)
-        .send(`Backed up these collections: ${collectionNames.join(', ')}`)
-    } catch (err) {
-      console.error(err)
-      res.status(500).send(`Error: ${err.message}`)
-    }
-  })
+if (IS_BACKUP_ENABLED) {
+  exports.manualBackup = functions
+    .runWith({
+      timeoutSeconds: backupTimeoutSeconds,
+      memory: '1GB',
+    })
+    .https.onRequest(async (req, res) => {
+      try {
+        const { collectionNames } = await backupDatabaseToStorage()
+        res
+          .status(200)
+          .send(`Backed up these collections: ${collectionNames.join(', ')}`)
+      } catch (err) {
+        console.error(err)
+        res.status(500).send(`Error: ${err.message}`)
+      }
+    })
 
-exports.scheduledFunctionPlainEnglish1 = functions.pubsub
-  .schedule('every 1 day')
-  .onRun(async () => backupDatabaseToStorage())
+  exports.automatedBackup = functions.pubsub
+    .schedule('every 1 day')
+    .onRun(async () => backupDatabaseToStorage())
+}
