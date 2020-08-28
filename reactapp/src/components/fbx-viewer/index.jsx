@@ -11,6 +11,9 @@ export default ({ url, onClick = null }) => {
     const container = containerRef.current
     var camera, scene, renderer, light, controls
 
+    let containerWidth = container.offsetWidth
+    let containerHeight = container.offsetHeight
+
     var clock = new THREE.Clock()
 
     var mixer
@@ -21,15 +24,15 @@ export default ({ url, onClick = null }) => {
     function init() {
       camera = new THREE.PerspectiveCamera(
         45,
-        window.innerWidth / window.innerHeight,
+        containerWidth / containerHeight,
         1,
-        2000
+        10000
       )
       camera.position.set(100, 200, 300)
 
       scene = new THREE.Scene()
       scene.background = new THREE.Color(0xa0a0a0)
-      scene.fog = new THREE.Fog(0xa0a0a0, 200, 1000)
+      // scene.fog = new THREE.Fog(0xa0a0a0, 200, 1000)
 
       light = new THREE.HemisphereLight(0xffffff, 0x444444)
       light.position.set(0, 200, 0)
@@ -47,28 +50,56 @@ export default ({ url, onClick = null }) => {
       // scene.add( new CameraHelper( light.shadow.camera ) );
 
       // ground
-      var mesh = new THREE.Mesh(
-        new THREE.PlaneBufferGeometry(2000, 2000),
-        new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false })
-      )
-      mesh.rotation.x = -Math.PI / 2
-      mesh.receiveShadow = true
-      scene.add(mesh)
+      // var mesh = new THREE.Mesh(
+      //   new THREE.PlaneBufferGeometry(2000, 2000),
+      //   new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false })
+      // )
+      // mesh.rotation.x = -Math.PI / 2
+      // mesh.receiveShadow = true
+      // scene.add(mesh)
 
       var grid = new THREE.GridHelper(2000, 20, 0x000000, 0x000000)
       grid.material.opacity = 0.2
       grid.material.transparent = true
       scene.add(grid)
 
+      function fitCameraToObject(camera, controls, object, fitOffset = 1.2) {
+        const box = new THREE.Box3()
+
+        box.expandByObject(object)
+
+        const size = box.getSize(new THREE.Vector3())
+        const center = box.getCenter(new THREE.Vector3())
+
+        const maxSize = Math.max(size.x, size.y, size.z)
+        const fitHeightDistance =
+          maxSize / (2 * Math.atan((Math.PI * camera.fov) / 360))
+        const fitWidthDistance = fitHeightDistance / camera.aspect
+        const distance =
+          fitOffset * Math.max(fitHeightDistance, fitWidthDistance)
+
+        const direction = controls.target
+          .clone()
+          .sub(camera.position)
+          .normalize()
+          .multiplyScalar(distance)
+
+        controls.maxDistance = distance * 10
+        controls.target.copy(center)
+
+        camera.near = distance / 100
+        camera.far = distance * 100
+        camera.updateProjectionMatrix()
+
+        camera.position.copy(controls.target).sub(direction)
+
+        controls.update()
+      }
+
       // model
       var loader = new FBXLoader()
       loader.setRequestHeader({ Origin: 'https://www.vrcarena.com' })
       loader.load(url, function(object) {
-        mixer = new THREE.AnimationMixer(object)
-
-        // var action = mixer.clipAction(object.animations[0])
-        // action.play()
-
         object.traverse(function(child) {
           if (child.isMesh) {
             child.castShadow = true
@@ -77,11 +108,13 @@ export default ({ url, onClick = null }) => {
         })
 
         scene.add(object)
+
+        fitCameraToObject(camera, controls, object)
       })
 
       renderer = new THREE.WebGLRenderer({ antialias: true })
       renderer.setPixelRatio(window.devicePixelRatio)
-      renderer.setSize(300, 300)
+      renderer.setSize(containerWidth, containerHeight)
       renderer.shadowMap.enabled = true
       container.appendChild(renderer.domElement)
 
@@ -99,10 +132,13 @@ export default ({ url, onClick = null }) => {
     }
 
     function onWindowResize() {
-      camera.aspect = window.innerWidth / window.innerHeight
+      camera.aspect = containerWidth / containerHeight
       camera.updateProjectionMatrix()
 
-      renderer.setSize(window.innerWidth, window.innerHeight)
+      containerWidth = container.offsetWidth
+      containerHeight = container.offsetHeight
+
+      renderer.setSize(containerWidth, containerHeight)
     }
 
     function animate() {
@@ -120,5 +156,5 @@ export default ({ url, onClick = null }) => {
     }
   }, [])
 
-  return <div ref={containerRef} style={{ width: '300px', height: '300px' }} />
+  return <div ref={containerRef} style={{ width: '100%', height: '400px' }} />
 }
