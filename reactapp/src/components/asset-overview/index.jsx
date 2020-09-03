@@ -53,7 +53,6 @@ import DeletedMessage from './components/deleted-message'
 import IsPrivateMessage from './components/is-private-message'
 import FileList from './components/file-list'
 import ReportMessage from './components/report-message'
-import PikapeteyDiscordMessage from './components/pikapetey-discord-message'
 import WorkInProgressMessage from './components/work-in-progress-message'
 import ChildrenAssets from './components/children-assets'
 import DownloadList from './components/download-list'
@@ -130,8 +129,6 @@ const useStyles = makeStyles({
   description: {
     margin: '2rem 0 1rem',
     '& A': { textDecoration: 'underline' },
-    // fix embedded urls causing content to break out of mobile layout
-    wordBreak: 'break-all',
     '& img': { maxWidth: '100%' }
   },
   downloadButton: {
@@ -243,10 +240,6 @@ function CreatedByMessage({ author, createdBy, categoryName }) {
       )}
     </span>
   )
-}
-
-function getIsPikapeteyDiscordSourceUrl(sourceUrl) {
-  return sourceUrl && sourceUrl.indexOf('channels/224293432498061313') !== -1
 }
 
 function Control({ children }) {
@@ -461,9 +454,6 @@ export default ({ assetId }) => {
       {isDeleted === true && <DeletedMessage />}
       {isPrivate === true && <IsPrivateMessage />}
       {tags && tags.includes('wip') && <WorkInProgressMessage />}
-      {getIsPikapeteyDiscordSourceUrl(sourceUrl) ? (
-        <PikapeteyDiscordMessage />
-      ) : null}
 
       <div className={classes.thumbAndTitle}>
         <div className={classes.thumbnailWrapper}>
