@@ -2,32 +2,43 @@ import React from 'react'
 import Markdown from 'react-markdown'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-import Typography from '@material-ui/core/Typography'
 import DeleteIcon from '@material-ui/icons/Delete'
 
-import * as routes from '../../routes'
 import useUserRecord from '../../hooks/useUserRecord'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
-
-import FormattedDate from '../formatted-date'
-import Button from '../button'
-import { canEditComments } from '../../permissions'
+import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import {
   CollectionNames,
   CommentFieldNames
 } from '../../hooks/useDatabaseQuery'
+
+import FormattedDate from '../formatted-date'
+import Button from '../button'
+import Avatar from '../avatar'
+
+import { canEditComments } from '../../permissions'
+import * as routes from '../../routes'
 import { createRef } from '../../utils'
-import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import { handleError } from '../../error-handling'
 
 const useStyles = makeStyles({
-  root: {
+  cols: {
     marginBottom: '1rem',
-    position: 'relative'
+    position: 'relative',
+    display: 'flex'
+  },
+  deleted: {
+    opacity: '0.5'
+  },
+  colLeft: {
+    maxWidth: '50px',
+    marginRight: '0.5rem'
+  },
+  colRight: {
+    flex: 1
   },
   content: {
+    marginTop: '0.25rem',
     '& p:first-child': {
       marginTop: 0
     },
@@ -37,7 +48,16 @@ const useStyles = makeStyles({
   },
   deletedMessage: {
     fontStyle: 'italic'
-  }
+  },
+  date: {
+    fontSize: '75%',
+    marginLeft: '0.25rem'
+  },
+  controls: {
+    display: 'flex',
+    justifyContent: 'flex-end'
+  },
+  control: {}
 })
 
 function DeleteButton({ commentId, isDeleted }) {
@@ -97,30 +117,35 @@ export default ({
   const classes = useStyles()
 
   return (
-    <Card className={classes.root}>
-      <div className={classes.container} title={id}>
-        <CardContent className={classes.content}>
-          {isDeleted && (
-            <span className={classes.deletedMessage}>
-              This comment has been deleted.
-            </span>
-          )}
-          {!isDeleted || canEditComments(user) ? (
+    <div className={`${classes.cols} ${isDeleted ? classes.deleted : ''}`}>
+      <div className={classes.colLeft}>
+        <Avatar size={null} />
+      </div>
+      <div className={classes.colRight}>
+        <Link to={routes.viewUserWithVar.replace(':userId', createdBy.id)}>
+          {createdBy.username}
+        </Link>{' '}
+        <span className={classes.date}>
+          <FormattedDate date={createdAt} />
+        </span>
+        {isDeleted && (
+          <div className={classes.deletedMessage}>
+            This comment has been deleted.
+          </div>
+        )}
+        {!isDeleted || canEditComments(user) ? (
+          <div className={classes.content}>
             <Markdown source={comment} />
-          ) : null}
-          <Typography variant="body2" color="textSecondary" component="p">
-            <FormattedDate date={createdAt} /> by{' '}
-            <Link to={routes.viewUserWithVar.replace(':userId', createdBy.id)}>
-              {createdBy.username}
-            </Link>
-          </Typography>
-          {canEditComments(user) && (
-            <div className={classes.controls}>
+          </div>
+        ) : null}
+        {canEditComments(user) && (
+          <div className={classes.controls}>
+            <div className={classes.control}>
               <DeleteButton commentId={id} isDeleted={isDeleted} />
             </div>
-          )}
-        </CardContent>
+          </div>
+        )}
       </div>
-    </Card>
+    </div>
   )
 }
