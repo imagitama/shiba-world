@@ -9,7 +9,8 @@ import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import {
   CollectionNames,
-  CommentFieldNames
+  CommentFieldNames,
+  UserFieldNames
 } from '../../hooks/useDatabaseQuery'
 
 import FormattedDate from '../formatted-date'
@@ -39,6 +40,7 @@ const useStyles = makeStyles({
   },
   content: {
     marginTop: '0.25rem',
+    flex: 1,
     '& p:first-child': {
       marginTop: 0
     },
@@ -52,6 +54,9 @@ const useStyles = makeStyles({
   date: {
     fontSize: '75%',
     marginLeft: '0.25rem'
+  },
+  contentWrapper: {
+    display: 'flex'
   },
   controls: {
     display: 'flex',
@@ -119,7 +124,14 @@ export default ({
   return (
     <div className={`${classes.cols} ${isDeleted ? classes.deleted : ''}`}>
       <div className={classes.colLeft}>
-        <Avatar size={null} />
+        <Avatar
+          url={
+            createdBy[UserFieldNames.avatarUrl]
+              ? createdBy[UserFieldNames.avatarUrl]
+              : null
+          }
+          size={null}
+        />
       </div>
       <div className={classes.colRight}>
         <Link to={routes.viewUserWithVar.replace(':userId', createdBy.id)}>
@@ -128,23 +140,25 @@ export default ({
         <span className={classes.date}>
           <FormattedDate date={createdAt} />
         </span>
-        {isDeleted && (
-          <div className={classes.deletedMessage}>
-            This comment has been deleted.
-          </div>
-        )}
-        {!isDeleted || canEditComments(user) ? (
-          <div className={classes.content}>
-            <Markdown source={comment} />
-          </div>
-        ) : null}
-        {canEditComments(user) && (
-          <div className={classes.controls}>
-            <div className={classes.control}>
-              <DeleteButton commentId={id} isDeleted={isDeleted} />
+        <div className={classes.contentWrapper}>
+          {isDeleted && (
+            <div className={classes.deletedMessage}>
+              This comment has been deleted.
             </div>
-          </div>
-        )}
+          )}
+          {!isDeleted || canEditComments(user) ? (
+            <div className={classes.content}>
+              <Markdown source={comment} />
+            </div>
+          ) : null}
+          {canEditComments(user) && (
+            <div className={classes.controls}>
+              <div className={classes.control}>
+                <DeleteButton commentId={id} isDeleted={isDeleted} />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

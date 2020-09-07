@@ -32,10 +32,15 @@ const useStyles = makeStyles({
   }
 })
 
-export default ({ url, username = '', size = sizes.MEDIUM }) => {
+export default ({
+  url,
+  username = '',
+  size = sizes.MEDIUM,
+  className = ''
+}) => {
   const classes = useStyles()
   return (
-    <div className={`${classes.container} ${classes[size]}`}>
+    <div className={`${classes.container} ${classes[size]} ${className}`}>
       <LazyLoad placeholder={<LoadingIndicator />}>
         <img
           src={url ? url : defaultAvatarUrl}

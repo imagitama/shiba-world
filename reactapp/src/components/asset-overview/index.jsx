@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Markdown from 'react-markdown'
 import { makeStyles } from '@material-ui/core/styles'
-import Typography from '@material-ui/core/Typography'
 import { Helmet } from 'react-helmet'
 import EditIcon from '@material-ui/icons/Edit'
 import ReportIcon from '@material-ui/icons/Report'
+import LoyaltyIcon from '@material-ui/icons/Loyalty'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -55,7 +55,6 @@ import FileList from './components/file-list'
 import ReportMessage from './components/report-message'
 import WorkInProgressMessage from './components/work-in-progress-message'
 import ChildrenAssets from './components/children-assets'
-import DownloadList from './components/download-list'
 
 import OwnerEditor from '../owner-editor'
 import DownloadAssetButton from '../download-asset-button'
@@ -104,6 +103,10 @@ const useStyles = makeStyles({
     alignItems: 'center'
   },
 
+  title: {
+    margin: '0 0 0.5rem'
+  },
+
   thumbnailWrapper: {
     flexShrink: 0,
     width: '200px',
@@ -120,14 +123,13 @@ const useStyles = makeStyles({
   },
 
   categoryMeta: {
-    fontSize: '125%',
-    marginBottom: '1rem'
+    fontSize: '125%'
   },
   subtitle: {
     marginTop: '0.5rem'
   },
   description: {
-    margin: '2rem 0 1rem',
+    margin: '2rem 0 2rem',
     '& A': { textDecoration: 'underline' },
     '& img': { maxWidth: '100%' }
   },
@@ -175,6 +177,17 @@ const useStyles = makeStyles({
       width: '100%',
       height: 'auto'
     }
+  },
+  meta: {
+    fontSize: '75%',
+    marginTop: '0.5rem'
+  },
+  tags: {
+    marginTop: '1rem'
+  },
+  adultIndicator: {
+    display: 'flex',
+    alignItems: 'center'
   }
 })
 
@@ -237,14 +250,7 @@ function CreatedByMessage({ author, createdBy, categoryName }) {
             {author[AuthorFieldNames.name]}
           </Link>
         </>
-      ) : (
-        <>
-          {getLabelForNonAuthorName(categoryName)} by{' '}
-          <Link to={routes.viewUserWithVar.replace(':userId', createdBy.id)}>
-            {createdBy.username}
-          </Link>
-        </>
-      )}
+      ) : null}
     </span>
   )
 }
@@ -480,16 +486,53 @@ export default ({ assetId }) => {
           <AssetThumbnail url={thumbnailUrl} className={classes.thumbnail} />
         </div>
         <div className={classes.titlesWrapper}>
-          <Heading variant="h1">
-            <Link to={routes.viewAssetWithVar.replace(':assetId', assetId)}>
-              {title}
-            </Link>{' '}
-            <CreatedByMessage
-              author={author}
-              createdBy={createdBy}
-              categoryName={category}
-            />
-          </Heading>
+          <div>
+            <Heading variant="h1" className={classes.title}>
+              <Link to={routes.viewAssetWithVar.replace(':assetId', assetId)}>
+                {title}
+              </Link>{' '}
+              <CreatedByMessage
+                author={author}
+                createdBy={createdBy}
+                categoryName={category}
+              />
+            </Heading>
+            <div className={classes.categoryMeta}>
+              {category && (
+                <div>
+                  {species.length ? (
+                    <>
+                      <Link
+                        to={routes.viewSpeciesWithVar.replace(
+                          ':speciesName',
+                          species[0]
+                        )}>
+                        {getSpeciesDisplayNameBySpeciesName(species[0])}
+                      </Link>
+                      {' / '}
+                      <Link
+                        to={routes.viewSpeciesCategoryWithVar
+                          .replace(':speciesName', species[0])
+                          .replace(':categoryName', category)}>
+                        {getCategoryDisplayName(category)}
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      {allSpeciesLabel} -{' '}
+                      <Link
+                        to={routes.viewCategoryWithVar.replace(
+                          ':categoryName',
+                          category
+                        )}>
+                        {getCategoryDisplayName(category)}
+                      </Link>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -506,27 +549,23 @@ export default ({ assetId }) => {
           {videoUrl && <VideoPlayer url={videoUrl} />}
 
           <div className={classes.description}>
-            <Heading variant="h2">Description</Heading>
             <Markdown source={description} />
           </div>
 
           {downloadUrls.length ? (
             <>
-              <Heading variant="h2">Files</Heading>
               <FileList assetId={id} fileUrls={downloadUrls} />
             </>
           ) : null}
 
           {videoUrls.length ? (
             <>
-              <Heading variant="h2">Videos</Heading>
               <FileList assetId={id} fileUrls={videoUrls} />
             </>
           ) : null}
 
           {imageUrls.length ? (
             <>
-              <Heading variant="h2">Images</Heading>
               <ImageGallery
                 urls={imageUrls}
                 onOpen={() =>
@@ -558,89 +597,11 @@ export default ({ assetId }) => {
             </>
           ) : null}
 
-          <Heading variant="h2">Meta</Heading>
-          <div className={classes.categoryMeta}>
-            {category && (
-              <div>
-                {species.length ? (
-                  <>
-                    <Link
-                      to={routes.viewSpeciesWithVar.replace(
-                        ':speciesName',
-                        species[0]
-                      )}>
-                      {getSpeciesDisplayNameBySpeciesName(species[0])}
-                    </Link>
-                    {' - '}
-                    <Link
-                      to={routes.viewSpeciesCategoryWithVar
-                        .replace(':speciesName', species[0])
-                        .replace(':categoryName', category)}>
-                      {getCategoryDisplayName(category)}
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    {allSpeciesLabel} -{' '}
-                    <Link
-                      to={routes.viewCategoryWithVar.replace(
-                        ':categoryName',
-                        category
-                      )}>
-                      {getCategoryDisplayName(category)}
-                    </Link>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-
-          <div>
+          <div className={classes.tags}>
             {tags
               ? tags.map(tagName => <TagChip key={tagName} tagName={tagName} />)
               : '(no tags)'}
           </div>
-          <Typography component="p" style={{ margin: '1rem 0' }}>
-            Uploaded{' '}
-            {createdAt ? <FormattedDate date={createdAt} /> : '(unknown)'} by{' '}
-            {createdBy ? (
-              <Link
-                to={routes.viewUserWithVar.replace(':userId', createdBy.id)}>
-                {createdBy.username}
-              </Link>
-            ) : (
-              '(unknown)'
-            )}
-          </Typography>
-          {lastModifiedBy && (
-            <Typography component="p" style={{ margin: '1rem 0' }}>
-              Last modified <FormattedDate date={lastModifiedAt} /> by{' '}
-              {lastModifiedBy ? (
-                <Link
-                  to={routes.viewUserWithVar.replace(
-                    ':userId',
-                    lastModifiedBy.id
-                  )}>
-                  {lastModifiedBy.username}
-                </Link>
-              ) : (
-                '(unknown)'
-              )}
-            </Typography>
-          )}
-          {ownedBy && (
-            <Typography component="p" style={{ margin: '1rem 0' }}>
-              Owned by{' '}
-              <Link to={routes.viewUserWithVar.replace(':userId', ownedBy.id)}>
-                {ownedBy.username}
-              </Link>
-            </Typography>
-          )}
-          {isAdult && (
-            <Typography component="p" style={{ margin: '1rem 0' }}>
-              Marked as NSFW
-            </Typography>
-          )}
         </div>
 
         <div className={classes.rightCol}>
@@ -703,6 +664,55 @@ export default ({ assetId }) => {
                 </Button>
               </Control>
             )}
+
+            <div className={classes.meta}>
+              <div>
+                Uploaded{' '}
+                {createdAt ? <FormattedDate date={createdAt} /> : '(unknown)'}{' '}
+                by{' '}
+                {createdBy ? (
+                  <Link
+                    to={routes.viewUserWithVar.replace(
+                      ':userId',
+                      createdBy.id
+                    )}>
+                    {createdBy.username}
+                  </Link>
+                ) : (
+                  '(unknown)'
+                )}
+              </div>
+              {lastModifiedBy && (
+                <div>
+                  Last modified <FormattedDate date={lastModifiedAt} /> by{' '}
+                  {lastModifiedBy ? (
+                    <Link
+                      to={routes.viewUserWithVar.replace(
+                        ':userId',
+                        lastModifiedBy.id
+                      )}>
+                      {lastModifiedBy.username}
+                    </Link>
+                  ) : (
+                    '(unknown)'
+                  )}
+                </div>
+              )}
+              {ownedBy && (
+                <div>
+                  Owned by{' '}
+                  <Link
+                    to={routes.viewUserWithVar.replace(':userId', ownedBy.id)}>
+                    {ownedBy.username}
+                  </Link>
+                </div>
+              )}
+              {isAdult && (
+                <div className={classes.adultIndicator}>
+                  <LoyaltyIcon /> NSFW
+                </div>
+              )}
+            </div>
 
             {canEditAsset(user, createdBy, ownedBy) ? (
               <>
@@ -784,15 +794,6 @@ export default ({ assetId }) => {
           })
         }
       />
-      <Heading variant="h2">Endorsements</Heading>
-      <EndorsementList assetId={assetId} />
-
-      {isApprover && (
-        <>
-          <Heading variant="h2">Downloads (Editors Only)</Heading>
-          <DownloadList assetId={assetId} />
-        </>
-      )}
     </div>
   )
 }

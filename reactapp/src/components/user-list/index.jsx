@@ -1,8 +1,9 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Link } from 'react-router-dom'
-import PersonIcon from '@material-ui/icons/Person'
 import * as routes from '../../routes'
+import Avatar, { sizes } from '../avatar'
+import { UserFieldNames } from '../../hooks/useDatabaseQuery'
 
 const useStyles = makeStyles({
   container: {
@@ -24,7 +25,8 @@ const useStyles = makeStyles({
   },
   name: {
     display: 'block',
-    fontSize: '150%'
+    fontSize: '150%',
+    marginTop: '0.5rem'
   },
   link: {
     display: 'flex',
@@ -35,6 +37,9 @@ const useStyles = makeStyles({
     left: 0,
     width: '100%',
     height: '100%'
+  },
+  avatar: {
+    margin: '0 auto'
   }
 })
 
@@ -44,11 +49,19 @@ function User({ user }) {
     <div className={classes.item}>
       <Link
         to={routes.viewUserWithVar.replace(':userId', user.id)}
-        title={`View the user profile for user ${user.username}`}
+        title={`View the user profile for user ${
+          user[UserFieldNames.username]
+        }`}
         className={classes.link}>
         <div className={classes.itemContents}>
-          <PersonIcon className={classes.icon} />
-          <span className={classes.name}>{user.username}</span>
+          <Avatar
+            url={user[UserFieldNames.avatarUrl]}
+            size={sizes.SMALL}
+            className={classes.avatar}
+          />
+          <span className={classes.name}>
+            {user[UserFieldNames.username] || '(no name set)'}
+          </span>
         </div>
       </Link>
     </div>
