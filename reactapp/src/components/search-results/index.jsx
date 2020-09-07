@@ -98,7 +98,8 @@ export default () => {
         <UserList
           users={hits.map(hit => ({
             id: hit.objectID,
-            username: hit.username
+            username: hit.username,
+            avatarUrl: hit.avatarUrl
           }))}
         />
       )
