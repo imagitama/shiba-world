@@ -1,28 +1,3 @@
-import { keys } from '../hooks/useStorage'
-
-function getIfBrowserSetToDarkMode() {
-  return (
-    window.matchMedia &&
-    window.matchMedia('(prefers-color-scheme: dark)').matches
-  )
-}
-
-function getDarkModeEnabledInitialState() {
-  if (localStorage.getItem(keys.darkModeEnabled) === 'true') {
-    return true
-  }
-
-  if (localStorage.getItem(keys.darkModeEnabled) === 'false') {
-    return false
-  }
-
-  if (getIfBrowserSetToDarkMode()) {
-    return true
-  }
-
-  return false
-}
-
 export const searchIndexNames = {
   ASSETS: 'prod_ASSETS',
   AUTHORS: 'prod_AUTHORS',
@@ -75,7 +50,7 @@ const initialState = {
   isMenuOpen: false,
   searchTerm: getInitialSearchTerm(),
   searchIndexName: getInitialSearchIndexName(),
-  darkModeEnabled: getDarkModeEnabledInitialState()
+  darkModeEnabled: true
 }
 
 const OPEN_MENU = 'OPEN_MENU'

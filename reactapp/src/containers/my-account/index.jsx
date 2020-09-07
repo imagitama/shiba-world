@@ -9,7 +9,6 @@ import AdultContentToggle from '../../components/adult-content-toggle'
 import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'
 import NoPermissionMessage from '../../components/no-permission-message'
-import DarkModeToggle from '../../components/darkmode-toggle'
 import MyUploads from '../../components/my-uploads'
 import SocialMediaUsernamesEditor from '../../components/social-media-usernames-editor'
 import BioEditor from '../../components/bio-editor'
@@ -83,15 +82,6 @@ export default () => {
           trackAction(
             analyticsCategoryName,
             newValue === true ? 'Enable adult content' : 'Disable adult content'
-          )
-        }
-      />
-      <br />
-      <DarkModeToggle
-        onClick={({ newValue }) =>
-          trackAction(
-            analyticsCategoryName,
-            newValue === true ? 'Enable dark mode' : 'Disable dark mode'
           )
         }
       />

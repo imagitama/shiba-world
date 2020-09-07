@@ -28,9 +28,8 @@ const useStyles = makeStyles({
   root: {
     position: 'relative',
     padding: '1rem 1rem 0',
-    borderBottom: '1px solid #260b36',
     marginBottom: '2rem',
-    background: 'linear-gradient(20deg, #6e4a9e, #240b36)',
+    background: 'linear-gradient(180deg, #322148, rgba(0,0,0,0))',
     [mediaQueryForMobiles]: {
       padding: '0.5rem 0.5rem 0',
       marginBottom: '0.5rem'

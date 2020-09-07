@@ -8,7 +8,7 @@ import ReactReduxFirebaseProvider from 'react-redux-firebase/lib/ReactReduxFireb
 import store, { history } from './store'
 import App from './App'
 import { inDevelopment } from './environment'
-import { changeSearchTerm, setDarkModeEnabled } from './modules/app'
+import { changeSearchTerm } from './modules/app'
 import './firebase'
 
 if (!inDevelopment()) {
@@ -21,15 +21,6 @@ if (!inDevelopment()) {
 history.listen(() => {
   store.dispatch(changeSearchTerm())
 })
-
-const mql = window.matchMedia('(prefers-color-scheme: dark)')
-
-// matchMedia not there on Safari https://sentry.io/organizations/imagitama/issues/1750078294/?project=5249930&query=is%3Aunresolved
-if (mql.addEventListener) {
-  mql.addEventListener('change', e => {
-    store.dispatch(setDarkModeEnabled(e.matches))
-  })
-}
 
 const target = document.querySelector('#root')
 
