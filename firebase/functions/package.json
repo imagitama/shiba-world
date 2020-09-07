@@ -4,7 +4,7 @@
   "scripts": {
     "lint": "eslint .",
     "load-local-config": "firebase functions:config:get > .runtimeconfig.json",
-    "serve": "firebase emulators:start --only functions",
+    "serve": "GOOGLE_APPLICATION_CREDENTIALS=credentials.json firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
@@ -17,15 +17,17 @@
     "load-config": "npm run load-algolia-config && npm run load-twitter-config && npm run load-discord-config && npm run load-global-config"
   },
   "engines": {
-    "node": "8"
+    "node": "10"
   },
   "dependencies": {
+    "@google-cloud/storage": "^5.3.0",
     "algoliasearch": "^4.2.0",
     "deep-diff": "^1.0.2",
     "firebase-admin": "^8.10.0",
     "firebase-functions": "^3.6.1",
     "node-fetch": "^2.6.0",
     "node-firestore-import-export": "^1.1.0",
+    "sharp": "^0.26.0",
     "twit": "^2.2.11"
   },
   "devDependencies": {

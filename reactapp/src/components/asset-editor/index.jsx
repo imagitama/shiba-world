@@ -14,6 +14,7 @@ import PopularTagsSelector from './components/popular-tags-selector'
 
 import Heading from '../heading'
 import ThumbnailUploader from '../thumbnail-uploader'
+import BannerUploader from '../banner-uploader'
 import Button from '../button'
 import TagChip from '../tag-chip'
 
@@ -325,6 +326,24 @@ export default ({
           fieldData[AssetFieldNames.category]
         )}
         onChange={newVal => onFieldChange(AssetFieldNames.sourceUrl, newVal)}
+      />
+      <Heading variant="h3">Banner</Heading>
+      <p>
+        A banner is a short but wide image that is used to show off your asset.
+      </p>
+      {fieldData[AssetFieldNames.bannerUrl] ? (
+        <img
+          src={fieldData[AssetFieldNames.bannerUrl]}
+          alt="Preview of the banner"
+        />
+      ) : (
+        <strong>Please use the form below to upload a banner</strong>
+      )}
+      <Heading variant="h4">Upload</Heading>
+      <BannerUploader
+        directoryPath="asset-banners"
+        filePrefix={shortid.generate()}
+        onUploaded={url => onFieldChange(AssetFieldNames.bannerUrl, url)}
       />
       <Heading variant="h3">Tags</Heading>
       Click a popular tag to add it:{' '}

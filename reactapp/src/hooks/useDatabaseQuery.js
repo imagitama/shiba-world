@@ -59,7 +59,8 @@ export const AssetFieldNames = {
   children: 'children',
   ownedBy: 'ownedBy',
   isPinned: 'isPinned',
-  discordServer: 'discordServer'
+  discordServer: 'discordServer',
+  bannerUrl: 'bannerUrl'
 }
 
 export const AssetCategories = {

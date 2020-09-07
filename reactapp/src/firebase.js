@@ -16,6 +16,11 @@ const firebaseConfig = {
 
 export const firebaseApp = firebase.initializeApp(firebaseConfig)
 
+if (process.env.REACT_APP_USE_FIREBASE_EMULATOR) {
+  console.log('Using firebase emulator')
+  firebase.functions().useFunctionsEmulator('http://localhost:5001')
+}
+
 export const auth = firebaseApp.auth()
 
 export const logout = () => auth.signOut()

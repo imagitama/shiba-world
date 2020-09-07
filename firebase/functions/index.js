@@ -5,6 +5,8 @@ const diff = require('deep-diff')
 const Twit = require('twit')
 const fetch = require('node-fetch')
 const { firestoreExport } = require('node-firestore-import-export')
+const sharp = require('sharp')
+const path = require('path')
 
 const config = functions.config()
 
@@ -1225,3 +1227,63 @@ if (IS_BACKUP_ENABLED) {
     .pubsub.schedule('0 0 * * *') // daily at midnight
     .onRun(async () => backupDatabaseToStorage())
 }
+
+async function optimizeBucketImageByUrl(imageUrl) {
+  const gcs = admin.storage()
+  const bucket = gcs.bucket()
+
+  // storage urls are long and encoded and include a token
+  // so convert it into something the storage SDK will understand
+  const filePath = imageUrl.split('/o/')[1].split('?')[0].replace('%2F', '/')
+  const fileExtension = path.extname(filePath).toLowerCase().replace('.', '')
+
+  const newFileName = path.basename(filePath).replace(fileExtension, 'webp')
+  const newFilePath = path.join(path.dirname(filePath), newFileName)
+
+  const pipeline = sharp()
+
+  // read source file and give it to sharp
+  const sourceFile = bucket.file(filePath)
+  sourceFile.createReadStream().pipe(pipeline)
+
+  const destFile = bucket.file(newFilePath)
+  const writeStream = destFile.createWriteStream({
+    metadata: {
+      contentType: `image/webp`,
+    },
+  })
+
+  // convert and perform write
+  pipeline
+    .toFormat('webp')
+    .webp({ lossless: true, quality: 60, alphaQuality: 80, force: false })
+    .pipe(writeStream)
+
+  return new Promise((resolve, reject) =>
+    writeStream
+      .on('finish', async () => {
+        await sourceFile.delete()
+        resolve(
+          destFile.getSignedUrl({ action: 'read', expires: '01-01-2050' })
+        )
+      })
+      .on('error', reject)
+  )
+}
+
+exports.optimizeImage = functions.https.onCall(async (data) => {
+  try {
+    const imageUrl = data.imageUrl
+
+    if (!imageUrl) {
+      throw new Error('Need to provide imageUrl')
+    }
+
+    const optimizedImageUrl = await optimizeBucketImageByUrl(imageUrl)
+
+    return { message: 'Image has been optimized', optimizedImageUrl }
+  } catch (err) {
+    console.error(err)
+    throw new functions.https.HttpsError('failed-to-optimize', err.message)
+  }
+})

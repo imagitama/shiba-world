@@ -168,6 +168,13 @@ const useStyles = makeStyles({
   discordServerInfo: {
     fontSize: '75%',
     marginBottom: '0.5rem'
+  },
+  banner: {
+    marginBottom: '1rem',
+    '& img': {
+      width: '100%',
+      height: 'auto'
+    }
   }
 })
 
@@ -354,6 +361,16 @@ function MobilePrimaryBtn({
   )
 }
 
+function Banner({ src }) {
+  const classes = useStyles()
+
+  return (
+    <div className={classes.banner}>
+      <img src={src} alt="Banner for the asset" />
+    </div>
+  )
+}
+
 export default ({ assetId }) => {
   const [isLoading, isErrored, result] = useDatabaseQuery(
     CollectionNames.Assets,
@@ -399,7 +416,8 @@ export default ({ assetId }) => {
     [AssetFieldNames.author]: author,
     children,
     [AssetFieldNames.ownedBy]: ownedBy,
-    [AssetFieldNames.discordServer]: discordServer
+    [AssetFieldNames.discordServer]: discordServer,
+    [AssetFieldNames.bannerUrl]: bannerUrl
   } = result
 
   if (!title) {
@@ -454,6 +472,8 @@ export default ({ assetId }) => {
       {isDeleted === true && <DeletedMessage />}
       {isPrivate === true && <IsPrivateMessage />}
       {tags && tags.includes('wip') && <WorkInProgressMessage />}
+
+      {bannerUrl && <Banner src={bannerUrl} />}
 
       <div className={classes.thumbAndTitle}>
         <div className={classes.thumbnailWrapper}>

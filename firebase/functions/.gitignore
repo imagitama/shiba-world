@@ -4,3 +4,4 @@ node_modules/
 .discordconfig.json
 .runtimeconfig.json
 .globalconfig.json
+credentials.json
