@@ -9,7 +9,6 @@ import LoyaltyIcon from '@material-ui/icons/Loyalty'
 
 import useDatabaseQuery, {
   CollectionNames,
-  AssetCategories,
   AuthorFieldNames,
   AssetFieldNames,
   DiscordServerFieldNames
@@ -27,7 +26,6 @@ import Heading from '../heading'
 import Button from '../button'
 import AssetThumbnail from '../asset-thumbnail'
 import VideoPlayer from '../video-player'
-import EndorsementList from '../endorsement-list'
 import ApproveAssetButton from '../approve-asset-button'
 import DeleteAssetButton from '../delete-asset-button'
 import PinAssetButton from '../pin-asset-button'
@@ -229,16 +227,7 @@ function ReportButton({ assetId, onClick }) {
   )
 }
 
-function getLabelForNonAuthorName(categoryName) {
-  switch (categoryName) {
-    case AssetCategories.article:
-      return 'posted'
-    default:
-      return 'uploaded'
-  }
-}
-
-function CreatedByMessage({ author, createdBy, categoryName }) {
+function CreatedByMessage({ author }) {
   const classes = useStyles()
 
   return (
