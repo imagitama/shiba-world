@@ -33,18 +33,7 @@ export default () => {
 
   // Sometimes a delay before firebase function creates their profile
   if (isLoadingUser || !user) {
-    return (
-      <LoadingIndicator
-        message={
-          <>
-            Looking up your account...
-            <br />
-            <br />
-            (contact Peanut if this never goes away)
-          </>
-        }
-      />
-    )
+    return <LoadingIndicator message="Loading your profile..." />
   }
 
   if (isCreating) {

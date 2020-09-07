@@ -150,7 +150,7 @@ const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
 const MainContent = () => {
   const searchTerm = useSearchTerm()
   const isLoggedIn = useIsLoggedIn()
-  const [, , username] = useUserRecord(UserFieldNames.username)
+  const [isLoadingUser, , username] = useUserRecord(UserFieldNames.username)
   const location = useLocation()
 
   useEffect(() => {
@@ -161,7 +161,7 @@ const MainContent = () => {
     return <SearchResults />
   }
 
-  if (isLoggedIn && !username) {
+  if (isLoggedIn && !isLoadingUser && !username) {
     return <SetupProfile />
   }
 
