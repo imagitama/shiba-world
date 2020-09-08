@@ -1256,16 +1256,17 @@ async function optimizeBucketImageByUrl(imageUrl) {
   // convert and perform write
   pipeline
     .toFormat('webp')
-    .webp({ lossless: true, quality: 60, alphaQuality: 80, force: false })
+    .webp({ lossless: false, quality: 60, alphaQuality: 80, force: false })
     .pipe(writeStream)
 
   return new Promise((resolve, reject) =>
     writeStream
       .on('finish', async () => {
-        await sourceFile.delete()
-        resolve(
-          destFile.getSignedUrl({ action: 'read', expires: '01-01-2050' })
-        )
+        const [url] = await destFile.getSignedUrl({
+          action: 'read',
+          expires: '01-01-2050',
+        })
+        resolve(url)
       })
       .on('error', reject)
   )

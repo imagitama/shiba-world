@@ -22,7 +22,7 @@ function renameJpgToPng(path) {
   return path.replace('.jpeg', '.png').replace('.jpg', '.png')
 }
 
-function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
+function Output({ onUploadedUrls, directoryPath = '', filePrefix = '' }) {
   const [cropX, setCropX] = useState(0)
   const [cropY, setCropY] = useState(0)
   const [width, setWidth] = useState(0)
@@ -137,7 +137,11 @@ function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
 
       setIsOptimizing(false)
       setUploadedUrl(optimizedImageUrl)
-      onUploaded(optimizedImageUrl)
+
+      onUploadedUrls({
+        fallbackUrl: uploadedUrl,
+        url: optimizedImageUrl
+      })
     } catch (err) {
       console.error('Failed to crop image', err)
       handleError(err)
@@ -164,12 +168,7 @@ function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
   if (uploadedUrl) {
     return (
       <>
-        <img
-          src={uploadedUrl}
-          width={bannerWidth}
-          height={bannerHeight}
-          alt="Uploaded preview"
-        />
+        <img src={uploadedUrl} width="100%" alt="Uploaded preview" />
         <Button onClick={onCancelBtnClick} color="default">
           Try Again
         </Button>

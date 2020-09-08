@@ -331,9 +331,10 @@ export default ({
       <p>
         A banner is a short but wide image that is used to show off your asset.
       </p>
-      {fieldData[AssetFieldNames.bannerUrl] ? (
+      {fieldData[AssetFieldNames.bannerUrl] &&
+      fieldData[AssetFieldNames.bannerUrl].url ? (
         <img
-          src={fieldData[AssetFieldNames.bannerUrl]}
+          src={fieldData[AssetFieldNames.bannerUrl].url}
           alt="Preview of the banner"
         />
       ) : (
@@ -343,7 +344,7 @@ export default ({
       <BannerUploader
         directoryPath="asset-banners"
         filePrefix={shortid.generate()}
-        onUploaded={url => onFieldChange(AssetFieldNames.bannerUrl, url)}
+        onUploadedUrls={urls => onFieldChange(AssetFieldNames.bannerUrl, urls)}
       />
       <Heading variant="h3">Tags</Heading>
       Click a popular tag to add it:{' '}

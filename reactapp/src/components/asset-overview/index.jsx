@@ -356,12 +356,22 @@ function MobilePrimaryBtn({
   )
 }
 
-function Banner({ src }) {
+function Banner({ imageUrls }) {
   const classes = useStyles()
+
+  if (!imageUrls.url) {
+    return 'Invalid format'
+  }
+
+  const { url, fallbackUrl } = imageUrls
 
   return (
     <div className={classes.banner}>
-      <img src={src} alt="Banner for the asset" />
+      <picture>
+        <source srcSet={url} type="image/webp" />
+        <source srcSet={fallbackUrl} type="image/png" />
+        <img src={fallbackUrl} alt={'Banner for the asset'} />
+      </picture>
     </div>
   )
 }
@@ -468,7 +478,7 @@ export default ({ assetId }) => {
       {isPrivate === true && <IsPrivateMessage />}
       {tags && tags.includes('wip') && <WorkInProgressMessage />}
 
-      {bannerUrl && <Banner src={bannerUrl} />}
+      {bannerUrl && <Banner imageUrls={bannerUrl} />}
 
       <div className={classes.thumbAndTitle}>
         <div className={classes.thumbnailWrapper}>
