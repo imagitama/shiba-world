@@ -30,6 +30,7 @@ import ApproveAssetButton from '../approve-asset-button'
 import DeleteAssetButton from '../delete-asset-button'
 import PinAssetButton from '../pin-asset-button'
 import ImageGallery from '../image-gallery'
+import ImagePlaceholder from '../image-placeholder'
 
 import * as routes from '../../routes'
 import speciesMeta from '../../species-meta'
@@ -171,9 +172,15 @@ const useStyles = makeStyles({
   },
   banner: {
     marginBottom: '1rem',
+    position: 'relative',
     '& img': {
       width: '100%',
       height: 'auto'
+    },
+    '& picture': {
+      position: 'absolute',
+      top: 0,
+      left: 0
     }
   },
   meta: {
@@ -367,6 +374,7 @@ function Banner({ imageUrls }) {
 
   return (
     <div className={classes.banner}>
+      <ImagePlaceholder width={1280} height={300} />
       <picture>
         <source srcSet={url} type="image/webp" />
         <source srcSet={fallbackUrl} type="image/png" />

@@ -32,7 +32,7 @@ const useStyles = makeStyles({
     opacity: '0.5'
   },
   colLeft: {
-    maxWidth: '50px',
+    width: '50px',
     marginRight: '0.5rem'
   },
   colRight: {

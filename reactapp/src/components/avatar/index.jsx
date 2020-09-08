@@ -7,7 +7,7 @@ import defaultAvatarUrl from '../../assets/images/default-avatar.png'
 export const sizes = {
   TINY: 'tiny',
   SMALL: 'small',
-  MEDIUM: 'large'
+  MEDIUM: 'medium'
 }
 
 const useStyles = makeStyles({
