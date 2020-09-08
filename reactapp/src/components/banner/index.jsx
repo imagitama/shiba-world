@@ -19,19 +19,12 @@ const useStyles = makeStyles({
       left: '50%',
       transform: 'translateX(-50%)'
     },
-    maskImage: 'linear-gradient(to top, transparent, #282828 500%)'
+    maskImage: 'linear-gradient(to top, transparent, #282828 500%)',
+    overflow: 'hidden'
   },
   unloaded: {
     opacity: 0
   }
-  // cover: {
-  //   position: 'absolute',
-  //   top: 0,
-  //   left: 0,
-  //   width: '100%',
-  //   height: '100%',
-  //   background: 'linear-gradient(180deg, rgba(0,0,0,0.8), #282828)'
-  // }
 })
 
 export default () => {
@@ -87,7 +80,6 @@ export default () => {
         <source srcSet={fallbackUrl} type="image/png" />
         <img src={fallbackUrl} alt={'Banner for the page'} ref={imageRef} />
       </picture>
-      <div className={classes.cover} />
     </div>
   )
 }
