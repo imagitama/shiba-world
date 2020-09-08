@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import { useMediaQuery } from 'react-responsive'
@@ -29,11 +29,23 @@ const useStyles = makeStyles({
     position: 'relative',
     padding: '1rem 1rem 0',
     marginBottom: '2rem',
-    background: 'linear-gradient(180deg, #322148, rgba(0,0,0,0))',
     [mediaQueryForMobiles]: {
       padding: '0.5rem 0.5rem 0',
       marginBottom: '0.5rem'
     }
+  },
+  background: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    zIndex: -5,
+    background: 'linear-gradient(180deg, #322148, rgba(0,0,0,0))',
+    transition: 'all 1000ms'
+  },
+  withBanner: {
+    opacity: 0
   },
   cols: {
     display: 'flex',
@@ -113,6 +125,7 @@ export default () => {
   const dispatch = useDispatch()
   const isMobile = useMediaQuery({ query: queryForMobiles })
   const dispatchOpenMenu = () => dispatch(openMenu())
+  const bannerUrl = useSelector(({ app }) => app.bannerUrl)
 
   const onToggleMobileMenuClick = () => {
     dispatchOpenMenu()
@@ -152,6 +165,12 @@ export default () => {
       </div>
 
       {isMobile && <MobileMenu />}
+
+      <div
+        className={`${classes.background} ${
+          bannerUrl ? classes.withBanner : ''
+        }`}
+      />
     </header>
   )
 }

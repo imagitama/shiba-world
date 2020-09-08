@@ -6,6 +6,7 @@ import { Helmet } from 'react-helmet'
 import EditIcon from '@material-ui/icons/Edit'
 import ReportIcon from '@material-ui/icons/Report'
 import LoyaltyIcon from '@material-ui/icons/Loyalty'
+import { useDispatch } from 'react-redux'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -14,6 +15,7 @@ import useDatabaseQuery, {
   DiscordServerFieldNames
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
+import { setBannerUrls as setBannerUrlsAction } from '../../modules/app'
 
 import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
@@ -30,7 +32,6 @@ import ApproveAssetButton from '../approve-asset-button'
 import DeleteAssetButton from '../delete-asset-button'
 import PinAssetButton from '../pin-asset-button'
 import ImageGallery from '../image-gallery'
-import ImagePlaceholder from '../image-placeholder'
 
 import * as routes from '../../routes'
 import speciesMeta from '../../species-meta'
@@ -363,27 +364,6 @@ function MobilePrimaryBtn({
   )
 }
 
-function Banner({ imageUrls }) {
-  const classes = useStyles()
-
-  if (!imageUrls.url) {
-    return 'Invalid format'
-  }
-
-  const { url, fallbackUrl } = imageUrls
-
-  return (
-    <div className={classes.banner}>
-      <ImagePlaceholder width={1280} height={300} />
-      <picture>
-        <source srcSet={url} type="image/webp" />
-        <source srcSet={fallbackUrl} type="image/png" />
-        <img src={fallbackUrl} alt={'Banner for the asset'} />
-      </picture>
-    </div>
-  )
-}
-
 export default ({ assetId }) => {
   const [isLoading, isErrored, result] = useDatabaseQuery(
     CollectionNames.Assets,
@@ -393,10 +373,27 @@ export default ({ assetId }) => {
   const [, , user] = useUserRecord()
   const [isReportMessageOpen, setIsReportMessageOpen] = useState(false)
 
+  const dispatch = useDispatch()
+  const setBannerUrls = urls => dispatch(setBannerUrlsAction(urls))
+
   useEffect(() => {
     if (result && !result.title) {
       handleError(new Error(`Asset with ID ${assetId} does not exist`))
     }
+  }, [result ? result.title : null])
+
+  useEffect(() => {
+    if (
+      !result ||
+      !result[AssetFieldNames.bannerUrl] ||
+      !result[AssetFieldNames.bannerUrl].url
+    ) {
+      return
+    }
+
+    setBannerUrls(result[AssetFieldNames.bannerUrl])
+
+    return () => setBannerUrls({ url: '', fallbackUrl: '' })
   }, [result ? result.title : null])
 
   if (isLoading) {
@@ -429,8 +426,7 @@ export default ({ assetId }) => {
     [AssetFieldNames.author]: author,
     children,
     [AssetFieldNames.ownedBy]: ownedBy,
-    [AssetFieldNames.discordServer]: discordServer,
-    [AssetFieldNames.bannerUrl]: bannerUrl
+    [AssetFieldNames.discordServer]: discordServer
   } = result
 
   if (!title) {
@@ -485,8 +481,6 @@ export default ({ assetId }) => {
       {isDeleted === true && <DeletedMessage />}
       {isPrivate === true && <IsPrivateMessage />}
       {tags && tags.includes('wip') && <WorkInProgressMessage />}
-
-      {bannerUrl && <Banner imageUrls={bannerUrl} />}
 
       <div className={classes.thumbAndTitle}>
         <div className={classes.thumbnailWrapper}>

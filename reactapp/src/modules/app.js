@@ -50,7 +50,9 @@ const initialState = {
   isMenuOpen: false,
   searchTerm: getInitialSearchTerm(),
   searchIndexName: getInitialSearchIndexName(),
-  darkModeEnabled: true
+  darkModeEnabled: true,
+  bannerUrl: '',
+  bannerFallbackUrl: ''
 }
 
 const OPEN_MENU = 'OPEN_MENU'
@@ -59,6 +61,7 @@ const CHANGE_SEARCH_TERM = 'CHANGE_SEARCH_TERM'
 const TOGGLE_DARK_MODE = 'TOGGLE_DARK_MODE'
 const SET_DARK_MODE_ENABLED = 'SET_DARK_MODE_ENABLED'
 const CHANGE_SEARCH_INDEX_NAME = 'CHANGE_SEARCH_INDEX_NAME'
+const SET_BANNER_URLS = 'SET_BANNER_URLS'
 
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -96,6 +99,13 @@ export default (state = initialState, action) => {
       return {
         ...state,
         darkModeEnabled: action.payload.newValue
+      }
+
+    case SET_BANNER_URLS:
+      return {
+        ...state,
+        bannerUrl: action.payload.url,
+        bannerFallbackUrl: action.payload.fallbackUrl
       }
 
     default:
@@ -150,6 +160,15 @@ export const setDarkModeEnabled = newValue => dispatch => {
     type: SET_DARK_MODE_ENABLED,
     payload: {
       newValue
+    }
+  })
+}
+
+export const setBannerUrls = newValue => dispatch => {
+  dispatch({
+    type: SET_BANNER_URLS,
+    payload: {
+      ...newValue
     }
   })
 }

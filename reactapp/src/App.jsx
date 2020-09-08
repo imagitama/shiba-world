@@ -4,10 +4,9 @@ import Container from '@material-ui/core/Container'
 import ThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { Helmet } from 'react-helmet'
-import { useSelector } from 'react-redux'
 
 import * as routes from './routes'
-import { lightTheme, darkTheme } from './themes'
+import { darkTheme } from './themes'
 import { UserFieldNames } from './hooks/useDatabaseQuery'
 
 // Do not lazy load these routes as they are very popular so they should load fast
@@ -27,6 +26,7 @@ import ErrorBoundary from './components/error-boundary'
 import LoadingIndicator from './components/loading-indicator'
 import UnapprovedAssetsMessage from './components/unapproved-assets-message'
 import BannedNotice from './components/banned-notice'
+import Banner from './components/banner'
 
 import useUserRecord from './hooks/useUserRecord'
 import useSearchTerm from './hooks/useSearchTerm'
@@ -353,13 +353,11 @@ const MainContent = () => {
 }
 
 export default () => {
-  const darkModeEnabled = useSelector(
-    ({ app: { darkModeEnabled } }) => darkModeEnabled
-  )
   return (
     <ErrorBoundary>
-      <ThemeProvider theme={darkModeEnabled ? darkTheme : lightTheme}>
+      <ThemeProvider theme={darkTheme}>
         <CssBaseline />
+        <Banner />
         <PageHeader />
         <main className="main">
           <Container maxWidth="lg">
