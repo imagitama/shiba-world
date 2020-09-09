@@ -46,7 +46,10 @@ import {
   isUrlNotAnImageOrVideo
 } from '../../utils'
 import { handleError } from '../../error-handling'
-import { mediaQueryForTabletsOrBelow } from '../../media-queries'
+import {
+  mediaQueryForTabletsOrBelow,
+  mediaQueryForMobiles
+} from '../../media-queries'
 
 import NotApprovedMessage from './components/not-approved-message'
 import DeletedMessage from './components/deleted-message'
@@ -84,7 +87,7 @@ const useStyles = makeStyles({
     marginLeft: '5%',
 
     [mediaQueryForTabletsOrBelow]: {
-      margin: 0
+      margin: '2rem 0 0'
     }
   },
 
@@ -92,7 +95,7 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'row',
 
-    [mediaQueryForTabletsOrBelow]: {
+    [mediaQueryForMobiles]: {
       flexDirection: 'column'
     }
   },
@@ -100,7 +103,11 @@ const useStyles = makeStyles({
   titlesWrapper: {
     paddingLeft: '1rem',
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'center',
+    [mediaQueryForMobiles]: {
+      marginTop: '1rem'
+    }
   },
 
   title: {
@@ -110,8 +117,9 @@ const useStyles = makeStyles({
   thumbnailWrapper: {
     flexShrink: 0,
     width: '200px',
+    textAlign: 'center',
 
-    [mediaQueryForTabletsOrBelow]: {
+    [mediaQueryForMobiles]: {
       width: '100%'
     }
   },
@@ -144,7 +152,7 @@ const useStyles = makeStyles({
   createdByInTitle: {
     fontSize: '50%',
 
-    [mediaQueryForTabletsOrBelow]: {
+    [mediaQueryForMobiles]: {
       width: '100%',
       display: 'block',
       marginTop: '0.5rem'
@@ -406,25 +414,25 @@ export default ({ assetId }) => {
 
   const {
     id,
-    title,
-    description,
-    category,
-    species,
-    createdAt,
-    createdBy,
+    [AssetFieldNames.title]: title,
+    [AssetFieldNames.description]: description,
+    [AssetFieldNames.category]: category,
+    [AssetFieldNames.species]: species,
+    [AssetFieldNames.createdAt]: createdAt,
+    [AssetFieldNames.createdBy]: createdBy,
     [AssetFieldNames.tags]: tags,
-    fileUrls,
-    thumbnailUrl,
-    isApproved,
-    lastModifiedAt,
-    lastModifiedBy,
-    sourceUrl,
-    videoUrl,
-    isDeleted,
-    isAdult,
-    isPrivate,
+    [AssetFieldNames.fileUrls]: fileUrls,
+    [AssetFieldNames.thumbnailUrl]: thumbnailUrl,
+    [AssetFieldNames.isApproved]: isApproved,
+    [AssetFieldNames.lastModifiedAt]: lastModifiedAt,
+    [AssetFieldNames.lastModifiedBy]: lastModifiedBy,
+    [AssetFieldNames.sourceUrl]: sourceUrl,
+    [AssetFieldNames.videoUrl]: videoUrl,
+    [AssetFieldNames.isDeleted]: isDeleted,
+    [AssetFieldNames.isAdult]: isAdult,
+    [AssetFieldNames.isPrivate]: isPrivate,
     [AssetFieldNames.author]: author,
-    children,
+    [AssetFieldNames.children]: children,
     [AssetFieldNames.ownedBy]: ownedBy,
     [AssetFieldNames.discordServer]: discordServer
   } = result
