@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { makeStyles } from '@material-ui/styles'
 import { useSelector } from 'react-redux'
+import { mediaQueryForWideDesktops } from '../../media-queries'
 
 const useStyles = makeStyles({
   root: {
@@ -12,15 +13,19 @@ const useStyles = makeStyles({
     textAlign: 'center',
     opacity: 1,
     transition: 'all 500ms',
-    '& img': {
-      height: '100%',
-      position: 'absolute',
-      top: '0',
-      left: '50%',
-      transform: 'translateX(-50%)'
-    },
-    maskImage: 'linear-gradient(to top, transparent, #282828 500%)',
     overflow: 'hidden'
+  },
+  image: {
+    height: '100%',
+    position: 'absolute',
+    top: '0',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    maskImage: 'linear-gradient(to top, transparent, #282828 500%)',
+    [mediaQueryForWideDesktops]: {
+      maskImage:
+        'radial-gradient(ellipse at top, #282828 -200%, transparent 65%, transparent)'
+    }
   },
   unloaded: {
     opacity: 0
@@ -78,7 +83,12 @@ export default () => {
       <picture>
         <source srcSet={url} type="image/webp" />
         <source srcSet={fallbackUrl} type="image/png" />
-        <img src={fallbackUrl} alt={'Banner for the page'} ref={imageRef} />
+        <img
+          src={fallbackUrl}
+          alt={'Banner for the page'}
+          ref={imageRef}
+          className={classes.image}
+        />
       </picture>
     </div>
   )
