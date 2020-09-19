@@ -33,7 +33,8 @@ export const CollectionNames = {
   PollResponses: 'pollResponses',
   GuestUsers: 'guestUsers',
   Authors: 'authors',
-  DiscordServers: 'discordServers'
+  DiscordServers: 'discordServers',
+  Likes: 'likes'
 }
 
 export const AssetFieldNames = {
@@ -204,6 +205,12 @@ export const DiscordServerFieldNames = {
   species: 'species',
   lastModifiedBy: 'lastModifiedBy',
   lastModifiedAt: 'lastModifiedAt',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy'
+}
+
+export const LikeFieldNames = {
+  parent: 'parent',
   createdAt: 'createdAt',
   createdBy: 'createdBy'
 }

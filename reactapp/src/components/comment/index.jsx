@@ -16,6 +16,8 @@ import {
 import FormattedDate from '../formatted-date'
 import Button from '../button'
 import Avatar from '../avatar'
+import LikeButton from '../like-button'
+import LikesTotal from '../likes-total'
 
 import { canEditComments } from '../../permissions'
 import * as routes from '../../routes'
@@ -51,10 +53,7 @@ const useStyles = makeStyles({
   deletedMessage: {
     fontStyle: 'italic'
   },
-  date: {
-    fontSize: '75%',
-    marginLeft: '0.25rem'
-  },
+  date: {},
   contentWrapper: {
     display: 'flex'
   },
@@ -62,7 +61,20 @@ const useStyles = makeStyles({
     display: 'flex',
     justifyContent: 'flex-end'
   },
-  control: {}
+  control: {},
+  meta: {
+    display: 'inline-block'
+  },
+  metaItems: {
+    marginLeft: '0.25rem',
+    fontSize: '75%',
+    display: 'flex',
+    alignItems: 'center',
+    '& > div': {
+      display: 'inline-block',
+      marginRight: '1rem'
+    }
+  }
 })
 
 function DeleteButton({ commentId, isDeleted }) {
@@ -137,9 +149,25 @@ export default ({
         <Link to={routes.viewUserWithVar.replace(':userId', createdBy.id)}>
           {createdBy.username}
         </Link>{' '}
-        <span className={classes.date}>
-          <FormattedDate date={createdAt} />
-        </span>
+        <div className={classes.meta}>
+          <div className={classes.metaItems}>
+            <div className={classes.date}>
+              <FormattedDate date={createdAt} />
+            </div>
+            <div className={classes.likeButton}>
+              <LikeButton
+                collectionName={CollectionNames.Comments}
+                parentId={id}
+              />
+            </div>
+            <div>
+              <LikesTotal
+                collectionName={CollectionNames.Comments}
+                parentId={id}
+              />
+            </div>
+          </div>
+        </div>
         <div className={classes.contentWrapper}>
           {isDeleted && (
             <div className={classes.deletedMessage}>
