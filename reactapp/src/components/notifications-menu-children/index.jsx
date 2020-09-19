@@ -166,6 +166,11 @@ export default ({ onClose, isMobile = false }) => {
     return false
   }
 
+  const onClickLink = id => {
+    onClearNotification(id)
+    onClose()
+  }
+
   const onClearNotification = async id => {
     try {
       await quickDeleteRecord(CollectionNames.Notifications, id)
@@ -179,7 +184,7 @@ export default ({ onClose, isMobile = false }) => {
     <MenuItem key={id} className={menuItemClassName}>
       <Link
         to={getLinkUrl(parent)}
-        onClick={onClose}
+        onClick={() => onClickLink(id)}
         className={classes.anchor}>
         <div className={classes.leftCol}>
           <div className={classes.message}>
