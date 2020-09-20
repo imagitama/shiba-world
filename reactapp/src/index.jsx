@@ -10,6 +10,7 @@ import App from './App'
 import { inDevelopment } from './environment'
 import { changeSearchTerm } from './modules/app'
 import './firebase'
+import './global.css'
 
 if (!inDevelopment()) {
   Sentry.init({
