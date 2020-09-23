@@ -290,6 +290,12 @@ const DiscordServerFieldNames = {
   createdBy: 'createdBy',
 }
 
+const LikeFieldNames = {
+  parent: 'parent',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+}
+
 function isNotApproved(docData) {
   return docData.isApproved === false
 }
@@ -865,6 +871,44 @@ exports.onCommentCreated = functions.firestore
         parent: doc[CommentFieldNames.parent],
       },
       docData[CommentFieldNames.createdBy]
+    )
+  })
+
+exports.onLikeCreated = functions.firestore
+  .document('likes/{likeId}')
+  .onCreate(async (doc) => {
+    const docData = doc.data()
+
+    const commentDoc = await docData[LikeFieldNames.parent].get()
+    const commentDocData = commentDoc.data()
+    const commenterDoc = await commentDocData[CommentFieldNames.createdBy].get()
+    const assetDoc = await commentDocData[CommentFieldNames.parent].get()
+    const likerDoc = await docData[LikeFieldNames.createdBy].get()
+
+    if (
+      !isPrivate(assetDoc) &&
+      !isNotApproved(assetDoc) &&
+      !isDeleted(assetDoc) &&
+      !isAdult(assetDoc)
+    ) {
+      await emitToDiscordActivity(
+        `User ${likerDoc.get(
+          UserFieldNames.username
+        )} liked a comment by "${commenterDoc.get(
+          UserFieldNames.username
+        )}" on asset "${assetDoc.get(AssetFieldNames.title)}"`,
+        [getEmbedForViewAsset(assetDoc.id)]
+      )
+    }
+
+    return storeInHistory(
+      'Liked comment',
+      doc.ref,
+      {
+        fields: replaceReferencesWithString(docData),
+        parent: doc[LikeFieldNames.parent],
+      },
+      docData[LikeFieldNames.createdBy]
     )
   })
 
