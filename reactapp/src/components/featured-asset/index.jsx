@@ -11,7 +11,7 @@ import LazyLoad from 'react-lazyload'
 import RoomIcon from '@material-ui/icons/Room'
 
 import * as routes from '../../routes'
-import categoryMeta from '../../category-meta'
+// import categoryMeta from '../../category-meta'
 import FormattedDate from '../formatted-date'
 import {
   mediaQueryForTabletsOrBelow,
