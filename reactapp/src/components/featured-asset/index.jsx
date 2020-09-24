@@ -18,6 +18,7 @@ import {
   mediaQueryForMobiles
 } from '../../media-queries'
 import useDatabaseQuery, { mapDates } from '../../hooks/useDatabaseQuery'
+import { trackAction } from '../../analytics'
 import Heading from '../heading'
 
 const useStyles = makeStyles(theme => ({
@@ -146,6 +147,7 @@ export default () => {
         <CardActionArea>
           <Link
             to={routes.viewAssetWithVar.replace(':assetId', id)}
+            onClick={() => trackAction('Home', 'CLick featured asset')}
             className={classes.cols}>
             <ExtraChips
               isAdult={isAdult}
