@@ -241,7 +241,7 @@ function getIsGettingSingleRecord(whereClauses) {
 
 const secondsToDate = seconds => new Date(seconds * 1000)
 
-const mapDates = doc => {
+export const mapDates = doc => {
   if (!doc) {
     return doc
   }

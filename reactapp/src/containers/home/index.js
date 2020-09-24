@@ -8,6 +8,7 @@ import SpeciesBrowser from '../../components/species-browser'
 import AllTagsBrowser from '../../components/all-tags-browser'
 import Paper from '../../components/paper'
 import Polls from '../../components/polls'
+import FeaturedAsset from '../../components/featured-asset'
 
 import * as routes from '../../routes'
 import categoryMeta from '../../category-meta'
@@ -202,6 +203,8 @@ export default () => {
 
   return (
     <>
+      <FeaturedAsset />
+
       <Tiles />
 
       <Polls className={classes.polls} />
