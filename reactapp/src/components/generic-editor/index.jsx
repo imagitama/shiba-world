@@ -45,6 +45,11 @@ const useStyles = makeStyles({
   saveBtn: {
     textAlign: 'center',
     marginTop: '1rem'
+  },
+  hint: {
+    fontSize: '75%',
+    fontStyle: 'italic',
+    marginTop: '5px'
   }
 })
 
@@ -114,8 +119,15 @@ export default ({
 
       const [newId] = await save({
         ...formFields,
-        lastModifiedBy: createRef(CollectionNames.Users, userId),
-        lastModifiedAt: new Date()
+        ...(id
+          ? {
+              lastModifiedBy: createRef(CollectionNames.Users, userId),
+              lastModifiedAt: new Date()
+            }
+          : {
+              createdBy: createRef(CollectionNames.Users, userId),
+              createdAt: new Date()
+            })
       })
 
       setCreatedDocId(newId)
@@ -154,20 +166,24 @@ export default ({
 
   return (
     <>
-      {fields.map(({ name, type, default: defaultValue, label, ...rest }) => {
-        const Input = getInputForFieldType(type)
+      {fields.map(
+        ({ name, type, default: defaultValue, label, hint, ...rest }) => {
+          const Input = getInputForFieldType(type)
 
-        return (
-          <Field key={name} label={label}>
-            <Input
-              value={formFields[name] || defaultValue}
-              {...rest}
-              onChange={newVal => onFieldChange(name, newVal)}
-              extraFormData={extraFormData}
-            />
-          </Field>
-        )
-      })}
+          return (
+            <Field key={name} label={label}>
+              <Input
+                value={formFields[name] || defaultValue}
+                {...rest}
+                onChange={newVal => onFieldChange(name, newVal)}
+                extraFormData={extraFormData}
+                setFieldValue={onFieldChange}
+              />
+              {hint && <div className={classes.hint}>{hint}</div>}
+            </Field>
+          )
+        }
+      )}
       <div className={classes.saveBtn}>
         <Button
           url={cancelUrl}

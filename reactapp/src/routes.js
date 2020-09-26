@@ -40,6 +40,8 @@ export const discordServers = '/discord-servers'
 export const viewDiscordServerWithVar = '/discord-servers/:discordServerId'
 export const editDiscordServerWithVar = '/discord-servers/:discordServerId/edit'
 export const createDiscordServer = '/discord-servers/create'
+export const editSpeciesWithVar = '/species/:speciesName/edit'
+export const createSpecies = '/species/create'
 
 // Outdated routes
 export const browseAssets = '/browse'

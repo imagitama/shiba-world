@@ -9,9 +9,20 @@ import Typography from '@material-ui/core/Typography'
 import * as routes from '../../routes'
 import speciesMeta from '../../species-meta'
 import { mediaQueryForTabletsOrBelow } from '../../media-queries'
+import useDatabaseQuery, {
+  SpeciesFieldNames,
+  CollectionNames
+} from '../../hooks/useDatabaseQuery'
+import LoadingIndicator from '../loading-indicator'
+import ErrorMessage from '../error-message'
+import Heading from '../heading'
 
 const useStyles = makeStyles({
-  speciesBrowser: { marginTop: '0.5rem', display: 'flex', flexWrap: 'wrap' },
+  root: { marginTop: '0.5rem' },
+  items: {
+    display: 'flex',
+    flexWrap: 'wrap'
+  },
   speciesItem: {
     width: '50%',
     padding: '0.5rem',
@@ -51,6 +62,7 @@ const useStyles = makeStyles({
 })
 
 const Species = ({
+  id = null,
   name,
   title,
   description,
@@ -59,7 +71,7 @@ const Species = ({
   onSpeciesClick = null
 }) => {
   const classes = useStyles()
-  const url = routes.viewSpeciesWithVar.replace(':speciesName', name)
+  const url = routes.viewSpeciesWithVar.replace(':speciesName', id || name)
 
   return (
     <div className={classes.speciesItem}>
@@ -100,30 +112,103 @@ const Species = ({
 }
 
 export default ({ onSpeciesClick = null }) => {
+  const [isLoading, isError, results] = useDatabaseQuery(
+    CollectionNames.Species
+  )
   const classes = useStyles()
+
+  if (isLoading) {
+    return <LoadingIndicator />
+  }
+
+  if (isError) {
+    return <ErrorMessage />
+  }
+
+  const allSpecies = Object.entries(speciesMeta).concat(
+    results.map(result => [
+      result.singularName,
+      {
+        id: result.id,
+        isPopular: result[SpeciesFieldNames.isPopular],
+        name: result[SpeciesFieldNames.singularName],
+        shortDescription: result[SpeciesFieldNames.shortDescription],
+        optimizedThumbnailUrl: result[SpeciesFieldNames.thumbnailUrl],
+        thumbnailUrl: result[SpeciesFieldNames.fallbackThumbnailurl]
+      }
+    ])
+  )
+  let popular = []
+  let unpopular = []
+
+  // todo: replace with nicer loop later when have time
+  allSpecies.forEach(([key, speciesItem]) => {
+    if (speciesItem[SpeciesFieldNames.isPopular] || !speciesItem.id) {
+      popular = popular.concat([[key, speciesItem]])
+    } else {
+      unpopular = unpopular.concat([[key, speciesItem]])
+    }
+  })
+
+  console.log(popular)
+
   return (
-    <div className={classes.speciesBrowser}>
-      {Object.entries(speciesMeta).map(
-        ([
-          name,
-          {
-            name: title,
-            shortDescription,
-            optimizedThumbnailUrl,
-            backupThumbnailUrl
-          }
-        ]) => (
-          <Species
-            key={name}
-            name={name}
-            title={title}
-            description={shortDescription}
-            optimizedThumbnailUrl={optimizedThumbnailUrl}
-            backupThumbnailUrl={backupThumbnailUrl}
-            onSpeciesClick={onSpeciesClick}
-          />
-        )
-      )}
+    <div className={classes.root}>
+      <Heading variant="h2">
+        <Link to={routes.viewAllSpecies}>Species</Link>
+      </Heading>
+      <Heading variant="h3">Popular Species</Heading>
+      <div className={classes.items}>
+        {popular.map(
+          ([
+            name,
+            {
+              id,
+              name: title,
+              shortDescription,
+              optimizedThumbnailUrl,
+              backupThumbnailUrl
+            }
+          ]) => (
+            <Species
+              key={id || name}
+              id={id}
+              name={name}
+              title={title}
+              description={shortDescription}
+              optimizedThumbnailUrl={optimizedThumbnailUrl}
+              backupThumbnailUrl={backupThumbnailUrl}
+              onSpeciesClick={onSpeciesClick}
+            />
+          )
+        )}
+      </div>
+      <Heading variant="h3">More Species</Heading>
+      <div className={classes.items}>
+        {unpopular.map(
+          ([
+            name,
+            {
+              id,
+              name: title,
+              shortDescription,
+              optimizedThumbnailUrl,
+              backupThumbnailUrl
+            }
+          ]) => (
+            <Species
+              key={id || name}
+              id={id}
+              name={name}
+              title={title}
+              description={shortDescription}
+              optimizedThumbnailUrl={optimizedThumbnailUrl}
+              backupThumbnailUrl={backupThumbnailUrl}
+              onSpeciesClick={onSpeciesClick}
+            />
+          )
+        )}
+      </div>
     </div>
   )
 }

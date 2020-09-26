@@ -34,7 +34,8 @@ export const CollectionNames = {
   GuestUsers: 'guestUsers',
   Authors: 'authors',
   DiscordServers: 'discordServers',
-  Likes: 'likes'
+  Likes: 'likes',
+  Species: 'species'
 }
 
 export const AssetFieldNames = {
@@ -215,6 +216,20 @@ export const LikeFieldNames = {
   createdBy: 'createdBy'
 }
 
+export const SpeciesFieldNames = {
+  singularName: 'singularName',
+  pluralName: 'pluralName',
+  description: 'description',
+  shortDescription: 'shortDescription',
+  thumbnailUrl: 'thumbnailUrl',
+  fallbackThumbnailUrl: 'fallbackThumbnailUrl',
+  isPopular: 'isPopular',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy'
+}
+
 function getWhereClausesAsString(whereClauses) {
   if (whereClauses === undefined) {
     return 'undefined'
@@ -228,7 +243,10 @@ function getWhereClausesAsString(whereClauses) {
   if (Array.isArray(whereClauses)) {
     return whereClauses
       .map(
-        ([fieldName, operator, value]) => `[${fieldName},${operator},${value}]`
+        ([fieldName, operator, value]) =>
+          `[${fieldName},${operator},${
+            isRef(value) ? `${value.ref.collectionName}=${value.ref.id}` : value
+          }]`
       )
       .join(',')
   }
@@ -321,14 +339,19 @@ async function mapDocArrays(doc, fetchChildren = true) {
 
   const newFields = await Promise.all(
     Object.entries(doc).map(async ([key, value]) => {
-      if (Array.isArray(value) && value.length && isFirebaseDoc(value[0])) {
-        return [
-          key,
-          await formatRawDocs(
-            await Promise.all(value.map(item => item.get())),
-            false
-          )
-        ]
+      if (Array.isArray(value) && value.length) {
+        const results = await Promise.all(
+          value.map(async item => {
+            if (isFirebaseDoc(item)) {
+              const doc = await item.get()
+              return formatRawDoc(doc, false)
+            } else {
+              return Promise.resolve(item)
+            }
+          })
+        )
+
+        return [key, results]
       }
       // Hack to support history data having a "parent" field ie. comments
       if (

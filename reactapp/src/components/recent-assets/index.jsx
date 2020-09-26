@@ -18,6 +18,7 @@ import BodyText from '../body-text'
 
 import * as routes from '../../routes'
 import categoryMeta from '../../category-meta'
+import { createRef } from '../../utils'
 
 function getViewMoreLinkUrl(speciesName, categoryName) {
   if (speciesName && categoryName) {
@@ -33,6 +34,7 @@ function getViewMoreLinkUrl(speciesName, categoryName) {
 
 export default ({
   speciesName = null,
+  speciesId = null,
   categoryName = null,
   showPinned,
   limit = 10,
@@ -52,6 +54,14 @@ export default ({
       AssetFieldNames.species,
       Operators.ARRAY_CONTAINS,
       speciesName
+    ])
+  }
+
+  if (speciesId) {
+    whereClauses.push([
+      AssetFieldNames.species,
+      Operators.ARRAY_CONTAINS,
+      createRef(CollectionNames.Species, speciesId)
     ])
   }
 

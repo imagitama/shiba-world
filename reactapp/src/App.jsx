@@ -127,6 +127,12 @@ const ViewDiscordServer = lazy(() =>
 const EditDiscordServer = lazy(() =>
   catchChunkDeaths(() => import('./containers/edit-discord-server'))
 )
+const CreateSpecies = lazy(() =>
+  catchChunkDeaths(() => import('./containers/create-species'))
+)
+const EditSpecies = lazy(() =>
+  catchChunkDeaths(() => import('./containers/edit-species'))
+)
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
   return (
@@ -290,6 +296,8 @@ const MainContent = () => {
             description: 'Thanks!'
           }}
         />
+        <Route exact path={routes.createSpecies} component={CreateSpecies} />
+        <Route exact path={routes.editSpeciesWithVar} component={EditSpecies} />
         <Route exact path={routes.viewSpeciesWithVar} component={ViewSpecies} />
         <Route
           exact

@@ -6,10 +6,17 @@ import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
 
 import speciesMeta from '../../../../species-meta'
+import useDatabaseQuery, {
+  CollectionNames,
+  SpeciesFieldNames
+} from '../../../../hooks/useDatabaseQuery'
 import useCategoryMeta from '../../../../hooks/useCategoryMeta'
 
 import Button from '../../../button'
 import Heading from '../../../heading'
+import LoadingIndicator from '../../../loading-indicator'
+import ErrorMessage from '../../../error-message'
+import { isRef } from '../../../../utils'
 
 const useStyles = makeStyles({
   doneBtn: {
@@ -92,6 +99,17 @@ export default ({
 }) => {
   const classes = useStyles()
   const { nameSingular } = useCategoryMeta(selectedCategory)
+  const [isLoading, isError, results] = useDatabaseQuery(
+    CollectionNames.Species
+  )
+
+  if (isLoading) {
+    return <LoadingIndicator />
+  }
+
+  if (isError) {
+    return <ErrorMessage>Failed to load species</ErrorMessage>
+  }
 
   return (
     <>
@@ -99,20 +117,47 @@ export default ({
       <Heading variant="h2">Select a species</Heading>
       <p>This is optional - you can select none and click Done.</p>
       <div className={classes.items}>
-        {Object.entries(speciesMeta).map(([name, meta]) => (
-          <Item
-            key={name}
-            {...meta}
-            isSelected={selectedSpeciesMulti.includes(name)}
-            onClick={() => {
-              if (selectedSpeciesMulti.includes(name)) {
-                onDeSelect(name)
-              } else {
-                onSelect(name)
+        {Object.entries(speciesMeta)
+          .concat(
+            results.map(result => [
+              result.singularName,
+              {
+                id: result.id,
+                name: result[SpeciesFieldNames.singularName],
+                shortDescription: result[SpeciesFieldNames.shortDescription],
+                optimizedThumbnailUrl: result[SpeciesFieldNames.thumbnailUrl],
+                thumbnailUrl: result[SpeciesFieldNames.fallbackThumbnailurl]
               }
-            }}
-          />
-        ))}
+            ])
+          )
+          .map(([name, meta]) => (
+            <Item
+              key={name}
+              {...meta}
+              isSelected={
+                selectedSpeciesMulti.findIndex(selectedSpeciesItem => {
+                  if (isRef(selectedSpeciesItem)) {
+                    return meta.id && selectedSpeciesItem.ref.id === meta.id
+                  }
+                  return selectedSpeciesItem === name
+                }) !== -1
+              }
+              onClick={() => {
+                if (
+                  selectedSpeciesMulti.findIndex(selectedSpeciesItem => {
+                    if (isRef(selectedSpeciesItem)) {
+                      return meta.id && selectedSpeciesItem.ref.id === meta.id
+                    }
+                    return selectedSpeciesItem === name
+                  }) !== -1
+                ) {
+                  onDeSelect(name, meta.id)
+                } else {
+                  onSelect(name, meta.id)
+                }
+              }}
+            />
+          ))}
       </div>
       <div className={classes.doneBtn}>
         <Button size="large" onClick={() => onDone()}>

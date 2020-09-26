@@ -98,6 +98,16 @@ export function canApproveAsset(currentUser) {
   return false
 }
 
+export function canEditSpecies(user) {
+  if (!user) {
+    return false
+  }
+  if (user.isAdmin || user.isEditor) {
+    return true
+  }
+  return false
+}
+
 // Some uploaded files have an uppercase extension (.PNG)
 // TODO: Upload the files always as lowercase?
 function getValidUrl(url) {
@@ -165,4 +175,29 @@ export function getDocument(collectionName, id) {
     .firestore()
     .collection(collectionName)
     .doc(id)
+}
+
+export function isDocument(value) {
+  return value && typeof value === 'object' && 'id' in value
+}
+
+export function mapRefToDoc(ref) {
+  return getDocument(ref.collectionName, ref.id)
+}
+
+export function mapRefsToDocs(value) {
+  if (!Array.isArray(value)) {
+    return false
+  }
+
+  return value.map(val => {
+    if (isRef(val)) {
+      return mapRefToDoc(val.ref)
+    }
+    return val
+  })
+}
+
+export function convertDocToRef(doc) {
+  return createRef(doc.parent.id, doc.id)
 }

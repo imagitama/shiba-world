@@ -34,7 +34,6 @@ import PinAssetButton from '../pin-asset-button'
 import ImageGallery from '../image-gallery'
 
 import * as routes from '../../routes'
-import speciesMeta from '../../species-meta'
 import { trackAction } from '../../analytics'
 import {
   getDescriptionForHtmlMeta,
@@ -58,6 +57,7 @@ import FileList from './components/file-list'
 import ReportMessage from './components/report-message'
 import WorkInProgressMessage from './components/work-in-progress-message'
 import ChildrenAssets from './components/children-assets'
+import SpeciesOutput from './components/species-output'
 
 import OwnerEditor from '../owner-editor'
 import DownloadAssetButton from '../download-asset-button'
@@ -207,16 +207,6 @@ const useStyles = makeStyles({
 
 const allSpeciesLabel = 'All Species'
 const analyticsCategoryName = 'ViewAsset'
-
-function getSpeciesDisplayNameBySpeciesName(speciesName) {
-  if (!speciesName) {
-    return allSpeciesLabel
-  }
-  if (!speciesMeta[speciesName]) {
-    throw new Error(`Unknown species name ${speciesName}`)
-  }
-  return speciesMeta[speciesName].name
-}
 
 function getCategoryDisplayName(category) {
   return `${category.substr(0, 1).toUpperCase()}${category.substr(1)}`
@@ -511,13 +501,7 @@ export default ({ assetId }) => {
                 <div>
                   {species.length ? (
                     <>
-                      <Link
-                        to={routes.viewSpeciesWithVar.replace(
-                          ':speciesName',
-                          species[0]
-                        )}>
-                        {getSpeciesDisplayNameBySpeciesName(species[0])}
-                      </Link>
+                      <SpeciesOutput species={species} />
                       {' / '}
                       <Link
                         to={routes.viewSpeciesCategoryWithVar

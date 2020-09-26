@@ -11,6 +11,7 @@ import FileAttacher from './components/file-attacher'
 import ChildrenInput from './components/children-input'
 import AuthorInput from './components/author-input'
 import PopularTagsSelector from './components/popular-tags-selector'
+import SpeciesOutput from './components/species-output'
 
 import Heading from '../heading'
 import ThumbnailUploader from '../thumbnail-uploader'
@@ -25,8 +26,15 @@ import {
 } from '../../hooks/useDatabaseQuery'
 import useCategoryMeta from '../../hooks/useCategoryMeta'
 import categoryMeta from '../../category-meta'
-import speciesMeta from '../../species-meta'
-import { scrollToTop, createRef } from '../../utils'
+import {
+  scrollToTop,
+  createRef,
+  isRef,
+  mapRefToDoc,
+  mapRefsToDocs,
+  convertDocToRef,
+  isDocument
+} from '../../utils'
 
 const useStyles = makeStyles({
   controls: { marginTop: '2rem', textAlign: 'center' }
@@ -135,6 +143,39 @@ const getIsFormValid = formFields => {
   return true
 }
 
+function fieldDataToDocs(fieldData) {
+  return Object.entries(fieldData).reduce(
+    (newFieldData, [name, val]) => ({
+      ...newFieldData,
+      [name]: isRef(val)
+        ? mapRefToDoc(val)
+        : Array.isArray(val)
+        ? mapRefsToDocs(val)
+        : val
+    }),
+    {}
+  )
+}
+
+function mapDocToRefs(asset) {
+  return Object.entries(asset).reduce(
+    (newFieldData, [name, val]) => ({
+      ...newFieldData,
+      [name]: isDocument(val)
+        ? convertDocToRef(val)
+        : Array.isArray(val)
+        ? val.map(item => {
+            if (isDocument(item)) {
+              return convertDocToRef(item)
+            }
+            return item
+          })
+        : val
+    }),
+    {}
+  )
+}
+
 export default ({
   assetId,
   asset = {},
@@ -160,7 +201,7 @@ export default ({
     isPrivate = false,
     author = null,
     children = []
-  } = asset
+  } = mapDocToRefs(asset)
 
   const [fieldData, setFieldData] = useState({
     title,
@@ -193,7 +234,9 @@ export default ({
       return
     }
 
-    onSubmit(fieldData)
+    const fieldDataWithDocs = fieldDataToDocs(fieldData)
+
+    onSubmit(fieldDataWithDocs)
   }
 
   const onFieldChange = (fieldName, newVal) => {
@@ -219,18 +262,28 @@ export default ({
     return (
       <SpeciesSelector
         selectedCategory={fieldData[AssetFieldNames.category]}
-        onSelect={speciesToAdd =>
+        onSelect={(nameToAdd, idToAdd) =>
           onFieldChange(
             AssetFieldNames.species,
-            fieldData[AssetFieldNames.species].concat([speciesToAdd])
+            fieldData[AssetFieldNames.species].concat([
+              idToAdd ? createRef(CollectionNames.Species, idToAdd) : nameToAdd
+            ])
           )
         }
-        onDeSelect={speciesToRemove =>
+        onDeSelect={(nameToRemove, idToRemove) =>
           onFieldChange(
             AssetFieldNames.species,
-            fieldData[AssetFieldNames.species].filter(
-              species => species !== speciesToRemove
-            )
+            fieldData[AssetFieldNames.species].filter(species => {
+              if (idToRemove) {
+                if (isRef(species)) {
+                  if (species.ref.id === idToRemove) {
+                    return false
+                  }
+                }
+                return true
+              }
+              return species !== nameToRemove
+            })
           )
         }
         selectedSpeciesMulti={fieldData.species}
@@ -251,11 +304,7 @@ export default ({
       </Heading>
       <Heading variant="h2">
         {categoryMeta[fieldData[AssetFieldNames.category]].nameSingular} -{' '}
-        {fieldData[AssetFieldNames.species].length
-          ? fieldData[AssetFieldNames.species]
-              .map(speciesName => speciesMeta[speciesName].name)
-              .join(', ')
-          : 'All Species'}
+        <SpeciesOutput species={fieldData[AssetFieldNames.species]} />
       </Heading>
       <Button onClick={() => onFieldChange(AssetFieldNames.category, '')}>
         Reset Category

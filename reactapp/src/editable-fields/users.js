@@ -19,10 +19,10 @@ export default [
     label: 'Avatar image URL',
     type: fieldTypes.imageUpload,
     fieldProperties: {
+      directoryName: 'avatars',
       width: 200,
       height: 200
     },
-    hint: 'Should be 200 x 200 png',
     default: ''
   },
   {

@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 
 import Heading from '../../components/heading'
-import BodyText from '../../components/body-text'
 import SpeciesBrowser from '../../components/species-browser'
 import AllTagsBrowser from '../../components/all-tags-browser'
 import Paper from '../../components/paper'
@@ -209,12 +208,6 @@ export default () => {
 
       <Polls className={classes.polls} />
 
-      <Heading variant="h2">
-        <Link to={routes.viewAllSpecies}>Species</Link>
-      </Heading>
-      <BodyText>
-        Select a species to browse their assets, tutorials, avatars and news.
-      </BodyText>
       <SpeciesBrowser
         onSpeciesClick={speciesName =>
           trackAction('Home', 'Click species browser', speciesName)

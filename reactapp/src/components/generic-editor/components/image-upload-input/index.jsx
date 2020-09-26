@@ -1,16 +1,39 @@
 import React from 'react'
-import ImageUploader from '../../../image-uploader'
-import Avatar from '../../../avatar'
+import FallbackImageUploader from '../../../fallback-image-uploader'
 
-export default ({ onChange, value, extraFormData = {} }) => {
+export default ({
+  onChange,
+  value,
+  fieldProperties = {
+    width: 200,
+    height: 200,
+    directoryName: 'untitled',
+    fallbackFieldName: ''
+  },
+  setFieldValue
+}) => {
   return (
     <>
-      <ImageUploader
-        onDownloadUrl={onChange}
-        directoryPath={`avatars/${extraFormData.userId}`}
-        thumbnailWidthAndHeight={200}
+      {value && (
+        <img
+          src={value}
+          alt="Preview"
+          width={fieldProperties.width}
+          height={fieldProperties.height}
+        />
+      )}
+      <FallbackImageUploader
+        onUploadedUrls={({ url, fallbackUrl }) => {
+          onChange(url)
+          if (fieldProperties.fallbackFieldName) {
+            console.log('setting it', fallbackUrl)
+            setFieldValue(fieldProperties.fallbackFieldName, fallbackUrl)
+          }
+        }}
+        requiredWidth={fieldProperties.width}
+        requiredHeight={fieldProperties.height}
+        directoryPath={fieldProperties.directoryName}
       />
-      {value ? <Avatar url={value} /> : '(none set)'}
     </>
   )
 }
