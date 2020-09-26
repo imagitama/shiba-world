@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 
 import * as routes from '../../routes'
-import speciesMeta from '../../species-meta'
+import speciesMeta, { speciesName } from '../../species-meta'
 import { mediaQueryForTabletsOrBelow } from '../../media-queries'
 import useDatabaseQuery, {
   SpeciesFieldNames,
@@ -30,6 +30,9 @@ const useStyles = makeStyles({
       width: '100%',
       padding: '0.25rem'
     }
+  },
+  fullWidth: {
+    width: '100%'
   },
   contentWrapper: {
     display: 'flex',
@@ -68,13 +71,17 @@ const Species = ({
   description,
   backupThumbnailUrl,
   optimizedThumbnailUrl,
-  onSpeciesClick = null
+  onSpeciesClick = null,
+  isFullWidth = false
 }) => {
   const classes = useStyles()
   const url = routes.viewSpeciesWithVar.replace(':speciesName', id || name)
 
   return (
-    <div className={classes.speciesItem}>
+    <div
+      className={`${classes.speciesItem} ${
+        isFullWidth ? classes.fullWidth : ''
+      }`}>
       <Card>
         <CardActionArea>
           <Link
@@ -125,19 +132,21 @@ export default ({ onSpeciesClick = null }) => {
     return <ErrorMessage />
   }
 
-  const allSpecies = Object.entries(speciesMeta).concat(
-    results.map(result => [
-      result.singularName,
-      {
-        id: result.id,
-        isPopular: result[SpeciesFieldNames.isPopular],
-        name: result[SpeciesFieldNames.singularName],
-        shortDescription: result[SpeciesFieldNames.shortDescription],
-        optimizedThumbnailUrl: result[SpeciesFieldNames.thumbnailUrl],
-        thumbnailUrl: result[SpeciesFieldNames.fallbackThumbnailurl]
-      }
-    ])
-  )
+  const allSpecies = Object.entries(speciesMeta)
+    .filter(([key]) => key !== speciesName.otherSpecies)
+    .concat(
+      results.map(result => [
+        result.singularName,
+        {
+          id: result.id,
+          isPopular: result[SpeciesFieldNames.isPopular],
+          name: result[SpeciesFieldNames.singularName],
+          shortDescription: result[SpeciesFieldNames.shortDescription],
+          optimizedThumbnailUrl: result[SpeciesFieldNames.thumbnailUrl],
+          thumbnailUrl: result[SpeciesFieldNames.fallbackThumbnailurl]
+        }
+      ])
+    )
   let popular = []
   let unpopular = []
 
@@ -150,7 +159,7 @@ export default ({ onSpeciesClick = null }) => {
     }
   })
 
-  console.log(popular)
+  const otherSpecies = speciesMeta[speciesName.otherSpecies]
 
   return (
     <div className={classes.root}>
@@ -208,6 +217,18 @@ export default ({ onSpeciesClick = null }) => {
             />
           )
         )}
+      </div>
+      <Heading variant="h3">Other Species</Heading>
+      <div>
+        <Species
+          name={speciesName.otherSpecies}
+          title={otherSpecies.name}
+          description={otherSpecies.shortDescription}
+          optimizedThumbnailUrl={otherSpecies.optimizedThumbnailUrl}
+          backupThumbnailUrl={otherSpecies.backupThumbnailUrl}
+          onSpeciesClick={onSpeciesClick}
+          isFullWidth
+        />
       </div>
     </div>
   )

@@ -1,7 +1,6 @@
 import React from 'react'
 import TwitterIcon from '@material-ui/icons/Twitter'
 import * as routes from './routes'
-import speciesMeta from './species-meta'
 import categoriesMeta from './category-meta'
 import { TWITTER_URL, DISCORD_URL } from './config'
 import { UserFieldNames, AssetCategories } from './hooks/useDatabaseQuery'
@@ -64,19 +63,7 @@ export default [
   {
     id: 'species',
     label: 'Species',
-    children: [
-      {
-        id: 'all-species',
-        label: 'All Species',
-        url: routes.viewAllSpecies
-      }
-    ].concat(
-      Object.entries(speciesMeta).map(([name, meta]) => ({
-        id: `species-${name}`,
-        label: meta.name,
-        url: routes.viewSpeciesWithVar.replace(':speciesName', name)
-      }))
-    )
+    url: routes.viewAllSpecies
   },
   {
     id: 'more',
