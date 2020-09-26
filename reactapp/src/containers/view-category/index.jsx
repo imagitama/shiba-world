@@ -31,7 +31,8 @@ import useDatabaseQuery, {
   CollectionNames,
   OrderDirections,
   AssetFieldNames,
-  AssetCategories
+  AssetCategories,
+  SpeciesFieldNames
 } from '../../hooks/useDatabaseQuery'
 import useStorage, { keys as storageKeys } from '../../hooks/useStorage'
 import { mediaQueryForMobiles } from '../../media-queries'
@@ -84,6 +85,7 @@ function AvatarAssetResults({ assets }) {
   }, [])
 
   let otherSpecies = [[speciesName.otherSpecies, []]]
+  const speciesMetaById = {}
 
   const assetsBySpecies = assets.reduce((obj, asset) => {
     if (
@@ -91,7 +93,15 @@ function AvatarAssetResults({ assets }) {
       asset[AssetFieldNames.species].length &&
       asset[AssetFieldNames.species][0] !== speciesName.otherSpecies
     ) {
-      const key = asset[AssetFieldNames.species][0]
+      const speciesItem = asset[AssetFieldNames.species][0]
+      let key
+
+      if (typeof speciesItem === 'string') {
+        key = speciesItem
+      } else {
+        speciesMetaById[speciesItem.id] = speciesItem
+        key = speciesItem.id
+      }
 
       return {
         ...obj,
@@ -109,18 +119,28 @@ function AvatarAssetResults({ assets }) {
       {Object.entries(assetsBySpecies)
         .sort(([nameA], [nameB]) => nameA.localeCompare(nameB))
         .concat(otherSpecies)
-        .map(([speciesName, assetsForSpecies]) => (
-          <Fragment key={speciesName}>
+        .map(([speciesNameOrId, assetsForSpecies]) => (
+          <Fragment key={speciesNameOrId}>
             <Heading variant="h2">
               <Link
                 to={routes.viewSpeciesWithVar.replace(
                   ':speciesName',
-                  speciesName
+                  speciesNameOrId
                 )}>
-                {speciesMeta[speciesName].name}
+                {speciesNameOrId in speciesMeta
+                  ? speciesMeta[speciesNameOrId].name
+                  : speciesMetaById[speciesNameOrId][
+                      SpeciesFieldNames.singularName
+                    ]}
               </Link>
             </Heading>
-            <BodyText>{speciesMeta[speciesName].shortDescription}</BodyText>
+            <BodyText>
+              {speciesNameOrId in speciesMeta
+                ? speciesMeta[speciesNameOrId].shortDescription
+                : speciesMetaById[speciesNameOrId][
+                    SpeciesFieldNames.shortDescription
+                  ]}
+            </BodyText>
 
             <AssetResults assets={assetsForSpecies} showPinned />
           </Fragment>
