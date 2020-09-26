@@ -181,8 +181,8 @@ export function isDocument(value) {
   return value && typeof value === 'object' && 'id' in value
 }
 
-export function mapRefToDoc(ref) {
-  return getDocument(ref.collectionName, ref.id)
+export function mapRefToDoc(val) {
+  return getDocument(val.ref.collectionName, val.ref.id)
 }
 
 export function mapRefsToDocs(value) {
@@ -192,7 +192,7 @@ export function mapRefsToDocs(value) {
 
   return value.map(val => {
     if (isRef(val)) {
-      return mapRefToDoc(val.ref)
+      return mapRefToDoc(val)
     }
     return val
   })
