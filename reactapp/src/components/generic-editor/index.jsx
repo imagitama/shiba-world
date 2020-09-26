@@ -111,6 +111,12 @@ export default ({
       [name]: newVal
     })
 
+  const onFieldsChange = updates =>
+    setFormFields({
+      ...formFields,
+      ...updates
+    })
+
   const onSaveBtnClick = async () => {
     try {
       trackAction(analyticsCategory, saveBtnAction, id)
@@ -173,11 +179,12 @@ export default ({
           return (
             <Field key={name} label={label}>
               <Input
+                name={name}
                 value={formFields[name] || defaultValue}
                 {...rest}
                 onChange={newVal => onFieldChange(name, newVal)}
                 extraFormData={extraFormData}
-                setFieldValue={onFieldChange}
+                setFieldsValues={onFieldsChange}
               />
               {hint && <div className={classes.hint}>{hint}</div>}
             </Field>

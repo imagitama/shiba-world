@@ -2,6 +2,7 @@ import React from 'react'
 import FallbackImageUploader from '../../../fallback-image-uploader'
 
 export default ({
+  name,
   onChange,
   value,
   fieldProperties = {
@@ -10,7 +11,7 @@ export default ({
     directoryName: 'untitled',
     fallbackFieldName: ''
   },
-  setFieldValue
+  setFieldsValues
 }) => {
   return (
     <>
@@ -24,10 +25,13 @@ export default ({
       )}
       <FallbackImageUploader
         onUploadedUrls={({ url, fallbackUrl }) => {
-          onChange(url)
           if (fieldProperties.fallbackFieldName) {
-            console.log('setting it', fallbackUrl)
-            setFieldValue(fieldProperties.fallbackFieldName, fallbackUrl)
+            setFieldsValues({
+              [name]: url,
+              [fieldProperties.fallbackFieldName]: fallbackUrl
+            })
+          } else if (onChange) {
+            onChange(url)
           }
         }}
         requiredWidth={fieldProperties.width}
