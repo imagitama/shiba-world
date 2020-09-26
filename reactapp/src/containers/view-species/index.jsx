@@ -211,10 +211,7 @@ const NewSpeciesResult = ({ speciesId }) => {
             routes.viewSpeciesWithVar.replace(':speciesName', species.id)
           )}
         />
-        <meta
-          property="og:image"
-          content={getOpenGraphUrlForRouteUrl(species.thumbnailUrl)}
-        />
+        <meta property="og:image" content={species.thumbnailUrl} />
       </Helmet>
       <div className={classes.thumbnailWrapper}>
         <picture>
