@@ -71,7 +71,7 @@ export default () => {
     return <ErrorMessage>Error!</ErrorMessage>
   }
 
-  if (!results) {
+  if (!results || !results.length) {
     return <ErrorMessage>No open polls</ErrorMessage>
   }
 
