@@ -15,9 +15,11 @@ import NoResultsMessage from '../no-results-message'
 import useDatabaseQuery, {
   CollectionNames,
   HistoryFieldNames,
-  OrderDirections
+  OrderDirections,
+  Operators
 } from '../../hooks/useDatabaseQuery'
 import * as routes from '../../routes'
+import { createRef } from '../../utils'
 
 function getKindAsReadable(kind) {
   switch (kind) {
@@ -86,11 +88,19 @@ function ParentLabel({ parent }) {
   return parent.refPath
 }
 
-export default () => {
+export default ({ assetId = null, limit = 20 }) => {
   const [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.History,
-    undefined,
-    20,
+    assetId
+      ? [
+          [
+            HistoryFieldNames.parent,
+            Operators.EQUALS,
+            createRef(CollectionNames.Assets, assetId)
+          ]
+        ]
+      : undefined,
+    limit,
     [HistoryFieldNames.createdAt, OrderDirections.DESC]
   )
 
@@ -117,21 +127,29 @@ export default () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {results.map(({ id, message, parent, data, createdAt }) => (
-            <TableRow key={id}>
-              <TableCell>
-                {message}
-                <br />
-                {parent ? <ParentLabel parent={parent} /> : '(no parent)'}
-              </TableCell>
-              <TableCell>
-                {data ? <HistoryData data={data} /> : '(no data)'}
-              </TableCell>
-              <TableCell>
-                <FormattedDate date={createdAt} />
-              </TableCell>
-            </TableRow>
-          ))}
+          {results.map(
+            ({
+              id,
+              [HistoryFieldNames.message]: message,
+              [HistoryFieldNames.parent]: parent,
+              [HistoryFieldNames.data]: data,
+              [HistoryFieldNames.createdAt]: createdAt
+            }) => (
+              <TableRow key={id}>
+                <TableCell>
+                  {message}
+                  <br />
+                  {parent ? <ParentLabel parent={parent} /> : '(no parent)'}
+                </TableCell>
+                <TableCell>
+                  {data ? <HistoryData data={data} /> : '(no data)'}
+                </TableCell>
+                <TableCell>
+                  <FormattedDate date={createdAt} />
+                </TableCell>
+              </TableRow>
+            )
+          )}
         </TableBody>
       </Table>
     </Paper>

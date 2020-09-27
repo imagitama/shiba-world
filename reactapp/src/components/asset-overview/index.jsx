@@ -32,6 +32,7 @@ import ApproveAssetButton from '../approve-asset-button'
 import DeleteAssetButton from '../delete-asset-button'
 import PinAssetButton from '../pin-asset-button'
 import ImageGallery from '../image-gallery'
+import AdminHistory from '../admin-history'
 
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
@@ -83,10 +84,12 @@ const useStyles = makeStyles({
   },
 
   rightCol: {
+    width: '25%',
     flexShrink: 0,
     marginLeft: '5%',
 
     [mediaQueryForTabletsOrBelow]: {
+      width: '100%',
       margin: '2rem 0 0'
     }
   },
@@ -202,6 +205,10 @@ const useStyles = makeStyles({
   adultIndicator: {
     display: 'flex',
     alignItems: 'center'
+  },
+  controlHint: {
+    fontSize: '75%',
+    display: 'block'
   }
 })
 
@@ -446,6 +453,7 @@ export default ({ assetId }) => {
     .filter(fileUrl => fileUrl !== thumbnailUrl)
 
   const isApprover = canApproveAsset(user)
+  const isOwnerOrEditor = canEditAsset(user, createdBy, ownedBy)
 
   return (
     <div className={classes.root}>
@@ -707,7 +715,7 @@ export default ({ assetId }) => {
               )}
             </div>
 
-            {canEditAsset(user, createdBy, ownedBy) ? (
+            {isOwnerOrEditor ? (
               <>
                 <Heading variant="h4">Owner Actions</Heading>
                 <Control>
@@ -726,6 +734,11 @@ export default ({ assetId }) => {
                   />
                 </Control>
                 <Control>
+                  <span className={classes.controlHint}>
+                    If you set the source to a Discord message that you need to
+                    be invited to see, link it to a Discord server here (send a
+                    message in our Discord to add yours)
+                  </span>
                   <ChangeDiscordServerForm
                     collectionName={CollectionNames.Assets}
                     id={assetId}
@@ -787,6 +800,13 @@ export default ({ assetId }) => {
           })
         }
       />
+
+      {isOwnerOrEditor && (
+        <>
+          <Heading variant="h2">History</Heading>
+          <AdminHistory assetId={assetId} limit={10} />
+        </>
+      )}
     </div>
   )
 }

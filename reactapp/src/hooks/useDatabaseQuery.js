@@ -116,7 +116,11 @@ export const CommentFieldNames = {
 }
 
 export const HistoryFieldNames = {
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  parent: 'parent',
+  message: 'message',
+  data: 'data'
 }
 
 export const NoticesFieldNames = {
