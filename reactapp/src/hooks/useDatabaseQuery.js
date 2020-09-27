@@ -223,6 +223,7 @@ export const SpeciesFieldNames = {
   shortDescription: 'shortDescription',
   thumbnailUrl: 'thumbnailUrl',
   fallbackThumbnailUrl: 'fallbackThumbnailUrl',
+  thumbnailSourceUrl: 'thumbnailSourceUrl',
   isPopular: 'isPopular',
   lastModifiedBy: 'lastModifiedBy',
   lastModifiedAt: 'lastModifiedAt',

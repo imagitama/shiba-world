@@ -14,7 +14,8 @@ import Paper from '../../components/paper'
 
 import useDatabaseQuery, {
   AssetCategories,
-  CollectionNames
+  CollectionNames,
+  SpeciesFieldNames
 } from '../../hooks/useDatabaseQuery'
 import useSpeciesMeta from '../../hooks/useSpeciesMeta'
 import useUserRecord from '../../hooks/useUserRecord'
@@ -190,49 +191,76 @@ const NewSpeciesResult = ({ speciesId }) => {
     return <ErrorMessage>Failed to load species</ErrorMessage>
   }
 
-  const titleWithoutSuffix = `${species.pluralName} | ${
-    species.shortDescription
+  const titleWithoutSuffix = `${species[SpeciesFieldNames.pluralName]} | ${
+    species[SpeciesFieldNames.shortDescription]
   }`
 
   return (
     <>
       <Helmet>
         <title>{titleWithoutSuffix} | VRCArena</title>
-        <meta name="description" content={species.shortDescription} />
+        <meta
+          name="description"
+          content={species[SpeciesFieldNames.shortDescription]}
+        />
         <meta property="og:title" content={titleWithoutSuffix} />
         <meta property="og:type" content="website" />
         <meta
           property="og:description"
-          content={getDescriptionForHtmlMeta(species.shortDescription)}
+          content={getDescriptionForHtmlMeta(
+            species[SpeciesFieldNames.shortDescription]
+          )}
         />
         <meta
           property="og:url"
           content={getOpenGraphUrlForRouteUrl(
-            routes.viewSpeciesWithVar.replace(':speciesName', species.id)
+            routes.viewSpeciesWithVar.replace(
+              ':speciesName',
+              species[SpeciesFieldNames.id]
+            )
           )}
         />
-        <meta property="og:image" content={species.thumbnailUrl} />
+        <meta
+          property="og:image"
+          content={species[SpeciesFieldNames.thumbnailUrl]}
+        />
       </Helmet>
       <div className={classes.thumbnailWrapper}>
-        <picture>
-          <source srcSet={species.thumbnailUrl} type="image/webp" />
-          <source srcSet={species.fallbackThumbnailUrl} type="image/png" />
-          <img
-            src={species.fallbackThumbnailUrl}
-            alt={`Thumbnail for species ${species.pluralName}`}
-            className={classes.thumbnail}
-          />
-        </picture>
+        <a
+          href={species[SpeciesFieldNames.thumbnailSourceUrl]}
+          title={`Visit the source of the thumbnail for ${
+            species[SpeciesFieldNames.pluralName]
+          }`}
+          target="_blank"
+          rel="noopener noreferrer">
+          <picture>
+            <source
+              srcSet={species[SpeciesFieldNames.thumbnailUrl]}
+              type="image/webp"
+            />
+            <source
+              srcSet={species[SpeciesFieldNames.fallbackThumbnailUrl]}
+              type="image/png"
+            />
+            <img
+              src={species[SpeciesFieldNames.fallbackThumbnailUrl]}
+              alt={`Thumbnail for species ${
+                species[SpeciesFieldNames.pluralName]
+              }`}
+              className={classes.thumbnail}
+            />
+          </picture>
+        </a>
       </div>
       <Heading variant="h1">
         <Link
           to={routes.viewSpeciesWithVar.replace(':speciesName', species.id)}>
-          {species.pluralName}
+          {species[SpeciesFieldNames.pluralName]}
         </Link>
       </Heading>
       <Paper>
         <Markdown className={classes.description}>
-          {species.description}
+          {species[SpeciesFieldNames.description]}
         </Markdown>
       </Paper>
       {canEditSpecies(user) && (

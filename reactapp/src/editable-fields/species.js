@@ -43,6 +43,13 @@ export default [
     isRequired: true
   },
   {
+    name: SpeciesFieldNames.thumbnailSourceUrl,
+    label: 'Thumbnail source URL',
+    type: fieldTypes.text,
+    hint:
+      'The website or tweet or whatever that you found the image above. Respect authors!'
+  },
+  {
     name: SpeciesFieldNames.isPopular,
     label: 'Is popular',
     type: fieldTypes.checkbox,
