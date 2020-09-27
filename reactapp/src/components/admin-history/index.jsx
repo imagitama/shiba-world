@@ -36,17 +36,56 @@ function getKindAsReadable(kind) {
   }
 }
 
-function getMessageForItem(kind, path, lhs, rhs, item) {
-  return `${path.join('.')} "${lhs}" ${getKindAsReadable(kind)} "${rhs}"`
+const maxLabelLength = 50
+
+function getTrucatedLabel(label) {
+  if (label.length > maxLabelLength) {
+    return `${label.substr(0, maxLabelLength)}...`
+  }
+  return label
 }
 
-function stringify(val) {
-  if (typeof val === 'object') {
-    if (val.id) {
-      return val.id
+function FieldValue({ val }) {
+  if (typeof val === 'string') {
+    if (val.includes('http')) {
+      return <a href={val}>{getTrucatedLabel(val)}</a>
     }
   }
-  return JSON.stringify(val)
+  if (Array.isArray(val)) {
+    return val.map((subVal, idx) => (
+      <>
+        {idx !== 0 && ', '}
+        <FieldValue val={subVal} />
+      </>
+    ))
+  }
+  if (val !== null && typeof val === 'object') {
+    if (val.id) {
+      return <span>{val.id}</span>
+    } else {
+      return Object.entries(val).map(([key, subVal]) => (
+        <>
+          {key}: <FieldValue val={subVal} />
+        </>
+      ))
+    }
+  }
+  if (val === true) {
+    return 'true'
+  }
+  if (val === false) {
+    return 'false'
+  }
+  return <span>{val}</span>
+}
+
+function MessageForItem({ kind, path, lhs, rhs }) {
+  return (
+    <span>
+      {path.join('.')} <FieldValue val={lhs} /> {getKindAsReadable(kind)}{' '}
+      <FieldValue val={rhs} />
+    </span>
+  )
 }
 
 function HistoryData({ data }) {
@@ -55,7 +94,7 @@ function HistoryData({ data }) {
       <ul>
         {data.diff.map(({ kind, path, lhs, rhs }) => (
           <li key={`${kind}.${path}`}>
-            {getMessageForItem(kind, path, lhs, rhs)}
+            <MessageForItem kind={kind} path={path} lhs={lhs} rhs={rhs} />
           </li>
         ))}
       </ul>
@@ -66,7 +105,7 @@ function HistoryData({ data }) {
       <ul>
         {Object.entries(data.fields).map(([key, val]) => (
           <li key={key}>
-            {key} = {stringify(val)}
+            {key} = <FieldValue val={val} />
           </li>
         ))}
       </ul>
