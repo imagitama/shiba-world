@@ -147,7 +147,7 @@ export default () => {
         <CardActionArea>
           <Link
             to={routes.viewAssetWithVar.replace(':assetId', id)}
-            onClick={() => trackAction('Home', 'CLick featured asset')}
+            onClick={() => trackAction('Home', 'Click featured asset')}
             className={classes.cols}>
             <ExtraChips
               isAdult={isAdult}
