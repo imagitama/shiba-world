@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "deploy:indexes": "firebase deploy --only firestore:indexes"
+  }
+}
