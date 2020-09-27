@@ -48,11 +48,6 @@ export function getLabelForMenuItem(Label) {
 }
 
 export default [
-  {
-    id: 'news',
-    url: routes.news,
-    label: 'News'
-  },
   ...Object.entries(categoriesMeta)
     .filter(([name]) => name !== AssetCategories.article)
     .map(([name, meta]) => ({
@@ -69,6 +64,11 @@ export default [
     id: 'more',
     label: 'More',
     children: [
+      {
+        id: 'news',
+        url: routes.news,
+        label: 'News'
+      },
       {
         id: 'authors',
         url: routes.authors,
