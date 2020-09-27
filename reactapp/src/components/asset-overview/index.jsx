@@ -7,6 +7,7 @@ import EditIcon from '@material-ui/icons/Edit'
 import ReportIcon from '@material-ui/icons/Report'
 import LoyaltyIcon from '@material-ui/icons/Loyalty'
 import { useDispatch } from 'react-redux'
+import LazyLoad from 'react-lazyload'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -802,10 +803,10 @@ export default ({ assetId }) => {
       />
 
       {isOwnerOrEditor && (
-        <>
+        <LazyLoad>
           <Heading variant="h2">History</Heading>
           <AdminHistory assetId={assetId} limit={10} />
-        </>
+        </LazyLoad>
       )}
     </div>
   )
