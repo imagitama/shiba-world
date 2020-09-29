@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import Markdown from 'react-markdown'
 import { makeStyles } from '@material-ui/core/styles'
@@ -34,6 +34,7 @@ import DeleteAssetButton from '../delete-asset-button'
 import PinAssetButton from '../pin-asset-button'
 import ImageGallery from '../image-gallery'
 import AdminHistory from '../admin-history'
+import ChangeSpeciesEditor from '../change-species-editor'
 
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
@@ -370,6 +371,8 @@ function MobilePrimaryBtn({
   )
 }
 
+const actionCategory = 'ViewAsset'
+
 export default ({ assetId }) => {
   const [isLoading, isErrored, result] = useDatabaseQuery(
     CollectionNames.Assets,
@@ -378,6 +381,8 @@ export default ({ assetId }) => {
   const classes = useStyles()
   const [, , user] = useUserRecord()
   const [isReportMessageOpen, setIsReportMessageOpen] = useState(false)
+  const [isSpeciesEditorOpen, setIsSpeciesEditorOpen] = useState(false)
+  const hideChangeSpeciesTimeoutRef = useRef()
 
   const dispatch = useDispatch()
   const setBannerUrls = urls => dispatch(setBannerUrlsAction(urls))
@@ -385,6 +390,11 @@ export default ({ assetId }) => {
   useEffect(() => {
     if (result && !result.title) {
       handleError(new Error(`Asset with ID ${assetId} does not exist`))
+    }
+
+    return () => {
+      // avoid memory leak setting state on unmounted component
+      clearTimeout(hideChangeSpeciesTimeoutRef.current)
     }
   }, [result ? result.title : null])
 
@@ -456,6 +466,19 @@ export default ({ assetId }) => {
   const isApprover = canApproveAsset(user)
   const isOwnerOrEditor = canEditAsset(user, createdBy, ownedBy)
 
+  const EnableSpeciesEditorIcon = () => {
+    if (isOwnerOrEditor && !isSpeciesEditorOpen) {
+      return <EditIcon onClick={() => setIsSpeciesEditorOpen(true)} />
+    }
+    return null
+  }
+
+  const onDoneChangingSpecies = () => {
+    setTimeout(() => {
+      setIsSpeciesEditorOpen(false)
+    }, 2000)
+  }
+
   return (
     <div className={classes.root}>
       <Helmet>
@@ -511,6 +534,7 @@ export default ({ assetId }) => {
                   {species.length ? (
                     <>
                       <SpeciesOutput species={species} />
+                      <EnableSpeciesEditorIcon />
                       {' / '}
                       <Link
                         to={routes.viewSpeciesCategoryWithVar
@@ -521,7 +545,8 @@ export default ({ assetId }) => {
                     </>
                   ) : (
                     <>
-                      {allSpeciesLabel} -{' '}
+                      {allSpeciesLabel}
+                      <EnableSpeciesEditorIcon /> -{' '}
                       <Link
                         to={routes.viewCategoryWithVar.replace(
                           ':categoryName',
@@ -537,6 +562,17 @@ export default ({ assetId }) => {
           </div>
         </div>
       </div>
+
+      {isSpeciesEditorOpen && (
+        <>
+          <Heading variant="h3">Change Species</Heading>
+          <ChangeSpeciesEditor
+            assetId={assetId}
+            actionCategory={actionCategory}
+            onDone={onDoneChangingSpecies}
+          />
+        </>
+      )}
 
       <MobilePrimaryBtn
         downloadUrls={downloadUrls}
@@ -731,7 +767,7 @@ export default ({ assetId }) => {
                   <OwnerEditor
                     collectionName={CollectionNames.Assets}
                     id={assetId}
-                    actionCategory="ViewAsset"
+                    actionCategory={actionCategory}
                   />
                 </Control>
                 <Control>
@@ -743,7 +779,7 @@ export default ({ assetId }) => {
                   <ChangeDiscordServerForm
                     collectionName={CollectionNames.Assets}
                     id={assetId}
-                    actionCategory="ViewAsset"
+                    actionCategory={actionCategory}
                   />
                 </Control>
               </>

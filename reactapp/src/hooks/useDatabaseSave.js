@@ -15,6 +15,13 @@ function mapRefsToDocuments(fields) {
         fieldValue.ref.collectionName,
         fieldValue.ref.id
       )
+    } else if (Array.isArray(fieldValue)) {
+      newFields[fieldName] = fieldValue.map(item => {
+        if (isRef(item)) {
+          return getDocument(item.ref.collectionName, item.ref.id)
+        }
+        return item
+      })
     } else {
       newFields[fieldName] = fieldValue
     }
