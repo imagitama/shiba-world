@@ -20,16 +20,26 @@ const useStyles = makeStyles({
   chip: { margin: '0 0.25rem 0.25rem 0' }
 })
 
+function isOldSpecies(val) {
+  return typeof val === 'string'
+}
+
 function isSpeciesActive(species, allActiveSpeciesRefs) {
-  return allActiveSpeciesRefs.find(
-    speciesItem => speciesItem.ref.id === species.id
-  )
+  return allActiveSpeciesRefs.find(speciesItem => {
+    if (isOldSpecies(speciesItem)) {
+      return false
+    }
+    return speciesItem.ref.id === species.id
+  })
 }
 
 function isSpeciesIdActive(speciesId, allActiveSpeciesRefs) {
-  return allActiveSpeciesRefs.find(
-    speciesItem => speciesItem.ref.id === speciesId
-  )
+  return allActiveSpeciesRefs.find(speciesItem => {
+    if (isOldSpecies(speciesItem)) {
+      return false
+    }
+    return speciesItem.ref.id === speciesId
+  })
 }
 
 function SpeciesButtons({ activeSpeciesRefs, onClickSpeciesWithId }) {
@@ -64,7 +74,13 @@ function SpeciesButtons({ activeSpeciesRefs, onClickSpeciesWithId }) {
 }
 
 function convertSpeciesIntoRefs(species) {
-  return species.map(item => createRef(CollectionNames.Species, item.id))
+  return species.map(item => {
+    console.log(item)
+    if (isOldSpecies(item)) {
+      return item
+    }
+    return createRef(CollectionNames.Species, item.id)
+  })
 }
 
 export default ({ assetId, actionCategory = '', onDone = null }) => {
@@ -78,6 +94,8 @@ export default ({ assetId, actionCategory = '', onDone = null }) => {
     assetId
   )
   const [newSpeciesRefs, setNewSpeciesRefs] = useState(null)
+
+  console.log(newSpeciesRefs)
 
   useEffect(() => {
     if (!result) {
@@ -112,10 +130,14 @@ export default ({ assetId, actionCategory = '', onDone = null }) => {
   }
 
   const onClickSpeciesWithId = speciesId => {
-    console.log(speciesId)
     setNewSpeciesRefs(currentVal => {
       if (isSpeciesIdActive(speciesId, newSpeciesRefs)) {
-        return currentVal.filter(item => item.ref.id !== speciesId)
+        return currentVal.filter(item => {
+          if (isOldSpecies(item)) {
+            return true
+          }
+          return item.ref.id !== speciesId
+        })
       } else {
         return currentVal.concat([
           createRef(CollectionNames.Species, speciesId)

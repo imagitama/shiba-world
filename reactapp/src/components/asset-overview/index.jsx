@@ -211,6 +211,13 @@ const useStyles = makeStyles({
   controlHint: {
     fontSize: '75%',
     display: 'block'
+  },
+  enableSpeciesEditorIcon: {
+    paddingLeft: '5px',
+    cursor: 'pointer',
+    '& svg': {
+      fontSize: '1rem'
+    }
   }
 })
 
@@ -468,7 +475,11 @@ export default ({ assetId }) => {
 
   const EnableSpeciesEditorIcon = () => {
     if (isOwnerOrEditor && !isSpeciesEditorOpen) {
-      return <EditIcon onClick={() => setIsSpeciesEditorOpen(true)} />
+      return (
+        <span className={classes.enableSpeciesEditorIcon}>
+          <EditIcon onClick={() => setIsSpeciesEditorOpen(true)} />
+        </span>
+      )
     }
     return null
   }
