@@ -114,6 +114,9 @@ const useStyles = makeStyles({
     display: 'block',
     width: '100%',
     textAlign: 'center'
+  },
+  featuredAsset: {
+    margin: '2rem 0 1rem'
   }
 })
 
@@ -202,9 +205,11 @@ export default () => {
 
   return (
     <>
-      <FeaturedAsset />
-
       <Tiles />
+
+      <div className={classes.featuredAsset}>
+        <FeaturedAsset />
+      </div>
 
       <Polls className={classes.polls} />
 

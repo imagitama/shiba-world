@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prebackup": "mkdir \"backups/$(date '+%d-%m-%Y')\"",
+    "prebackup": "mkdir p \"backups/$(date '+%d-%m-%Y')/storage\"",
     "backup:db": "GOOGLE_APPLICATION_CREDENTIALS=credentials.json firestore-export -p -b \"backups/$(date '+%d-%m-%Y')/db.json\"",
     "backup:auth": "firebase auth:export \"backups/$(date '+%d-%m-%Y')/auth.json\"",
     "backup": "npm run backup:db && npm run backup:auth",
-    "import:db": "GOOGLE_APPLICATION_CREDENTIALS=credentials.json firestore-import -b \"backups/$(date '+%d-%m-%Y')/db.json\""
+    "import:db": "GOOGLE_APPLICATION_CREDENTIALS=credentials.json firestore-import -b \"backups/$(date '+%d-%m-%Y')/db.json\"",
+    "backup:storage": "npm run prebackup && gsutil -m cp -R gs://shiba-world.appspot.com \"backups/$(date '+%d-%m-%Y')/storage\""
   },
   "author": "",
   "license": "ISC",

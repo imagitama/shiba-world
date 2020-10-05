@@ -11,21 +11,15 @@ import LazyLoad from 'react-lazyload'
 import RoomIcon from '@material-ui/icons/Room'
 
 import * as routes from '../../routes'
-// import categoryMeta from '../../category-meta'
 import FormattedDate from '../formatted-date'
-import {
-  mediaQueryForTabletsOrBelow,
-  mediaQueryForMobiles
-} from '../../media-queries'
+import { mediaQueryForMobiles } from '../../media-queries'
 import useDatabaseQuery, { mapDates } from '../../hooks/useDatabaseQuery'
 import { trackAction } from '../../analytics'
 import Heading from '../heading'
 
 const useStyles = makeStyles(theme => ({
   root: {
-    marginBottom: '2rem',
-    position: 'relative',
-    [mediaQueryForTabletsOrBelow]: {}
+    position: 'relative'
   },
   cols: {
     display: 'flex',
@@ -105,18 +99,6 @@ function ExtraChips({ isAdult, isApproved, isPrivate, isPinned }) {
   )
 }
 
-// const CategoryChip = ({ categoryName }) => {
-//   const classes = useStyles()
-//   return (
-//     <div className={classes.categoryChip}>
-//       <Chip
-//         label={categoryMeta[categoryName].nameSingular}
-//         className={classes.categoryChipWithMargin}
-//       />
-//     </div>
-//   )
-// }
-
 export default () => {
   const [, , result] = useDatabaseQuery('special', 'featured')
   const classes = useStyles()
@@ -133,8 +115,6 @@ export default () => {
     isAdult,
     isApproved,
     isPrivate,
-    // category,
-    // isPinned,
     createdAt
   } = mapDates(result.asset)
 
@@ -153,9 +133,7 @@ export default () => {
               isAdult={isAdult}
               isApproved={isApproved}
               isPrivate={isPrivate}
-              // isPinned={showPinned && isPinned}
             />
-            {/* {showCategory && <CategoryChip categoryName={category} />} */}
             <LazyLoad width={200} height={200}>
               <CardMedia
                 className={classes.media}
