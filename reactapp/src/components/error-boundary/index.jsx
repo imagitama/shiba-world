@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import * as Sentry from '@sentry/browser'
 import ErrorMessage from '../error-message'
+import { DISCORD_URL, EMAIL } from '../../config'
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -26,9 +27,7 @@ class ErrorBoundary extends Component {
             <strong>Whoops. Something went wrong.</strong>
           </p>
           <p>
-            Please try again. If it happens again please contact Peanut via
-            Discord (Peanut#1756) or email (contact@vrcarena.com) and explain
-            what you were doing so he can fix it.
+            This doesn't usually happen. Please <a href={DISCORD_URL}>join our Discord</a> or <a href={`mailto:${EMAIL}`}>email us</a> to report this error so we can fix it.
           </p>
         </ErrorMessage>
       )
