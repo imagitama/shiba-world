@@ -46,6 +46,9 @@ const useStyles = makeStyles({
       width: '100%',
       height: '100%'
     }
+  },
+  onlineCount: {
+    margin: '1rem 0'
   }
 })
 
@@ -104,7 +107,9 @@ export default ({ serverId, joinActionCategory }) => {
   return (
     <div className={classes.root}>
       <Heading variant="h2">Discord Server: {name}</Heading>
-      <Heading variant="h3">{presence_count} members</Heading>
+      <Heading variant="h3" className={classes.onlineCount}>
+        {presence_count} online
+      </Heading>
       <div className={classes.members}>
         {members.map(({ id, avatar_url, username }) => (
           <div key={id} className={classes.member}>

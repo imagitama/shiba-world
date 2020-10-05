@@ -162,7 +162,8 @@ export default ({
     [AuthorFieldNames.lastModifiedBy]: lastModifiedBy,
     [AuthorFieldNames.isOpenForCommission]: isOpenForCommission,
     [AuthorFieldNames.commissionInfo]: commissionInfo,
-    [AuthorFieldNames.avatarUrl]: avatarUrl
+    [AuthorFieldNames.avatarUrl]: avatarUrl,
+    [AuthorFieldNames.fallbackAvatarUrl]: fallbackAvatarUrl
   } = result
 
   return (
@@ -175,7 +176,7 @@ export default ({
         />
       </Helmet>
 
-      <Avatar url={avatarUrl} username={name} />
+      <Avatar url={avatarUrl} fallbackUrl={fallbackAvatarUrl} username={name} />
 
       <Heading variant="h1">
         <Link to={routes.viewAuthorWithVar.replace(':authorId', authorId)}>
@@ -208,6 +209,13 @@ export default ({
         socialMedia={result}
         actionCategory={analyticsCategory}
       />
+
+      {!isOpenForCommission && commissionInfo && (
+        <>
+          <Heading variant="h2">Commission Info</Heading>
+          {commissionInfo}
+        </>
+      )}
 
       {discordServerId && (
         <DiscordServerWidget
