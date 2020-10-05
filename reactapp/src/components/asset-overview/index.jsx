@@ -53,6 +53,7 @@ import {
   mediaQueryForTabletsOrBelow,
   mediaQueryForMobiles
 } from '../../media-queries'
+import { THUMBNAIL_WIDTH } from '../../config'
 
 import NotApprovedMessage from './components/not-approved-message'
 import DeletedMessage from './components/deleted-message'
@@ -133,7 +134,7 @@ const useStyles = makeStyles({
   thumbnail: {
     width: '100%',
     height: 'auto',
-    maxWidth: '300px'
+    maxWidth: `${THUMBNAIL_WIDTH}px`
   },
 
   categoryMeta: {

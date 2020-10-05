@@ -11,13 +11,14 @@ import {
   isUrlAVideo,
   getFilenameFromUrl
 } from '../../../../utils'
+import { THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT } from '../../../../config'
 
 const useStyles = makeStyles({
   item: { margin: '0 0 1rem 0', padding: '2rem' },
   uploader: { padding: '2rem' },
   image: {
-    maxWidth: 300,
-    maxHeight: 300
+    maxWidth: THUMBNAIL_WIDTH,
+    maxHeight: THUMBNAIL_HEIGHT
   }
 })
 

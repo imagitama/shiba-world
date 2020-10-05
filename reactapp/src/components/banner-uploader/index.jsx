@@ -8,15 +8,13 @@ import useFileUpload from '../../hooks/useFileUpload'
 import BodyText from '../body-text'
 import { handleError } from '../../error-handling'
 import { callFunction } from '../../firebase'
+import { BANNER_WIDTH, BANNER_HEIGHT } from '../../config'
 
 const useStyles = makeStyles({
   root: {
     padding: '1rem'
   }
 })
-
-const bannerWidth = 1280
-const bannerHeight = 300
 
 function renameJpgToPng(path) {
   return path.replace('.jpeg', '.png').replace('.jpg', '.png')
@@ -77,8 +75,8 @@ function Output({ onUploadedUrls, directoryPath = '', filePrefix = '' }) {
   const cropImageElementAndGetCanvas = async () => {
     return new Promise(resolve => {
       const canvas = document.createElement('canvas')
-      canvas.width = bannerWidth
-      canvas.height = bannerHeight
+      canvas.width = BANNER_WIDTH
+      canvas.height = BANNER_HEIGHT
 
       const image = imageRef.current
       const scaleX = image.naturalWidth / image.width
@@ -93,8 +91,8 @@ function Output({ onUploadedUrls, directoryPath = '', filePrefix = '' }) {
         height * scaleY,
         0,
         0,
-        bannerWidth,
-        bannerHeight
+        BANNER_WIDTH,
+        BANNER_HEIGHT
       )
       resolve(canvas)
     })
@@ -184,8 +182,8 @@ function Output({ onUploadedUrls, directoryPath = '', filePrefix = '' }) {
     return (
       <>
         <BodyText>
-          Select a JPG or PNG and you will be able to crop it to {bannerWidth}x
-          {bannerHeight}
+          Select a JPG or PNG and you will be able to crop it to {BANNER_WIDTH}x
+          {BANNER_HEIGHT}
         </BodyText>
         <input
           type="file"
@@ -218,15 +216,15 @@ function Output({ onUploadedUrls, directoryPath = '', filePrefix = '' }) {
           width: width ? width : undefined,
           height: height ? height : 100,
           lock: true,
-          aspect: bannerWidth / bannerHeight,
+          aspect: BANNER_WIDTH / BANNER_HEIGHT,
           unit: width && height ? 'px' : '%'
         }}
       />
       Output:
       <img
         src={croppedImagePreviewUrl}
-        width={bannerWidth}
-        height={bannerHeight}
+        width={BANNER_WIDTH}
+        height={BANNER_HEIGHT}
         alt="Uploaded preview"
       />
       <br />

@@ -6,6 +6,7 @@ import CardActionArea from '@material-ui/core/CardActionArea'
 import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
 import CardMedia from '@material-ui/core/CardMedia'
+import LazyLoad from 'react-lazyload'
 
 import * as routes from '../../routes'
 import { mediaQueryForTabletsOrBelow } from '../../media-queries'
@@ -38,7 +39,7 @@ const useStyles = makeStyles({
   }
 })
 
-export default ({ author: { id, name, categories = [] } }) => {
+export default ({ author: { id, name, categories = [], avatarUrl } }) => {
   const classes = useStyles()
 
   return (
@@ -46,11 +47,13 @@ export default ({ author: { id, name, categories = [] } }) => {
       <Card>
         <CardActionArea>
           <Link to={routes.viewAuthorWithVar.replace(':authorId', id)}>
-            <CardMedia
-              className={classes.media}
-              image={defaultAvatarUrl}
-              title={`Thumbnail for ${name}`}
-            />
+            <LazyLoad width={200} height={200}>
+              <CardMedia
+                className={classes.media}
+                image={avatarUrl || defaultAvatarUrl}
+                title={`Thumbnail for ${name}`}
+              />
+            </LazyLoad>
             <CardContent className={classes.content}>
               <Typography variant="h5" component="h2">
                 {name}

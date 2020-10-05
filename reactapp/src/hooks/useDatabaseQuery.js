@@ -199,7 +199,11 @@ export const AuthorFieldNames = {
   discordServerId: 'discordServerId',
   isOpenForCommission: 'isOpenForCommission',
   commissionInfo: 'commissionInfo',
-  showCommissionStatusForAssets: 'showCommissionStatusForAssets'
+  showCommissionStatusForAssets: 'showCommissionStatusForAssets',
+  avatarUrl: 'avatarUrl',
+  fallbackAvatarUrl: 'fallbackAvatarUrl',
+  bannerUrl: 'bannerUrl',
+  fallbackBannerUrl: 'fallbackBannerUrl'
 }
 
 export const DiscordServerFieldNames = {

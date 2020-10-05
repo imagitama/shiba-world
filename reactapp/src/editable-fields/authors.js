@@ -1,5 +1,11 @@
 import { AssetCategories, AuthorFieldNames } from '../hooks/useDatabaseQuery'
 import { fieldTypes } from '../generic-forms'
+import {
+  THUMBNAIL_WIDTH,
+  THUMBNAIL_HEIGHT,
+  BANNER_WIDTH,
+  BANNER_HEIGHT
+} from '../config'
 
 export default [
   {
@@ -12,6 +18,18 @@ export default [
     name: AuthorFieldNames.description,
     label: 'Description',
     type: fieldTypes.textMarkdown,
+    default: ''
+  },
+  {
+    name: AuthorFieldNames.avatarUrl,
+    label: 'Avatar',
+    type: fieldTypes.imageUpload,
+    fieldProperties: {
+      width: THUMBNAIL_WIDTH,
+      height: THUMBNAIL_HEIGHT,
+      directoryName: 'author-avatars',
+      fallbackFieldName: AuthorFieldNames.fallbackAvatarUrl
+    },
     default: ''
   },
   {
@@ -81,6 +99,18 @@ export default [
       value
     })),
     default: []
+  },
+  {
+    name: AuthorFieldNames.bannerUrl,
+    label: 'Banner',
+    type: fieldTypes.imageUpload,
+    fieldProperties: {
+      width: BANNER_WIDTH,
+      height: BANNER_HEIGHT,
+      directoryName: 'author-banners',
+      fallbackFieldName: AuthorFieldNames.fallbackBannerUrl
+    },
+    default: ''
   },
   {
     name: AuthorFieldNames.isOpenForCommission,

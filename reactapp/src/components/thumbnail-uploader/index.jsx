@@ -7,6 +7,7 @@ import Button from '../button'
 import useFileUpload from '../../hooks/useFileUpload'
 import BodyText from '../body-text'
 import { handleError } from '../../error-handling'
+import { THUMBNAIL_WIDTH } from '../../config'
 
 const useStyles = makeStyles({
   root: {
@@ -14,7 +15,7 @@ const useStyles = makeStyles({
   }
 })
 
-const thumbnailWidthAndHeight = 300
+const thumbnailWidthAndHeight = THUMBNAIL_WIDTH
 
 function renameJpgToPng(path) {
   return path.replace('.jpeg', '.png').replace('.jpg', '.png')

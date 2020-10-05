@@ -8,6 +8,7 @@ import useFileUpload from '../../hooks/useFileUpload'
 import BodyText from '../body-text'
 import { handleError } from '../../error-handling'
 import { callFunction } from '../../firebase'
+import { THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT } from '../../config'
 
 const useStyles = makeStyles({
   root: {
@@ -21,8 +22,8 @@ function renameJpgToPng(path) {
 
 function Output({
   onUploadedUrls,
-  requiredWidth = 300,
-  requiredHeight = 300,
+  requiredWidth = THUMBNAIL_WIDTH,
+  requiredHeight = THUMBNAIL_HEIGHT,
   directoryPath = '',
   filePrefix = ''
 }) {

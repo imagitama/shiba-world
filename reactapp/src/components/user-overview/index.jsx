@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import Markdown from 'react-markdown'
 
-import defaultAvatarUrl from '../../assets/images/default-avatar.png'
-
 import useDatabaseQuery, {
   CollectionNames,
   AssetFieldNames,
@@ -26,6 +24,7 @@ import AddCommentForm from '../add-comment-form'
 import SocialMediaList from '../social-media-list'
 import Button from '../button'
 import AuthorResults from '../author-results'
+import Avatar from '../avatar'
 
 import * as routes from '../../routes'
 import { createRef } from '../../utils'
@@ -136,20 +135,6 @@ const AuthorsForUser = ({ userId }) => {
   }
 
   return <AuthorResults authors={results} />
-}
-
-function Avatar({ username, url }) {
-  const classes = useStyles()
-
-  return (
-    <div className={classes.avatar}>
-      <img
-        src={url || defaultAvatarUrl}
-        className={classes.img}
-        alt={`Avatar for ${username}`}
-      />
-    </div>
-  )
 }
 
 function Profile({ userId }) {

@@ -1,12 +1,14 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import EditIcon from '@material-ui/icons/Edit'
 import Markdown from 'react-markdown'
+import { useDispatch } from 'react-redux'
 
 import * as routes from '../../routes'
 import categoryMeta from '../../category-meta'
+import { setBannerUrls as setBannerUrlsAction } from '../../modules/app'
 
 import ErrorMessage from '../../components/error-message'
 import LoadingIndicator from '../../components/loading-indicator'
@@ -18,6 +20,7 @@ import OwnerEditor from '../../components/owner-editor'
 import DiscordServerWidget from '../../components/discord-server-widget'
 import SocialMediaList from '../../components/social-media-list'
 import OpenForCommissionMessage from '../../components/open-for-commissions-message'
+import Avatar from '../../components/avatar'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import useDatabaseQuery, {
@@ -121,6 +124,22 @@ export default ({
   )
   const classes = useStyles()
 
+  const dispatch = useDispatch()
+  const setBannerUrls = urls => dispatch(setBannerUrlsAction(urls))
+
+  useEffect(() => {
+    if (!result || !result[AuthorFieldNames.bannerUrl]) {
+      return
+    }
+
+    setBannerUrls({
+      url: result[AuthorFieldNames.bannerUrl],
+      fallbackUrl: result[AuthorFieldNames.fallbackBannerUrl]
+    })
+
+    return () => setBannerUrls({ url: '', fallbackUrl: '' })
+  }, [result ? result[AuthorFieldNames.name] : null])
+
   if (isLoading) {
     return <LoadingIndicator />
   }
@@ -142,7 +161,8 @@ export default ({
     [AuthorFieldNames.createdBy]: createdBy,
     [AuthorFieldNames.lastModifiedBy]: lastModifiedBy,
     [AuthorFieldNames.isOpenForCommission]: isOpenForCommission,
-    [AuthorFieldNames.commissionInfo]: commissionInfo
+    [AuthorFieldNames.commissionInfo]: commissionInfo,
+    [AuthorFieldNames.avatarUrl]: avatarUrl
   } = result
 
   return (
@@ -154,6 +174,8 @@ export default ({
           content={`Browse all of the assets that have been uploaded for the author ${name}.`}
         />
       </Helmet>
+
+      <Avatar url={avatarUrl} username={name} />
 
       <Heading variant="h1">
         <Link to={routes.viewAuthorWithVar.replace(':authorId', authorId)}>

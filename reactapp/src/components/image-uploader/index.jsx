@@ -6,6 +6,7 @@ import Button from '../button'
 import useFileUpload from '../../hooks/useFileUpload'
 import BodyText from '../body-text'
 import { handleError } from '../../error-handling'
+import { THUMBNAIL_WIDTH } from '../../config'
 
 const useStyles = makeStyles({
   container: {
@@ -31,7 +32,7 @@ export default ({
   onCroppedImagePreviewUrl = null,
   directoryPath = '',
   filePrefix = '',
-  thumbnailWidthAndHeight = 300,
+  thumbnailWidthAndHeight = THUMBNAIL_WIDTH,
   children
 }) => {
   const [cropX, setCropX] = useState(0)
