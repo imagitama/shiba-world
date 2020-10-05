@@ -332,6 +332,7 @@ const MainContent = () => {
         <Route exact path={routes.about} component={About} />
         <Route exact path={routes.adultAssets} component={AdultAssets} />
         <Route exact path={routes.authors} component={Authors} />
+        <Route exact path={routes.createAuthor} component={EditAuthor} />
         <Route exact path={routes.editAuthorWithVar} component={EditAuthor} />
         <Route exact path={routes.viewAuthorWithVar} component={ViewAuthor} />
         <Route

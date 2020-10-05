@@ -35,6 +35,7 @@ import PinAssetButton from '../pin-asset-button'
 import ImageGallery from '../image-gallery'
 import AdminHistory from '../admin-history'
 import ChangeSpeciesEditor from '../change-species-editor'
+import OpenForCommissionsMessage from '../open-for-commissions-message'
 
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
@@ -584,6 +585,16 @@ export default ({ assetId }) => {
           />
         </>
       )}
+
+      {author &&
+        author[AuthorFieldNames.isOpenForCommission] &&
+        author[AuthorFieldNames.showOpenForCommissionsInAssets] && (
+          <OpenForCommissionsMessage
+            showViewAuthorButton
+            authorId={author.id}
+            analyticsCategory={analyticsCategoryName}
+          />
+        )}
 
       <MobilePrimaryBtn
         downloadUrls={downloadUrls}

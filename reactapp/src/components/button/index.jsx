@@ -4,6 +4,9 @@ import Button from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles({
+  root: {
+    whiteSpace: 'nowrap'
+  },
   icon: {
     marginLeft: '0.5rem',
     display: 'flex', // fix line height issue
@@ -15,7 +18,15 @@ const useStyles = makeStyles({
   }
 })
 
-export default ({ children, onClick, url, icon, isDisabled, ...props }) => {
+export default ({
+  children,
+  onClick,
+  url,
+  icon,
+  isDisabled,
+  className = '',
+  ...props
+}) => {
   const classes = useStyles()
 
   const FinalButton = () => (
@@ -24,6 +35,7 @@ export default ({ children, onClick, url, icon, isDisabled, ...props }) => {
       color="primary"
       onClick={onClick}
       disabled={isDisabled}
+      className={`${classes.root} ${className}`}
       {...props}>
       {children} {icon && <span className={classes.icon}>{icon}</span>}
     </Button>

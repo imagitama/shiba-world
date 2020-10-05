@@ -11,7 +11,8 @@ import useDatabaseQuery, {
   AssetFieldNames,
   Operators,
   OrderDirections,
-  UserFieldNames
+  UserFieldNames,
+  AuthorFieldNames
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 
@@ -24,6 +25,7 @@ import CommentList from '../comment-list'
 import AddCommentForm from '../add-comment-form'
 import SocialMediaList from '../social-media-list'
 import Button from '../button'
+import AuthorResults from '../author-results'
 
 import * as routes from '../../routes'
 import { createRef } from '../../utils'
@@ -107,6 +109,33 @@ const AssetsForUser = ({ userId }) => {
   }
 
   return <AssetResults assets={results} showCategory />
+}
+
+const AuthorsForUser = ({ userId }) => {
+  const [isLoading, isErrored, results] = useDatabaseQuery(
+    CollectionNames.Authors,
+    [
+      [
+        AuthorFieldNames.ownedBy,
+        Operators.EQUALS,
+        createRef(CollectionNames.Users, userId)
+      ]
+    ]
+  )
+
+  if (isLoading || results === null) {
+    return <LoadingIndicator />
+  }
+
+  if (isErrored) {
+    return <ErrorMessage>Failed to find their authors</ErrorMessage>
+  }
+
+  if (!results.length) {
+    return <ErrorMessage>No authors found</ErrorMessage>
+  }
+
+  return <AuthorResults authors={results} />
 }
 
 function Avatar({ username, url }) {
@@ -258,6 +287,9 @@ export default ({ userId }) => {
           trackAction('ViewUser', 'Click add comment button', { userId })
         }
       />
+      <Heading variant="h2">Authors</Heading>
+      <p>A user can have multiple authors associated with it.</p>
+      <AuthorsForUser userId={userId} />
       <Heading variant="h2">Uploads</Heading>
       <AssetsForUser userId={userId} />
     </>

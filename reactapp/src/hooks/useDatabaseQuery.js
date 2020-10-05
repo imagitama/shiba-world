@@ -196,7 +196,10 @@ export const AuthorFieldNames = {
   lastModifiedBy: 'lastModifiedBy',
   lastModifiedAt: 'lastModifiedAt',
   ownedBy: 'ownedBy',
-  discordServerId: 'discordServerId'
+  discordServerId: 'discordServerId',
+  isOpenForCommission: 'isOpenForCommission',
+  commissionInfo: 'commissionInfo',
+  showCommissionStatusForAssets: 'showCommissionStatusForAssets'
 }
 
 export const DiscordServerFieldNames = {

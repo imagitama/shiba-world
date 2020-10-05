@@ -75,7 +75,6 @@ function SpeciesButtons({ activeSpeciesRefs, onClickSpeciesWithId }) {
 
 function convertSpeciesIntoRefs(species) {
   return species.map(item => {
-    console.log(item)
     if (isOldSpecies(item)) {
       return item
     }
@@ -94,8 +93,6 @@ export default ({ assetId, actionCategory = '', onDone = null }) => {
     assetId
   )
   const [newSpeciesRefs, setNewSpeciesRefs] = useState(null)
-
-  console.log(newSpeciesRefs)
 
   useEffect(() => {
     if (!result) {

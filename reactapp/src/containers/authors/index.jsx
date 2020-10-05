@@ -8,6 +8,7 @@ import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'
 import AuthorResults from '../../components/author-results'
 import NoResultsMessage from '../../components/no-results-message'
+import Button from '../../components/button'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -15,6 +16,8 @@ import useDatabaseQuery, {
   OrderDirections
 } from '../../hooks/useDatabaseQuery'
 import * as routes from '../../routes'
+import { canApproveAsset } from '../../utils'
+import useUserRecord from '../../hooks/useUserRecord'
 
 function Authors() {
   const [isLoading, isErrored, results] = useDatabaseQuery(
@@ -40,6 +43,7 @@ function Authors() {
 }
 
 export default () => {
+  const [, , user] = useUserRecord()
   return (
     <>
       <Helmet>
@@ -53,6 +57,9 @@ export default () => {
         <Link to={routes.authors}>Authors</Link>
       </Heading>
       <BodyText>A list of all authors who have assets on the site.</BodyText>
+      {canApproveAsset(user) && (
+        <Button url={routes.createAuthor}>Create</Button>
+      )}
       <Authors />
     </>
   )

@@ -177,10 +177,14 @@ export default ({
           const Input = getInputForFieldType(type)
 
           return (
-            <Field key={name} label={label}>
+            <Field
+              key={name}
+              label={type !== fieldTypes.checkbox ? label : null}>
               <Input
                 name={name}
-                value={formFields[name] || defaultValue}
+                value={formFields[name]}
+                defaultValue={defaultValue}
+                label={label}
                 {...rest}
                 onChange={newVal => onFieldChange(name, newVal)}
                 extraFormData={extraFormData}

@@ -17,6 +17,7 @@ import Button from '../../components/button'
 import OwnerEditor from '../../components/owner-editor'
 import DiscordServerWidget from '../../components/discord-server-widget'
 import SocialMediaList from '../../components/social-media-list'
+import OpenForCommissionMessage from '../../components/open-for-commissions-message'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import useDatabaseQuery, {
@@ -139,7 +140,9 @@ export default ({
     [AuthorFieldNames.discordServerId]: discordServerId,
     [AuthorFieldNames.ownedBy]: ownedBy,
     [AuthorFieldNames.createdBy]: createdBy,
-    [AuthorFieldNames.lastModifiedBy]: lastModifiedBy
+    [AuthorFieldNames.lastModifiedBy]: lastModifiedBy,
+    [AuthorFieldNames.isOpenForCommission]: isOpenForCommission,
+    [AuthorFieldNames.commissionInfo]: commissionInfo
   } = result
 
   return (
@@ -172,6 +175,10 @@ export default ({
           </Fragment>
         ))}
       </div>
+
+      {isOpenForCommission && (
+        <OpenForCommissionMessage info={commissionInfo} />
+      )}
 
       {description && <Markdown source={description} />}
 

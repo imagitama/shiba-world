@@ -17,6 +17,8 @@ export default ({
     params: { authorId }
   }
 }) => {
+  const isCreating = !authorId
+
   const [isLoading, isErrored, user] = useUserRecord()
   const [isLoadingAuthor, isErroredLoadingAuthor, result] = useDatabaseQuery(
     CollectionNames.Authors,
@@ -37,16 +39,23 @@ export default ({
 
   return (
     <>
-      <Heading variant="h1">Edit Author</Heading>
+      <Heading variant="h1">{isCreating ? 'Create' : 'Edit'} Author</Heading>
       <GenericEditor
         collectionName={CollectionNames.Authors}
-        id={authorId}
-        analyticsCategory="EditAuthor"
+        id={isCreating ? null : authorId}
+        analyticsCategory={isCreating ? 'CreateAuthor' : 'EditAuthor'}
         saveBtnAction="Click save author button"
         viewBtnAction="Click view item button after save"
         cancelBtnAction="Click cancel button"
         successUrl={routes.viewAuthorWithVar.replace(':authorId', authorId)}
-        cancelUrl={routes.viewAuthorWithVar.replace(':authorId', authorId)}
+        getSuccessUrl={newId =>
+          routes.viewAuthorWithVar.replace(':authorId', newId)
+        }
+        cancelUrl={
+          isCreating
+            ? routes.authors
+            : routes.viewAuthorWithVar.replace(':authorId', authorId)
+        }
       />
     </>
   )
