@@ -34,6 +34,7 @@ const useStyles = makeStyles({
 
 export default ({
   url,
+  fallbackUrl,
   username = '',
   size = sizes.MEDIUM,
   className = ''
@@ -42,11 +43,23 @@ export default ({
   return (
     <div className={`${classes.container} ${classes[size]} ${className}`}>
       <LazyLoad placeholder={<LoadingIndicator />}>
-        <img
-          src={url ? url : defaultAvatarUrl}
-          alt={`Avatar for ${username || 'a user'}`}
-          className={classes.image}
-        />
+        {url && fallbackUrl ? (
+          <picture>
+            <source srcSet={url} type="image/webp" />
+            <source srcSet={fallbackUrl} type="image/png" />
+            <img
+              src={fallbackUrl}
+              alt={`Avatar for ${username || 'a user'}`}
+              className={classes.image}
+            />
+          </picture>
+        ) : (
+          <img
+            src={url ? url : defaultAvatarUrl}
+            alt={`Avatar for ${username || 'a user'}`}
+            className={classes.image}
+          />
+        )}
       </LazyLoad>
     </div>
   )
