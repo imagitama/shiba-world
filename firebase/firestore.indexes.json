@@ -16,7 +16,7 @@
       ]
     },
     {
-      "CUSTOM_PAGE_NAME": "ViewCategorySortByDateAsc",
+      "CUSTOM_PAGE_NAME": "ViewCategorySortByDateAscAdult",
       "collectionGroup": "assets",
       "queryScope": "COLLECTION",
       "fields": [
@@ -47,7 +47,7 @@
       ]
     },
     {
-      "CUSTOM_PAGE_NAME": "ViewCategorySortByDateDesc",
+      "CUSTOM_PAGE_NAME": "ViewCategorySortByDateDescAdult",
       "collectionGroup": "assets",
       "queryScope": "COLLECTION",
       "fields": [
@@ -78,7 +78,7 @@
       ]
     },
     {
-      "CUSTOM_PAGE_NAME": "ViewCategorySortByTitleAsc",
+      "CUSTOM_PAGE_NAME": "ViewCategorySortByTitleAscAdult",
       "collectionGroup": "assets",
       "queryScope": "COLLECTION",
       "fields": [
@@ -109,7 +109,7 @@
       ]
     },
     {
-      "CUSTOM_PAGE_NAME": "ViewCategorySortByTitleDesc",
+      "CUSTOM_PAGE_NAME": "ViewCategorySortByTitleDescAdult",
       "collectionGroup": "assets",
       "queryScope": "COLLECTION",
       "fields": [
@@ -119,6 +119,114 @@
         },
         {
           "fieldPath": "isAdult",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "isApproved",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "isDeleted",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "isPrivate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "title",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "CUSTOM_PAGE_NAME": "ViewCategorySortByDateAscNonAdult",
+      "collectionGroup": "assets",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "category",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "isApproved",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "isDeleted",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "isPrivate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "CUSTOM_PAGE_NAME": "ViewCategorySortByDateDescNonAdult",
+      "collectionGroup": "assets",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "category",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "isApproved",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "isDeleted",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "isPrivate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "CUSTOM_PAGE_NAME": "ViewCategorySortByTitleAscNonAdult",
+      "collectionGroup": "assets",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "category",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "isApproved",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "isDeleted",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "isPrivate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "title",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "CUSTOM_PAGE_NAME": "ViewCategorySortByTitleDescNonAdult",
+      "collectionGroup": "assets",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "category",
           "order": "ASCENDING"
         },
         {
@@ -217,17 +325,17 @@
       ]
     },
     {
-      "CUSTOM_PAGE_NAME": "ViewAuthors",
+      "CUSTOM_PAGE_NAME": "ViewAuthorsFilter",
       "collectionGroup": "authors",
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "isOpenForCommissions",
+          "fieldPath": "isOpenForCommission",
           "order": "ASCENDING"
         },
         {
           "fieldPath": "name",
-          "order": "DESCENDING"
+          "order": "ASCENDING"
         }
       ]
     },
