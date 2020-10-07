@@ -1,16 +1,18 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { Provider } from 'react-redux'
-import { ConnectedRouter } from 'connected-react-router'
-import firebase from 'firebase/app'
+// import { Provider } from 'react-redux'
+// import { ConnectedRouter } from 'connected-react-router'
+// import firebase from 'firebase/app'
 import * as Sentry from '@sentry/browser'
-import ReactReduxFirebaseProvider from 'react-redux-firebase/lib/ReactReduxFirebaseProvider'
+import CssBaseline from '@material-ui/core/CssBaseline'
+// import ReactReduxFirebaseProvider from 'react-redux-firebase/lib/ReactReduxFirebaseProvider'
 import store, { history } from './store'
-import App from './App'
+// import App from './App'
 import { inDevelopment } from './environment'
 import { changeSearchTerm } from './modules/app'
 import './firebase'
 import './global.css'
+import { DISCORD_URL, TWITTER_URL } from './config'
 
 if (!inDevelopment()) {
   Sentry.init({
@@ -25,19 +27,31 @@ history.listen(() => {
 
 const target = document.querySelector('#root')
 
-const rrfProps = {
-  firebase,
-  config: {},
-  dispatch: store.dispatch
-}
+// const rrfProps = {
+//   firebase,
+//   config: {},
+//   dispatch: store.dispatch
+// }
+
+// render(
+//   <Provider store={store}>
+//     <ConnectedRouter history={history}>
+//       <ReactReduxFirebaseProvider {...rrfProps}>
+//         <App />
+//       </ReactReduxFirebaseProvider>
+//     </ConnectedRouter>
+//   </Provider>,
+//   target
+// )
 
 render(
-  <Provider store={store}>
-    <ConnectedRouter history={history}>
-      <ReactReduxFirebaseProvider {...rrfProps}>
-        <App />
-      </ReactReduxFirebaseProvider>
-    </ConnectedRouter>
-  </Provider>,
+  <div>
+    <CssBaseline />
+    <h1>VRCArena is down for maintenance. It will return very soon.</h1>
+    <p>
+      Please check the <a href={TWITTER_URL}>Twitter</a> and visit the{' '}
+      <a href={DISCORD_URL}>Discord</a> for more info.
+    </p>
+  </div>,
   target
 )
