@@ -230,6 +230,21 @@
           "order": "DESCENDING"
         }
       ]
+    },
+    {
+      "CUSTOM_PAGE_NAME": "ViewAssetHistory",
+      "collectionGroup": "history",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "parent",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
     }
   ],
   "fieldOverrides": []

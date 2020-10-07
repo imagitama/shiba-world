@@ -1,0 +1,153 @@
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+    
+    function isEditor() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isEditor == true;
+    }
+    
+    function isCreatedBy() {
+    	return request.auth.uid == get(resource.data.createdBy).id;
+    }
+    
+    function isOwnedBy() {
+    	return request.auth.uid == get(resource.data.ownedBy).id;
+    }
+    
+    function isLoggedIn() {
+    	return request.auth.uid != null;
+    }
+    
+    function isRecipient() {
+			return request.auth.uid == get(resource.data.recipient).id;
+		}
+    
+    function isNotBanned() {
+    	return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isBanned == false;
+    }
+    
+    function validateUserUpdate() {
+      return isAdmin() || (request.resource.data.isAdmin == resource.data.isAdmin && request.resource.data.isEditor == resource.data.isEditor);
+    }
+    
+    function validateAssetUpdate() {
+      return isEditor() || request.resource.data.isApproved == resource.data.isApproved;
+    }
+    
+    match /assets/{document=**} {
+      allow read;
+      allow update: if validateAssetUpdate() && (isCreatedBy() || isOwnedBy() || isEditor() || isAdmin()) && isNotBanned();
+      allow create: if isLoggedIn() && isNotBanned();
+    }
+    
+    match /comments/{document=**} {
+      allow read;
+      allow update: if isEditor() || isAdmin();
+      allow create: if isLoggedIn() && isNotBanned();
+    }
+    
+    match /votes/{document=**} {
+      allow read;
+      allow update: if isCreatedBy() || isAdmin();
+      allow create: if (request.auth.uid != null && isEditor());
+    }
+    
+    match /users/{document=**} {
+      allow read;
+      allow update: if ((request.auth.uid == resource.id) || isAdmin()) && isNotBanned();
+      allow create: if request.auth.uid != null || isAdmin();
+    }
+    
+    match /special/{document=**} {
+      allow read;
+      allow update: if isAdmin();
+      allow create: if isAdmin();
+    }
+    
+    match /history/{document=**} {
+      allow read;
+    }
+    
+    match /notices/{document=**} {
+      allow read;
+    }
+    
+    match /endorsements/{document=**} {
+      allow read;
+      allow create: if isLoggedIn() && isNotBanned();
+    }
+    
+    match /streamers/{document=**} {
+      allow read;
+      allow update: if (isCreatedBy() || isEditor() || isAdmin()) && isNotBanned();
+      allow create: if isLoggedIn();
+    }
+    
+    match /profiles/{document=**} {
+      allow read;
+      allow update: if ((request.auth.uid == resource.id) || isEditor() || isAdmin()) && isNotBanned();
+      allow create: if isLoggedIn();
+    }
+    
+    match /summaries/{document=**} {
+      allow read;
+    }
+    
+    match /downloads/{document=**} {
+      allow read;
+      allow write;
+    }
+    
+    match /requests/{document=**} {
+      allow read;
+      allow update: if (isCreatedBy() || isEditor() || isAdmin()) && isNotBanned();
+      allow create: if isLoggedIn() && isNotBanned();
+    }
+    
+    match /notifications/{document=**} {
+    	allow read;
+      allow delete: if isRecipient();
+    }
+    
+    match /polls/{document=**} {
+    	allow read;
+    }
+    
+    match /pollResponses/{document=**} {
+    	allow read;
+      allow create;
+    }
+    
+    match /guestUsers/{document=**} {
+    	allow read;
+      allow update;
+      allow create;
+    }
+    
+    match /authors/{document=**} {
+      allow read;
+      allow update: if (isCreatedBy() || isOwnedBy() || isEditor() || isAdmin()) && isNotBanned();
+      allow create: if isLoggedIn() && isNotBanned();
+    }
+    
+    match /discordServers/{document=**} {
+      allow read;
+      allow update: if (isCreatedBy() || isOwnedBy() || isEditor() || isAdmin()) && isNotBanned();
+      allow create: if isLoggedIn() && isNotBanned();
+    }
+    
+    match /likes/{document=**} {
+    	allow read;
+      allow delete: if isCreatedBy();
+      allow create: if isLoggedIn() && isNotBanned();
+  	}
+    
+    match /species/{document=**} {
+      allow read;
+      allow update: if isEditor() || isAdmin();
+      allow create: if isEditor() || isAdmin();
+    }
+  }
+}
