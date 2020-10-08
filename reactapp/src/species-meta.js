@@ -78,7 +78,7 @@ Useful links:
 Useful links:
 - [Model website](https://bestbois.com)
 - [Best Boi Discord](https://discord.com/invite/sRrXpyZ)
-- [Best Boi Twitter](https://twitter.com/bestboip)
+- [Best Boi Twitter](https://twitter.com/bestboiproject)
 - [Best Boi VRChat world](https://vrchat.com/home/world/wrld_05be1d4a-72ae-489b-93bd-489d2b78abc5)`,
     backupThumbnailUrl: backupBestBoiImageUrl,
     optimizedThumbnailUrl: optimizedBestBoiImageUrl,
