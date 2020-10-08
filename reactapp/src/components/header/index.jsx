@@ -84,7 +84,7 @@ const useStyles = makeStyles({
     position: 'absolute',
     top: 0,
     left: 0,
-    padding: '1rem',
+    margin: '1rem',
     [mediaQueryForMobiles]: {
       position: 'relative',
       padding: 0
