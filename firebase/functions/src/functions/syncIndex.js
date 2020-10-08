@@ -6,6 +6,7 @@ const {
   retrieveAuthorNameFromAssetData,
 } = require('../firebase')
 const {
+  getAlgoliaClient,
   convertAssetDocToAlgoliaRecord,
   convertAuthorDocToAlgoliaRecord,
   convertUserDocToAlgoliaRecord,

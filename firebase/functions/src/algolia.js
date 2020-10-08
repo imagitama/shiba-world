@@ -15,7 +15,7 @@ const ALGOLIA_INDEX_NAME_AUTHORS = 'prod_AUTHORS'
 
 let algoliaClient
 
-module.exports.getAlgoliaClient = () => {
+const getAlgoliaClient = () => {
   if (algoliaClient) {
     return algoliaClient
   }
@@ -23,6 +23,7 @@ module.exports.getAlgoliaClient = () => {
   algoliaClient = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_ADMIN_KEY)
   return algoliaClient
 }
+module.exports.getAlgoliaClient = getAlgoliaClient
 
 module.exports.convertAssetDocToAlgoliaRecord = (docId, doc, authorName) => {
   return {
