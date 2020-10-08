@@ -295,6 +295,8 @@ export default ({
     )
   }
 
+  console.log('stuff', fieldData)
+
   return (
     <>
       <Heading variant="h1">
@@ -453,13 +455,14 @@ export default ({
       />
       <Heading variant="h3">Additional settings</Heading>
       <AuthorInput
-        authorRef={fieldData[AssetFieldNames.author]}
+        author={fieldData[AssetFieldNames.author]}
         onNewAuthorId={newAuthorId =>
           onFieldChange(
             AssetFieldNames.author,
             createRef(CollectionNames.Authors, newAuthorId)
           )
         }
+        deleteAuthor={() => onFieldChange(AssetFieldNames.author, null)}
       />
       <br />
       <ChildrenInput

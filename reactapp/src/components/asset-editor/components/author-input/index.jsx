@@ -12,7 +12,7 @@ import useFirebaseUserId from '../../../../hooks/useFirebaseUserId'
 import Button from '../../../button'
 import Paper from '../../../paper'
 import Heading from '../../../heading'
-import { createRef, isRef } from '../../../../utils'
+import { createRef, isRef, mapRefToDoc } from '../../../../utils'
 import { handleError } from '../../../../error-handling'
 
 const useStyles = makeStyles({
@@ -111,28 +111,38 @@ function AddAuthorForm() {
   )
 }
 
-export default ({ onNewAuthorId, authorRef = null }) => {
+export default ({ onNewAuthorId, deleteAuthor, author = null }) => {
   const [isAuthorListExpanded, setIsAuthorListExpanded] = useState(false)
   const [isAddAuthorFormVisible, setIsAddAuthorFormVisible] = useState(false)
   const [selectedAuthor, setSelectedAuthor] = useState(null)
   const classes = useStyles()
 
   useEffect(() => {
-    if (!authorRef || isRef(authorRef)) {
-      return
-    }
+    async function main() {
+      if (!author) {
+        setSelectedAuthor(null)
+        return
+      }
 
-    async function retrieveAuthorNameFromRef() {
       try {
-        const doc = await authorRef.get()
+        let firebaseDocRef
+
+        if (isRef(author)) {
+          firebaseDocRef = mapRefToDoc(author)
+        } else {
+          firebaseDocRef = author
+        }
+
+        const doc = await firebaseDocRef.get()
+
         setSelectedAuthor(doc.data())
       } catch (err) {
         handleError(err)
       }
     }
 
-    retrieveAuthorNameFromRef()
-  }, [authorRef === null])
+    main()
+  }, [author === null])
 
   return (
     <Paper>
@@ -143,9 +153,14 @@ export default ({ onNewAuthorId, authorRef = null }) => {
         Select an author from the list below. Create a new one if you cannot
         find the author. This feature is new and will be improved over time.
       </p>
-      {selectedAuthor
-        ? `Selected author "${selectedAuthor.name}"`
-        : 'No author selected'}
+      {selectedAuthor ? (
+        <>
+          Selected author "${selectedAuthor.name}"{' '}
+          <Button onClick={() => deleteAuthor()}>Remove Author</Button>
+        </>
+      ) : (
+        'No author selected'
+      )}
       <br />
       <br />
       {isAuthorListExpanded ? (
