@@ -21,8 +21,8 @@ import MobileMenu from '../mobile-menu'
 import DesktopMenu from '../desktop-menu'
 import DesktopAccountMenu from '../desktop-account-menu'
 
-// when the navigation cannot get any smaller
-const mediaQueryForMaxMenuWidth = '@media (max-width: 1100px)'
+// when the navigation starts obstructing the logo
+const mediaQueryForMenuLogoCollision = '@media (max-width: 1280px)'
 
 const useStyles = makeStyles({
   root: {
@@ -97,7 +97,7 @@ const useStyles = makeStyles({
     height: '100px',
     width: 'auto',
     transition: 'all 100ms',
-    [mediaQueryForMaxMenuWidth]: {
+    [mediaQueryForMenuLogoCollision]: {
       height: '75px'
     },
     [mediaQueryForMobiles]: {
