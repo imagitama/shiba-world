@@ -24,26 +24,25 @@ import useDatabaseQuery, {
   Operators,
   CollectionNames,
   AssetFieldNames,
-  OrderDirections
+  OrderDirections,
+  SpeciesFieldNames
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import useStorage, { keys as storageKeys } from '../../hooks/useStorage'
-import useSpeciesMeta from '../../hooks/useSpeciesMeta'
 import useCategoryMeta from '../../hooks/useCategoryMeta'
 
-function Assets({
-  speciesName,
-  categoryName,
-  sortByFieldName,
-  sortByDirection
-}) {
+function Assets({ species, categoryName, sortByFieldName, sortByDirection }) {
   const [, , user] = useUserRecord()
 
   let whereClauses = [
     [AssetFieldNames.isApproved, Operators.EQUALS, true],
     [AssetFieldNames.isAdult, Operators.EQUALS, false],
     [AssetFieldNames.isDeleted, Operators.EQUALS, false],
-    [AssetFieldNames.species, Operators.ARRAY_CONTAINS, speciesName],
+    [
+      AssetFieldNames.species,
+      Operators.ARRAY_CONTAINS,
+      species[SpeciesFieldNames.singularName]
+    ],
     [AssetFieldNames.category, Operators.EQUALS, categoryName],
     [AssetFieldNames.isPrivate, Operators.EQUALS, false]
   ]
@@ -70,8 +69,8 @@ function Assets({
   if (isErrored) {
     return (
       <ErrorMessage>
-        Failed to get assets by species {speciesName} and category{' '}
-        {categoryName}
+        Failed to get assets by species{' '}
+        {species[SpeciesFieldNames.singularName]} and category {categoryName}
       </ErrorMessage>
     )
   }
@@ -83,12 +82,26 @@ function Assets({
   return <AssetResults assets={results} showPinned />
 }
 
+function isRouteVarAFirebaseId(routeVar) {
+  return (
+    routeVar &&
+    routeVar.length >= 20 &&
+    routeVar.match(/^[a-z0-9]+$/i) !== null &&
+    !routeVar.includes(' ')
+  )
+}
+
 export default ({
   match: {
-    params: { speciesName, categoryName }
+    params: { speciesIdOrSlug, categoryName }
   }
 }) => {
-  const species = useSpeciesMeta(speciesName)
+  let [isLoading, isError, species] = useDatabaseQuery(
+    CollectionNames.Species,
+    isRouteVarAFirebaseId(speciesIdOrSlug)
+      ? speciesIdOrSlug
+      : [[SpeciesFieldNames.slug, Operators.EQUALS, speciesIdOrSlug]]
+  )
   const category = useCategoryMeta(categoryName)
   const [assetsSortByFieldName] = useStorage(
     storageKeys.assetsSortByFieldName,
@@ -101,7 +114,17 @@ export default ({
   const [activeSortFieldName, setActiveSortFieldName] = useState()
   const [activeSortDirection, setActiveSortDirection] = useState()
 
-  if (!species) {
+  if (isLoading) {
+    return <LoadingIndicator />
+  }
+
+  if (isError || !species) {
+    return <ErrorMessage>Failed to load species</ErrorMessage>
+  }
+
+  species = Array.isArray(species) ? species[0] : species
+
+  if (!species || !species.length) {
     return (
       <ErrorMessage>
         Sorry that species does not seem to exist.
@@ -127,7 +150,7 @@ export default ({
     setActiveSortFieldName(fieldName)
     setActiveSortDirection(direction)
     trackAction('AssetsList', 'Click sort by field and direction', {
-      speciesName,
+      species: species.id,
       categoryName,
       fieldName,
       direction
@@ -146,14 +169,20 @@ export default ({
       </Helmet>
       <Heading variant="h1">
         <Link
-          to={routes.viewSpeciesWithVar.replace(':speciesName', speciesName)}>
+          to={routes.viewSpeciesWithVar.replace(
+            ':speciesIdOrSlug',
+            species[SpeciesFieldNames.singularName]
+          )}>
           {species.name}
         </Link>
       </Heading>
       <Heading variant="h2">
         <Link
           to={routes.viewSpeciesCategoryWithVar
-            .replace(':speciesName', speciesName)
+            .replace(
+              ':species[SpeciesFieldNames.singularName]',
+              species[SpeciesFieldNames.singularName]
+            )
             .replace(':categoryName', categoryName)}>
           {category.name}
         </Link>
@@ -170,13 +199,13 @@ export default ({
         onNewSortFieldAndDirection={onNewSortFieldAndDirection}
         onOpenDropdown={() =>
           trackAction('AssetsList', 'Open sort dropdown', {
-            speciesName,
+            species: species.id,
             categoryName
           })
         }
       />
       <Assets
-        speciesName={speciesName}
+        species={species}
         categoryName={categoryName}
         sortByFieldName={activeSortFieldName || assetsSortByFieldName}
         sortByDirection={activeSortDirection || assetsSortByDirection}

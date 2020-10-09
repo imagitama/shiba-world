@@ -5,7 +5,6 @@ import CardActionArea from '@material-ui/core/CardActionArea'
 import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
 
-import speciesMeta from '../../../../species-meta'
 import useDatabaseQuery, {
   CollectionNames,
   SpeciesFieldNames
@@ -117,19 +116,18 @@ export default ({
       <Heading variant="h2">Select a species</Heading>
       <p>This is optional - you can select none and click Done.</p>
       <div className={classes.items}>
-        {Object.entries(speciesMeta)
-          .concat(
-            results.map(result => [
-              result.singularName,
-              {
-                id: result.id,
-                name: result[SpeciesFieldNames.singularName],
-                shortDescription: result[SpeciesFieldNames.shortDescription],
-                optimizedThumbnailUrl: result[SpeciesFieldNames.thumbnailUrl],
-                thumbnailUrl: result[SpeciesFieldNames.fallbackThumbnailurl]
-              }
-            ])
-          )
+        {results
+          .map(result => [
+            result.singularName,
+            {
+              id: result.id,
+              name: result[SpeciesFieldNames.singularName],
+              shortDescription: result[SpeciesFieldNames.shortDescription],
+              optimizedThumbnailUrl: result[SpeciesFieldNames.thumbnailUrl],
+              thumbnailUrl: result[SpeciesFieldNames.fallbackThumbnailurl]
+            }
+          ])
+
           .map(([name, meta]) => (
             <Item
               key={name}

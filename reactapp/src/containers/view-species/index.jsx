@@ -15,9 +15,9 @@ import Paper from '../../components/paper'
 import useDatabaseQuery, {
   AssetCategories,
   CollectionNames,
-  SpeciesFieldNames
+  SpeciesFieldNames,
+  Operators
 } from '../../hooks/useDatabaseQuery'
-import useSpeciesMeta from '../../hooks/useSpeciesMeta'
 import useUserRecord from '../../hooks/useUserRecord'
 
 import {
@@ -48,6 +48,8 @@ const useStyles = makeStyles({
   }
 })
 
+const otherSpeciesSlug = 'other-species'
+
 function isRouteVarAFirebaseId(routeVar) {
   return (
     routeVar &&
@@ -57,129 +59,15 @@ function isRouteVarAFirebaseId(routeVar) {
   )
 }
 
-const OldSpeciesResult = ({ speciesName }) => {
-  const species = useSpeciesMeta(speciesName)
-  const classes = useStyles()
-
-  if (!species) {
-    return (
-      <ErrorMessage>
-        Sorry that species does not seem to exist.
-        <br />
-        <br />
-        <Button url={routes.viewAllSpecies}>View All Species</Button>
-      </ErrorMessage>
-    )
-  }
-
-  const titleWithoutSuffix = `${species.name} | ${species.shortDescription}`
-
-  return (
-    <>
-      <Helmet>
-        <title>{titleWithoutSuffix} | VRCArena</title>
-        <meta name="description" content={species.shortDescription} />
-        <meta property="og:title" content={titleWithoutSuffix} />
-        <meta property="og:type" content="website" />
-        <meta
-          property="og:description"
-          content={getDescriptionForHtmlMeta(species.shortDescription)}
-        />
-        <meta
-          property="og:url"
-          content={getOpenGraphUrlForRouteUrl(
-            routes.viewSpeciesWithVar.replace(':speciesName', speciesName)
-          )}
-        />
-        <meta
-          property="og:image"
-          content={getOpenGraphUrlForRouteUrl(species.backupThumbnailUrl)}
-        />
-      </Helmet>
-      <div className={classes.thumbnailWrapper}>
-        <a
-          href={species.thumbnailSourceUrl}
-          title={`Visit the source of the thumbnail for ${species.name}`}
-          target="_blank"
-          rel="noopener noreferrer">
-          <picture>
-            <source srcSet={species.optimizedThumbnailUrl} type="image/webp" />
-            <source srcSet={species.backupThumbnailUrl} type="image/png" />
-            <img
-              src={species.backupThumbnailUrl}
-              alt={`Thumbnail for species ${species.name}`}
-              className={classes.thumbnail}
-            />
-          </picture>
-        </a>
-      </div>
-      <Heading variant="h1">
-        <Link
-          to={routes.viewSpeciesWithVar.replace(':speciesName', speciesName)}>
-          {species.name}
-        </Link>
-      </Heading>
-      <Paper>
-        <Markdown className={classes.description}>
-          {species.description}
-        </Markdown>
-      </Paper>
-      <RecentAssets
-        speciesName={speciesName}
-        limit={999}
-        categoryName={AssetCategories.avatar}
-        showPinned
-        title="Avatars"
-      />
-      <RecentAssets
-        speciesName={speciesName}
-        limit={5}
-        categoryName={AssetCategories.article}
-        title="News"
-      />
-      <RecentAssets
-        speciesName={speciesName}
-        limit={5}
-        categoryName={AssetCategories.accessory}
-        title="Recent Accessories"
-      />
-      <RecentAssets
-        speciesName={speciesName}
-        limit={5}
-        categoryName={AssetCategories.animation}
-        title="Recent Animations"
-      />
-      <RecentAssets
-        speciesName={speciesName}
-        limit={5}
-        categoryName={AssetCategories.tutorial}
-        title="Recent Tutorials"
-      />
-      <RecentAssets
-        speciesName={speciesName}
-        limit={5}
-        categoryName={AssetCategories.world}
-        title="Recent Worlds"
-      />
-      <RecentAssets
-        speciesName={speciesName}
-        limit={5}
-        categoryName={AssetCategories.alteration}
-        title="Recent Alterations"
-      />
-      <Heading variant="h2">Tags</Heading>
-      <AllTagsBrowser lazyLoad />
-    </>
-  )
-}
-
 const analyticsCategory = 'ViewSpecies'
 
-const NewSpeciesResult = ({ speciesId }) => {
+const SpeciesResult = ({ speciesIdOrSlug }) => {
   const [, , user] = useUserRecord()
-  const [isLoading, isError, species] = useDatabaseQuery(
+  let [isLoading, isError, species] = useDatabaseQuery(
     CollectionNames.Species,
-    speciesId
+    isRouteVarAFirebaseId(speciesIdOrSlug)
+      ? speciesIdOrSlug
+      : [[SpeciesFieldNames.slug, Operators.EQUALS, speciesIdOrSlug]]
   )
   const classes = useStyles()
 
@@ -190,6 +78,12 @@ const NewSpeciesResult = ({ speciesId }) => {
   if (isError) {
     return <ErrorMessage>Failed to load species</ErrorMessage>
   }
+
+  if (!species || !species.length) {
+    return <ErrorMessage>Could not found that species</ErrorMessage>
+  }
+
+  species = Array.isArray(species) ? species[0] : species
 
   const titleWithoutSuffix = `${species[SpeciesFieldNames.pluralName]} | ${
     species[SpeciesFieldNames.shortDescription]
@@ -214,10 +108,7 @@ const NewSpeciesResult = ({ speciesId }) => {
         <meta
           property="og:url"
           content={getOpenGraphUrlForRouteUrl(
-            routes.viewSpeciesWithVar.replace(
-              ':speciesName',
-              species[SpeciesFieldNames.id]
-            )
+            routes.viewSpeciesWithVar.replace(':speciesIdOrSlug', species.id)
           )}
         />
         <meta
@@ -254,7 +145,10 @@ const NewSpeciesResult = ({ speciesId }) => {
       </div>
       <Heading variant="h1">
         <Link
-          to={routes.viewSpeciesWithVar.replace(':speciesName', species.id)}>
+          to={routes.viewSpeciesWithVar.replace(
+            ':speciesIdOrSlug',
+            species.id
+          )}>
           {species[SpeciesFieldNames.pluralName]}
         </Link>
       </Heading>
@@ -267,7 +161,7 @@ const NewSpeciesResult = ({ speciesId }) => {
         <>
           <Heading variant="h2">Actions</Heading>
           <Button
-            url={routes.editSpeciesWithVar.replace(':speciesName', species.id)}
+            url={routes.editSpeciesWithVar.replace(':speciesId', species.id)}
             icon={<EditIcon />}
             onClick={() =>
               trackAction(
@@ -281,44 +175,174 @@ const NewSpeciesResult = ({ speciesId }) => {
         </>
       )}
       <RecentAssets
-        speciesId={speciesId}
+        speciesId={species.id}
         limit={999}
         categoryName={AssetCategories.avatar}
         showPinned
         title="Avatars"
       />
       <RecentAssets
-        speciesId={speciesId}
+        speciesId={species.id}
         limit={5}
         categoryName={AssetCategories.article}
         title="News"
       />
       <RecentAssets
-        speciesId={speciesId}
+        speciesId={species.id}
         limit={5}
         categoryName={AssetCategories.accessory}
         title="Recent Accessories"
       />
       <RecentAssets
-        speciesId={speciesId}
+        speciesId={species.id}
         limit={5}
         categoryName={AssetCategories.animation}
         title="Recent Animations"
       />
       <RecentAssets
-        speciesId={speciesId}
+        speciesId={species.id}
         limit={5}
         categoryName={AssetCategories.tutorial}
         title="Recent Tutorials"
       />
       <RecentAssets
-        speciesId={speciesId}
+        speciesId={species.id}
         limit={5}
         categoryName={AssetCategories.world}
         title="Recent Worlds"
       />
       <RecentAssets
-        speciesId={speciesId}
+        speciesId={species.id}
+        limit={5}
+        categoryName={AssetCategories.alteration}
+        title="Recent Alterations"
+      />
+      <Heading variant="h2">Tags</Heading>
+      <AllTagsBrowser lazyLoad />
+    </>
+  )
+}
+
+function OtherSpecies() {
+  const classes = useStyles()
+
+  const species = {
+    [SpeciesFieldNames.pluralName]: 'Other Species',
+    [SpeciesFieldNames.description]: 'Assets that do not have a species.',
+    [SpeciesFieldNames.shortDescription]: 'Assets that do not have a species.'
+  }
+
+  const titleWithoutSuffix = `${species[SpeciesFieldNames.pluralName]} | ${
+    species[SpeciesFieldNames.shortDescription]
+  }`
+
+  return (
+    <>
+      <Helmet>
+        <title>{titleWithoutSuffix} | VRCArena</title>
+        <meta
+          name="description"
+          content={species[SpeciesFieldNames.shortDescription]}
+        />
+        <meta property="og:title" content={titleWithoutSuffix} />
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:description"
+          content={getDescriptionForHtmlMeta(
+            species[SpeciesFieldNames.shortDescription]
+          )}
+        />
+        <meta
+          property="og:url"
+          content={getOpenGraphUrlForRouteUrl(
+            routes.viewSpeciesWithVar.replace(':speciesIdOrSlug', species.id)
+          )}
+        />
+        <meta
+          property="og:image"
+          content={species[SpeciesFieldNames.thumbnailUrl]}
+        />
+      </Helmet>
+      {/* <div className={classes.thumbnailWrapper}>
+        <a
+          href={species[SpeciesFieldNames.thumbnailSourceUrl]}
+          title={`Visit the source of the thumbnail for ${
+            species[SpeciesFieldNames.pluralName]
+          }`}
+          target="_blank"
+          rel="noopener noreferrer">
+          <picture>
+            <source
+              srcSet={species[SpeciesFieldNames.thumbnailUrl]}
+              type="image/webp"
+            />
+            <source
+              srcSet={species[SpeciesFieldNames.fallbackThumbnailUrl]}
+              type="image/png"
+            />
+            <img
+              src={species[SpeciesFieldNames.fallbackThumbnailUrl]}
+              alt={`Thumbnail for species ${
+                species[SpeciesFieldNames.pluralName]
+              }`}
+              className={classes.thumbnail}
+            />
+          </picture>
+        </a>
+      </div> */}
+      <Heading variant="h1">
+        <Link
+          to={routes.viewSpeciesWithVar.replace(
+            ':speciesIdOrSlug',
+            otherSpeciesSlug
+          )}>
+          {species[SpeciesFieldNames.pluralName]}
+        </Link>
+      </Heading>
+      <Paper>
+        <Markdown className={classes.description}>
+          {species[SpeciesFieldNames.description]}
+        </Markdown>
+      </Paper>
+      <RecentAssets
+        speciesId={false}
+        limit={999}
+        categoryName={AssetCategories.avatar}
+        showPinned
+        title="Avatars"
+      />
+      <RecentAssets
+        speciesId={false}
+        limit={5}
+        categoryName={AssetCategories.article}
+        title="News"
+      />
+      <RecentAssets
+        speciesId={false}
+        limit={5}
+        categoryName={AssetCategories.accessory}
+        title="Recent Accessories"
+      />
+      <RecentAssets
+        speciesId={false}
+        limit={5}
+        categoryName={AssetCategories.animation}
+        title="Recent Animations"
+      />
+      <RecentAssets
+        speciesId={false}
+        limit={5}
+        categoryName={AssetCategories.tutorial}
+        title="Recent Tutorials"
+      />
+      <RecentAssets
+        speciesId={false}
+        limit={5}
+        categoryName={AssetCategories.world}
+        title="Recent Worlds"
+      />
+      <RecentAssets
+        speciesId={false}
         limit={5}
         categoryName={AssetCategories.alteration}
         title="Recent Alterations"
@@ -331,12 +355,11 @@ const NewSpeciesResult = ({ speciesId }) => {
 
 export default ({
   match: {
-    params: { speciesName }
+    params: { speciesIdOrSlug }
   }
-}) => {
-  return isRouteVarAFirebaseId(speciesName) ? (
-    <NewSpeciesResult speciesId={speciesName} />
+}) =>
+  speciesIdOrSlug === otherSpeciesSlug ? (
+    <OtherSpecies />
   ) : (
-    <OldSpeciesResult speciesName={speciesName} />
+    <SpeciesResult speciesIdOrSlug={speciesIdOrSlug} />
   )
-}

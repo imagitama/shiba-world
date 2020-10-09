@@ -56,5 +56,13 @@ export default [
     hint:
       'Popular species are always shown in the list of species. Others will be hidden by default',
     default: false
+  },
+  {
+    name: SpeciesFieldNames.slug,
+    label: 'Slug',
+    type: fieldTypes.text,
+    hint: 'AVOID EVER CHANGING THIS!!!! This bit: /species/$slug',
+    isRequired: false,
+    default: ''
   }
 ]

@@ -7,7 +7,6 @@ import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 
 import * as routes from '../../routes'
-import speciesMeta, { speciesName } from '../../species-meta'
 import { mediaQueryForTabletsOrBelow } from '../../media-queries'
 import useDatabaseQuery, {
   SpeciesFieldNames,
@@ -16,6 +15,7 @@ import useDatabaseQuery, {
 import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
 import Heading from '../heading'
+import { otherSpeciesMeta, otherSpeciesKey } from '../../config'
 
 const useStyles = makeStyles({
   root: { marginTop: '0.5rem' },
@@ -65,8 +65,7 @@ const useStyles = makeStyles({
 })
 
 const Species = ({
-  id = null,
-  name,
+  id,
   title,
   description,
   backupThumbnailUrl,
@@ -75,7 +74,7 @@ const Species = ({
   isFullWidth = false
 }) => {
   const classes = useStyles()
-  const url = routes.viewSpeciesWithVar.replace(':speciesName', id || name)
+  const url = routes.viewSpeciesWithVar.replace(':speciesIdOrSlug', id)
 
   return (
     <div
@@ -89,7 +88,7 @@ const Species = ({
             className={classes.contentWrapper}
             onClick={() => {
               if (onSpeciesClick) {
-                onSpeciesClick(name)
+                onSpeciesClick(id)
               }
             }}>
             <div className={classes.thumbnailWrapper}>
@@ -132,21 +131,17 @@ export default ({ onSpeciesClick = null }) => {
     return <ErrorMessage />
   }
 
-  const allSpecies = Object.entries(speciesMeta)
-    .filter(([key]) => key !== speciesName.otherSpecies)
-    .concat(
-      results.map(result => [
-        result.singularName,
-        {
-          id: result.id,
-          isPopular: result[SpeciesFieldNames.isPopular],
-          name: result[SpeciesFieldNames.singularName],
-          shortDescription: result[SpeciesFieldNames.shortDescription],
-          optimizedThumbnailUrl: result[SpeciesFieldNames.thumbnailUrl],
-          thumbnailUrl: result[SpeciesFieldNames.fallbackThumbnailurl]
-        }
-      ])
-    )
+  const allSpecies = results.map(result => [
+    result.singularName,
+    {
+      id: result.id,
+      isPopular: result[SpeciesFieldNames.isPopular],
+      name: result[SpeciesFieldNames.singularName],
+      shortDescription: result[SpeciesFieldNames.shortDescription],
+      optimizedThumbnailUrl: result[SpeciesFieldNames.thumbnailUrl],
+      thumbnailUrl: result[SpeciesFieldNames.fallbackThumbnailurl]
+    }
+  ])
   let popular = []
   let unpopular = []
 
@@ -158,8 +153,6 @@ export default ({ onSpeciesClick = null }) => {
       unpopular = unpopular.concat([[key, speciesItem]])
     }
   })
-
-  const otherSpecies = speciesMeta[speciesName.otherSpecies]
 
   return (
     <div className={classes.root}>
@@ -221,11 +214,15 @@ export default ({ onSpeciesClick = null }) => {
       <Heading variant="h3">Other Species</Heading>
       <div>
         <Species
-          name={speciesName.otherSpecies}
-          title={otherSpecies.name}
-          description={otherSpecies.shortDescription}
-          optimizedThumbnailUrl={otherSpecies.optimizedThumbnailUrl}
-          backupThumbnailUrl={otherSpecies.backupThumbnailUrl}
+          id={otherSpeciesKey}
+          title={otherSpeciesMeta[SpeciesFieldNames.singularName]}
+          description={otherSpeciesMeta[SpeciesFieldNames.shortDescription]}
+          optimizedThumbnailUrl={
+            otherSpeciesMeta[SpeciesFieldNames.thumbnailSourceUrl]
+          }
+          backupThumbnailUrl={
+            otherSpeciesMeta[SpeciesFieldNames.fallbackThumbnailUrl]
+          }
           onSpeciesClick={onSpeciesClick}
           isFullWidth
         />

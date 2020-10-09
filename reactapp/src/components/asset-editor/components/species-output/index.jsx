@@ -5,7 +5,6 @@ import {
   CollectionNames,
   SpeciesFieldNames
 } from '../../../../hooks/useDatabaseQuery'
-import speciesMeta from '../../../../species-meta'
 
 function stringify(species) {
   if (!species || !species.length) {
@@ -57,13 +56,5 @@ export default ({ species }) => {
     return 'All Species'
   }
 
-  return speciesNames
-    .map(speciesNameOrRef => {
-      if (speciesNameOrRef in speciesMeta) {
-        return speciesMeta[speciesNameOrRef].name
-      } else {
-        return speciesNameOrRef
-      }
-    })
-    .join(', ')
+  return speciesNames.join(', ')
 }

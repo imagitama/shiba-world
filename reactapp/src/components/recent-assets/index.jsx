@@ -20,10 +20,10 @@ import * as routes from '../../routes'
 import categoryMeta from '../../category-meta'
 import { createRef } from '../../utils'
 
-function getViewMoreLinkUrl(speciesName, categoryName) {
-  if (speciesName && categoryName) {
+function getViewMoreLinkUrl(speciesId, categoryName) {
+  if (speciesId && categoryName) {
     return routes.viewSpeciesCategoryWithVar
-      .replace(':speciesName', speciesName)
+      .replace(':speciesIdOrSlug', speciesId)
       .replace(':categoryName', categoryName)
   }
   if (categoryName) {
@@ -33,7 +33,6 @@ function getViewMoreLinkUrl(speciesName, categoryName) {
 }
 
 export default ({
-  speciesName = null,
   speciesId = null,
   categoryName = null,
   showPinned,
@@ -49,20 +48,16 @@ export default ({
     [AssetFieldNames.isPrivate, Operators.EQUALS, false]
   ]
 
-  if (speciesName) {
-    whereClauses.push([
-      AssetFieldNames.species,
-      Operators.ARRAY_CONTAINS,
-      speciesName
-    ])
-  }
-
   if (speciesId) {
     whereClauses.push([
       AssetFieldNames.species,
       Operators.ARRAY_CONTAINS,
       createRef(CollectionNames.Species, speciesId)
     ])
+  }
+
+  if (speciesId === false) {
+    whereClauses.push([AssetFieldNames.species, Operators.EQUALS, []])
   }
 
   if (categoryName) {
@@ -99,9 +94,9 @@ export default ({
       <Heading variant="h2">
         <Link
           to={
-            speciesName
+            speciesId
               ? routes.viewSpeciesCategoryWithVar
-                  .replace(':speciesName', speciesName)
+                  .replace(':speciesIdOrSlug', speciesId)
                   .replace(':categoryName', categoryName)
               : routes.viewCategoryWithVar.replace(
                   ':categoryName',
@@ -114,7 +109,7 @@ export default ({
       <BodyText>{categoryMeta[categoryName].shortDescription}</BodyText>
       <AssetResults assets={results} showPinned={showPinned} />
       <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-        {speciesName && categoryName && (
+        {speciesId && categoryName && (
           <Link
             to={routes.viewCategoryWithVar.replace(
               ':categoryName',
@@ -128,7 +123,7 @@ export default ({
             Upload
           </Button>
         )}{' '}
-        <Link to={getViewMoreLinkUrl(speciesName, categoryName)}>
+        <Link to={getViewMoreLinkUrl(speciesId, categoryName)}>
           <Button>View More</Button>
         </Link>
       </div>

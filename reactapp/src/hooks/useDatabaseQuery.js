@@ -239,7 +239,8 @@ export const SpeciesFieldNames = {
   lastModifiedBy: 'lastModifiedBy',
   lastModifiedAt: 'lastModifiedAt',
   createdAt: 'createdAt',
-  createdBy: 'createdBy'
+  createdBy: 'createdBy',
+  slug: 'slug'
 }
 
 function getWhereClausesAsString(whereClauses) {

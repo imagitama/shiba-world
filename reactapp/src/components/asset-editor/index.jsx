@@ -295,8 +295,6 @@ export default ({
     )
   }
 
-  console.log('stuff', fieldData)
-
   return (
     <>
       <Heading variant="h1">

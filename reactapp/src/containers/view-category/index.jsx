@@ -12,7 +12,6 @@ import {
   getLabelForAssetSortFieldNameAndDirection
 } from '../../sorting'
 import { trackAction } from '../../analytics'
-import speciesMeta, { speciesName } from '../../species-meta'
 import * as routes from '../../routes'
 
 import ErrorMessage from '../../components/error-message'
@@ -62,6 +61,7 @@ function getDescriptionByCategoryName(categoryName) {
 }
 
 let avatarsScrollPosition
+const otherSpeciesKey = 'other-species'
 
 function AvatarAssetResults({ assets }) {
   // Because the avatars page is very long and the most popular page of the site
@@ -84,33 +84,36 @@ function AvatarAssetResults({ assets }) {
     }
   }, [])
 
-  let otherSpecies = [[speciesName.otherSpecies, []]]
-  const speciesMetaById = {}
+  const speciesMetaById = {
+    [otherSpeciesKey]: {
+      [SpeciesFieldNames.pluralName]: 'Other Species',
+      [SpeciesFieldNames.singularName]: 'Other Species',
+      [SpeciesFieldNames.description]: 'Assets that do not have a species.',
+      [SpeciesFieldNames.shortDescription]: 'Assets that do not have a species.'
+    }
+  }
 
   const assetsBySpecies = assets.reduce((obj, asset) => {
     if (
       asset[AssetFieldNames.species] &&
-      asset[AssetFieldNames.species].length &&
-      asset[AssetFieldNames.species][0] !== speciesName.otherSpecies
+      asset[AssetFieldNames.species].length
     ) {
       const speciesItem = asset[AssetFieldNames.species][0]
-      let key
 
-      if (typeof speciesItem === 'string') {
-        key = speciesItem
-      } else {
-        speciesMetaById[speciesItem.id] = speciesItem
-        key = speciesItem.id
-      }
+      speciesMetaById[speciesItem.id] = speciesItem
+      const key = speciesItem.id
 
       return {
         ...obj,
         [key]: obj[key] ? obj[key].concat([asset]) : [asset]
       }
     } else {
-      // Quick and dirty way to ensure Other Species comes last
-      otherSpecies[0][1].push(asset)
-      return obj
+      return {
+        ...obj,
+        [otherSpeciesKey]: obj[otherSpeciesKey]
+          ? obj[otherSpeciesKey].concat([asset])
+          : [asset]
+      }
     }
   }, {})
 
@@ -118,28 +121,27 @@ function AvatarAssetResults({ assets }) {
     <>
       {Object.entries(assetsBySpecies)
         .sort(([nameA], [nameB]) => nameA.localeCompare(nameB))
-        .concat(otherSpecies)
         .map(([speciesNameOrId, assetsForSpecies]) => (
           <Fragment key={speciesNameOrId}>
             <Heading variant="h2">
               <Link
                 to={routes.viewSpeciesWithVar.replace(
-                  ':speciesName',
+                  ':speciesIdOrSlug',
                   speciesNameOrId
                 )}>
-                {speciesNameOrId in speciesMeta
-                  ? speciesMeta[speciesNameOrId].name
-                  : speciesMetaById[speciesNameOrId][
-                      SpeciesFieldNames.singularName
-                    ]}
+                {
+                  speciesMetaById[speciesNameOrId][
+                    SpeciesFieldNames.singularName
+                  ]
+                }
               </Link>
             </Heading>
             <BodyText>
-              {speciesNameOrId in speciesMeta
-                ? speciesMeta[speciesNameOrId].shortDescription
-                : speciesMetaById[speciesNameOrId][
-                    SpeciesFieldNames.shortDescription
-                  ]}
+              {
+                speciesMetaById[speciesNameOrId][
+                  SpeciesFieldNames.shortDescription
+                ]
+              }
             </BodyText>
 
             <AssetResults assets={assetsForSpecies} showPinned />

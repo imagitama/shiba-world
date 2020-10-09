@@ -174,7 +174,7 @@ export default ({ assetId = null, limit = 20 }) => {
               [HistoryFieldNames.data]: data,
               [HistoryFieldNames.createdAt]: createdAt
             }) => (
-              <TableRow key={id}>
+              <TableRow key={id} title={id}>
                 <TableCell>
                   {message}
                   <br />

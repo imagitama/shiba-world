@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 
@@ -13,13 +13,11 @@ import Button from '../../components/button'
 import useDatabaseQuery, {
   CollectionNames,
   AuthorFieldNames,
-  OrderDirections,
-  DiscordServerFieldNames
+  OrderDirections
 } from '../../hooks/useDatabaseQuery'
 import * as routes from '../../routes'
 import { canEditDiscordServer } from '../../utils'
 import useUserRecord from '../../hooks/useUserRecord'
-import speciesMeta from '../../species-meta'
 
 function DiscordServers() {
   const [isLoading, isErrored, results] = useDatabaseQuery(
@@ -41,46 +39,9 @@ function DiscordServers() {
     return <NoResultsMessage />
   }
 
-  const resultsBySpeciesName = {}
-  const noSpeciesResults = []
-
-  results.forEach(result => {
-    if (
-      result[DiscordServerFieldNames.species] &&
-      result[DiscordServerFieldNames.species].length
-    ) {
-      result[DiscordServerFieldNames.species].forEach(speciesName => {
-        if (!(speciesName in resultsBySpeciesName)) {
-          resultsBySpeciesName[speciesName] = []
-        }
-        resultsBySpeciesName[speciesName].push(result)
-      })
-    } else {
-      noSpeciesResults.push(result)
-    }
-  })
-
   return (
     <>
-      {Object.entries(resultsBySpeciesName).map(
-        ([speciesName, resultsForSpecies]) => (
-          <Fragment key={speciesName}>
-            <Heading variant="h2">
-              <Link
-                to={routes.viewSpeciesWithVar.replace(
-                  ':speciesName',
-                  speciesName
-                )}>
-                {' '}
-                {speciesMeta[speciesName].name}
-              </Link>
-            </Heading>
-            <DiscordServerResults discordServers={resultsForSpecies} />
-          </Fragment>
-        )
-      )}
-      <Heading variant="h2">No Species Specified</Heading>
-      <DiscordServerResults discordServers={noSpeciesResults} />
+      <DiscordServerResults discordServers={results} />
     </>
   )
 }

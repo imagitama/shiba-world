@@ -37,7 +37,7 @@ export default () => {
         viewBtnAction="Click view item button after save"
         cancelBtnAction="Click cancel button"
         getSuccessUrl={id =>
-          routes.viewSpeciesWithVar.replace(':speciesName', id)
+          routes.viewSpeciesWithVar.replace(':speciesIdOrSlug', id)
         }
       />
     </>

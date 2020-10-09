@@ -1,4 +1,4 @@
-const { db } = require('./firebase')
+const { db, CollectionNames, AssetFieldNames } = require('./firebase')
 
 const summariesIdTags = 'tags'
 

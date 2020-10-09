@@ -1,5 +1,4 @@
 import { DiscordServerFieldNames } from '../hooks/useDatabaseQuery'
-import { speciesName } from '../species-meta'
 
 export default [
   {
@@ -53,17 +52,5 @@ export default [
     default: '',
     type: 'text',
     hint: 'The URL to the Patreon you need to be a sub for to join it'
-  },
-  {
-    name: DiscordServerFieldNames.species,
-    label: 'Species',
-    type: 'multichoice',
-    options: Object.entries(speciesName).map(([key, value]) => ({
-      label: key,
-      value
-    })),
-    default: [],
-    hint:
-      'If the Discord server is for a specific species (eg. Avali VR Homeworld is for Avalis)'
   }
 ]

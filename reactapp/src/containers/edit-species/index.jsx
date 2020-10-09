@@ -14,7 +14,7 @@ import { canEditSpecies } from '../../utils'
 
 export default ({
   match: {
-    params: { speciesName: speciesId } // change to speciesId later
+    params: { speciesId }
   }
 }) => {
   const [isLoading, isErrored, user] = useUserRecord()
@@ -46,10 +46,13 @@ export default ({
         viewBtnAction="Click view item button after save"
         cancelBtnAction="Click cancel button"
         successUrl={routes.viewSpeciesWithVar.replace(
-          ':speciesName',
+          ':speciesIdOrSlug',
           speciesId
         )}
-        cancelUrl={routes.viewSpeciesWithVar.replace(':speciesName', speciesId)}
+        cancelUrl={routes.viewSpeciesWithVar.replace(
+          ':speciesIdOrSlug',
+          speciesId
+        )}
       />
     </>
   )

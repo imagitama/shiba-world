@@ -551,7 +551,7 @@ export default ({ assetId }) => {
                       {' / '}
                       <Link
                         to={routes.viewSpeciesCategoryWithVar
-                          .replace(':speciesName', species[0])
+                          .replace(':speciesIdOrSlug', species[0].id)
                           .replace(':categoryName', category)}>
                         {getCategoryDisplayName(category)}
                       </Link>

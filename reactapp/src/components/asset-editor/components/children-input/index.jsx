@@ -12,6 +12,7 @@ import Button from '../../../button'
 import Paper from '../../../paper'
 import Heading from '../../../heading'
 import { searchIndexNames } from '../../../../modules/app'
+import { mapRefToDoc } from '../../../../utils'
 
 const useStyles = makeStyles({
   heading: {
@@ -24,7 +25,9 @@ function ChildAsset({ assetDoc, onDelete }) {
 
   useEffect(() => {
     async function main() {
-      const record = await assetDoc.get()
+      const ref = mapRefToDoc(assetDoc)
+
+      const record = await ref.get()
       const formattedRecord = await formatRawDoc(record)
       setAsset(formattedRecord)
     }
