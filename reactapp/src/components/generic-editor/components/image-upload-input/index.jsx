@@ -1,4 +1,5 @@
 import React from 'react'
+import shortid from 'shortid'
 import FallbackImageUploader from '../../../fallback-image-uploader'
 
 export default ({
@@ -9,7 +10,8 @@ export default ({
     width: 200,
     height: 200,
     directoryName: 'untitled',
-    fallbackFieldName: ''
+    fallbackFieldName: '',
+    prefixWithHash: true
   },
   setFieldsValues
 }) => {
@@ -37,6 +39,9 @@ export default ({
         requiredWidth={fieldProperties.width}
         requiredHeight={fieldProperties.height}
         directoryPath={fieldProperties.directoryName}
+        filePrefix={
+          fieldProperties.prefixWithHash !== false ? shortid.generate() : ''
+        }
       />
     </>
   )
