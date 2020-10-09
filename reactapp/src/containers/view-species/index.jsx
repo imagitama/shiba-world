@@ -62,10 +62,11 @@ function isRouteVarAFirebaseId(routeVar) {
 const analyticsCategory = 'ViewSpecies'
 
 const SpeciesResult = ({ speciesIdOrSlug }) => {
+  const isFirebaseId = isRouteVarAFirebaseId(speciesIdOrSlug)
   const [, , user] = useUserRecord()
   let [isLoading, isError, species] = useDatabaseQuery(
     CollectionNames.Species,
-    isRouteVarAFirebaseId(speciesIdOrSlug)
+    isFirebaseId
       ? speciesIdOrSlug
       : [[SpeciesFieldNames.slug, Operators.EQUALS, speciesIdOrSlug]]
   )
@@ -79,7 +80,7 @@ const SpeciesResult = ({ speciesIdOrSlug }) => {
     return <ErrorMessage>Failed to load species</ErrorMessage>
   }
 
-  if (!species || !species.length) {
+  if (!species || (!isFirebaseId && !species.length)) {
     return <ErrorMessage>Could not found that species</ErrorMessage>
   }
 
