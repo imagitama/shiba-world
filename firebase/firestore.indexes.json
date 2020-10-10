@@ -314,7 +314,7 @@
       ]
     },
     {
-      "CUSTOM_PAGE_NAME": "ViewUser",
+      "CUSTOM_PAGE_NAME": "ViewUserAdult",
       "collectionGroup": "assets",
       "queryScope": "COLLECTION",
       "fields": [
@@ -324,6 +324,33 @@
         },
         {
           "fieldPath": "isAdult",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "isApproved",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "isDeleted",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "isPrivate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "CUSTOM_PAGE_NAME": "ViewUserNonAdult",
+      "collectionGroup": "assets",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "createdBy",
           "order": "ASCENDING"
         },
         {
