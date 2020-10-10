@@ -16,6 +16,7 @@ import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
 import Heading from '../heading'
 import { otherSpeciesMeta, otherSpeciesKey } from '../../config'
+import { fixAccessingImagesUsingToken } from '../../utils'
 
 const useStyles = makeStyles({
   root: { marginTop: '0.5rem' },
@@ -93,10 +94,16 @@ const Species = ({
             }}>
             <div className={classes.thumbnailWrapper}>
               <picture>
-                <source srcSet={optimizedThumbnailUrl} type="image/webp" />
-                <source srcSet={backupThumbnailUrl} type="image/png" />
+                <source
+                  srcSet={fixAccessingImagesUsingToken(optimizedThumbnailUrl)}
+                  type="image/webp"
+                />
+                <source
+                  srcSet={fixAccessingImagesUsingToken(backupThumbnailUrl)}
+                  type="image/png"
+                />
                 <img
-                  src={backupThumbnailUrl}
+                  src={fixAccessingImagesUsingToken(backupThumbnailUrl)}
                   alt={`Thumbnail for species ${title}`}
                   className={classes.thumbnail}
                 />

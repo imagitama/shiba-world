@@ -2,7 +2,7 @@ import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import GetAppIcon from '@material-ui/icons/GetApp'
 
-import { createRef } from '../../utils'
+import { createRef, fixAccessingImagesUsingToken } from '../../utils'
 import { handleError } from '../../error-handling'
 
 import { CollectionNames } from '../../hooks/useDatabaseQuery'
@@ -46,7 +46,7 @@ export default ({ assetId, url, isLarge = false, onClick = null }) => {
   return (
     <Button
       className={`${classes.root} ${isLarge ? classes.large : ''}`}
-      url={url}
+      url={fixAccessingImagesUsingToken(url)}
       icon={<GetAppIcon />}
       onClick={onDownloadBtnClick}
       size={isLarge ? 'large' : undefined}>

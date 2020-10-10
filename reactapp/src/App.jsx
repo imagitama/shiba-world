@@ -220,7 +220,7 @@ const MainContent = () => {
           }}
         />
         <Redirect
-          from={routes.browseWithVar.replace(':tagName', ':speciesName')}
+          from={routes.browseWithVar.replace(':tagName', ':speciesIdOrSlug')}
           to={routes.viewSpeciesWithVar}
         />
         <Redirect from={routes.browseAssets} to={routes.home} />

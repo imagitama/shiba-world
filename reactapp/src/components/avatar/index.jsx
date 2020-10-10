@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import LazyLoad from 'react-lazyload'
 import LoadingIndicator from '../loading-indicator'
 import defaultAvatarUrl from '../../assets/images/default-avatar.png'
+import { fixAccessingImagesUsingToken } from '../../utils'
 
 export const sizes = {
   TINY: 'tiny',
@@ -45,17 +46,23 @@ export default ({
       <LazyLoad placeholder={<LoadingIndicator />}>
         {url && fallbackUrl ? (
           <picture>
-            <source srcSet={url} type="image/webp" />
-            <source srcSet={fallbackUrl} type="image/png" />
+            <source
+              srcSet={fixAccessingImagesUsingToken(url)}
+              type="image/webp"
+            />
+            <source
+              srcSet={fixAccessingImagesUsingToken(fallbackUrl)}
+              type="image/png"
+            />
             <img
-              src={fallbackUrl}
+              src={fixAccessingImagesUsingToken(fallbackUrl)}
               alt={`Avatar for ${username || 'a user'}`}
               className={classes.image}
             />
           </picture>
         ) : (
           <img
-            src={url ? url : defaultAvatarUrl}
+            src={url ? fixAccessingImagesUsingToken(url) : defaultAvatarUrl}
             alt={`Avatar for ${username || 'a user'}`}
             className={classes.image}
           />

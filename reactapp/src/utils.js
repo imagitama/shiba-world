@@ -201,3 +201,18 @@ export function mapRefsToDocs(value) {
 export function convertDocToRef(doc) {
   return createRef(doc.parent.id, doc.id)
 }
+
+// even if you grant public access to a Firebase bucket
+// if you provide an access ID it will still error?
+// so strip that out
+export function fixAccessingImagesUsingToken(url) {
+  if (!url) {
+    return url
+  }
+  if (!url.includes('GoogleAccessId')) {
+    return url
+  }
+  const newUrl = url.split('?')[0]
+  console.log(newUrl)
+  return newUrl
+}

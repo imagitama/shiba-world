@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { makeStyles } from '@material-ui/styles'
 import { useSelector } from 'react-redux'
 import { mediaQueryForWideDesktops } from '../../media-queries'
+import { fixAccessingImagesUsingToken } from '../../utils'
 
 const useStyles = makeStyles({
   root: {
@@ -82,10 +83,13 @@ export default () => {
         isLoaded ? classes.loaded : classes.unloaded
       }`}>
       <picture>
-        <source srcSet={url} type="image/webp" />
-        <source srcSet={fallbackUrl} type="image/png" />
+        <source srcSet={fixAccessingImagesUsingToken(url)} type="image/webp" />
+        <source
+          srcSet={fixAccessingImagesUsingToken(fallbackUrl)}
+          type="image/png"
+        />
         <img
-          src={fallbackUrl}
+          src={fixAccessingImagesUsingToken(fallbackUrl)}
           alt={'Banner for the page'}
           ref={imageRef}
           className={classes.image}
