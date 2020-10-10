@@ -212,7 +212,5 @@ export function fixAccessingImagesUsingToken(url) {
   if (!url.includes('GoogleAccessId')) {
     return url
   }
-  const newUrl = url.split('?')[0]
-  console.log(newUrl)
-  return newUrl
+  return url.split('?')[0]
 }
