@@ -2,7 +2,8 @@ const { db, CollectionNames, AssetFieldNames } = require('./firebase')
 
 const summariesIdTags = 'tags'
 
-module.exports.tagsKeyAllTags = 'allTags'
+const tagsKeyAllTags = 'allTags'
+module.exports.tagsKeyAllTags = tagsKeyAllTags
 
 module.exports.getAllTags = async () => {
   const { docs } = await db

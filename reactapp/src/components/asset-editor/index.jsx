@@ -221,7 +221,7 @@ export default ({
   const [
     hasFinishedSelectingSpecies,
     setHasFinishedSelectingSpecies
-  ] = useState(asset.id ? true : species.length !== 0 ? true : false)
+  ] = useState(assetId ? true : species.length !== 0 ? true : false)
   const { nameSingular } = useCategoryMeta(fieldData[AssetFieldNames.category])
 
   const isFormValid = getIsFormValid(fieldData)
