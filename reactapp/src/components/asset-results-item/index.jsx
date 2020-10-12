@@ -115,7 +115,10 @@ function HighlightResult({ _highlightResult }) {
         }
       })
     } else {
-      if (valueOfProp.matchLevel !== 'none' && subValue.matchedWords.length) {
+      if (
+        valueOfProp.matchLevel !== 'none' &&
+        valueOfProp.matchedWords.length
+      ) {
         nameOfMatchingProp = nameOfProp
         valueOfMatchProp = valueOfProp.matchedWords[0]
       }
