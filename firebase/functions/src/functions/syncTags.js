@@ -1,6 +1,6 @@
 const functions = require('firebase-functions')
 const { db, CollectionNames } = require('../firebase')
-const { getAllTags, tagsKeyAllTags } = require('../tags')
+const { getAllTags, tagsKeyAllTags, summariesIdTags } = require('../tags')
 
 async function rebuildTagsCache() {
   const tagsDoc = await db

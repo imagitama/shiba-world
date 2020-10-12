@@ -3,6 +3,7 @@ const {
   AssetFieldNames,
   AuthorFieldNames,
   UserFieldNames,
+  retrieveAuthorNameFromAssetData,
 } = require('./firebase')
 const config = require('./config')
 
@@ -10,8 +11,11 @@ const IS_ALGOLIA_ENABLED = config.global.isAlgoliaEnabled !== 'false'
 const ALGOLIA_APP_ID = config.algolia.app_id
 const ALGOLIA_ADMIN_KEY = config.algolia.admin_api_key
 const ALGOLIA_INDEX_NAME_ASSETS = 'prod_ASSETS'
+module.exports.ALGOLIA_INDEX_NAME_ASSETS = ALGOLIA_INDEX_NAME_ASSETS
 const ALGOLIA_INDEX_NAME_USERS = 'prod_USERS'
+module.exports.ALGOLIA_INDEX_NAME_USERS = ALGOLIA_INDEX_NAME_USERS
 const ALGOLIA_INDEX_NAME_AUTHORS = 'prod_AUTHORS'
+module.exports.ALGOLIA_INDEX_NAME_AUTHORS = ALGOLIA_INDEX_NAME_AUTHORS
 
 let algoliaClient
 
@@ -25,7 +29,7 @@ const getAlgoliaClient = () => {
 }
 module.exports.getAlgoliaClient = getAlgoliaClient
 
-module.exports.convertAssetDocToAlgoliaRecord = (docId, doc, authorName) => {
+const convertAssetDocToAlgoliaRecord = (docId, doc, authorName) => {
   return {
     objectID: docId,
     title: doc[AssetFieldNames.title],
@@ -38,8 +42,9 @@ module.exports.convertAssetDocToAlgoliaRecord = (docId, doc, authorName) => {
     authorName,
   }
 }
+module.exports.convertAssetDocToAlgoliaRecord = convertAssetDocToAlgoliaRecord
 
-module.exports.convertAuthorDocToAlgoliaRecord = (docId, doc) => {
+const convertAuthorDocToAlgoliaRecord = (docId, doc) => {
   return {
     objectID: docId,
     name: doc[AuthorFieldNames.name],
@@ -47,14 +52,16 @@ module.exports.convertAuthorDocToAlgoliaRecord = (docId, doc) => {
     categories: doc[AuthorFieldNames.categories],
   }
 }
+module.exports.convertAuthorDocToAlgoliaRecord = convertAuthorDocToAlgoliaRecord
 
-module.exports.convertUserDocToAlgoliaRecord = (docId, doc) => {
+const convertUserDocToAlgoliaRecord = (docId, doc) => {
   return {
     objectID: docId,
     username: doc[UserFieldNames.username],
     avatarUrl: doc[UserFieldNames.avatarUrl],
   }
 }
+module.exports.convertUserDocToAlgoliaRecord = convertUserDocToAlgoliaRecord
 
 module.exports.insertAssetDocIntoIndex = async (doc, docData) => {
   const authorName = await retrieveAuthorNameFromAssetData(docData)

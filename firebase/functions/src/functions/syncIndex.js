@@ -3,6 +3,7 @@ const {
   db,
   CollectionNames,
   AssetFieldNames,
+  Operators,
   retrieveAuthorNameFromAssetData,
 } = require('../firebase')
 const {
@@ -10,6 +11,9 @@ const {
   convertAssetDocToAlgoliaRecord,
   convertAuthorDocToAlgoliaRecord,
   convertUserDocToAlgoliaRecord,
+  ALGOLIA_INDEX_NAME_ASSETS,
+  ALGOLIA_INDEX_NAME_AUTHORS,
+  ALGOLIA_INDEX_NAME_USERS,
 } = require('../algolia')
 
 async function insertAssetsIntoIndex() {

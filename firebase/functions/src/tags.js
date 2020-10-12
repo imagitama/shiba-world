@@ -1,6 +1,7 @@
 const { db, CollectionNames, AssetFieldNames } = require('./firebase')
 
 const summariesIdTags = 'tags'
+module.exports.summariesIdTags = summariesIdTags
 
 const tagsKeyAllTags = 'allTags'
 module.exports.tagsKeyAllTags = tagsKeyAllTags
