@@ -109,13 +109,13 @@ function HighlightResult({ _highlightResult }) {
 
     if (Array.isArray(valueOfProp)) {
       valueOfProp.forEach(subValue => {
-        if (subValue.matchLevel !== 'none') {
+        if (subValue.matchLevel !== 'none' && subValue.matchedWords.length) {
           nameOfMatchingProp = nameOfProp
           valueOfMatchProp = subValue.matchedWords[0]
         }
       })
     } else {
-      if (valueOfProp.matchLevel !== 'none') {
+      if (valueOfProp.matchLevel !== 'none' && subValue.matchedWords.length) {
         nameOfMatchingProp = nameOfProp
         valueOfMatchProp = valueOfProp.matchedWords[0]
       }
