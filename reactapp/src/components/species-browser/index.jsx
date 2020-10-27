@@ -124,6 +124,10 @@ const Species = ({
   )
 }
 
+function sortSpeciesByAlpha([speciesNameA], [speciesNameB]) {
+  return speciesNameA.localeCompare(speciesNameB)
+}
+
 export default ({ onSpeciesClick = null }) => {
   const [isLoading, isError, results] = useDatabaseQuery(
     CollectionNames.Species
@@ -168,55 +172,59 @@ export default ({ onSpeciesClick = null }) => {
       </Heading>
       <Heading variant="h3">Popular Species</Heading>
       <div className={classes.items}>
-        {popular.map(
-          ([
-            name,
-            {
-              id,
-              name: title,
-              shortDescription,
-              optimizedThumbnailUrl,
-              backupThumbnailUrl
-            }
-          ]) => (
-            <Species
-              key={id || name}
-              id={id}
-              name={name}
-              title={title}
-              description={shortDescription}
-              optimizedThumbnailUrl={optimizedThumbnailUrl}
-              backupThumbnailUrl={backupThumbnailUrl}
-              onSpeciesClick={onSpeciesClick}
-            />
-          )
-        )}
+        {popular
+          .sort(sortSpeciesByAlpha)
+          .map(
+            ([
+              name,
+              {
+                id,
+                name: title,
+                shortDescription,
+                optimizedThumbnailUrl,
+                backupThumbnailUrl
+              }
+            ]) => (
+              <Species
+                key={id || name}
+                id={id}
+                name={name}
+                title={title}
+                description={shortDescription}
+                optimizedThumbnailUrl={optimizedThumbnailUrl}
+                backupThumbnailUrl={backupThumbnailUrl}
+                onSpeciesClick={onSpeciesClick}
+              />
+            )
+          )}
       </div>
       <Heading variant="h3">More Species</Heading>
       <div className={classes.items}>
-        {unpopular.map(
-          ([
-            name,
-            {
-              id,
-              name: title,
-              shortDescription,
-              optimizedThumbnailUrl,
-              backupThumbnailUrl
-            }
-          ]) => (
-            <Species
-              key={id || name}
-              id={id}
-              name={name}
-              title={title}
-              description={shortDescription}
-              optimizedThumbnailUrl={optimizedThumbnailUrl}
-              backupThumbnailUrl={backupThumbnailUrl}
-              onSpeciesClick={onSpeciesClick}
-            />
-          )
-        )}
+        {unpopular
+          .sort(sortSpeciesByAlpha)
+          .map(
+            ([
+              name,
+              {
+                id,
+                name: title,
+                shortDescription,
+                optimizedThumbnailUrl,
+                backupThumbnailUrl
+              }
+            ]) => (
+              <Species
+                key={id || name}
+                id={id}
+                name={name}
+                title={title}
+                description={shortDescription}
+                optimizedThumbnailUrl={optimizedThumbnailUrl}
+                backupThumbnailUrl={backupThumbnailUrl}
+                onSpeciesClick={onSpeciesClick}
+              />
+            )
+          )}
       </div>
       <Heading variant="h3">Other Species</Heading>
       <div>
