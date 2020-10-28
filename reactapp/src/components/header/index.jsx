@@ -11,13 +11,18 @@ import * as routes from '../../routes'
 import { openMenu } from '../../modules/app'
 import { ReactComponent as Logo } from '../../assets/images/logo.svg'
 import { ReactComponent as DiscordIcon } from '../../assets/images/icons/discord.svg'
+import { ReactComponent as PatreonIcon } from '../../assets/images/icons/patreon.svg'
 import {
   queryForMobiles,
   mediaQueryForMobiles,
   mediaQueryForDesktopsOnly
 } from '../../media-queries'
 import { trackAction } from '../../analytics'
-import { TWITTER_URL, DISCORD_URL } from '../../config'
+import {
+  TWITTER_URL,
+  DISCORD_URL,
+  PATREON_BECOME_PATRON_URL
+} from '../../config'
 
 import Searchbar from '../searchbar'
 import MobileMenu from '../mobile-menu'
@@ -98,6 +103,8 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
     '& a': {
+      display: 'flex',
+      alignItems: 'center',
       padding: '0 0.5rem',
       opacity: '0.75',
       transition: 'all 100ms',
@@ -106,7 +113,8 @@ const useStyles = makeStyles({
       }
     },
     '& svg': {
-      width: '0.75em'
+      width: 'auto', // fix patreon icon
+      height: '0.75em'
     },
     '& path': {
       fill: '#FFF'
@@ -161,11 +169,23 @@ export default () => {
           <Logo className={classes.logo} />
         </Link>
         <div className={classes.socialIcons}>
-          <a href={TWITTER_URL} title="Visit our Twitter">
+          <a
+            href={TWITTER_URL}
+            title="Visit our Twitter"
+            onClick={() => trackAction('Header', 'Click visit Twitter icon')}>
             <TwitterIcon />
           </a>
-          <a href={DISCORD_URL} title="Visit our Discord">
+          <a
+            href={DISCORD_URL}
+            title="Visit our Discord"
+            onClick={() => trackAction('Header', 'Click visit Discord icon')}>
             <DiscordIcon />
+          </a>
+          <a
+            href={PATREON_BECOME_PATRON_URL}
+            title="Visit our Patreon"
+            onClick={() => trackAction('Header', 'Click visit Patreon icon')}>
+            <PatreonIcon />
           </a>
         </div>
       </div>

@@ -76,7 +76,7 @@ const useStyles = makeStyles({
     }
   },
   tabs: {
-    marginRight: '1rem',
+    marginRight: '2rem',
     [mediaQueryForTabletsOrBelow]: {
       margin: 0
     }

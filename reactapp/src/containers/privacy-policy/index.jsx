@@ -1,9 +1,17 @@
 import React from 'react'
 import { Container } from '@material-ui/core'
+import { Helmet } from 'react-helmet'
 import Heading from '../../components/heading'
 
 export default () => (
   <>
+    <Helmet>
+      <title>Privacy Policy | VRCArena</title>
+      <meta
+        name="description"
+        content={`Read the privacy policy for the site.`}
+      />
+    </Helmet>
     <Container maxWidth="md">
       <Heading variant="h1">Privacy Policy</Heading>
       <p>

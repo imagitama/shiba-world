@@ -4,6 +4,8 @@ import otherSpeciesFallbackThumbnailUrl from './assets/images/other-species.png'
 
 export const TWITTER_URL = 'https://twitter.com/VRCArena'
 export const DISCORD_URL = 'https://discord.gg/UVs9V58'
+export const PATREON_BECOME_PATRON_URL =
+  'https://www.patreon.com/bePatron?u=43812267'
 export const EMAIL = 'contact@vrcarena.com'
 
 export const BANNER_WIDTH = 1280
