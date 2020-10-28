@@ -18,7 +18,9 @@ export default () => (
           src="https://c6.patreon.com/becomePatronButton.bundle.js"
         />
       </p>
-      <Heading variant="h2">Current Patreons</Heading>
+      <Heading variant="h2">
+        Users who have connected their account with Patreon
+      </Heading>
       <PatreonList />
     </Container>
   </>
