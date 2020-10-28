@@ -78,18 +78,19 @@ export default () => {
   }
 
   if (result === true) {
-    return 'We have detected that you are a patron of the $1 tier or more'
+    return 'You have successfully connected your VRCArena account to Patreon!'
   }
 
   if (result === false) {
-    return 'We have detected you are NOT a patron yet'
+    return 'It appears you have not pledged anything to the VRCArena Patreon. If you think this is a mistake please join our Discord and message us'
+  }
+
+  if (user && user[UserFieldNames.isPatron]) {
+    return 'You have connected your VRCArena account to Patreon and you are a Patron - thanks for your support!'
   }
 
   return (
     <div>
-      {user && user[UserFieldNames.isPatron]
-        ? 'You are a Patreon'
-        : 'You are not a Patreon'}
       <Button url={patreonOAuthUrl}>Connect with Patreon</Button>
     </div>
   )

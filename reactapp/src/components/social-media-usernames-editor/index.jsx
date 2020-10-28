@@ -17,14 +17,34 @@ import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
 
 const useStyles = makeStyles({
+  field: {
+    width: '100%',
+    display: 'flex',
+    padding: '1rem 0',
+    borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+    '&:last-child': {
+      borderBottom: 'none'
+    }
+  },
   label: {
     marginTop: '1rem',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    width: '25%',
+    flexShrink: 0
+  },
+  input: {
+    flex: 1,
+    '& > div': {
+      width: '100%'
+    },
+    '& input': {
+      paddingTop: '12px'
+    }
   },
   hint: {
-    fontStyle: 'italic',
     fontSize: '75%',
-    marginTop: '0.5rem'
+    marginTop: '0.5rem',
+    opacity: '0.75'
   },
   controls: {
     marginTop: '2rem'
@@ -36,9 +56,19 @@ const Label = ({ children }) => {
   return <div className={classes.label}>{children}</div>
 }
 
+const Input = ({ children }) => {
+  const classes = useStyles()
+  return <div className={classes.input}>{children}</div>
+}
+
 const Hint = ({ children }) => {
   const classes = useStyles()
   return <div className={classes.hint}>{children}</div>
+}
+
+const Field = ({ children }) => {
+  const classes = useStyles()
+  return <div className={classes.field}>{children}</div>
 }
 
 export default ({ onSaveClick = null }) => {
@@ -124,90 +154,140 @@ export default ({ onSaveClick = null }) => {
 
   return (
     <>
-      <Label>VRChat User ID</Label>
-      <TextField
-        value={formFieldValues.vrchatUserId}
-        onChange={e =>
-          updateFormFieldValue(ProfileFieldNames.vrchatUserId, e.target.value)
-        }
-      />
-      <Hint>
-        To find your ID, log in to VRChat website, click your username and your
-        ID is https://vrchat.com/home/user/[YOUR_ID]
-      </Hint>
-      <Label>VRChat Username</Label>
-      <TextField
-        value={formFieldValues.vrchatUsername}
-        onChange={e =>
-          updateFormFieldValue(ProfileFieldNames.vrchatUsername, e.target.value)
-        }
-      />
-      <Hint>For display purposes only.</Hint>
-      <Label>Discord username</Label>
-      <TextField
-        value={formFieldValues.discordUsername}
-        onChange={e =>
-          updateFormFieldValue(
-            ProfileFieldNames.discordUsername,
-            e.target.value
-          )
-        }
-      />
-      <Hint>eg. MyName#1234</Hint>
-      <Label>Twitter username</Label>
-      <TextField
-        value={formFieldValues.twitterUsername}
-        onChange={e =>
-          updateFormFieldValue(
-            ProfileFieldNames.twitterUsername,
-            e.target.value
-          )
-        }
-      />
-      <Hint>Without the @ symbol eg. MyTwitterName</Hint>
-      <Label>Telegram username</Label>
-      <TextField
-        value={formFieldValues.telegramUsername}
-        onChange={e =>
-          updateFormFieldValue(
-            ProfileFieldNames.telegramUsername,
-            e.target.value
-          )
-        }
-      />
-      <Hint>Without @ symbol eg. MyTelegramUsername</Hint>
-      <Label>YouTube channel ID</Label>
-      <TextField
-        value={formFieldValues.youtubeChannelId}
-        onChange={e =>
-          updateFormFieldValue(
-            ProfileFieldNames.youtubeChannelId,
-            e.target.value
-          )
-        }
-      />
-      <Hint>
-        Get your channel ID by visiting your channel and in the address bar it
-        is https://www.youtube.com/channel/[YOUR_ID]
-      </Hint>
-      <Label>Twitch username</Label>
-      <TextField
-        value={formFieldValues.twitchUsername}
-        onChange={e =>
-          updateFormFieldValue(ProfileFieldNames.twitchUsername, e.target.value)
-        }
-      />
-      <Label>Patreon username</Label>
-      <TextField
-        value={formFieldValues.patreonUsername}
-        onChange={e =>
-          updateFormFieldValue(
-            ProfileFieldNames.patreonUsername,
-            e.target.value
-          )
-        }
-      />
-      <Hint>The name in the URL like https://patreon.com/[username]</Hint>
+      <Field>
+        <Label>VRChat User ID</Label>
+        <Input>
+          <TextField
+            variant="filled"
+            value={formFieldValues.vrchatUserId}
+            onChange={e =>
+              updateFormFieldValue(
+                ProfileFieldNames.vrchatUserId,
+                e.target.value
+              )
+            }
+          />
+          <Hint>
+            To find your ID, log in to VRChat website, click your username and
+            your ID is https://vrchat.com/home/user/[YOUR_ID]
+            <br />
+          </Hint>
+        </Input>
+      </Field>
+      <Field>
+        <Label>VRChat Username</Label>
+        <Input>
+          <TextField
+            variant="filled"
+            value={formFieldValues.vrchatUsername}
+            onChange={e =>
+              updateFormFieldValue(
+                ProfileFieldNames.vrchatUsername,
+                e.target.value
+              )
+            }
+          />
+          <Hint>For display purposes only.</Hint>
+        </Input>
+      </Field>
+      <Field>
+        <Label>Discord username</Label>
+        <Input>
+          <TextField
+            variant="filled"
+            value={formFieldValues.discordUsername}
+            onChange={e =>
+              updateFormFieldValue(
+                ProfileFieldNames.discordUsername,
+                e.target.value
+              )
+            }
+          />
+          <Hint>eg. MyName#1234</Hint>
+        </Input>
+      </Field>
+      <Field>
+        <Label>Twitter username</Label>
+        <Input>
+          <TextField
+            variant="filled"
+            value={formFieldValues.twitterUsername}
+            onChange={e =>
+              updateFormFieldValue(
+                ProfileFieldNames.twitterUsername,
+                e.target.value
+              )
+            }
+          />
+          <Hint>Without the @ symbol eg. MyTwitterName</Hint>
+        </Input>
+      </Field>
+      <Field>
+        <Label>Telegram username</Label>
+        <Input>
+          <TextField
+            variant="filled"
+            value={formFieldValues.telegramUsername}
+            onChange={e =>
+              updateFormFieldValue(
+                ProfileFieldNames.telegramUsername,
+                e.target.value
+              )
+            }
+          />
+          <Hint>Without @ symbol eg. MyTelegramUsername</Hint>
+        </Input>
+      </Field>
+      <Field>
+        <Label>YouTube channel ID</Label>
+        <Input>
+          <TextField
+            variant="filled"
+            value={formFieldValues.youtubeChannelId}
+            onChange={e =>
+              updateFormFieldValue(
+                ProfileFieldNames.youtubeChannelId,
+                e.target.value
+              )
+            }
+          />
+          <Hint>
+            Get your channel ID by visiting your channel and in the address bar
+            it is https://www.youtube.com/channel/[YOUR_ID]
+          </Hint>
+        </Input>
+      </Field>
+      <Field>
+        <Label>Twitch username</Label>
+        <Input>
+          <TextField
+            variant="filled"
+            value={formFieldValues.twitchUsername}
+            onChange={e =>
+              updateFormFieldValue(
+                ProfileFieldNames.twitchUsername,
+                e.target.value
+              )
+            }
+          />
+        </Input>
+      </Field>
+      <Field>
+        <Label>Patreon username</Label>
+        <Input>
+          <TextField
+            variant="filled"
+            value={formFieldValues.patreonUsername}
+            onChange={e =>
+              updateFormFieldValue(
+                ProfileFieldNames.patreonUsername,
+                e.target.value
+              )
+            }
+          />
+          <Hint>The name in the URL like https://patreon.com/[username]</Hint>
+        </Input>
+      </Field>
       <div className={classes.controls}>
         {isSaving && 'Saving...'}
         {isSaveSuccess
