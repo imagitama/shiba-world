@@ -1,9 +1,10 @@
 import React, { lazy, Suspense, useEffect } from 'react'
 import { Route, Switch, Redirect, useLocation } from 'react-router-dom'
 import Container from '@material-ui/core/Container'
-import { ThemeProvider } from '@material-ui/core/styles'
+import ThemeProvider from '@material-ui/styles/ThemeProvider'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { Helmet } from 'react-helmet'
+import { makeStyles } from '@material-ui/core/styles'
 
 import * as routes from './routes'
 import { darkTheme } from './themes'
@@ -34,6 +35,10 @@ import useIsLoggedIn from './hooks/useIsLoggedIn'
 
 import { scrollToTop } from './utils'
 import { searchIndexNameLabels } from './modules/app'
+import {
+  mediaQueryForMobiles,
+  mediaQueryForTabletsOrBelow
+} from './media-queries'
 
 const catchChunkDeaths = functionToImport =>
   functionToImport().catch(err => {
@@ -43,6 +48,19 @@ const catchChunkDeaths = functionToImport =>
     }
     throw err
   })
+
+const useStyles = makeStyles({
+  mainContainer: {
+    [mediaQueryForTabletsOrBelow]: {
+      maxWidth: '100vw',
+      overflow: 'hidden'
+    },
+    paddingTop: '2rem',
+    [mediaQueryForMobiles]: {
+      paddingTop: '0.5rem'
+    }
+  }
+})
 
 // Lazy load these to improve performance (downloading and processing JS)
 const Login = lazy(() => catchChunkDeaths(() => import('./containers/login')))
@@ -366,6 +384,7 @@ const MainContent = () => {
 }
 
 export default () => {
+  const classes = useStyles()
   return (
     <ErrorBoundary>
       <ThemeProvider theme={darkTheme}>
@@ -373,7 +392,7 @@ export default () => {
         <Banner />
         <PageHeader />
         <main className="main">
-          <Container maxWidth="lg">
+          <Container maxWidth="lg" className={classes.mainContainer}>
             <BannedNotice />
             <Notices />
             <UnapprovedAssetsMessage />

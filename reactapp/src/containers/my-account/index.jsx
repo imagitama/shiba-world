@@ -4,6 +4,7 @@ import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import { makeStyles } from '@material-ui/core/styles'
 import LazyLoad from 'react-lazyload'
+import { useMediaQuery } from 'react-responsive'
 
 import LoadingIndicator from '../../components/loading-indicator'
 import ErrorMessage from '../../components/error-message'
@@ -23,6 +24,10 @@ import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
 import PatreonConnectForm from '../../components/patreon-connect-form'
+import {
+  queryForTabletsOrBelow,
+  mediaQueryForTabletsOrBelow
+} from '../../media-queries'
 
 function WelcomeMessage() {
   const [isLoading, isErrored, user] = useUserRecord()
@@ -65,13 +70,22 @@ const TabPanel = ({ value, index, children }) =>
 const useStyles = makeStyles({
   tabsContainer: {
     display: 'flex',
-    margin: '1rem 0'
+    margin: '1rem 0',
+    [mediaQueryForTabletsOrBelow]: {
+      display: 'block'
+    }
   },
   tabs: {
-    marginRight: '1rem'
+    marginRight: '1rem',
+    [mediaQueryForTabletsOrBelow]: {
+      margin: 0
+    }
   },
   tabPanels: {
-    flex: 1
+    flex: 1,
+    [mediaQueryForTabletsOrBelow]: {
+      margin: '1rem 0'
+    }
   }
 })
 
@@ -79,6 +93,7 @@ export default () => {
   const userId = useFirebaseUserId()
   const [activeTabIdx, setActiveTabIdx] = useState(getInitialTabIdx())
   const classes = useStyles()
+  const isMobile = useMediaQuery({ query: queryForTabletsOrBelow })
 
   if (!userId) {
     return <NoPermissionMessage />
@@ -91,7 +106,7 @@ export default () => {
 
       <div className={classes.tabsContainer}>
         <Tabs
-          orientation="vertical"
+          orientation={isMobile ? 'horizontal' : 'vertical'}
           variant="scrollable"
           value={activeTabIdx}
           onChange={(event, newIdx) => setActiveTabIdx(newIdx)}

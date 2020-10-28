@@ -2,13 +2,13 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 
-import useFirebaseUserId from '../../hooks/useFirebaseUserId'
-import Button from '../button'
-
 import * as routes from '../../routes'
 import { scrollToTop } from '../../utils'
 import { trackAction } from '../../analytics'
 import useGuestUserRecord from '../../hooks/useGuestUserRecord'
+import useFirebaseUserId from '../../hooks/useFirebaseUserId'
+
+import Button from '../button'
 
 const useStyles = makeStyles({
   footer: {

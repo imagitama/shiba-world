@@ -4,7 +4,6 @@ import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import { makeStyles } from '@material-ui/core/styles'
-import ClickAwayListener from '@material-ui/core/ClickAwayListener'
 
 import Button from '../../components/button'
 
@@ -45,39 +44,35 @@ export default ({
   }
 
   return (
-    <ClickAwayListener onClickAway={onClose}>
-      <div className={classes.controls}>
-        <span ref={buttonRef}>
-          <Button onClick={onMainBtnClick}>
-            Sort by {label}
-            <KeyboardArrowDownIcon />
-          </Button>
-        </span>
-        {isDropdownOpen && (
-          <Menu
-            anchorEl={buttonRef.current}
-            open={isDropdownOpen}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'center'
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'center'
-            }}
-            onClose={onClose}>
-            {Object.entries(options).map(
-              ([label, { fieldName, direction }]) => (
-                <MenuItem
-                  key={`${fieldName}.${direction}`}
-                  onClick={() => onClickItem(fieldName, direction)}>
-                  {label}
-                </MenuItem>
-              )
-            )}
-          </Menu>
-        )}
-      </div>
-    </ClickAwayListener>
+    <div className={classes.controls}>
+      <span ref={buttonRef}>
+        <Button onClick={onMainBtnClick}>
+          Sort by {label}
+          <KeyboardArrowDownIcon />
+        </Button>
+      </span>
+      {isDropdownOpen && (
+        <Menu
+          anchorEl={buttonRef.current}
+          open={isDropdownOpen}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center'
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'center'
+          }}
+          onClose={onClose}>
+          {Object.entries(options).map(([label, { fieldName, direction }]) => (
+            <MenuItem
+              key={`${fieldName}.${direction}`}
+              onClick={() => onClickItem(fieldName, direction)}>
+              {label}
+            </MenuItem>
+          ))}
+        </Menu>
+      )}
+    </div>
   )
 }

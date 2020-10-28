@@ -5,16 +5,19 @@ import { makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import { useMediaQuery } from 'react-responsive'
 import MenuIcon from '@material-ui/icons/Menu'
+import TwitterIcon from '@material-ui/icons/Twitter'
 
 import * as routes from '../../routes'
 import { openMenu } from '../../modules/app'
 import { ReactComponent as Logo } from '../../assets/images/logo.svg'
+import { ReactComponent as DiscordIcon } from '../../assets/images/icons/discord.svg'
 import {
   queryForMobiles,
   mediaQueryForMobiles,
   mediaQueryForDesktopsOnly
 } from '../../media-queries'
 import { trackAction } from '../../analytics'
+import { TWITTER_URL, DISCORD_URL } from '../../config'
 
 import Searchbar from '../searchbar'
 import MobileMenu from '../mobile-menu'
@@ -28,10 +31,8 @@ const useStyles = makeStyles({
   root: {
     position: 'relative',
     padding: '1rem 1rem 0',
-    marginBottom: '2rem',
     [mediaQueryForMobiles]: {
-      padding: '0.5rem 0.5rem 0',
-      marginBottom: '0.5rem'
+      padding: '0.5rem 0.5rem 0'
     }
   },
   background: {
@@ -81,6 +82,8 @@ const useStyles = makeStyles({
     width: '100%'
   },
   logoWrapper: {
+    display: 'flex',
+    alignItems: 'start',
     position: 'absolute',
     top: 0,
     left: 0,
@@ -88,6 +91,25 @@ const useStyles = makeStyles({
     [mediaQueryForMobiles]: {
       position: 'relative',
       padding: 0
+    }
+  },
+  socialIcons: {
+    marginLeft: '0.25rem',
+    display: 'flex',
+    alignItems: 'center',
+    '& a': {
+      padding: '0 0.5rem',
+      opacity: '0.75',
+      transition: 'all 100ms',
+      '&:hover': {
+        opacity: 1
+      }
+    },
+    '& svg': {
+      width: '0.75em'
+    },
+    '& path': {
+      fill: '#FFF'
     }
   },
   logo: {
@@ -138,6 +160,14 @@ export default () => {
         <Link to={routes.home} title="Go to the homepage of VRCArena">
           <Logo className={classes.logo} />
         </Link>
+        <div className={classes.socialIcons}>
+          <a href={TWITTER_URL} title="Visit our Twitter">
+            <TwitterIcon />
+          </a>
+          <a href={DISCORD_URL} title="Visit our Discord">
+            <DiscordIcon />
+          </a>
+        </div>
       </div>
 
       <div className={classes.searchBar}>

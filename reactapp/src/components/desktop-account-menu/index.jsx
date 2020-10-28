@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
-import ClickAwayListener from '@material-ui/core/ClickAwayListener'
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 
 import * as routes from '../../routes'
@@ -133,47 +132,45 @@ export default () => {
           </div>
         </div>
       </span>
-      <ClickAwayListener onClickAway={closeAllDropdowns}>
-        <div>
-          <Menu
-            anchorEl={userMenuLabelRef.current}
-            getContentAnchorEl={null}
-            open={openId === 'user'}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right'
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right'
-            }}>
-            {menuItems.map(({ id, url, label, getUrlFromUserId }) => (
-              <MenuItem key={id}>
-                <Link
-                  to={getUrlFromUserId ? getUrlFromUserId(user.id) : url}
-                  className={classes.link}
-                  onClick={closeAllDropdowns}>
-                  {label}
-                </Link>
-              </MenuItem>
-            ))}
-          </Menu>
-          <Menu
-            anchorEl={notificationsMenuLabelRef.current}
-            getContentAnchorEl={null}
-            open={openId === 'notifications'}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right'
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right'
-            }}>
-            <NotificationsMenuChildren onClose={closeAllDropdowns} />
-          </Menu>
-        </div>
-      </ClickAwayListener>
+      <Menu
+        anchorEl={userMenuLabelRef.current}
+        getContentAnchorEl={null}
+        open={openId === 'user'}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right'
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right'
+        }}
+        onClose={closeAllDropdowns}>
+        {menuItems.map(({ id, url, label, getUrlFromUserId }) => (
+          <MenuItem key={id}>
+            <Link
+              to={getUrlFromUserId ? getUrlFromUserId(user.id) : url}
+              className={classes.link}
+              onClick={closeAllDropdowns}>
+              {label}
+            </Link>
+          </MenuItem>
+        ))}
+      </Menu>
+      <Menu
+        anchorEl={notificationsMenuLabelRef.current}
+        getContentAnchorEl={null}
+        open={openId === 'notifications'}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right'
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right'
+        }}
+        onClose={closeAllDropdowns}>
+        <NotificationsMenuChildren onClose={closeAllDropdowns} />
+      </Menu>
     </>
   )
 }

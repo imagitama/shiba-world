@@ -3,7 +3,6 @@ import { Link, useHistory } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
-import ClickAwayListener from '@material-ui/core/ClickAwayListener'
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 
 import useUserRecord from '../../hooks/useUserRecord'
@@ -72,7 +71,8 @@ function Dropdown({ label, items, isOpen, onOpen, onClose }) {
         transformOrigin={{
           vertical: 'top',
           horizontal: 'right'
-        }}>
+        }}
+        onClose={onClose}>
         {isChildrenAComponent(items)
           ? React.createElement(items, { onClose })
           : items.map(({ label, url }) => (
@@ -99,62 +99,60 @@ export default () => {
   }
 
   return (
-    <ClickAwayListener onClickAway={closeMenuDropdown}>
-      <div className={classes.root}>
-        {navItems
-          .filter(navItem => canShowMenuItem(navItem, user))
-          .map(({ id, label, url, children }) => {
-            const actualLabel = getLabelForMenuItem(label)
+    <div className={classes.root}>
+      {navItems
+        .filter(navItem => canShowMenuItem(navItem, user))
+        .map(({ id, label, url, children }) => {
+          const actualLabel = getLabelForMenuItem(label)
 
-            const Anchor = ({ children }) =>
-              url.includes('http') ? (
-                <a
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={classes.menuItemLabel}
-                  onClick={() =>
-                    trackAction('DesktopMenu', 'Click external link', url)
-                  }>
-                  {children}
-                </a>
-              ) : (
-                <Link
-                  to={url}
-                  className={classes.menuItemLabel}
-                  onClick={() =>
-                    trackAction('DesktopMenu', 'Click menu item', id)
-                  }>
-                  {children}
-                </Link>
-              )
-
-            return (
-              <div key={id} className={classes.menuItem}>
-                {children ? (
-                  <Dropdown
-                    label={actualLabel}
-                    items={
-                      isChildrenAComponent(children)
-                        ? children
-                        : children.filter(navItem =>
-                            canShowMenuItem(navItem, user)
-                          )
-                    }
-                    isOpen={openMenuItem === id}
-                    onOpen={() => {
-                      setOpenMenuItem(id)
-                      trackAction('DesktopMenu', 'Open dropdown menu', id)
-                    }}
-                    onClose={() => closeMenuDropdown()}
-                  />
-                ) : (
-                  <Anchor>{actualLabel}</Anchor>
-                )}
-              </div>
+          const Anchor = ({ children }) =>
+            url.includes('http') ? (
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={classes.menuItemLabel}
+                onClick={() =>
+                  trackAction('DesktopMenu', 'Click external link', url)
+                }>
+                {children}
+              </a>
+            ) : (
+              <Link
+                to={url}
+                className={classes.menuItemLabel}
+                onClick={() =>
+                  trackAction('DesktopMenu', 'Click menu item', id)
+                }>
+                {children}
+              </Link>
             )
-          })}
-      </div>
-    </ClickAwayListener>
+
+          return (
+            <div key={id} className={classes.menuItem}>
+              {children ? (
+                <Dropdown
+                  label={actualLabel}
+                  items={
+                    isChildrenAComponent(children)
+                      ? children
+                      : children.filter(navItem =>
+                          canShowMenuItem(navItem, user)
+                        )
+                  }
+                  isOpen={openMenuItem === id}
+                  onOpen={() => {
+                    setOpenMenuItem(id)
+                    trackAction('DesktopMenu', 'Open dropdown menu', id)
+                  }}
+                  onClose={() => closeMenuDropdown()}
+                />
+              ) : (
+                <Anchor>{actualLabel}</Anchor>
+              )}
+            </div>
+          )
+        })}
+    </div>
   )
 }

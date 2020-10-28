@@ -3,11 +3,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import InputBase from '@material-ui/core/InputBase'
-import { ThemeProvider } from '@material-ui/core/styles'
+import ThemeProvider from '@material-ui/styles/ThemeProvider'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
-import ClickAwayListener from '@material-ui/core/ClickAwayListener'
 
 import {
   changeSearchTerm,
@@ -112,55 +111,53 @@ export default () => {
 
   return (
     <ThemeProvider theme={lightTheme}>
-      <ClickAwayListener onClickAway={() => setIsIndexDropdownOpen(false)}>
-        <Paper className={classes.root}>
-          <InputBase
-            className={classes.input}
-            placeholder={getPlaceholderForSearchIndexName(searchIndexName)}
-            autoFocus={true}
-            autoComplete="false"
-            onChange={onSearchTermInputChange}
-            defaultValue={searchTerm || ''}
-          />
-          <span
-            className={classes.dropdown}
-            ref={dropdownMenuBtnRef}
-            onClick={() => {
-              setIsIndexDropdownOpen(!isIndexDropdownOpen)
-              trackAction('Searchbar', 'Open search index dropdown')
-            }}>
-            {getLabelForSearchIndexName(searchIndexName)} <ArrowDropDownIcon />
-          </span>
-          <Menu
-            anchorEl={dropdownMenuBtnRef.current}
-            getContentAnchorEl={null}
-            open={isIndexDropdownOpen}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right'
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right'
-            }}>
-            {Object.values(searchIndexNames).map(name => (
-              <MenuItem
-                key={name}
-                onClick={() => {
-                  dispatch(changeSearchIndexName(name))
-                  setIsIndexDropdownOpen(false)
-                  trackAction(
-                    'Searchbar',
-                    'Change search index name',
-                    searchIndexNameLabels[name]
-                  )
-                }}>
-                {getLabelForSearchIndexName(name)}
-              </MenuItem>
-            ))}
-          </Menu>
-        </Paper>
-      </ClickAwayListener>
+      <Paper className={classes.root}>
+        <InputBase
+          className={classes.input}
+          placeholder={getPlaceholderForSearchIndexName(searchIndexName)}
+          autoFocus={true}
+          autoComplete="false"
+          onChange={onSearchTermInputChange}
+          defaultValue={searchTerm || ''}
+        />
+        <span
+          className={classes.dropdown}
+          ref={dropdownMenuBtnRef}
+          onClick={() => {
+            setIsIndexDropdownOpen(!isIndexDropdownOpen)
+            trackAction('Searchbar', 'Open search index dropdown')
+          }}>
+          {getLabelForSearchIndexName(searchIndexName)} <ArrowDropDownIcon />
+        </span>
+        <Menu
+          anchorEl={dropdownMenuBtnRef.current}
+          getContentAnchorEl={null}
+          open={isIndexDropdownOpen}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right'
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right'
+          }}>
+          {Object.values(searchIndexNames).map(name => (
+            <MenuItem
+              key={name}
+              onClick={() => {
+                dispatch(changeSearchIndexName(name))
+                setIsIndexDropdownOpen(false)
+                trackAction(
+                  'Searchbar',
+                  'Change search index name',
+                  searchIndexNameLabels[name]
+                )
+              }}>
+              {getLabelForSearchIndexName(name)}
+            </MenuItem>
+          ))}
+        </Menu>
+      </Paper>
     </ThemeProvider>
   )
 }

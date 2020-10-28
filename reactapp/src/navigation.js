@@ -1,10 +1,7 @@
 import React from 'react'
-import TwitterIcon from '@material-ui/icons/Twitter'
 import * as routes from './routes'
 import categoriesMeta from './category-meta'
-import { TWITTER_URL, DISCORD_URL } from './config'
 import { UserFieldNames, AssetCategories } from './hooks/useDatabaseQuery'
-import { ReactComponent as DiscordIcon } from './assets/images/icons/discord.svg'
 
 export function canShowMenuItem(menuItem, user) {
   if (menuItem.requiresAuth && !user) {
@@ -114,45 +111,28 @@ export default [
         url: routes.adultAssets,
         label: 'Adult Content',
         requiresAdultContentEnabled: true
-      }
-    ]
-  },
-  {
-    id: 'twitter',
-    label: TwitterIcon,
-    url: TWITTER_URL
-  },
-  {
-    id: 'discord',
-    label: DiscordIcon,
-    url: DISCORD_URL
-  },
-  {
-    id: 'admin',
-    label: 'Admin',
-    url: routes.admin,
-    requiresAdminOrEditor: true,
-    children: [
+      },
       {
         id: 'admin-users',
-        label: 'Users',
+        label: 'Admin - Users',
         url: routes.adminUsers,
         requiresAdmin: true
       },
       {
         id: 'admin-assets',
-        label: 'Assets',
-        url: routes.adminAssets
+        label: 'Admin - Assets',
+        url: routes.adminAssets,
+        requiresAdminOrEditor: true
       },
       {
         id: 'admin-history',
-        label: 'History',
+        label: 'Admin - History',
         url: routes.adminHistory,
         requiresAdmin: true
       },
       {
         id: 'admin-polls',
-        label: 'Polls',
+        label: 'Admin - Polls',
         url: routes.adminPolls,
         requiresAdmin: true
       }
