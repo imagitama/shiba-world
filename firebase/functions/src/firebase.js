@@ -91,6 +91,7 @@ const UserFieldNames = {
   isBanned: 'isBanned',
   banReason: 'banReason',
   isPatron: 'isPatron',
+  patreonUserId: 'patreonUserId',
 }
 module.exports.UserFieldNames = UserFieldNames
 

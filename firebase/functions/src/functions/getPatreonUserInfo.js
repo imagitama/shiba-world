@@ -17,6 +17,8 @@ client_id=${CLIENT_ID}&\
 client_secret=${CLIENT_SECRET}&\
 redirect_uri=${REDIRECT_URI}`
 
+  console.log('getAccessTokenWithCode', url)
+
   const resp = await fetch(url, {
     method: 'POST',
     headers: {
@@ -61,6 +63,7 @@ async function getIsAOneDollarTierPatronWithCode(code) {
   const accessToken = await getAccessTokenWithCode(code)
   const {
     data: {
+      id: patreonUserId,
       relationships: {
         memberships: { data: memberships },
       },
@@ -72,7 +75,7 @@ async function getIsAOneDollarTierPatronWithCode(code) {
 
   if (!memberships) {
     console.log('Not a member of any campaigns')
-    return false
+    return { isPatron: false, patreonUserId }
   }
 
   const isAMember = memberships.find(
@@ -81,7 +84,7 @@ async function getIsAOneDollarTierPatronWithCode(code) {
 
   if (!isAMember) {
     console.log('Not a member of our campaign')
-    return false
+    return { isPatron: false, patreonUserId }
   }
 
   const {
@@ -99,13 +102,17 @@ async function getIsAOneDollarTierPatronWithCode(code) {
 
   if (!hasPledgedOneDollar) {
     console.log('User has not pledged for one dollar tier')
-    return false
+    return { isPatron: false, patreonUserId }
   }
 
-  return true
+  return { isPatron: true, patreonUserId }
 }
 
-async function storeIsOneDollarTierPatronForUser(userId, isPatron) {
+async function storeIsOneDollarTierPatronForUser(
+  userId,
+  isPatron,
+  patreonUserId
+) {
   if (!userId) {
     throw new Error(
       'Cannot store is one dollar tier patreon without a user ID!'
@@ -118,6 +125,7 @@ async function storeIsOneDollarTierPatronForUser(userId, isPatron) {
     .set(
       {
         [UserFieldNames.isPatron]: isPatron,
+        [UserFieldNames.patreonUserId]: patreonUserId,
         [UserFieldNames.lastModifiedAt]: new Date(),
         [UserFieldNames.lastModifiedBy]: db.doc(
           `${CollectionNames.Users}/${userId}`
@@ -137,14 +145,17 @@ module.exports = functions.https.onCall(async (data, context) => {
       throw new Error('Need to pass Patreon code')
     }
 
-    const isOneDollarTierPatron = await getIsAOneDollarTierPatronWithCode(code)
+    const { isPatron, patreonUserId } = await getIsAOneDollarTierPatronWithCode(
+      code
+    )
 
     await storeIsOneDollarTierPatronForUser(
       context.auth.uid,
-      isOneDollarTierPatron
+      isPatron,
+      patreonUserId
     )
 
-    return { isOneDollarTierPatron }
+    return { isPatron }
   } catch (err) {
     console.error(err)
     throw new functions.https.HttpsError(

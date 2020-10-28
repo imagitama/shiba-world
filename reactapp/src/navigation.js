@@ -105,6 +105,11 @@ export default [
         label: 'About'
       },
       {
+        id: 'patreon',
+        url: routes.patreon,
+        label: 'Patreon'
+      },
+      {
         id: 'adult',
         url: routes.adultAssets,
         label: 'Adult Content',

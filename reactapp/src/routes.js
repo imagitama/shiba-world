@@ -44,6 +44,7 @@ export const editDiscordServerWithVar = '/discord-servers/:discordServerId/edit'
 export const createDiscordServer = '/discord-servers/create'
 export const editSpeciesWithVar = '/species/:speciesId/edit'
 export const createSpecies = '/species/create'
+export const patreon = '/patreon'
 
 // Outdated routes
 export const browseAssets = '/browse'
