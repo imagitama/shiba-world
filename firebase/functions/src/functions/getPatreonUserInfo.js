@@ -55,9 +55,8 @@ async function fetchFromPatreonWithAccessToken(path, accessToken) {
   return resp.json()
 }
 
-// todo: verify if this is membership ID or campaign ID
-const campaignId = 'fc2109fa-92ed-4d84-bf28-56f9ca504b3e'
-const oneDollarTierId = '6084795'
+const vrcarenaCampaignId = '5479725'
+// const oneDollarTierId = '6084795'
 
 async function getIsAOneDollarTierPatronWithCode(code) {
   const accessToken = await getAccessTokenWithCode(code)
@@ -78,34 +77,31 @@ async function getIsAOneDollarTierPatronWithCode(code) {
     return { isPatron: false, patreonUserId }
   }
 
-  const isAMember = memberships.find(
-    (membership) => membership.id === campaignId
+  // if they are a patron of a lot of campaigns this does a fetch per one!
+  const results = await Promise.all(
+    memberships.map(async (membership) => {
+      const {
+        data: {
+          relationships: {
+            campaign: {
+              data: { id: campaignId },
+            },
+          },
+        },
+      } = await fetchFromPatreonWithAccessToken(
+        `/members/${membership.id}?include=campaign`,
+        accessToken
+      )
+
+      console.log('Checking campaign ID', campaignId)
+
+      return campaignId === vrcarenaCampaignId
+    })
   )
 
-  if (!isAMember) {
-    console.log('Not a member of our campaign')
-    return { isPatron: false, patreonUserId }
-  }
+  const isPatron = results.some((result) => result === true)
 
-  const {
-    data: {
-      relationships: {
-        currently_entitled_tiers: { data: tiers },
-      },
-    },
-  } = await fetchFromPatreonWithAccessToken(
-    `/members/${campaignId}?include=currently_entitled_tiers`,
-    accessToken
-  )
-
-  const hasPledgedOneDollar = tiers.find((tier) => tier.id === oneDollarTierId)
-
-  if (!hasPledgedOneDollar) {
-    console.log('User has not pledged for one dollar tier')
-    return { isPatron: false, patreonUserId }
-  }
-
-  return { isPatron: true, patreonUserId }
+  return { isPatron, patreonUserId }
 }
 
 async function storeIsOneDollarTierPatronForUser(
