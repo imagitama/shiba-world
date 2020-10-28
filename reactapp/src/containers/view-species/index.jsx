@@ -28,6 +28,7 @@ import {
 import * as routes from '../../routes'
 import LoadingIndicator from '../../components/loading-indicator'
 import { trackAction } from '../../analytics'
+import { fixAccessingImagesUsingToken } from '../../utils'
 
 const useStyles = makeStyles({
   description: {
@@ -114,7 +115,9 @@ const SpeciesResult = ({ speciesIdOrSlug }) => {
         />
         <meta
           property="og:image"
-          content={species[SpeciesFieldNames.thumbnailUrl]}
+          content={fixAccessingImagesUsingToken(
+            species[SpeciesFieldNames.thumbnailUrl]
+          )}
         />
       </Helmet>
       <div className={classes.thumbnailWrapper}>
@@ -127,15 +130,21 @@ const SpeciesResult = ({ speciesIdOrSlug }) => {
           rel="noopener noreferrer">
           <picture>
             <source
-              srcSet={species[SpeciesFieldNames.thumbnailUrl]}
+              srcSet={fixAccessingImagesUsingToken(
+                species[SpeciesFieldNames.thumbnailUrl]
+              )}
               type="image/webp"
             />
             <source
-              srcSet={species[SpeciesFieldNames.fallbackThumbnailUrl]}
+              srcSet={fixAccessingImagesUsingToken(
+                species[SpeciesFieldNames.fallbackThumbnailUrl]
+              )}
               type="image/png"
             />
             <img
-              src={species[SpeciesFieldNames.fallbackThumbnailUrl]}
+              src={fixAccessingImagesUsingToken(
+                species[SpeciesFieldNames.fallbackThumbnailUrl]
+              )}
               alt={`Thumbnail for species ${
                 species[SpeciesFieldNames.pluralName]
               }`}
