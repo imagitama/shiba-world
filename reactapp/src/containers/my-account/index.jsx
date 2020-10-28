@@ -18,6 +18,7 @@ import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
+import PatreonConnectForm from '../../components/patreon-connect-form'
 
 function WelcomeMessage() {
   const [isLoading, isErrored, user] = useUserRecord()
@@ -93,6 +94,9 @@ export default () => {
           trackAction(analyticsCategoryName, 'Click save social media')
         }
       />
+
+      <Heading variant="h2">Patreon</Heading>
+      <PatreonConnectForm />
 
       <Heading variant="h2">Your Uploads</Heading>
       <MyUploads />

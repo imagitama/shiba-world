@@ -10,6 +10,15 @@ When deploying and running locally you need to configure the functions.
 
 When running functions locally you must have a `credentials.json` file in the root. This is a service account key you can get from the Firebase console.
 
+## Emulating locally
+
+Run HTTP callable functions locally:
+
+1. `npm run load-local-config`
+2. `npm run serve`
+
+Then run the web app using `npm run start:emulator` which connects to the local webserver
+
 ## IAM
 
 For the `optimizeImage` function to work you must grant a "sign" permission.

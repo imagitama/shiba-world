@@ -87,7 +87,8 @@ export const UserFieldNames = {
   createdBy: 'createdBy',
   createdAt: 'createdAt',
   isBanned: 'isBanned',
-  banReason: 'banReason'
+  banReason: 'banReason',
+  isPatron: 'isPatron'
 }
 
 export const ProfileFieldNames = {

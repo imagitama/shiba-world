@@ -5,7 +5,7 @@ const {
   UserFieldNames,
 } = require('./firebase')
 
-module.exports.storeInNotifications = (
+const storeInNotifications = (
   message,
   parentRef,
   recipientRef,
@@ -20,8 +20,9 @@ module.exports.storeInNotifications = (
     [NotificationsFieldNames.createdAt]: new Date(),
   })
 }
+module.exports.storeInNotifications = storeInNotifications
 
-module.exports.getTaggedNotificationRecipientByUsername = (username) => {
+const getTaggedNotificationRecipientByUsername = (username) => {
   return db
     .collection(CollectionNames.Users)
     .where(UserFieldNames.username, Operators.EQUALS, username)

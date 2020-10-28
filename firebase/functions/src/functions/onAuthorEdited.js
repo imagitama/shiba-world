@@ -1,6 +1,6 @@
 const functions = require('firebase-functions')
 const { storeInHistory } = require('../history')
-const { replaceReferencesWithString } = require('../firebase')
+const { replaceReferencesWithString, AuthorFieldNames } = require('../firebase')
 const { insertAuthorDocIntoIndex } = require('../algolia')
 const { getDifferenceInObjects } = require('../utils')
 

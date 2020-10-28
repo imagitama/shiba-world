@@ -3,5 +3,6 @@ node_modules/
 .twitterconfig.json
 .discordconfig.json
 .runtimeconfig.json
+.patreonconfig.json
 .globalconfig.json
 credentials.json

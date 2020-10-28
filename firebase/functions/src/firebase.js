@@ -28,6 +28,7 @@ const CollectionNames = {
   Notifications: 'notifications',
   Authors: 'authors',
   DiscordServers: 'discordServers',
+  Patreons: 'patreons',
 }
 module.exports.CollectionNames = CollectionNames
 
@@ -89,6 +90,7 @@ const UserFieldNames = {
   createdAt: 'createdAt',
   isBanned: 'isBanned',
   banReason: 'banReason',
+  isPatron: 'isPatron',
 }
 module.exports.UserFieldNames = UserFieldNames
 

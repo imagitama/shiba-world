@@ -8,6 +8,7 @@ const {
   LikeFieldNames,
   CommentFieldNames,
   AssetFieldNames,
+  UserFieldNames,
 } = require('../firebase')
 const { storeInHistory } = require('../history')
 const { emitToDiscordActivity, getEmbedForViewAsset } = require('../discord')
