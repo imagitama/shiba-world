@@ -134,7 +134,9 @@ export default ({
   const classes = useStyles()
 
   return (
-    <div className={`${classes.cols} ${isDeleted ? classes.deleted : ''}`}>
+    <div
+      className={`${classes.cols} ${isDeleted ? classes.deleted : ''}`}
+      title={id}>
       <div className={classes.colLeft}>
         <Avatar
           url={
