@@ -37,6 +37,9 @@ export default ({ history: { push } }) => {
         You can read our <Link to={routes.privacyPolicy}>Privacy Policy</Link>{' '}
         here.
       </BodyText>
+      <BodyText>
+        Reset your password <Link to={routes.resetPassword}>here</Link>.
+      </BodyText>
     </>
   )
 }

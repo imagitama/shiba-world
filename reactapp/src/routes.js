@@ -45,6 +45,7 @@ export const createDiscordServer = '/discord-servers/create'
 export const editSpeciesWithVar = '/species/:speciesId/edit'
 export const createSpecies = '/species/create'
 export const patreon = '/patreon'
+export const resetPassword = '/reset-password'
 
 // Outdated routes
 export const browseAssets = '/browse'
