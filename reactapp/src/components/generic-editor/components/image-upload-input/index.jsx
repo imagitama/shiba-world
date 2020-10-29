@@ -1,6 +1,7 @@
 import React from 'react'
 import shortid from 'shortid'
 import FallbackImageUploader from '../../../fallback-image-uploader'
+import { fixAccessingImagesUsingToken } from '../../../../utils'
 
 export default ({
   name,
@@ -19,7 +20,7 @@ export default ({
     <>
       {value && (
         <img
-          src={value}
+          src={fixAccessingImagesUsingToken(value)}
           alt="Preview"
           width={fieldProperties.width}
           height={fieldProperties.height}
