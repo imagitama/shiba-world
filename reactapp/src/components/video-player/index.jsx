@@ -49,6 +49,7 @@ export default ({ url, onPlay = null }) => {
     <>
       {' '}
       <ReactPlayer
+        light
         url={url}
         controls
         onPlay={() => {
@@ -61,6 +62,7 @@ export default ({ url, onPlay = null }) => {
           console.error(e.target.error)
           setErrorState(getErrorStateForEvent(e))
         }}
+        playing={true}
       />
       {errorState &&
         `An error has occured playing the video: ${getLabelForErrorState(
