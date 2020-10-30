@@ -22,6 +22,7 @@ async function optimizeBucketImageByUrl(imageUrl) {
   sourceFile.createReadStream().pipe(pipeline)
 
   const destFile = bucket.file(newFilePath)
+
   const writeStream = destFile.createWriteStream({
     metadata: {
       contentType: `image/webp`,
@@ -41,6 +42,11 @@ async function optimizeBucketImageByUrl(imageUrl) {
           action: 'read',
           expires: '01-01-2050',
         })
+
+        await destFile.setMetadata({
+          cacheControl: 'public, max-age=15552000',
+        })
+
         resolve(url)
       })
       .on('error', reject)
