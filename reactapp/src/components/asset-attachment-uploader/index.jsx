@@ -79,7 +79,7 @@ function moveItemInArray(from, to, array) {
   return newArray
 }
 
-export default ({ assetId }) => {
+export default ({ assetId, onDone }) => {
   const userId = useFirebaseUserId()
   const [isAttachingImage, setIsAttachingImage] = useState(null)
   const [newFileUrls, setNewFileUrls] = useState(null)
@@ -189,6 +189,8 @@ export default ({ assetId }) => {
           userId
         )
       })
+
+      onDone()
     } catch (err) {
       console.error(err)
       handleError(err)

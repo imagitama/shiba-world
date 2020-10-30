@@ -39,6 +39,7 @@ function Output({
   const [isOptimizing, setIsOptimizing] = useState(false)
   const [isErrored, setIsErrored] = useState(false)
   const throttleTimeoutRef = useRef()
+  const onImageLoadedTimeoutRef = useRef()
 
   useEffect(() => {
     if (!imageRef.current) {
@@ -61,6 +62,7 @@ function Output({
   useEffect(() => {
     return () => {
       clearTimeout(throttleTimeoutRef.current)
+      clearTimeout(onImageLoadedTimeoutRef.current)
     }
   }, [])
 
@@ -226,7 +228,7 @@ function Output({
           imageRef.current = img
 
           // need this delay because it is needed apparently
-          setTimeout(() => {
+          onImageLoadedTimeoutRef.current = setTimeout(() => {
             onCropChange({
               x: 0,
               y: 0,

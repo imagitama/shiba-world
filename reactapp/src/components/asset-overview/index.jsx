@@ -401,6 +401,7 @@ export default ({ assetId }) => {
   const [, , user] = useUserRecord()
   const [isReportMessageOpen, setIsReportMessageOpen] = useState(false)
   const [isSpeciesEditorOpen, setIsSpeciesEditorOpen] = useState(false)
+  const [isAttachFileFormOpen, setIsAttachFileFormOpen] = useState(false)
   const hideChangeSpeciesTimeoutRef = useRef()
 
   const dispatch = useDispatch()
@@ -493,6 +494,22 @@ export default ({ assetId }) => {
       return (
         <span className={classes.enableSpeciesEditorIcon}>
           <EditIcon onClick={() => setIsSpeciesEditorOpen(true)} />
+        </span>
+      )
+    }
+    return null
+  }
+
+  const EnableAttachFileButton = () => {
+    if (isOwnerOrEditor && !isAttachFileFormOpen) {
+      return (
+        <span>
+          <Button
+            onClick={() => setIsAttachFileFormOpen(true)}
+            icon={<EditIcon />}
+            color="default">
+            Modify Attachments
+          </Button>
         </span>
       )
     }
@@ -668,12 +685,16 @@ export default ({ assetId }) => {
             </>
           ) : null}
 
-          {isOwnerOrEditor && (
+          {isAttachFileFormOpen ? (
             <>
-              <Heading variant="h3">Attachments</Heading>
-              <AssetAttachmentUploader assetId={assetId} />
+              <AssetAttachmentUploader
+                assetId={assetId}
+                onDone={() => setIsAttachFileFormOpen(false)}
+              />
             </>
-          )}
+          ) : isOwnerOrEditor ? (
+            <EnableAttachFileButton />
+          ) : null}
 
           {children && children.length ? (
             <>
