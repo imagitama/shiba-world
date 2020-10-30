@@ -6,7 +6,6 @@ import Button from '../button'
 import useFileUpload from '../../hooks/useFileUpload'
 import BodyText from '../body-text'
 import { handleError } from '../../error-handling'
-import { THUMBNAIL_WIDTH } from '../../config'
 
 const useStyles = makeStyles({
   container: {
@@ -32,7 +31,9 @@ export default ({
   onCroppedImagePreviewUrl = null,
   directoryPath = '',
   filePrefix = '',
-  thumbnailWidthAndHeight = THUMBNAIL_WIDTH,
+  maxWidth = null,
+  maxHeight = null,
+  aspectRatio = undefined,
   children
 }) => {
   const [cropX, setCropX] = useState(0)
@@ -45,6 +46,7 @@ export default ({
   const imageRef = useRef()
   const selectedFileRef = useRef()
   const classes = useStyles()
+  const throttleTimeoutRef = useRef()
 
   useEffect(() => {
     if (!imageRef.current) {
@@ -64,6 +66,10 @@ export default ({
       }
     }
     main()
+
+    return () => {
+      clearTimeout(throttleTimeoutRef.current)
+    }
   }, [cropX, cropY, width, height])
 
   const onFileChange = files => {
@@ -84,13 +90,26 @@ export default ({
     setUploadedUrl(null)
   }
 
+  const onCropChange = newCrop => {
+    clearTimeout(throttleTimeoutRef.current)
+
+    throttleTimeoutRef.current = setTimeout(() => {
+      // If you store the whole object it invalidates a dep and causes infinite loop
+      setCropX(newCrop.x)
+      setCropY(newCrop.y)
+      setWidth(newCrop.width)
+      setHeight(newCrop.height)
+    }, 5)
+  }
+
   const cropImageElementAndGetCanvas = async () => {
     return new Promise(resolve => {
-      const canvas = document.createElement('canvas')
-      canvas.width = thumbnailWidthAndHeight
-      canvas.height = thumbnailWidthAndHeight
-
       const image = imageRef.current
+
+      const canvas = document.createElement('canvas')
+      canvas.width = maxWidth || image.naturalWidth
+      canvas.height = maxHeight || image.naturalHeight
+
       const scaleX = image.naturalWidth / image.width
       const scaleY = image.naturalHeight / image.height
 
@@ -103,8 +122,8 @@ export default ({
         height * scaleY,
         0,
         0,
-        thumbnailWidthAndHeight,
-        thumbnailWidthAndHeight
+        maxWidth || image.naturalWidth,
+        maxHeight || image.naturalHeight
       )
       resolve(canvas)
     })
@@ -150,8 +169,8 @@ export default ({
       <>
         <img
           src={uploadedUrl}
-          width={thumbnailWidthAndHeight}
-          height={thumbnailWidthAndHeight}
+          width={maxWidth}
+          height={maxHeight}
           alt="Uploaded preview"
         />
         <Button onClick={onCancelBtnClick} color="default">
@@ -182,10 +201,7 @@ export default ({
 
     return (
       <>
-        <BodyText>
-          Select a JPG or PNG and you will be able to crop it to{' '}
-          {thumbnailWidthAndHeight}x{thumbnailWidthAndHeight}
-        </BodyText>
+        <BodyText>Select a JPG or PNG and you will be able to crop it</BodyText>
         <input
           type="file"
           onChange={event => onFileChange(event.target.files)}
@@ -199,13 +215,7 @@ export default ({
     <>
       <ReactCrop
         src={imageSrc}
-        onChange={newCrop => {
-          // If you store the whole object it invalidates a dep and causes infinite loop
-          setCropX(newCrop.x)
-          setCropY(newCrop.y)
-          setWidth(newCrop.width)
-          setHeight(newCrop.height)
-        }}
+        onChange={onCropChange}
         onImageLoaded={img => {
           imageRef.current = img
         }}
@@ -215,7 +225,7 @@ export default ({
           y: cropY,
           width: width ? width : undefined,
           height: height ? height : 100,
-          aspect: 1,
+          aspect: aspectRatio,
           lock: true,
           unit: width && height ? 'px' : '%'
         }}

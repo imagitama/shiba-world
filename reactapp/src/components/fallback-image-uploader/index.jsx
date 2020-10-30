@@ -8,7 +8,6 @@ import useFileUpload from '../../hooks/useFileUpload'
 import BodyText from '../body-text'
 import { handleError } from '../../error-handling'
 import { callFunction } from '../../firebase'
-import { THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT } from '../../config'
 
 const useStyles = makeStyles({
   root: {
@@ -22,8 +21,8 @@ function renameJpgToPng(path) {
 
 function Output({
   onUploadedUrls,
-  requiredWidth = THUMBNAIL_WIDTH,
-  requiredHeight = THUMBNAIL_HEIGHT,
+  requiredWidth = null,
+  requiredHeight = null,
   directoryPath = '',
   filePrefix = ''
 }) {
@@ -39,6 +38,7 @@ function Output({
   const [croppedImagePreviewUrl, setCroppedImagePreviewUrl] = useState('')
   const [isOptimizing, setIsOptimizing] = useState(false)
   const [isErrored, setIsErrored] = useState(false)
+  const throttleTimeoutRef = useRef()
 
   useEffect(() => {
     if (!imageRef.current) {
@@ -57,6 +57,12 @@ function Output({
     }
     main()
   }, [cropX, cropY, width, height])
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(throttleTimeoutRef.current)
+    }
+  }, [])
 
   const onFileChange = files => {
     const reader = new FileReader()
@@ -78,13 +84,26 @@ function Output({
     setIsErrored(false)
   }
 
+  const onCropChange = newCrop => {
+    clearTimeout(throttleTimeoutRef.current)
+
+    throttleTimeoutRef.current = setTimeout(() => {
+      // If you store the whole object it invalidates a dep and causes infinite loop
+      setCropX(newCrop.x)
+      setCropY(newCrop.y)
+      setWidth(newCrop.width)
+      setHeight(newCrop.height)
+    }, 5)
+  }
+
   const cropImageElementAndGetCanvas = async () => {
     return new Promise(resolve => {
-      const canvas = document.createElement('canvas')
-      canvas.width = requiredWidth
-      canvas.height = requiredHeight
-
       const image = imageRef.current
+
+      const canvas = document.createElement('canvas')
+      canvas.width = requiredWidth || image.width
+      canvas.height = requiredHeight || image.height
+
       const scaleX = image.naturalWidth / image.width
       const scaleY = image.naturalHeight / image.height
 
@@ -97,8 +116,8 @@ function Output({
         height * scaleY,
         0,
         0,
-        requiredWidth,
-        requiredHeight
+        canvas.width,
+        canvas.height
       )
       resolve(canvas)
     })
@@ -187,10 +206,7 @@ function Output({
   if (!imageSrc) {
     return (
       <>
-        <BodyText>
-          Select a JPG or PNG and you will be able to crop it to {requiredWidth}
-          x{requiredHeight}
-        </BodyText>
+        <BodyText>Select a JPG or PNG and you will be able to crop it</BodyText>
         <input
           type="file"
           onChange={event => onFileChange(event.target.files)}
@@ -205,15 +221,19 @@ function Output({
       Now crop the image:
       <ReactCrop
         src={imageSrc}
-        onChange={newCrop => {
-          // If you store the whole object it invalidates a dep and causes infinite loop
-          setCropX(newCrop.x)
-          setCropY(newCrop.y)
-          setWidth(newCrop.width)
-          setHeight(newCrop.height)
-        }}
+        onChange={onCropChange}
         onImageLoaded={img => {
           imageRef.current = img
+
+          // need this delay because it is needed apparently
+          setTimeout(() => {
+            onCropChange({
+              x: 0,
+              y: 0,
+              width: requiredWidth || img.width,
+              height: requiredHeight || img.height
+            })
+          }, 50)
         }}
         style={{ width: '100%' }}
         crop={{
@@ -222,15 +242,18 @@ function Output({
           width: width ? width : undefined,
           height: height ? height : 100,
           lock: true,
-          aspect: requiredWidth / requiredHeight,
+          aspect:
+            requiredWidth && requiredHeight
+              ? requiredWidth / requiredHeight
+              : undefined,
           unit: width && height ? 'px' : '%'
         }}
       />
       Output:
       <img
         src={croppedImagePreviewUrl}
-        width={requiredWidth}
-        height={requiredHeight}
+        width={width}
+        height={height}
         alt="Uploaded preview"
       />
       <br />

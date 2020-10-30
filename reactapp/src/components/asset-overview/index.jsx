@@ -36,6 +36,7 @@ import ImageGallery from '../image-gallery'
 import AdminHistory from '../admin-history'
 import ChangeSpeciesEditor from '../change-species-editor'
 import OpenForCommissionsMessage from '../open-for-commissions-message'
+import AssetAttachmentUploader from '../asset-attachment-uploader'
 
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
@@ -382,6 +383,15 @@ function MobilePrimaryBtn({
 
 const actionCategory = 'ViewAsset'
 
+// in future we need to serve up the fallback url but for now
+// assume users are using modern browsers
+const pickNonFallbackUrl = urlOrUrls => {
+  if (typeof urlOrUrls === 'string') {
+    return urlOrUrls
+  }
+  return urlOrUrls.url
+}
+
 export default ({ assetId }) => {
   const [isLoading, isErrored, result] = useDatabaseQuery(
     CollectionNames.Assets,
@@ -461,14 +471,17 @@ export default ({ assetId }) => {
   }
 
   const downloadUrls = fileUrls
+    .map(pickNonFallbackUrl)
     .filter(isUrlNotAnImageOrVideo)
     .filter(fileUrl => fileUrl !== thumbnailUrl)
 
   const imageUrls = fileUrls
+    .map(pickNonFallbackUrl)
     .filter(isUrlAnImage)
     .filter(fileUrl => fileUrl !== thumbnailUrl)
 
   const videoUrls = fileUrls
+    .map(pickNonFallbackUrl)
     .filter(isUrlAVideo)
     .filter(fileUrl => fileUrl !== thumbnailUrl)
 
@@ -654,6 +667,13 @@ export default ({ assetId }) => {
               />
             </>
           ) : null}
+
+          {isOwnerOrEditor && (
+            <>
+              <Heading variant="h3">Attachments</Heading>
+              <AssetAttachmentUploader assetId={assetId} />
+            </>
+          )}
 
           {children && children.length ? (
             <>

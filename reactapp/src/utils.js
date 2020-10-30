@@ -123,7 +123,8 @@ export function isUrlAnImage(url) {
     validUrl.includes('jpg') ||
     validUrl.includes('png') ||
     validUrl.includes('gif') ||
-    validUrl.includes('jpeg')
+    validUrl.includes('jpeg') ||
+    validUrl.includes('webp')
   )
 }
 

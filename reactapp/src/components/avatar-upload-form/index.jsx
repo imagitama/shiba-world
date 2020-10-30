@@ -83,7 +83,9 @@ export default ({ onClick = null }) => {
     <ImageUploader
       onDownloadUrl={onDownloadUrl}
       directoryPath={`avatars/${userId}`}
-      thumbnailWidthAndHeight={200}>
+      maxWidth={200}
+      maxHeight={200}
+      aspectRatio={1}>
       <div className={classes.container}>
         <img
           src={avatarUrl ? avatarUrl : defaultAvatarUrl}

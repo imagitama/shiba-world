@@ -7,7 +7,6 @@ import SpeciesSelector from './components/species-selector'
 import CategorySelector from './components/category-selector'
 import FormField, { formFieldType } from './components/form-field'
 import InvalidMessage from './components/invalid-message'
-import FileAttacher from './components/file-attacher'
 import ChildrenInput from './components/children-input'
 import AuthorInput from './components/author-input'
 import PopularTagsSelector from './components/popular-tags-selector'
@@ -433,24 +432,7 @@ export default ({
         </>
       )}
       <Heading variant="h2">Attachments</Heading>
-      <FileAttacher
-        fileUrls={fieldData[AssetFieldNames.fileUrls]}
-        onFileAttached={fileUrl =>
-          onFieldChange(
-            AssetFieldNames.fileUrls,
-            fieldData[AssetFieldNames.fileUrls].concat([fileUrl])
-          )
-        }
-        onFilesChanged={newFileUrls =>
-          onFieldChange(AssetFieldNames.fileUrls, newFileUrls)
-        }
-        onFileRemoved={fileUrl =>
-          onFieldChange(
-            AssetFieldNames.fileUrls,
-            fieldData[AssetFieldNames.fileUrls].filter(url => url !== fileUrl)
-          )
-        }
-      />
+      <p>This has been moved to the asset overview.</p>
       <Heading variant="h3">Additional settings</Heading>
       <AuthorInput
         author={fieldData[AssetFieldNames.author]}

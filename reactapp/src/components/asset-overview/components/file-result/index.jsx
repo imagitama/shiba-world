@@ -21,9 +21,13 @@ const useStyles = makeStyles({
 
 const analyticsCategoryName = 'ViewAsset'
 
-export default ({ assetId, url }) => {
+export default ({ assetId, url: urlOrUrls }) => {
   const classes = useStyles()
   const [showFbxViewer, setShowFbxViewer] = useState(false)
+
+  console.log(urlOrUrls)
+
+  const url = typeof urlOrUrls === 'string' ? urlOrUrls : urlOrUrls.url
 
   return (
     <Paper className={classes.root}>
