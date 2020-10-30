@@ -5,6 +5,9 @@ import shortid from 'shortid'
 import SaveIcon from '@material-ui/icons/Save'
 import ImageIcon from '@material-ui/icons/Image'
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
+import DeleteIcon from '@material-ui/icons/Delete'
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
 
 import { isUrlAnImage, isUrlAVideo, getFilenameFromUrl } from '../../utils'
 import { THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT } from '../../config'
@@ -57,13 +60,13 @@ const FileAttacherItem = ({ urlOrUrls, onRemove, onMoveUp, onMoveDown }) => {
         {getFilenameFromUrl(url)}
       </a>
       <br />
-      <Button color="default" onClick={onMoveUp}>
+      <Button color="default" onClick={onMoveUp} icon={<ArrowUpwardIcon />}>
         Move Up
-      </Button>
-      <Button color="default" onClick={onMoveDown}>
+      </Button>{' '}
+      <Button color="default" onClick={onMoveDown} icon={<ArrowDownwardIcon />}>
         Move Down
-      </Button>
-      <Button color="default" onClick={onRemove}>
+      </Button>{' '}
+      <Button color="default" onClick={onRemove} icon={<DeleteIcon />}>
         Remove
       </Button>
     </Paper>
@@ -95,15 +98,18 @@ export default ({ assetId }) => {
     setIsAttachingImage(null)
   }
 
-  const onFileRemoved = fileUrl =>
+  const onFileRemoved = fileUrl => {
+    const urlToFind = isFallbackImageDefinition(fileUrl) ? fileUrl.url : fileUrl
+
     setNewFileUrls(
       newFileUrls.filter(urlOrUrls => {
-        if (typeof urlOrUrls === 'string') {
-          return urlOrUrls !== fileUrl
+        if (isFallbackImageDefinition(urlOrUrls)) {
+          return urlOrUrls.url !== urlToFind
         }
-        return urlOrUrls.url !== fileUrl
+        return urlOrUrls !== urlToFind
       })
     )
+  }
 
   useEffect(() => {
     if (!asset) {
@@ -195,8 +201,8 @@ export default ({ assetId }) => {
         <FileAttacherItem
           key={
             isFallbackImageDefinition(fileUrlOrUrls)
-              ? fileUrlOrUrls
-              : fileUrlOrUrls.url
+              ? fileUrlOrUrls.url
+              : fileUrlOrUrls
           }
           urlOrUrls={fileUrlOrUrls}
           onRemove={() => onFileRemoved(fileUrlOrUrls)}
