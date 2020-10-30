@@ -7,7 +7,7 @@ import Button from '../button'
 import useFileUpload from '../../hooks/useFileUpload'
 import BodyText from '../body-text'
 import { handleError } from '../../error-handling'
-import { callFunction } from '../../firebase'
+// import { callFunction } from '../../firebase'
 
 const useStyles = makeStyles({
   root: {
@@ -168,11 +168,15 @@ function Output({
 
       setIsOptimizing(true)
 
-      const {
-        data: { optimizedImageUrl }
-      } = await callFunction('optimizeImage', {
-        imageUrl: uploadedUrl
-      })
+      // until Google sorts its shit out we cannot call this function right now
+      // as it is returning status "crash" for some people included me :(
+      // const {
+      //   data: { optimizedImageUrl }
+      // } = await callFunction('optimizeImage', {
+      //   imageUrl: uploadedUrl
+      // })
+
+      const optimizedImageUrl = ''
 
       setIsOptimizing(false)
       setUploadedUrl(optimizedImageUrl)

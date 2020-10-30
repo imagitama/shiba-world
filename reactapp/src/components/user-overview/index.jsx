@@ -27,7 +27,7 @@ import AuthorResults from '../author-results'
 import Avatar from '../avatar'
 
 import * as routes from '../../routes'
-import { createRef } from '../../utils'
+import { createRef, isFallbackImageDefinition } from '../../utils'
 import { trackAction } from '../../analytics'
 import { canEditUsers } from '../../permissions'
 
@@ -248,7 +248,23 @@ export default ({ userId }) => {
           content={`Browse all of the accessories, animations, avatars, news articles, tutorials and more uploaded by ${username}`}
         />
       </Helmet>
-      <Avatar username={user.username} url={user.avatarUrl} />
+      <Avatar
+        username={user.username}
+        url={
+          user && user[UserFieldNames.avatarUrl]
+            ? isFallbackImageDefinition(user[UserFieldNames.avatarUrl])
+              ? user[UserFieldNames.avatarUrl].url
+              : user[UserFieldNames.avatarUrl]
+            : null
+        }
+        fallbackUrl={
+          user &&
+          user[UserFieldNames.avatarUrl] &&
+          isFallbackImageDefinition(user[UserFieldNames.avatarUrl])
+            ? user[UserFieldNames.avatarUrl].fallbackUrl
+            : null
+        }
+      />
       <Heading
         variant="h1"
         className={`${classes.username} ${isBanned ? classes.isBanned : ''}`}>

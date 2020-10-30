@@ -62,7 +62,13 @@ export default ({
           </picture>
         ) : (
           <img
-            src={url ? fixAccessingImagesUsingToken(url) : defaultAvatarUrl}
+            src={
+              url
+                ? fixAccessingImagesUsingToken(url)
+                : fallbackUrl
+                ? fixAccessingImagesUsingToken(fallbackUrl)
+                : defaultAvatarUrl
+            }
             alt={`Avatar for ${username || 'a user'}`}
             className={classes.image}
           />

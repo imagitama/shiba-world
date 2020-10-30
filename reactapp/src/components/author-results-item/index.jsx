@@ -48,7 +48,7 @@ export default ({
         <CardActionArea>
           <Link to={routes.viewAuthorWithVar.replace(':authorId', id)}>
             <Avatar
-              url={avatarUrl}
+              url={avatarUrl || fallbackAvatarUrl}
               fallbackUrl={fallbackAvatarUrl}
               username={name}
             />

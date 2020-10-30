@@ -146,6 +146,12 @@ export default ({
                 : createdBy[UserFieldNames.avatarUrl]
               : null
           }
+          fallbackUrl={
+            createdBy[UserFieldNames.avatarUrl] &&
+            isFallbackImageDefinition(createdBy[UserFieldNames.avatarUrl])
+              ? createdBy[UserFieldNames.avatarUrl].fallbackUrl
+              : null
+          }
           size={null}
         />
       </div>

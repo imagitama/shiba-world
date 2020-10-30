@@ -65,6 +65,13 @@ function User({ user }) {
                   : user[UserFieldNames.avatarUrl]
                 : null
             }
+            fallbackUrl={
+              user &&
+              user[UserFieldNames.avatarUrl] &&
+              isFallbackImageDefinition(user[UserFieldNames.avatarUrl])
+                ? user[UserFieldNames.avatarUrl].fallbackUrl
+                : null
+            }
             size={sizes.SMALL}
             className={classes.avatar}
           />

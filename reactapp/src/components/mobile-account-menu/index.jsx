@@ -13,6 +13,8 @@ import Avatar, { sizes } from '../avatar'
 import Button from '../button'
 import NotificationsMenuLabel from '../notifications-menu-label'
 import NotificationsMenuChildren from '../notifications-menu-children'
+import { UserFieldNames } from '../../hooks/useDatabaseQuery'
+import { isFallbackImageDefinition } from '../../utils'
 
 const useStyles = makeStyles({
   toggle: {
@@ -121,7 +123,16 @@ export default ({ onClose }) => {
         <div
           onClick={() => toggleUserDropdown()}
           className={classes.userDropdownBtn}>
-          <Avatar url={user ? user.avatarUrl : false} size={sizes.TINY} />
+          <Avatar
+            url={
+              user && user[UserFieldNames.avatarUrl]
+                ? isFallbackImageDefinition(user[UserFieldNames.avatarUrl])
+                  ? user[UserFieldNames.avatarUrl].url
+                  : user[UserFieldNames.avatarUrl]
+                : null
+            }
+            size={sizes.TINY}
+          />
           <div className={classes.dropdownIcon}>
             <KeyboardArrowDownIcon className={classes.icon} />
           </div>

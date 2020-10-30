@@ -61,7 +61,7 @@ export default () => {
     timeoutRef.current = setTimeout(
       () => {
         setLastKnownBannerUrl({
-          url: bannerUrl,
+          url: bannerUrl || bannerFallbackUrl,
           fallbackUrl: bannerFallbackUrl
         })
       },
@@ -83,7 +83,12 @@ export default () => {
         isLoaded ? classes.loaded : classes.unloaded
       }`}>
       <picture>
-        <source srcSet={fixAccessingImagesUsingToken(url)} type="image/webp" />
+        {url && (
+          <source
+            srcSet={fixAccessingImagesUsingToken(url)}
+            type="image/webp"
+          />
+        )}
         <source
           srcSet={fixAccessingImagesUsingToken(fallbackUrl)}
           type="image/png"

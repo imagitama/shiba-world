@@ -207,8 +207,9 @@ export function convertDocToRef(doc) {
 // if you provide an access ID it will still error?
 // so strip that out
 export function fixAccessingImagesUsingToken(url) {
+  console.log(url)
   if (!url) {
-    return url
+    return ''
   }
   if (!url.includes('GoogleAccessId')) {
     return url
@@ -219,5 +220,5 @@ export function fixAccessingImagesUsingToken(url) {
 // while we are transition from strings to objects with url & fallback url
 // we need a way to know which is which
 export function isFallbackImageDefinition(thing) {
-  return thing && typeof thing !== 'string' && thing.url
+  return thing && typeof thing !== 'string' && (thing.url || thing.fallbackUrl)
 }

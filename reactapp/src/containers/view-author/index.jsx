@@ -133,7 +133,9 @@ export default ({
     }
 
     setBannerUrls({
-      url: result[AuthorFieldNames.bannerUrl],
+      url:
+        result[AuthorFieldNames.bannerUrl] ||
+        result[AuthorFieldNames.fallbackBannerUrl],
       fallbackUrl: result[AuthorFieldNames.fallbackBannerUrl]
     })
 
@@ -176,7 +178,11 @@ export default ({
         />
       </Helmet>
 
-      <Avatar url={avatarUrl} fallbackUrl={fallbackAvatarUrl} username={name} />
+      <Avatar
+        url={avatarUrl || fallbackAvatarUrl}
+        fallbackUrl={fallbackAvatarUrl}
+        username={name}
+      />
 
       <Heading variant="h1">
         <Link to={routes.viewAuthorWithVar.replace(':authorId', authorId)}>
