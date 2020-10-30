@@ -1,11 +1,23 @@
 const fetch = require('node-fetch')
 const config = require('./config')
 const { VRCARENA_BASE_URL, routes } = require('./site')
+const {
+  db,
+  CollectionNames,
+  DiscordMessageFieldNames,
+  DiscordMessageStatuses,
+} = require('./firebase')
 
 const IS_DISCORD_ENABLED = config.global.isDiscordEnabled !== 'false'
 const DISCORD_ACTIVITY_WEBHOOK_URL = config.discord.activity_webhook_url
 const DISCORD_EDITOR_NOTIFICATIONS_WEBHOOK_URL =
   config.discord.editor_notifications_webhook_url
+
+const channelNames = {
+  activity: 'activity',
+  editorNotifications: 'editor-notifications',
+}
+module.exports.channelNames = channelNames
 
 const emitToDiscord = async (webhookUrl, message, embeds = []) => {
   if (!IS_DISCORD_ENABLED) {
@@ -115,4 +127,15 @@ module.exports.getDiscordServerIcon = (guildId, iconHash) => {
 
   // https://discord.com/developers/docs/reference#image-formatting
   return `https://cdn.discordapp.com/icons/${guildId}/${iconHash}.png`
+}
+
+module.exports.queueMessage = async (channelName, message, embeds = []) => {
+  return db.collection(CollectionNames.DiscordMessages).add({
+    [DiscordMessageFieldNames.channelName]: channelName,
+    [DiscordMessageFieldNames.message]: message,
+    [DiscordMessageFieldNames.embeds]: embeds,
+    [DiscordMessageFieldNames.status]: DiscordMessageStatuses.Queued,
+    [DiscordMessageFieldNames.lastModifiedAt]: null,
+    [DiscordMessageFieldNames.createdAt]: new Date(),
+  })
 }

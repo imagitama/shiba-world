@@ -9,12 +9,17 @@ const {
   AssetFieldNames,
   CommentFieldNames,
   UserFieldNames,
+  Operators,
 } = require('../firebase')
 const {
   storeInNotifications,
   notifyTaggedUserIfNeeded,
 } = require('../notifications')
-const { emitToDiscordActivity, getEmbedForViewAsset } = require('../discord')
+const {
+  emitToDiscordActivity,
+  getEmbedForViewAsset,
+  getEmbedForViewProfile,
+} = require('../discord')
 const { storeInHistory } = require('../history')
 
 module.exports = functions.firestore

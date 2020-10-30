@@ -2,6 +2,10 @@ const functions = require('firebase-functions')
 const fetch = require('node-fetch')
 const config = require('../config')
 const { db, CollectionNames, UserFieldNames } = require('../firebase')
+const {
+  queueMessage: queueDiscordMessage,
+  channelNames,
+} = require('../discord')
 
 const CLIENT_ID = config.patreon.client_id
 const CLIENT_SECRET = config.patreon.client_secret
@@ -149,6 +153,11 @@ module.exports = functions.https.onCall(async (data, context) => {
       context.auth.uid,
       isPatron,
       patreonUserId
+    )
+
+    await queueDiscordMessage(
+      channelNames.activity,
+      `User ${context.auth.uid} just connected their VRCArena account with Patreon`
     )
 
     return { isPatron }

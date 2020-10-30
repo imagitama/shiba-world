@@ -29,6 +29,7 @@ const CollectionNames = {
   Authors: 'authors',
   DiscordServers: 'discordServers',
   Patreons: 'patreons',
+  DiscordMessages: 'discordMessages',
 }
 module.exports.CollectionNames = CollectionNames
 
@@ -145,6 +146,23 @@ const DiscordServerFieldNames = {
   createdBy: 'createdBy',
 }
 module.exports.DiscordServerFieldNames = DiscordServerFieldNames
+
+const DiscordMessageFieldNames = {
+  channelName: 'channelName',
+  message: 'message',
+  embeds: 'embeds',
+  status: 'status',
+  lastModifiedAt: 'lastModifiedAt',
+  createdAt: 'createdAt',
+}
+module.exports.DiscordMessageFieldNames = DiscordMessageFieldNames
+
+const DiscordMessageStatuses = {
+  Queued: 'queued',
+  Sent: 'sent',
+  Error: 'error',
+}
+module.exports.DiscordMessageStatuses = DiscordMessageStatuses
 
 const LikeFieldNames = {
   parent: 'parent',

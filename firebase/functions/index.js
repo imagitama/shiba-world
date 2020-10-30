@@ -15,6 +15,7 @@ exports.onTweetCreated = require('./src/functions/onTweetCreated')
 exports.syncDiscordServerById = require('./src/functions/syncDiscordServerById')
 exports.syncIndex = require('./src/functions/syncIndex')
 exports.syncTags = require('./src/functions/syncTags')
+exports.onDiscordMessageQueued = require('./src/functions/onDiscordMessageQueued')
 
 const IS_BACKUP_ENABLED = config.global.isBackupEnabled !== 'false'
 
