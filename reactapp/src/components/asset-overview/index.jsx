@@ -56,6 +56,7 @@ import {
 import { THUMBNAIL_WIDTH } from '../../config'
 
 import NotApprovedMessage from './components/not-approved-message'
+import DeletedMessage from './components/deleted-message'
 import IsPrivateMessage from './components/is-private-message'
 import FileList from './components/file-list'
 import ReportMessage from './components/report-message'
@@ -454,11 +455,9 @@ export default ({ assetId }) => {
   } = result
 
   if (!title) {
-    return <ErrorMessage>Asset does not exist.</ErrorMessage>
-  }
-
-  if (isDeleted) {
-    return <ErrorMessage>Asset has been deleted.</ErrorMessage>
+    return (
+      <ErrorMessage>Asset does not exist. Maybe it was deleted?</ErrorMessage>
+    )
   }
 
   const downloadUrls = fileUrls
@@ -493,6 +492,10 @@ export default ({ assetId }) => {
     }, 2000)
   }
 
+  if (isDeleted && !canApproveAsset(user)) {
+    return <ErrorMessage>This asset has been deleted.</ErrorMessage>
+  }
+
   return (
     <div className={classes.root}>
       <Helmet>
@@ -522,6 +525,7 @@ export default ({ assetId }) => {
       </Helmet>
       {isReportMessageOpen && <ReportMessage assetId={id} />}
       {isApproved === false && <NotApprovedMessage />}
+      {isDeleted === true && <DeletedMessage />}
       {isPrivate === true && <IsPrivateMessage />}
       {tags && tags.includes('wip') && <WorkInProgressMessage />}
 
