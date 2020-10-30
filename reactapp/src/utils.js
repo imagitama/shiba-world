@@ -215,3 +215,9 @@ export function fixAccessingImagesUsingToken(url) {
   }
   return url.split('?')[0]
 }
+
+// while we are transition from strings to objects with url & fallback url
+// we need a way to know which is which
+export function isFallbackImageDefinition(thing) {
+  return thing && typeof thing !== 'string' && thing.url
+}

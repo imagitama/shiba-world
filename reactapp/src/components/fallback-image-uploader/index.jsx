@@ -12,6 +12,18 @@ import { callFunction } from '../../firebase'
 const useStyles = makeStyles({
   root: {
     padding: '1rem'
+  },
+  container: {
+    position: 'relative'
+  },
+  input: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    opacity: 0,
+    zIndex: 100
   }
 })
 
@@ -24,8 +36,10 @@ function Output({
   requiredWidth = null,
   requiredHeight = null,
   directoryPath = '',
-  filePrefix = ''
+  filePrefix = '',
+  children = null
 }) {
+  const classes = useStyles()
   const [cropX, setCropX] = useState(0)
   const [cropY, setCropY] = useState(0)
   const [width, setWidth] = useState(0)
@@ -118,8 +132,8 @@ function Output({
         height * scaleY,
         0,
         0,
-        canvas.width,
-        canvas.height
+        requiredWidth || image.width,
+        requiredHeight || image.height
       )
       resolve(canvas)
     })
@@ -206,6 +220,20 @@ function Output({
   }
 
   if (!imageSrc) {
+    if (children) {
+      return (
+        <div className={classes.container}>
+          <input
+            className={classes.input}
+            type="file"
+            onChange={event => onFileChange(event.target.files)}
+            multiple={false}
+          />
+          {children}
+        </div>
+      )
+    }
+
     return (
       <>
         <BodyText>Select a JPG or PNG and you will be able to crop it</BodyText>
@@ -221,36 +249,37 @@ function Output({
   return (
     <>
       Now crop the image:
-      <ReactCrop
-        src={imageSrc}
-        onChange={onCropChange}
-        onImageLoaded={img => {
-          imageRef.current = img
+      <div style={{ width: '100%' }}>
+        <ReactCrop
+          src={imageSrc}
+          onChange={onCropChange}
+          onImageLoaded={img => {
+            imageRef.current = img
 
-          // need this delay because it is needed apparently
-          onImageLoadedTimeoutRef.current = setTimeout(() => {
-            onCropChange({
-              x: 0,
-              y: 0,
-              width: requiredWidth || img.width,
-              height: requiredHeight || img.height
-            })
-          }, 50)
-        }}
-        style={{ width: '100%' }}
-        crop={{
-          x: cropX,
-          y: cropY,
-          width: width ? width : undefined,
-          height: height ? height : 100,
-          lock: true,
-          aspect:
-            requiredWidth && requiredHeight
-              ? requiredWidth / requiredHeight
-              : undefined,
-          unit: width && height ? 'px' : '%'
-        }}
-      />
+            // need this delay because it is needed apparently
+            onImageLoadedTimeoutRef.current = setTimeout(() => {
+              onCropChange({
+                x: 0,
+                y: 0,
+                width: requiredWidth || img.width,
+                height: requiredHeight || img.height
+              })
+            }, 50)
+          }}
+          crop={{
+            x: cropX,
+            y: cropY,
+            width: width ? width : undefined,
+            height: height ? height : 100,
+            lock: true,
+            aspect:
+              requiredWidth && requiredHeight
+                ? requiredWidth / requiredHeight
+                : undefined,
+            unit: width && height ? 'px' : '%'
+          }}
+        />
+      </div>
       Output:
       <img
         src={croppedImagePreviewUrl}
@@ -269,6 +298,10 @@ function Output({
 
 export default props => {
   const classes = useStyles()
+
+  if (props.children) {
+    return <Output {...props} />
+  }
 
   return (
     <Paper className={classes.root}>

@@ -53,11 +53,21 @@ const convertAuthorDocToAlgoliaRecord = (docId, doc) => {
 }
 module.exports.convertAuthorDocToAlgoliaRecord = convertAuthorDocToAlgoliaRecord
 
+const getAvatarUrl = (urlOrUrls) => {
+  if (!urlOrUrls) {
+    return ''
+  }
+  if (typeof urlOrUrls === 'string') {
+    return urlOrUrls
+  }
+  return doc[UserFieldNames.avatarUrl].url
+}
+
 const convertUserDocToAlgoliaRecord = (docId, doc) => {
   return {
     objectID: docId,
     username: doc[UserFieldNames.username],
-    avatarUrl: doc[UserFieldNames.avatarUrl],
+    avatarUrl: getAvatarUrl(doc[UserFieldNames.avatarUrl]),
   }
 }
 module.exports.convertUserDocToAlgoliaRecord = convertUserDocToAlgoliaRecord

@@ -5,8 +5,12 @@ import { makeStyles } from '@material-ui/core/styles'
 import { writeStorage } from '@rehooks/local-storage'
 import CloseIcon from '@material-ui/icons/Close'
 import Markdown from 'react-markdown'
+
 import useStorage, { keys } from '../../hooks/useStorage'
+import { UserFieldNames } from '../../hooks/useDatabaseQuery'
 import { trackAction } from '../../analytics'
+import { isFallbackImageDefinition } from '../../utils'
+
 import Avatar, { sizes } from '../avatar'
 
 const useStyles = makeStyles(theme => ({
@@ -59,8 +63,14 @@ export default ({ id, title, message, createdBy }) => {
     <Paper className={classes.root}>
       <div className={classes.leftCol}>
         <Avatar
-          url={createdBy.avatarUrl}
-          username={createdBy.username}
+          url={
+            createdBy && createdBy[UserFieldNames.avatarUrl]
+              ? isFallbackImageDefinition(createdBy[UserFieldNames.avatarUrl])
+                ? createdBy[UserFieldNames.avatarUrl].url
+                : createdBy[UserFieldNames.avatarUrl]
+              : null
+          }
+          username={createdBy ? createdBy.username : ''}
           size={sizes.TINY}
         />
       </div>

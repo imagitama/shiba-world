@@ -1,9 +1,12 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Link } from 'react-router-dom'
+
 import * as routes from '../../routes'
-import Avatar, { sizes } from '../avatar'
 import { UserFieldNames } from '../../hooks/useDatabaseQuery'
+import { isFallbackImageDefinition } from '../../utils'
+
+import Avatar, { sizes } from '../avatar'
 
 const useStyles = makeStyles({
   container: {
@@ -55,7 +58,13 @@ function User({ user }) {
         className={classes.link}>
         <div className={classes.itemContents}>
           <Avatar
-            url={user[UserFieldNames.avatarUrl]}
+            url={
+              user && user[UserFieldNames.avatarUrl]
+                ? isFallbackImageDefinition(user[UserFieldNames.avatarUrl])
+                  ? user[UserFieldNames.avatarUrl].url
+                  : user[UserFieldNames.avatarUrl]
+                : null
+            }
             size={sizes.SMALL}
             className={classes.avatar}
           />

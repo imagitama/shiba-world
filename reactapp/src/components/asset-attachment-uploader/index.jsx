@@ -16,7 +16,7 @@ import useDatabaseQuery, {
   AssetFieldNames
 } from '../../hooks/useDatabaseQuery'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
-import { createRef } from '../../utils'
+import { createRef, isFallbackImageDefinition } from '../../utils'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import { handleError } from '../../error-handling'
 import { trackAction } from '../../analytics'
@@ -36,9 +36,6 @@ const useStyles = makeStyles({
     maxHeight: THUMBNAIL_HEIGHT
   }
 })
-
-const isFallbackImageDefinition = thing =>
-  thing && typeof thing !== 'string' && thing.url
 
 const FileAttacherItem = ({ urlOrUrls, onRemove, onMoveUp, onMoveDown }) => {
   const classes = useStyles()

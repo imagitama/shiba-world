@@ -21,7 +21,7 @@ import LikesTotal from '../likes-total'
 
 import { canEditComments } from '../../permissions'
 import * as routes from '../../routes'
-import { createRef } from '../../utils'
+import { createRef, isFallbackImageDefinition } from '../../utils'
 import { handleError } from '../../error-handling'
 
 const useStyles = makeStyles({
@@ -141,7 +141,9 @@ export default ({
         <Avatar
           url={
             createdBy[UserFieldNames.avatarUrl]
-              ? createdBy[UserFieldNames.avatarUrl]
+              ? isFallbackImageDefinition(createdBy[UserFieldNames.avatarUrl])
+                ? createdBy[UserFieldNames.avatarUrl].url
+                : createdBy[UserFieldNames.avatarUrl]
               : null
           }
           size={null}

@@ -8,6 +8,8 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import * as routes from '../../routes'
 import useUserRecord from '../../hooks/useUserRecord'
 import { trackAction } from '../../analytics'
+import { UserFieldNames } from '../../hooks/useDatabaseQuery'
+import { isFallbackImageDefinition } from '../../utils'
 
 import Avatar, { sizes } from '../avatar'
 import Button from '../button'
@@ -126,7 +128,16 @@ export default () => {
           ref={userMenuLabelRef}
           onClick={() => toggleUserDropdown()}
           className={classes.userDropdownBtn}>
-          <Avatar url={user ? user.avatarUrl : false} size={sizes.TINY} />
+          <Avatar
+            url={
+              user && user[UserFieldNames.avatarUrl]
+                ? isFallbackImageDefinition(user[UserFieldNames.avatarUrl])
+                  ? user[UserFieldNames.avatarUrl].url
+                  : user[UserFieldNames.avatarUrl]
+                : null
+            }
+            size={sizes.TINY}
+          />
           <div className={classes.dropdownIcon}>
             <KeyboardArrowDownIcon className={classes.icon} />
           </div>
