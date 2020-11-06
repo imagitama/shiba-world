@@ -32,6 +32,7 @@ import VideoPlayer from '../video-player'
 import ApproveAssetButton from '../approve-asset-button'
 import DeleteAssetButton from '../delete-asset-button'
 import PinAssetButton from '../pin-asset-button'
+import FeatureAssetButton from '../feature-asset-button'
 import ImageGallery from '../image-gallery'
 import AdminHistory from '../admin-history'
 import ChangeSpeciesEditor from '../change-species-editor'
@@ -884,6 +885,18 @@ export default ({ assetId }) => {
                       newValue === true
                         ? 'Click pin asset button'
                         : 'Click unpin asset button',
+                      assetId
+                    )
+                  }
+                />
+                <FeatureAssetButton
+                  assetId={assetId}
+                  onClick={({ newValue }) =>
+                    trackAction(
+                      analyticsCategoryName,
+                      newValue === true
+                        ? 'Click feature asset button'
+                        : 'Click unfeature asset button',
                       assetId
                     )
                   }

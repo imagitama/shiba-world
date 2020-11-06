@@ -35,7 +35,18 @@ export const CollectionNames = {
   Authors: 'authors',
   DiscordServers: 'discordServers',
   Likes: 'likes',
-  Species: 'species'
+  Species: 'species',
+  Special: 'special'
+}
+
+export const specialCollectionIds = {
+  featured: 'featured'
+}
+
+export const FeaturedAssetFieldNames = {
+  asset: 'asset',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt'
 }
 
 export const AssetFieldNames = {

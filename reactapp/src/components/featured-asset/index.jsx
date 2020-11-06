@@ -103,7 +103,7 @@ export default () => {
   const [, , result] = useDatabaseQuery('special', 'featured')
   const classes = useStyles()
 
-  if (!result) {
+  if (!result || !result.asset) {
     return null
   }
 
