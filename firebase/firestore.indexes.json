@@ -279,6 +279,37 @@
       ]
     },
     {
+      "CUSTOM_PAGE_NAME": "ViewSpeciesCategory",
+      "collectionGroup": "assets",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "species",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "category",
+          "arrayConfig": "ASCENDING"
+        },
+        {
+          "fieldPath": "isApproved",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "isDeleted",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "isPrivate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
       "CUSTOM_PAGE_NAME": "ViewSpeciesOther",
       "collectionGroup": "assets",
       "queryScope": "COLLECTION",

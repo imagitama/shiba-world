@@ -64,6 +64,12 @@ const useStyles = makeStyles(theme => ({
   date: {
     margin: '0.25rem 0 0.5rem',
     color: theme.palette.text.secondary
+  },
+  chipIcon: {
+    margin: 0
+  },
+  chipLabel: {
+    padding: 0
   }
 }))
 
@@ -80,8 +86,12 @@ function ExtraChips({ isAdult, isApproved, isPrivate, isPinned }) {
       {isPrivate && <Chip label="Private" className={classes.extraChip} />}
       {isPinned && (
         <Chip
-          label={<RoomIcon />}
+          icon={<RoomIcon />}
           className={`${classes.extraChip} ${classes.extraChipWithIcon}`}
+          classes={{
+            icon: classes.chipIcon,
+            label: classes.chipLabel
+          }}
         />
       )}
     </div>

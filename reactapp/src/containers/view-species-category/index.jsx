@@ -124,7 +124,7 @@ export default ({
 
   species = Array.isArray(species) ? species[0] : species
 
-  if (!species || !species.length) {
+  if (!species) {
     return (
       <ErrorMessage>
         Sorry that species does not seem to exist.
@@ -158,12 +158,12 @@ export default ({
   }
 
   const desc = category.shortDescription
-
   return (
     <>
       <Helmet>
         <title>
-          {category.name} - {species.name} | {desc} | VRCArena
+          {category.name} - {species[SpeciesFieldNames.singularName]} | {desc} |
+          VRCArena
         </title>
         <meta name="description" content={desc} />
       </Helmet>
