@@ -4,6 +4,10 @@ import useDatabaseQuery, { CollectionNames } from '../../hooks/useDatabaseQuery'
 import TagChip from '../tag-chip'
 import LoadingIndicator from '../loading-indicator'
 
+function sortByAlpha(a, b) {
+  return a.localeCompare(b)
+}
+
 function Tags() {
   const [isLoading, isErrored, record] = useDatabaseQuery(
     CollectionNames.Summaries,
@@ -18,7 +22,12 @@ function Tags() {
     return 'None'
   }
 
-  return record.allTags.map(tag => <TagChip key={tag} tagName={tag} />)
+  console.log(record.allTags)
+
+  return record.allTags
+    .filter(tag => tag)
+    .sort(sortByAlpha)
+    .map(tag => <TagChip key={tag} tagName={tag} />)
 }
 
 export default ({ lazyLoad = false }) => {
