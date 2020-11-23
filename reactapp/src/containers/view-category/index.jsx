@@ -100,8 +100,10 @@ function AvatarAssetResults({ assets }) {
     ) {
       const speciesItem = asset[AssetFieldNames.species][0]
 
-      speciesMetaById[speciesItem.id] = speciesItem
-      const key = speciesItem.id
+      speciesMetaById[speciesItem.singularName] = speciesItem
+
+      console.log(speciesItem)
+      const key = speciesItem[SpeciesFieldNames.singularName]
 
       return {
         ...obj,
@@ -116,6 +118,8 @@ function AvatarAssetResults({ assets }) {
       }
     }
   }, {})
+
+  console.log(Object.entries(assetsBySpecies))
 
   return (
     <>
