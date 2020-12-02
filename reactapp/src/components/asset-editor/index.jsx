@@ -233,6 +233,10 @@ export default ({
       return
     }
 
+    fieldData.tags = fieldData.tags
+      ? fieldData.tags.map(tag => tag.trim()).filter(tag => tag)
+      : []
+
     const fieldDataWithDocs = fieldDataToDocs(fieldData)
 
     onSubmit(fieldDataWithDocs)
