@@ -1,6 +1,6 @@
 const Twit = require('twit')
 const config = require('./config')
-const { db } = require('./firebase')
+const { db, CollectionNames } = require('./firebase')
 
 const IS_TWITTER_ENABLED = config.global.isTwitterEnabled !== 'false'
 const TWITTER_CONSUMER_KEY = config.twitter.consumer_key

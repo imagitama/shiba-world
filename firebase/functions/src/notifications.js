@@ -3,6 +3,7 @@ const {
   CollectionNames,
   NotificationsFieldNames,
   UserFieldNames,
+  Operators,
 } = require('./firebase')
 
 const storeInNotifications = (

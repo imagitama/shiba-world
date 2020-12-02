@@ -54,7 +54,7 @@ module.exports.emitToDiscordEditorNotifications = (message, embeds) => {
   )
 }
 
-function getUrlForViewAsset(assetId) {
+module.exports.getUrlForViewAsset = (assetId) => {
   return `${VRCARENA_BASE_URL}${routes.viewAssetWithVar.replace(
     ':assetId',
     assetId
@@ -64,7 +64,7 @@ function getUrlForViewAsset(assetId) {
 module.exports.getEmbedForViewAsset = (assetId) => {
   return {
     title: 'View Asset',
-    url: getUrlForViewAsset(assetId),
+    url: module.exports.getUrlForViewAsset(assetId),
   }
 }
 

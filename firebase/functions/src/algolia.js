@@ -60,7 +60,7 @@ const getAvatarUrl = (urlOrUrls) => {
   if (typeof urlOrUrls === 'string') {
     return urlOrUrls
   }
-  return doc[UserFieldNames.avatarUrl].url
+  return urlOrUrls.url
 }
 
 const convertUserDocToAlgoliaRecord = (docId, doc) => {
