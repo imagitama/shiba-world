@@ -51,13 +51,6 @@ const createTheme = isDark =>
           }
         }
       },
-      MuiContainer: {
-        root: {
-          [mediaQueryForTabletsOrBelow]: {
-            padding: '0.5rem'
-          }
-        }
-      },
       MuiCardContent: {
         root: {
           [mediaQueryForTabletsOrBelow]: {

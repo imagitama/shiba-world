@@ -102,7 +102,6 @@ function AvatarAssetResults({ assets }) {
 
       speciesMetaById[speciesItem.singularName] = speciesItem
 
-      console.log(speciesItem)
       const key = speciesItem[SpeciesFieldNames.singularName]
 
       return {
@@ -118,8 +117,6 @@ function AvatarAssetResults({ assets }) {
       }
     }
   }, {})
-
-  console.log(Object.entries(assetsBySpecies))
 
   return (
     <>

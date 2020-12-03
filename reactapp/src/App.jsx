@@ -1,6 +1,5 @@
 import React, { lazy, Suspense, useEffect } from 'react'
 import { Route, Switch, Redirect, useLocation } from 'react-router-dom'
-import Container from '@material-ui/core/Container'
 import ThemeProvider from '@material-ui/styles/ThemeProvider'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { Helmet } from 'react-helmet'
@@ -51,11 +50,11 @@ const catchChunkDeaths = functionToImport =>
 
 const useStyles = makeStyles({
   mainContainer: {
+    padding: '2rem',
     [mediaQueryForTabletsOrBelow]: {
       maxWidth: '100vw',
       overflow: 'hidden'
     },
-    paddingTop: '2rem',
     [mediaQueryForMobiles]: {
       paddingTop: '0.5rem'
     }
@@ -396,12 +395,12 @@ export default () => {
         <Banner />
         <PageHeader />
         <main className="main">
-          <Container maxWidth="lg" className={classes.mainContainer}>
+          <div className={classes.mainContainer}>
             <BannedNotice />
             <Notices />
             <UnapprovedAssetsMessage />
             <MainContent />
-          </Container>
+          </div>
         </main>
         <PageFooter />
       </ThemeProvider>

@@ -207,7 +207,6 @@ export function convertDocToRef(doc) {
 // if you provide an access ID it will still error?
 // so strip that out
 export function fixAccessingImagesUsingToken(url) {
-  console.log(url)
   if (!url) {
     return ''
   }

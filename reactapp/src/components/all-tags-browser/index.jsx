@@ -22,8 +22,6 @@ function Tags() {
     return 'None'
   }
 
-  console.log(record.allTags)
-
   return record.allTags
     .filter(tag => tag)
     .sort(sortByAlpha)
