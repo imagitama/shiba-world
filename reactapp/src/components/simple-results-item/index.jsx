@@ -48,7 +48,8 @@ export default ({
   description,
   author = null,
   date = null,
-  thumbnailUrl = ''
+  thumbnailUrl = '',
+  onReadMoreBtnClick = null
 }) => {
   const classes = useStyles()
 
@@ -81,7 +82,12 @@ export default ({
           </div>
           <Markdown source={description} />
           <div className={classes.controls}>
-            <Button url={url}>Read More</Button>
+            <Button
+              url={url}
+              color="default"
+              onClick={onReadMoreBtnClick ? onReadMoreBtnClick : null}>
+              Read More
+            </Button>
           </div>
         </div>
       </div>

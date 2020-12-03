@@ -56,7 +56,7 @@ const useStyles = makeStyles({
       overflow: 'hidden'
     },
     [mediaQueryForMobiles]: {
-      paddingTop: '0.5rem'
+      padding: '0.5rem'
     }
   }
 })

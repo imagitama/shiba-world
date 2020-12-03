@@ -8,10 +8,14 @@ import AllTagsBrowser from '../../components/all-tags-browser'
 import Paper from '../../components/paper'
 import Polls from '../../components/polls'
 import FeaturedAsset from '../../components/featured-asset'
+import NewsFrontPage from '../../components/news-front-page'
 
 import * as routes from '../../routes'
 import categoryMeta from '../../category-meta'
-import { mediaQueryForMobiles } from '../../media-queries'
+import {
+  mediaQueryForMobiles,
+  mediaQueryForTabletsOrBelow
+} from '../../media-queries'
 import { trackAction } from '../../analytics'
 
 import useSearchTerm from '../../hooks/useSearchTerm'
@@ -117,6 +121,25 @@ const useStyles = makeStyles({
   },
   featuredAsset: {
     margin: '2rem 0 1rem'
+  },
+  cols: {
+    display: 'flex',
+    [mediaQueryForTabletsOrBelow]: {
+      display: 'block'
+    }
+  },
+  col: {
+    width: '50%',
+    '&:first-child': {
+      paddingRight: '1rem'
+    },
+    '&:last-child': {
+      paddingLeft: '1rem'
+    },
+    [mediaQueryForTabletsOrBelow]: {
+      width: '100%',
+      padding: 0
+    }
   }
 })
 
@@ -207,17 +230,27 @@ export default () => {
     <>
       <Tiles />
 
-      <div className={classes.featuredAsset}>
-        <FeaturedAsset />
+      <div className={classes.cols}>
+        <div className={classes.col}>
+          <div className={classes.featuredAsset}>
+            <FeaturedAsset />
+          </div>
+
+          <Heading variant="h2">Poll</Heading>
+          <Polls className={classes.polls} />
+
+          <Heading variant="h2">News</Heading>
+          <NewsFrontPage />
+        </div>
+
+        <div className={classes.col}>
+          <SpeciesBrowser
+            onSpeciesClick={speciesName =>
+              trackAction('Home', 'Click species browser', speciesName)
+            }
+          />
+        </div>
       </div>
-
-      <Polls className={classes.polls} />
-
-      <SpeciesBrowser
-        onSpeciesClick={speciesName =>
-          trackAction('Home', 'Click species browser', speciesName)
-        }
-      />
 
       <Heading variant="h2">Tags</Heading>
       <AllTagsBrowser lazyLoad />
