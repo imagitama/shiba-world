@@ -58,7 +58,9 @@ module.exports = functions.firestore
       return Promise.resolve()
     }
 
-    await addTagsToCache(docData.tags)
+    if (!isAdult(docData)) {
+      await addTagsToCache(docData[AssetFieldNames.tags])
+    }
 
     return insertAssetDocIntoIndex(doc, docData)
   })
