@@ -13,7 +13,8 @@ import useDatabaseQuery, {
   CollectionNames,
   AuthorFieldNames,
   AssetFieldNames,
-  DiscordServerFieldNames
+  DiscordServerFieldNames,
+  AssetCategories
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import { setBannerUrls as setBannerUrlsAction } from '../../modules/app'
@@ -38,6 +39,8 @@ import AdminHistory from '../admin-history'
 import ChangeSpeciesEditor from '../change-species-editor'
 import OpenForCommissionsMessage from '../open-for-commissions-message'
 import AssetAttachmentUploader from '../asset-attachment-uploader'
+import TutorialStepsEditor from '../tutorial-steps-editor'
+import TutorialSteps from '../tutorial-steps'
 
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
@@ -403,6 +406,9 @@ export default ({ assetId }) => {
   const [isReportMessageOpen, setIsReportMessageOpen] = useState(false)
   const [isSpeciesEditorOpen, setIsSpeciesEditorOpen] = useState(false)
   const [isAttachFileFormOpen, setIsAttachFileFormOpen] = useState(false)
+  const [isTutorialStepsEditorOpen, setIsTutorialStepsEditorOpen] = useState(
+    false
+  )
   const hideChangeSpeciesTimeoutRef = useRef()
 
   const dispatch = useDispatch()
@@ -463,7 +469,8 @@ export default ({ assetId }) => {
     [AssetFieldNames.author]: author,
     [AssetFieldNames.children]: children,
     [AssetFieldNames.ownedBy]: ownedBy,
-    [AssetFieldNames.discordServer]: discordServer
+    [AssetFieldNames.discordServer]: discordServer,
+    [AssetFieldNames.tutorialSteps]: tutorialSteps = []
   } = result
 
   if (!title) {
@@ -686,6 +693,13 @@ export default ({ assetId }) => {
             </>
           ) : null}
 
+          {tutorialSteps.length ? (
+            <>
+              <Heading variant="h2">Steps</Heading>
+              <TutorialSteps steps={tutorialSteps} />
+            </>
+          ) : null}
+
           {isAttachFileFormOpen ? (
             <>
               <AssetAttachmentUploader
@@ -695,6 +709,23 @@ export default ({ assetId }) => {
             </>
           ) : isOwnerOrEditor ? (
             <EnableAttachFileButton />
+          ) : null}
+
+          {isTutorialStepsEditorOpen ? (
+            <TutorialStepsEditor
+              assetId={assetId}
+              existingSteps={tutorialSteps}
+              onSave={() => {
+                setIsTutorialStepsEditorOpen(false)
+              }}
+            />
+          ) : isOwnerOrEditor && category === AssetCategories.tutorial ? (
+            <Button
+              onClick={() => setIsTutorialStepsEditorOpen(true)}
+              color="default"
+              icon={<EditIcon />}>
+              Edit Tutorial Steps
+            </Button>
           ) : null}
 
           {children && children.length ? (

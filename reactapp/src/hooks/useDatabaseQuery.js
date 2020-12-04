@@ -73,7 +73,16 @@ export const AssetFieldNames = {
   ownedBy: 'ownedBy',
   isPinned: 'isPinned',
   discordServer: 'discordServer',
-  bannerUrl: 'bannerUrl'
+  bannerUrl: 'bannerUrl',
+  tutorialSteps: 'tutorialSteps'
+}
+
+export const TutorialStepFieldNames = {
+  number: 'number', // 1 onwards
+  title: 'title',
+  description: 'description',
+  imageUrls: 'imageUrls', // { url: string, fallbackUrl: string }
+  youtubeUrl: 'youtubeUrl'
 }
 
 export const AssetCategories = {

@@ -179,7 +179,7 @@ function Output({
       const optimizedImageUrl = ''
 
       setIsOptimizing(false)
-      setUploadedUrl(optimizedImageUrl)
+      setUploadedUrl(uploadedUrl)
 
       onUploadedUrls({
         fallbackUrl: uploadedUrl,
