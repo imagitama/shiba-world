@@ -15,7 +15,7 @@ import Button from '../../../button'
 import Heading from '../../../heading'
 import LoadingIndicator from '../../../loading-indicator'
 import ErrorMessage from '../../../error-message'
-import { isRef } from '../../../../utils'
+import { isRef, fixAccessingImagesUsingToken } from '../../../../utils'
 
 const useStyles = makeStyles({
   doneBtn: {
@@ -123,8 +123,12 @@ export default ({
               id: result.id,
               name: result[SpeciesFieldNames.singularName],
               shortDescription: result[SpeciesFieldNames.shortDescription],
-              optimizedThumbnailUrl: result[SpeciesFieldNames.thumbnailUrl],
-              thumbnailUrl: result[SpeciesFieldNames.fallbackThumbnailurl]
+              optimizedThumbnailUrl: fixAccessingImagesUsingToken(
+                result[SpeciesFieldNames.thumbnailUrl]
+              ),
+              thumbnailUrl: fixAccessingImagesUsingToken(
+                result[SpeciesFieldNames.fallbackThumbnailurl]
+              )
             }
           ])
 
