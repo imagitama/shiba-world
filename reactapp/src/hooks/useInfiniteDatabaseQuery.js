@@ -25,6 +25,10 @@ function getWhichSnapshotToStartAfter(pageNumber, resultsByPageNumber) {
   const prevPageResults = resultsByPageNumber[prevPageNumber]
   const numberOfResultsForPrevPage = prevPageResults.length
 
+  if (numberOfResultsForPrevPage.length === 0) {
+    return undefined
+  }
+
   return prevPageResults[numberOfResultsForPrevPage - 1].snapshot
 }
 
@@ -54,9 +58,7 @@ export default (
 
   const isChangingPageNumberRef = useRef(false)
 
-  const isAtEndOfQuery =
-    resultsByPageNumber[pageNumber] &&
-    resultsByPageNumber[pageNumber].length < maxResultsPerPage
+  const isAtEndOfQuery = queryResults && queryResults.length === 0
 
   const isAllowedToChangePageNumber = !isLoading && !isAtEndOfQuery
 
