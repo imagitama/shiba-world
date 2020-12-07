@@ -60,6 +60,7 @@ export default (
 
   const isAtEndOfQuery = queryResults && queryResults.length === 0
 
+  console.log('isAtEnd?', isAtEndOfQuery)
   const isAllowedToChangePageNumber = !isLoading && !isAtEndOfQuery
 
   useEffect(() => {
@@ -95,7 +96,10 @@ export default (
 
       const scrollAmount = window.pageYOffset
 
-      if (scrollAmount === document.body.offsetHeight - window.innerHeight) {
+      if (
+        Math.floor(scrollAmount) ===
+        document.body.offsetHeight - window.innerHeight
+      ) {
         // prevent edge case when user scrolls HEAPS and React is still re-rendering
         if (isChangingPageNumberRef.current) {
           console.debug('Cannot change page number (changing already)')
