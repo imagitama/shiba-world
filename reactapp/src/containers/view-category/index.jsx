@@ -100,10 +100,9 @@ function AvatarAssetResults({ assets }) {
       asset[AssetFieldNames.species].length
     ) {
       const speciesItem = asset[AssetFieldNames.species][0]
+      const key = speciesItem.id
 
-      speciesMetaById[speciesItem.singularName] = speciesItem
-
-      const key = speciesItem[SpeciesFieldNames.singularName]
+      speciesMetaById[key] = speciesItem
 
       return {
         ...obj,
@@ -123,27 +122,19 @@ function AvatarAssetResults({ assets }) {
     <>
       {Object.entries(assetsBySpecies)
         .sort(([nameA], [nameB]) => nameA.localeCompare(nameB))
-        .map(([speciesNameOrId, assetsForSpecies]) => (
-          <Fragment key={speciesNameOrId}>
+        .map(([speciesId, assetsForSpecies]) => (
+          <Fragment key={speciesId}>
             <Heading variant="h2">
               <Link
                 to={routes.viewSpeciesWithVar.replace(
                   ':speciesIdOrSlug',
-                  speciesNameOrId
+                  speciesId
                 )}>
-                {
-                  speciesMetaById[speciesNameOrId][
-                    SpeciesFieldNames.singularName
-                  ]
-                }
+                {speciesMetaById[speciesId][SpeciesFieldNames.singularName]}
               </Link>
             </Heading>
             <BodyText>
-              {
-                speciesMetaById[speciesNameOrId][
-                  SpeciesFieldNames.shortDescription
-                ]
-              }
+              {speciesMetaById[speciesId][SpeciesFieldNames.shortDescription]}
             </BodyText>
 
             <AssetResults assets={assetsForSpecies} showPinned />
