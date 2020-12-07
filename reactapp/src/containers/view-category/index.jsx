@@ -20,9 +20,9 @@ import AssetResults from '../../components/asset-results'
 import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'
 import SortDropdown from '../../components/sort-dropdown'
-import AllTagsBrowser from '../../components/all-tags-browser'
 import NoResultsMessage from '../../components/no-results-message'
 import Button from '../../components/button'
+import Message, { styles as messageStyles } from '../../components/message'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import useDatabaseQuery, {
@@ -33,6 +33,7 @@ import useDatabaseQuery, {
   AssetCategories,
   SpeciesFieldNames
 } from '../../hooks/useDatabaseQuery'
+import useInfiniteDatabaseQuery from '../../hooks/useInfiniteDatabaseQuery'
 import useStorage, { keys as storageKeys } from '../../hooks/useStorage'
 import { mediaQueryForMobiles } from '../../media-queries'
 import { scrollTo } from '../../utils'
@@ -156,8 +157,11 @@ function Assets({
   categoryName,
   sortByFieldName = null,
   sortByDirection = null,
-  groupAvatarsBySpecies = false
+  groupAvatarsBySpecies = false,
+  pageNumber = 1
 }) {
+  const ifToUseNonInfiniteQuery =
+    groupAvatarsBySpecies && categoryName === AssetCategories.avatar
   const [, , user] = useUserRecord()
 
   let whereClauses = [
@@ -176,17 +180,31 @@ function Assets({
     )
   }
 
-  const [isLoading, isErrored, results] = useDatabaseQuery(
+  const queryArgs = [
     CollectionNames.Assets,
     whereClauses.length ? whereClauses : undefined,
-    undefined,
     sortByFieldName && sortByDirection
       ? [sortByFieldName, sortByDirection]
       : undefined
-  )
+  ]
 
-  if (isLoading) {
-    return <LoadingIndicator />
+  const [
+    isLoading,
+    isErrored,
+    results,
+    isAtEndOfQuery
+  ] = ifToUseNonInfiniteQuery
+    ? useDatabaseQuery(...queryArgs)
+    : useInfiniteDatabaseQuery(pageNumber, ...queryArgs)
+
+  if (ifToUseNonInfiniteQuery) {
+    if (isLoading) {
+      return <LoadingIndicator />
+    }
+
+    if (results && !results.length) {
+      return <NoResultsMessage />
+    }
   }
 
   if (isErrored) {
@@ -197,15 +215,24 @@ function Assets({
     )
   }
 
-  if (!results.length) {
-    return <NoResultsMessage />
-  }
-
-  if (groupAvatarsBySpecies && categoryName === AssetCategories.avatar) {
+  if (ifToUseNonInfiniteQuery) {
     return <AvatarAssetResults assets={results} />
   }
 
-  return <AssetResults assets={results} />
+  return (
+    <>
+      <AssetResults assets={results} />
+      {isLoading ? (
+        <LoadingIndicator message="Loading..." />
+      ) : (
+        <Message style={messageStyles.BG}>
+          {isAtEndOfQuery
+            ? 'No more results found'
+            : 'Scroll to load more results'}
+        </Message>
+      )}
+    </>
+  )
 }
 
 export default ({
@@ -306,8 +333,6 @@ export default ({
           </>
         )}
       </div>
-      <Heading variant="h2">Tags</Heading>
-      <AllTagsBrowser lazyLoad />
     </>
   )
 }

@@ -264,7 +264,7 @@ export const SpeciesFieldNames = {
   slug: 'slug'
 }
 
-function getWhereClausesAsString(whereClauses) {
+export function getWhereClausesAsString(whereClauses) {
   if (whereClauses === undefined) {
     return 'undefined'
   }
@@ -285,6 +285,13 @@ function getWhereClausesAsString(whereClauses) {
       .join(',')
   }
   return whereClauses
+}
+
+function getStartAfterAsString(startAfter) {
+  if (!startAfter) {
+    return ''
+  }
+  return startAfter.id
 }
 
 function getIsGettingSingleRecord(whereClauses) {
@@ -424,7 +431,8 @@ export async function formatRawDocs(docs, fetchChildren = true) {
         : {
             ...doc.data(),
             id: doc.id,
-            parentPath: doc.ref.parent.path
+            parentPath: doc.ref.parent.path,
+            snapshot: doc
           }
     )
     .map(mapDates)
@@ -435,7 +443,7 @@ export async function formatRawDocs(docs, fetchChildren = true) {
   return Promise.all(mappedRefs.map(ref => mapDocArrays(ref, fetchChildren)))
 }
 
-function getOrderByAsString(orderBy) {
+export function getOrderByAsString(orderBy) {
   if (!orderBy) {
     return ''
   }
@@ -447,7 +455,8 @@ export default (
   whereClauses,
   limit,
   orderBy,
-  subscribe = true
+  subscribe = true,
+  startAfter = undefined
 ) => {
   const [recordOrRecords, setRecordOrRecords] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -456,11 +465,19 @@ export default (
 
   const whereClausesAsString = getWhereClausesAsString(whereClauses)
   const orderByAsString = getOrderByAsString(orderBy)
+  const startAfterAsString = getStartAfterAsString(startAfter)
 
   async function doIt() {
     try {
       if (inDevelopment()) {
-        console.debug('useDatabaseQuery', collectionName, whereClausesAsString)
+        console.debug(
+          'useDatabaseQuery',
+          collectionName,
+          whereClausesAsString,
+          limit,
+          orderByAsString,
+          startAfterAsString
+        )
       }
 
       setIsLoading(true)
@@ -495,6 +512,10 @@ export default (
 
       if (orderBy) {
         queryChain = queryChain.orderBy(orderBy[0], orderBy[1])
+      }
+
+      if (startAfter) {
+        queryChain = queryChain.startAfter(startAfter)
       }
 
       async function processResults(results) {
@@ -541,7 +562,12 @@ export default (
         unsubscribe()
       }
     }
-  }, [collectionName, whereClausesAsString, orderByAsString])
+  }, [
+    collectionName,
+    whereClausesAsString,
+    orderByAsString,
+    startAfterAsString
+  ])
 
   return [isLoading, isErrored, recordOrRecords]
 }
