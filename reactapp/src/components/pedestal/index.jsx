@@ -59,7 +59,11 @@ export default ({ videoUrl, fallbackImageUrl, children }) => {
     // fix a weird thing when it pauses randomly
     videoRef.current.addEventListener('pause', () => {
       console.debug('Pedestal video has paused -> playing')
-      videoRef.current.play()
+
+      // on unmount this might happen
+      if (videoRef.current) {
+        videoRef.current.play()
+      }
     })
   }, [])
 
