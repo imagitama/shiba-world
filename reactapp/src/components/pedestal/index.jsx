@@ -74,6 +74,7 @@ export default ({ videoUrl, fallbackImageUrl, children }) => {
           controls={false}
           autoPlay={true}
           loop={true}
+          muted={true}
           className={classes.video}>
           <source src={videoUrl} type="video/webm" />
         </video>
