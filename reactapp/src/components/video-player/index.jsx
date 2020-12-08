@@ -42,7 +42,7 @@ function getLabelForErrorState(errorState) {
   }
 }
 
-export default ({ url, onPlay = null }) => {
+export default ({ url, onPlay = null, ...otherProps }) => {
   const [errorState, setErrorState] = useState(null)
 
   return (
@@ -63,6 +63,7 @@ export default ({ url, onPlay = null }) => {
           setErrorState(getErrorStateForEvent(e))
         }}
         playing={true}
+        {...otherProps}
       />
       {errorState &&
         `An error has occured playing the video: ${getLabelForErrorState(

@@ -71,6 +71,7 @@ import ReportMessage from './components/report-message'
 import WorkInProgressMessage from './components/work-in-progress-message'
 import ChildrenAssets from './components/children-assets'
 import SpeciesOutput from './components/species-output'
+import VideoList from './components/video-list'
 
 import Pedestal from '../pedestal'
 import OwnerEditor from '../owner-editor'
@@ -712,7 +713,7 @@ export default ({ assetId }) => {
 
           {videoUrls.length ? (
             <>
-              <FileList assetId={id} fileUrls={videoUrls} />
+              <VideoList assetId={id} urls={videoUrls} />
             </>
           ) : null}
 
