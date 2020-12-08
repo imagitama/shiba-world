@@ -6,6 +6,7 @@ import { Helmet } from 'react-helmet'
 import EditIcon from '@material-ui/icons/Edit'
 import ReportIcon from '@material-ui/icons/Report'
 import LoyaltyIcon from '@material-ui/icons/Loyalty'
+import HighlightIcon from '@material-ui/icons/Highlight'
 import { useDispatch } from 'react-redux'
 import LazyLoad from 'react-lazyload'
 
@@ -41,6 +42,7 @@ import OpenForCommissionsMessage from '../open-for-commissions-message'
 import AssetAttachmentUploader from '../asset-attachment-uploader'
 import TutorialStepsEditor from '../tutorial-steps-editor'
 import TutorialSteps from '../tutorial-steps'
+import PedestalUploadForm from '../pedestal-upload-form'
 
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
@@ -49,6 +51,7 @@ import {
   getOpenGraphUrlForRouteUrl,
   canApproveAsset,
   canEditAsset,
+  canEditPedestal,
   isUrlAnImage,
   isUrlAVideo,
   isUrlNotAnImageOrVideo
@@ -69,6 +72,7 @@ import WorkInProgressMessage from './components/work-in-progress-message'
 import ChildrenAssets from './components/children-assets'
 import SpeciesOutput from './components/species-output'
 
+import Pedestal from '../pedestal'
 import OwnerEditor from '../owner-editor'
 import DownloadAssetButton from '../download-asset-button'
 import VisitSourceButton from '../visit-source-button'
@@ -224,6 +228,12 @@ const useStyles = makeStyles({
     cursor: 'pointer',
     '& svg': {
       fontSize: '1rem'
+    }
+  },
+  pedestalControls: {
+    margin: '2rem 0',
+    [mediaQueryForTabletsOrBelow]: {
+      display: 'none'
     }
   }
 })
@@ -409,6 +419,7 @@ export default ({ assetId }) => {
   const [isTutorialStepsEditorOpen, setIsTutorialStepsEditorOpen] = useState(
     false
   )
+  const [isEditingPedestal, setIsEditingPedestal] = useState(false)
   const hideChangeSpeciesTimeoutRef = useRef()
 
   const dispatch = useDispatch()
@@ -470,7 +481,9 @@ export default ({ assetId }) => {
     [AssetFieldNames.children]: children,
     [AssetFieldNames.ownedBy]: ownedBy,
     [AssetFieldNames.discordServer]: discordServer,
-    [AssetFieldNames.tutorialSteps]: tutorialSteps = []
+    [AssetFieldNames.tutorialSteps]: tutorialSteps = [],
+    [AssetFieldNames.pedestalVideoUrl]: pedestalVideoUrl,
+    [AssetFieldNames.pedestalFallbackImageUrl]: pedestalFallbackImageUrl
   } = result
 
   if (!title) {
@@ -496,6 +509,7 @@ export default ({ assetId }) => {
 
   const isApprover = canApproveAsset(user)
   const isOwnerOrEditor = canEditAsset(user, createdBy, ownedBy)
+  const isAbleToEditPedestal = canEditPedestal(user, createdBy, ownedBy)
 
   const EnableSpeciesEditorIcon = () => {
     if (isOwnerOrEditor && !isSpeciesEditorOpen) {
@@ -534,6 +548,52 @@ export default ({ assetId }) => {
     return <ErrorMessage>This asset has been deleted.</ErrorMessage>
   }
 
+  const AssetTitle = () => (
+    <div>
+      <Heading variant="h1" className={classes.title}>
+        <Link to={routes.viewAssetWithVar.replace(':assetId', assetId)}>
+          {title}
+        </Link>{' '}
+        <CreatedByMessage
+          author={author}
+          createdBy={createdBy}
+          categoryName={category}
+        />
+      </Heading>
+      <div className={classes.categoryMeta}>
+        {category && (
+          <div>
+            {species.length ? (
+              <>
+                <SpeciesOutput species={species} />
+                <EnableSpeciesEditorIcon />
+                {' / '}
+                <Link
+                  to={routes.viewSpeciesCategoryWithVar
+                    .replace(':speciesIdOrSlug', species[0].id)
+                    .replace(':categoryName', category)}>
+                  {getCategoryDisplayName(category)}
+                </Link>
+              </>
+            ) : (
+              <>
+                {allSpeciesLabel}
+                <EnableSpeciesEditorIcon /> -{' '}
+                <Link
+                  to={routes.viewCategoryWithVar.replace(
+                    ':categoryName',
+                    category
+                  )}>
+                  {getCategoryDisplayName(category)}
+                </Link>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+
   return (
     <div className={classes.root}>
       <Helmet>
@@ -567,56 +627,43 @@ export default ({ assetId }) => {
       {isPrivate === true && <IsPrivateMessage />}
       {tags && tags.includes('wip') && <WorkInProgressMessage />}
 
-      <div className={classes.thumbAndTitle}>
-        <div className={classes.thumbnailWrapper}>
-          <AssetThumbnail url={thumbnailUrl} className={classes.thumbnail} />
-        </div>
-        <div className={classes.titlesWrapper}>
-          <div>
-            <Heading variant="h1" className={classes.title}>
-              <Link to={routes.viewAssetWithVar.replace(':assetId', assetId)}>
-                {title}
-              </Link>{' '}
-              <CreatedByMessage
-                author={author}
-                createdBy={createdBy}
-                categoryName={category}
-              />
-            </Heading>
-            <div className={classes.categoryMeta}>
-              {category && (
-                <div>
-                  {species.length ? (
-                    <>
-                      <SpeciesOutput species={species} />
-                      <EnableSpeciesEditorIcon />
-                      {' / '}
-                      <Link
-                        to={routes.viewSpeciesCategoryWithVar
-                          .replace(':speciesIdOrSlug', species[0].id)
-                          .replace(':categoryName', category)}>
-                        {getCategoryDisplayName(category)}
-                      </Link>
-                    </>
-                  ) : (
-                    <>
-                      {allSpeciesLabel}
-                      <EnableSpeciesEditorIcon /> -{' '}
-                      <Link
-                        to={routes.viewCategoryWithVar.replace(
-                          ':categoryName',
-                          category
-                        )}>
-                        {getCategoryDisplayName(category)}
-                      </Link>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
+      {pedestalVideoUrl ? (
+        <Pedestal
+          videoUrl={pedestalVideoUrl}
+          fallbackImageUrl={pedestalFallbackImageUrl}>
+          <AssetTitle />
+          <div className={classes.pedestalControls}>
+            <VisitSourceButton
+              assetId={assetId}
+              sourceUrl={sourceUrl}
+              categoryName={category}
+              isNoFilesAttached={downloadUrls.length === 0}
+            />
+          </div>
+          <div className={classes.description}>
+            <Markdown source={description} />
+          </div>
+        </Pedestal>
+      ) : (
+        <div className={classes.thumbAndTitle}>
+          <div className={classes.thumbnailWrapper}>
+            <AssetThumbnail url={thumbnailUrl} className={classes.thumbnail} />
+          </div>
+          <div className={classes.titlesWrapper}>
+            <AssetTitle />
           </div>
         </div>
-      </div>
+      )}
+
+      {isEditingPedestal && (
+        <>
+          <Heading variant="h3">Edit Pedestal</Heading>
+          <PedestalUploadForm
+            assetId={assetId}
+            onDone={() => setIsEditingPedestal(false)}
+          />
+        </>
+      )}
 
       {isSpeciesEditorOpen && (
         <>
@@ -651,9 +698,11 @@ export default ({ assetId }) => {
         <div className={classes.leftCol}>
           {videoUrl && <VideoPlayer url={videoUrl} />}
 
-          <div className={classes.description}>
-            <Markdown source={description} />
-          </div>
+          {pedestalVideoUrl ? null : (
+            <div className={classes.description}>
+              <Markdown source={description} />
+            </div>
+          )}
 
           {downloadUrls.length ? (
             <>
@@ -744,7 +793,7 @@ export default ({ assetId }) => {
 
         <div className={classes.rightCol}>
           <div className={classes.controls}>
-            {sourceUrl && (
+            {sourceUrl && !pedestalVideoUrl && (
               <Control>
                 <VisitSourceButton
                   assetId={assetId}
@@ -881,6 +930,19 @@ export default ({ assetId }) => {
                     id={assetId}
                     actionCategory={actionCategory}
                   />
+                </Control>
+              </>
+            ) : null}
+
+            {isAbleToEditPedestal && isEditingPedestal === false ? (
+              <>
+                <Control>
+                  <Button
+                    onClick={() => setIsEditingPedestal(true)}
+                    color="default"
+                    icon={<HighlightIcon />}>
+                    Set Pedestal
+                  </Button>
                 </Control>
               </>
             ) : null}

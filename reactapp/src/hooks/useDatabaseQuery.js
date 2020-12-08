@@ -74,7 +74,9 @@ export const AssetFieldNames = {
   isPinned: 'isPinned',
   discordServer: 'discordServer',
   bannerUrl: 'bannerUrl',
-  tutorialSteps: 'tutorialSteps'
+  tutorialSteps: 'tutorialSteps',
+  pedestalVideoUrl: 'pedestalVideoUrl',
+  pedestalFallbackImageUrl: 'pedestalFallbackImageUrl'
 }
 
 export const TutorialStepFieldNames = {
