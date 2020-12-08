@@ -44,12 +44,13 @@ export default ({
     }
 
     try {
-      const url = await upload(
-        uploadedFileRef.current,
-        `${directoryPath}/${filePrefix ? `${filePrefix}___` : ''}${
-          uploadedFileRef.current.name
-        }`
-      )
+      const pathToUpload = `${directoryPath}/${
+        filePrefix ? `${filePrefix}___` : ''
+      }${uploadedFileRef.current.name}`
+
+      console.debug(`Uploading file "${pathToUpload}"`)
+
+      const url = await upload(uploadedFileRef.current, pathToUpload)
 
       onDownloadUrl(url)
     } catch (err) {

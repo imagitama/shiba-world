@@ -16,7 +16,7 @@ import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import { handleError } from '../../error-handling'
 import { trackAction } from '../../analytics'
 
-function VideoUploadForm({ onUploaded }) {
+function VideoUploadForm({ assetId, onUploaded }) {
   const [uploadedUrl, setUploadedUrl] = useState(false)
 
   const onUploadedVideo = url => {
@@ -55,14 +55,17 @@ function VideoUploadForm({ onUploaded }) {
             <li>convert to webm by following [these steps]</li>
             <li>generate a fallback image by following [these steps]</li>
           </ul>
-          <FileUploader onDownloadUrl={onUploadedVideo} />
+          <FileUploader
+            directoryPath={`pedestals/${assetId}`}
+            onDownloadUrl={onUploadedVideo}
+          />
         </>
       )}
     </Paper>
   )
 }
 
-function ImageUploadForm({ onUploaded }) {
+function ImageUploadForm({ assetId, onUploaded }) {
   const [uploadedUrl, setUploadedUrl] = useState(false)
 
   const onUploadedFallbackImage = url => {
@@ -96,7 +99,10 @@ function ImageUploadForm({ onUploaded }) {
             <li>1000x1000 dimensions</li>
             <li>under 200kb</li>
           </ul>
-          <FileUploader onDownloadUrl={onUploadedFallbackImage} />
+          <FileUploader
+            directoryPath={`pedestals/${assetId}`}
+            onDownloadUrl={onUploadedFallbackImage}
+          />
         </>
       )}
     </Paper>
@@ -142,8 +148,14 @@ export default ({ assetId, onDone }) => {
 
   return (
     <div>
-      <VideoUploadForm onUploaded={url => setUploadedVideoUrl(url)} />
-      <ImageUploadForm onUploaded={url => setUploadedFallbackImageUrl(url)} />
+      <VideoUploadForm
+        assetId={assetId}
+        onUploaded={url => setUploadedVideoUrl(url)}
+      />
+      <ImageUploadForm
+        assetId={assetId}
+        onUploaded={url => setUploadedFallbackImageUrl(url)}
+      />
       {uploadedVideoUrl && uploadedFallbackImageUrl && (
         <>
           <Paper>
