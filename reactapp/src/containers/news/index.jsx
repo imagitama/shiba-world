@@ -27,6 +27,13 @@ const useStyles = makeStyles({
   }
 })
 
+function trimDescription(description) {
+  if (description.length >= 200) {
+    return `${description.substr(0, 200)}...`
+  }
+  return description
+}
+
 function Articles() {
   const [, , user] = useUserRecord()
   const classes = useStyles()
@@ -74,7 +81,7 @@ function Articles() {
             key={id}
             url={routes.viewAssetWithVar.replace(':assetId', id)}
             title={title}
-            description={description}
+            description={trimDescription(description)}
             author={createdBy}
             date={createdAt}
             thumbnailUrl={thumbnailUrl}
