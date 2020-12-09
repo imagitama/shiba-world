@@ -156,6 +156,9 @@ const Patreon = lazy(() =>
 const ResetPassword = lazy(() =>
   catchChunkDeaths(() => import('./containers/reset-password'))
 )
+const Pedestals = lazy(() =>
+  catchChunkDeaths(() => import('./containers/pedestals'))
+)
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
   return (
@@ -376,6 +379,7 @@ const MainContent = () => {
         <Route exact path={routes.discordServers} component={DiscordServers} />
         <Route exact path={routes.patreon} component={Patreon} />
         <Route exact path={routes.resetPassword} component={ResetPassword} />
+        <Route exact path={routes.pedestals} component={Pedestals} />
         <Route
           component={() => (
             <ErrorContainer code={404} message="Page not found" />
