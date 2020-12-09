@@ -27,7 +27,8 @@ export default () => {
   const classes = useStyles()
   let [, , results] = useDatabaseQuery(CollectionNames.Assets, [
     [AssetFieldNames.isApproved, Operators.EQUALS, false],
-    [AssetFieldNames.isDeleted, Operators.EQUALS, false]
+    [AssetFieldNames.isDeleted, Operators.EQUALS, false],
+    [AssetFieldNames.isPrivate, Operators.EQUALS, false]
   ])
 
   if (!user || !isUserStaff(user) || !results || !results.length) {
