@@ -6,3 +6,4 @@ node_modules/
 .patreonconfig.json
 .globalconfig.json
 credentials.json
+.vrchatconfig.json

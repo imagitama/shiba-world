@@ -2,6 +2,7 @@
   "isAlgoliaEnabled": "true",
   "isDiscordEnabled": "true",
   "isTwitterEnabled": "true",
+  "isVrchatEnabled": "true",
   "isBackupEnabled": "true",
   "backupBucketName": ""
 }

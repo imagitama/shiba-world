@@ -14,8 +14,9 @@
     "load-twitter-config": "firebase functions:config:set twitter=\"$(cat .twitterconfig.json)\"",
     "load-discord-config": "firebase functions:config:set discord=\"$(cat .discordconfig.json)\"",
     "load-patreon-config": "firebase functions:config:set patreon=\"$(cat .patreonconfig.json)\"",
+    "load-vrchat-config": "firebase functions:config:set vrchat=\"$(cat .vrchatconfig.json)\"",
     "load-global-config": "firebase functions:config:set global=\"$(cat .globalconfig.json)\"",
-    "load-config": "npm run load-algolia-config && npm run load-twitter-config && npm run load-discord-config && npm run load-patreon-config && npm run load-global-config"
+    "load-config": "npm run load-algolia-config && npm run load-twitter-config && npm run load-discord-config && npm run load-patreon-config && npm run load-vrchat-config && npm run load-global-config"
   },
   "engines": {
     "node": "10"

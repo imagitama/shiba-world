@@ -26,3 +26,4 @@ if (IS_BACKUP_ENABLED) {
 
 exports.optimizeImage = require('./src/functions/optimizeImage')
 exports.getPatreonUserInfo = require('./src/functions/getPatreonUserInfo')
+exports.lookupVrchatUsername = require('./src/functions/lookupVrchatUsername')

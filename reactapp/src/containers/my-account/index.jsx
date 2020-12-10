@@ -17,6 +17,7 @@ import NoPermissionMessage from '../../components/no-permission-message'
 import MyUploads from '../../components/my-uploads'
 import SocialMediaUsernamesEditor from '../../components/social-media-usernames-editor'
 import BioEditor from '../../components/bio-editor'
+import VrchatConnectForm from '../../components/vrchat-connect-form'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
@@ -117,7 +118,8 @@ export default () => {
           <Tab label="Profile" index={3} />
           <Tab label="Social" index={4} />
           <Tab label="Patreon" index={patreonConnectFormTabIdx} />
-          <Tab label="Uploads" index={6} />
+          <Tab label="VRChat" index={6} />
+          <Tab label="Uploads" index={7} />
         </Tabs>
         <div className={classes.tabPanels}>
           <TabPanel value={activeTabIdx} index={0}>
@@ -177,6 +179,10 @@ export default () => {
             <PatreonConnectForm />
           </TabPanel>
           <TabPanel value={activeTabIdx} index={6}>
+            <Heading variant="h2">VRChat</Heading>
+            <VrchatConnectForm />
+          </TabPanel>
+          <TabPanel value={activeTabIdx} index={7}>
             <Heading variant="h2">Your Uploads</Heading>
             <MyUploads />
           </TabPanel>
