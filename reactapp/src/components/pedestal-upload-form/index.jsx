@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { makeStyles } from '@material-ui/core/styles'
 
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { CollectionNames, AssetFieldNames } from '../../hooks/useDatabaseQuery'
@@ -8,7 +9,6 @@ import Paper from '../paper'
 import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
 import Heading from '../heading'
-import VideoPlayer from '../video-player'
 import Button from '../button'
 
 import { createRef } from '../../utils'
@@ -16,44 +16,52 @@ import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import { handleError } from '../../error-handling'
 import { trackAction } from '../../analytics'
 
+const useStyles = makeStyles({
+  root: {
+    margin: '1rem 0'
+  },
+  heading: {
+    margin: '0 0 1rem 0'
+  },
+  preview: {
+    width: 500,
+    height: 500
+  }
+})
+
 function VideoUploadForm({ assetId, onUploaded }) {
   const [uploadedUrl, setUploadedUrl] = useState(false)
+  const classes = useStyles()
 
   const onUploadedVideo = url => {
     setUploadedUrl(url)
-    onUploaded(url)
   }
 
   return (
-    <Paper>
-      <Heading variant="h3">Video</Heading>
+    <>
+      <Heading variant="h3" className={classes.heading}>
+        Step 1: Video
+      </Heading>
       {uploadedUrl ? (
         <>
           <p>Upload successful!</p>
-          <VideoPlayer url={uploadedUrl} />
+          <video className={classes.preview} autoPlay muted loop>
+            <source src={uploadedUrl} />
+          </video>
+          <br />
+          <Button onClick={() => onUploaded(uploadedUrl)}>Next Step</Button>
         </>
       ) : (
         <>
           <p>
-            You can upload a <strong>very specific</strong> video here. This
-            video must meet these requirements:
+            You can upload a <strong>very specific</strong> video here. How to
+            do so are in the #patrons channel of our Discord server (click the
+            icon at the top left of the page).
           </p>
           <ul>
+            <li>1000x1000</li>
             <li>transparent .webm</li>
-            <li>1000x1000 dimensions</li>
-            <li>10 seconds duration</li>
             <li>under 2mb</li>
-          </ul>
-          <p>Steps to generate this video:</p>
-          <ul>
-            <li>open [this Unity project] and import your model</li>
-            <li>place it under the "rotator" object in the Hierarchy</li>
-            <li>
-              open Unity Recorder and ensure it matches [these settings] and
-              record
-            </li>
-            <li>convert to webm by following [these steps]</li>
-            <li>generate a fallback image by following [these steps]</li>
           </ul>
           <FileUploader
             directoryPath={`pedestals/${assetId}`}
@@ -61,38 +69,42 @@ function VideoUploadForm({ assetId, onUploaded }) {
           />
         </>
       )}
-    </Paper>
+    </>
   )
 }
 
 function ImageUploadForm({ assetId, onUploaded }) {
   const [uploadedUrl, setUploadedUrl] = useState(false)
+  const classes = useStyles()
 
   const onUploadedFallbackImage = url => {
     setUploadedUrl(url)
-    onUploaded(url)
   }
 
   return (
-    <Paper>
+    <>
       {uploadedUrl ? (
         <>
           <p>Upload successful!</p>
-          <src
-            url={uploadedUrl}
+          <img
+            src={uploadedUrl}
             alt="Uploaded fallback"
             width="500"
             height="500"
+            className={classes.preview}
           />
+          <Button onClick={() => onUploaded(uploadedUrl)}>Next Step</Button>
         </>
       ) : (
         <>
-          <Heading variant="h3">Fallback Image</Heading>
+          <Heading variant="h3" className={classes.heading}>
+            Step 2: Fallback Image
+          </Heading>
           <p>
             Some browsers cannot view webm videos or the user might be on a slow
-            connection so we will display a fallback image instead. As with the
-            video, this image is <strong>very specific</strong> and has these
-            strict requirements:
+            connection so we will display a fallback image instead. Instructions
+            for how to generate this image from your video are in the #patrons
+            channel.
           </p>
           <ul>
             <li>transparent .webp</li>
@@ -105,7 +117,7 @@ function ImageUploadForm({ assetId, onUploaded }) {
           />
         </>
       )}
-    </Paper>
+    </>
   )
 }
 
@@ -117,6 +129,7 @@ export default ({ assetId, onDone }) => {
     CollectionNames.Assets,
     assetId
   )
+  const classes = useStyles()
 
   const onSaveBtnClick = async () => {
     try {
@@ -147,26 +160,26 @@ export default ({ assetId, onDone }) => {
   }
 
   return (
-    <div>
-      <VideoUploadForm
-        assetId={assetId}
-        onUploaded={url => setUploadedVideoUrl(url)}
-      />
-      <ImageUploadForm
-        assetId={assetId}
-        onUploaded={url => setUploadedFallbackImageUrl(url)}
-      />
-      {uploadedVideoUrl && uploadedFallbackImageUrl && (
+    <Paper className={classes.root}>
+      {uploadedVideoUrl && uploadedFallbackImageUrl ? (
         <>
-          <Paper>
-            <Heading variant="h3">Submit</Heading>
-            <p>
-              You can now save the pedestal for the asset by clicking below:
-            </p>
-            <Button onClick={onSaveBtnClick}>Save</Button>
-          </Paper>
+          <Heading variant="h3" className={classes.heading}>
+            Step 3: Save
+          </Heading>
+          <p>You can now save the pedestal for the asset by clicking below:</p>
+          <Button onClick={onSaveBtnClick}>Save</Button>
         </>
+      ) : uploadedVideoUrl ? (
+        <ImageUploadForm
+          assetId={assetId}
+          onUploaded={url => setUploadedFallbackImageUrl(url)}
+        />
+      ) : (
+        <VideoUploadForm
+          assetId={assetId}
+          onUploaded={url => setUploadedVideoUrl(url)}
+        />
       )}
-    </div>
+    </Paper>
   )
 }
