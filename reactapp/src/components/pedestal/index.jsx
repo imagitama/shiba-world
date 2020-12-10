@@ -18,20 +18,30 @@ const useStyles = makeStyles({
       width: '100%'
     }
   },
+  leftCol: {},
   rightCol: {
     display: 'flex',
     alignItems: 'center'
   },
+  videoWrapper: {
+    position: 'relative'
+  },
   video: {
     position: 'relative',
     zIndex: 100
+  },
+  shadowWrapper: {
+    position: 'absolute',
+    top: '50%',
+    left: 0,
+    transform: 'translateY(-25%)'
   },
   shadow: {
     position: 'absolute',
     bottom: '0',
     left: '0',
     width: '100%',
-    height: '25%',
+    height: '20%',
     background:
       'radial-gradient(ellipse, rgba(0,0,0,1) 0%, rgba(255,255,255,0) 50%)'
   },
@@ -71,25 +81,29 @@ export default ({ videoUrl, fallbackImageUrl, children }) => {
   return (
     <div className={classes.root}>
       <div className={`${classes.col} ${classes.leftCol}`}>
-        <div className={classes.shadow} />
-        <video
-          ref={videoRef}
-          width="100%"
-          controls={false}
-          autoPlay={true}
-          loop={true}
-          muted={true}
-          className={classes.video}>
-          <source src={videoUrl} type="video/webm" />
-        </video>
-        {isVideoLoaded === false && (
-          <img
-            src={fallbackImageUrl}
+        <div className={classes.videoWrapper}>
+          {/* <div className={classes.shadowWrapper}> */}
+          <div className={classes.shadow} />
+          {/* </div> */}
+          <video
+            ref={videoRef}
             width="100%"
-            className={classes.video}
-            alt="Fallback"
-          />
-        )}
+            controls={false}
+            autoPlay={true}
+            loop={true}
+            muted={true}
+            className={classes.video}>
+            <source src={videoUrl} type="video/webm" />
+          </video>
+          {isVideoLoaded === false && (
+            <img
+              src={fallbackImageUrl}
+              width="100%"
+              className={classes.video}
+              alt="Fallback"
+            />
+          )}
+        </div>
       </div>
       <div className={`${classes.col} ${classes.rightCol}`}>
         <div>{children}</div>
