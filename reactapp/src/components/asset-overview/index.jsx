@@ -236,6 +236,14 @@ const useStyles = makeStyles({
     [mediaQueryForTabletsOrBelow]: {
       display: 'none'
     }
+  },
+  pedestalDiscordServerInfo: {
+    marginTop: '0.5rem',
+    opacity: 0.5,
+    '&:hover': {
+      cursor: 'default',
+      opacity: 1
+    }
   }
 })
 
@@ -640,6 +648,11 @@ export default ({ assetId }) => {
               categoryName={category}
               isNoFilesAttached={downloadUrls.length === 0}
             />
+            {discordServer && (
+              <div className={classes.pedestalDiscordServerInfo}>
+                <DiscordServerInfo discordServer={discordServer} />
+              </div>
+            )}
           </div>
           <div className={classes.description}>
             <Markdown source={description} />
@@ -819,7 +832,9 @@ export default ({ assetId }) => {
                 />
               </Control>
             ) : null}
-            <DiscordServerInfo discordServer={discordServer} />
+            {!pedestalVideoUrl && (
+              <DiscordServerInfo discordServer={discordServer} />
+            )}
             <Control>
               <ReportButton
                 assetId={id}
