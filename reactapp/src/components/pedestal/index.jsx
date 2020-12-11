@@ -28,7 +28,11 @@ const useStyles = makeStyles({
   },
   video: {
     position: 'relative',
-    zIndex: 100
+    zIndex: 100,
+    opacity: 0
+  },
+  loaded: {
+    opacity: 1
   },
   shadowWrapper: {
     position: 'absolute',
@@ -92,7 +96,9 @@ export default ({ videoUrl, fallbackImageUrl, children }) => {
             autoPlay={true}
             loop={true}
             muted={true}
-            className={classes.video}>
+            className={`${classes.video} ${
+              isVideoLoaded ? classes.loaded : ''
+            }`}>
             <source src={videoUrl} type="video/webm" />
           </video>
           {isVideoLoaded === false && (
