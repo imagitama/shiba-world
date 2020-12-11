@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { makeStyles } from '@material-ui/core/styles'
+import { Link } from 'react-router-dom'
 
 import ErrorMessage from '../../components/error-message'
 import LoadingIndicator from '../../components/loading-indicator'
@@ -12,6 +13,7 @@ import useDatabaseQuery, {
   CollectionNames,
   AssetFieldNames
 } from '../../hooks/useDatabaseQuery'
+import * as routes from '../../routes'
 
 const useStyles = makeStyles({
   pedestals: {
@@ -45,7 +47,7 @@ const useStyles = makeStyles({
   }
 })
 
-function Pedestal({ videoUrl, fallbackImageUrl }) {
+function Pedestal({ assetId, videoUrl, fallbackImageUrl }) {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
   const videoRef = useRef()
   const pedestalRef = useRef()
@@ -67,25 +69,31 @@ function Pedestal({ videoUrl, fallbackImageUrl }) {
 
   return (
     <div className={classes.pedestal} ref={pedestalRef}>
-      <div className={classes.shadow} />
-      <video
-        ref={videoRef}
-        width="100%"
-        controls={false}
-        autoPlay={false}
-        loop={true}
-        muted={true}
-        className={`${classes.video} ${isVideoLoaded ? classes.playing : ''}`}>
-        <source src={videoUrl} type="video/webm" />
-      </video>
-      {!isVideoLoaded && (
-        <img
-          src={fallbackImageUrl}
+      <Link to={routes.viewAssetWithVar.replace(':assetId', assetId)}>
+        <div className={classes.shadow} />
+        <video
+          ref={videoRef}
           width="100%"
-          className={`${classes.image} ${isVideoLoaded ? classes.playing : ''}`}
-          alt="Fallback"
-        />
-      )}
+          controls={false}
+          autoPlay={false}
+          loop={true}
+          muted={true}
+          className={`${classes.video} ${
+            isVideoLoaded ? classes.playing : ''
+          }`}>
+          <source src={videoUrl} type="video/webm" />
+        </video>
+        {!isVideoLoaded && (
+          <img
+            src={fallbackImageUrl}
+            width="100%"
+            className={`${classes.image} ${
+              isVideoLoaded ? classes.playing : ''
+            }`}
+            alt="Fallback"
+          />
+        )}
+      </Link>
     </div>
   )
 }
@@ -97,7 +105,8 @@ function Pedestals({ pedestals }) {
     <div className={classes.pedestals}>
       {pedestals.map(pedestal => (
         <Pedestal
-          key={pedestal[AssetFieldNames.pedestalVideoUrl]}
+          key={pedestal.id}
+          assetId={pedestal.id}
           videoUrl={pedestal[AssetFieldNames.pedestalVideoUrl]}
           fallbackImageUrl={pedestal[AssetFieldNames.pedestalFallbackImageUrl]}
         />
@@ -144,6 +153,7 @@ function Assets() {
   return (
     <Pedestals
       pedestals={resultsWithPedestals.map(asset => ({
+        id: asset.id,
         [AssetFieldNames.pedestalVideoUrl]:
           asset[AssetFieldNames.pedestalVideoUrl],
         [AssetFieldNames.pedestalFallbackImageUrl]:
