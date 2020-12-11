@@ -6,5 +6,6 @@ export default ({ url, className }) => (
     allow="autoplay; fullscreen; vr"
     src={url}
     className={className}
+    title="Sketchfab embed"
   />
 )
