@@ -7,6 +7,7 @@ import EditIcon from '@material-ui/icons/Edit'
 import ReportIcon from '@material-ui/icons/Report'
 import LoyaltyIcon from '@material-ui/icons/Loyalty'
 import HighlightIcon from '@material-ui/icons/Highlight'
+import ControlCameraIcon from '@material-ui/icons/ControlCamera'
 import { useDispatch } from 'react-redux'
 import LazyLoad from 'react-lazyload'
 
@@ -78,6 +79,8 @@ import OwnerEditor from '../owner-editor'
 import DownloadAssetButton from '../download-asset-button'
 import VisitSourceButton from '../visit-source-button'
 import ChangeDiscordServerForm from '../change-discord-server-form'
+import SketchfabEmbed from '../sketchfab-embed'
+import SketchfabEmbedEditor from '../sketchfab-embed-editor'
 
 const useStyles = makeStyles({
   root: {
@@ -244,6 +247,10 @@ const useStyles = makeStyles({
       cursor: 'default',
       opacity: 1
     }
+  },
+  sketchfabEmbed: {
+    width: '100%',
+    height: '400px'
   }
 })
 
@@ -429,6 +436,8 @@ export default ({ assetId }) => {
     false
   )
   const [isEditingPedestal, setIsEditingPedestal] = useState(false)
+  const [isSketchfabEmbedVisible, setIsSketchfabEmbedVisible] = useState(false)
+  const [isEditingSketchfabEmbed, setIsEditingSketchfabEmbed] = useState(false)
   const hideChangeSpeciesTimeoutRef = useRef()
 
   const dispatch = useDispatch()
@@ -492,7 +501,8 @@ export default ({ assetId }) => {
     [AssetFieldNames.discordServer]: discordServer,
     [AssetFieldNames.tutorialSteps]: tutorialSteps = [],
     [AssetFieldNames.pedestalVideoUrl]: pedestalVideoUrl,
-    [AssetFieldNames.pedestalFallbackImageUrl]: pedestalFallbackImageUrl
+    [AssetFieldNames.pedestalFallbackImageUrl]: pedestalFallbackImageUrl,
+    [AssetFieldNames.sketchfabEmbedUrl]: sketchfabEmbedUrl
   } = result
 
   if (!title) {
@@ -603,6 +613,35 @@ export default ({ assetId }) => {
     </div>
   )
 
+  const ViewSketchfabEmbedButton = () =>
+    sketchfabEmbedUrl ? (
+      <Button
+        onClick={() => {
+          setIsSketchfabEmbedVisible(!isSketchfabEmbedVisible)
+          trackAction(
+            analyticsCategoryName,
+            'Click view 3D model button',
+            assetId
+          )
+        }}
+        icon={<ControlCameraIcon />}
+        color="default">
+        View 3D Model
+      </Button>
+    ) : null
+
+  const Description = () => (
+    <div className={classes.description}>
+      {isSketchfabEmbedVisible && (
+        <SketchfabEmbed
+          url={sketchfabEmbedUrl}
+          className={classes.sketchfabEmbed}
+        />
+      )}
+      <Markdown source={description} />
+    </div>
+  )
+
   return (
     <div className={classes.root}>
       <Helmet>
@@ -647,16 +686,15 @@ export default ({ assetId }) => {
               sourceUrl={sourceUrl}
               categoryName={category}
               isNoFilesAttached={downloadUrls.length === 0}
-            />
+            />{' '}
+            <ViewSketchfabEmbedButton />
             {discordServer && (
               <div className={classes.pedestalDiscordServerInfo}>
                 <DiscordServerInfo discordServer={discordServer} />
               </div>
             )}
           </div>
-          <div className={classes.description}>
-            <Markdown source={description} />
-          </div>
+          <Description />
         </Pedestal>
       ) : (
         <div className={classes.thumbAndTitle}>
@@ -690,6 +728,17 @@ export default ({ assetId }) => {
         </>
       )}
 
+      {isEditingSketchfabEmbed && (
+        <>
+          <Heading variant="h3">Embed Sketchfab</Heading>
+          <SketchfabEmbedEditor
+            assetId={assetId}
+            sketchfabEmbedUrl={sketchfabEmbedUrl}
+            onDone={() => setIsEditingSketchfabEmbed(false)}
+          />
+        </>
+      )}
+
       {author &&
         author[AuthorFieldNames.isOpenForCommission] &&
         author[AuthorFieldNames.showOpenForCommissionsInAssets] && (
@@ -712,11 +761,7 @@ export default ({ assetId }) => {
         <div className={classes.leftCol}>
           {videoUrl && <VideoPlayer url={videoUrl} />}
 
-          {pedestalVideoUrl ? null : (
-            <div className={classes.description}>
-              <Markdown source={description} />
-            </div>
-          )}
+          {pedestalVideoUrl ? null : <Description />}
 
           {downloadUrls.length ? (
             <>
@@ -946,6 +991,14 @@ export default ({ assetId }) => {
                     id={assetId}
                     actionCategory={actionCategory}
                   />
+                </Control>
+                <Control>
+                  <Button
+                    onClick={() => setIsEditingSketchfabEmbed(true)}
+                    icon={<ControlCameraIcon />}
+                    color="default">
+                    Embed Sketchfab
+                  </Button>
                 </Control>
               </>
             ) : null}

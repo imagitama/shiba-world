@@ -76,7 +76,8 @@ export const AssetFieldNames = {
   bannerUrl: 'bannerUrl',
   tutorialSteps: 'tutorialSteps',
   pedestalVideoUrl: 'pedestalVideoUrl',
-  pedestalFallbackImageUrl: 'pedestalFallbackImageUrl'
+  pedestalFallbackImageUrl: 'pedestalFallbackImageUrl',
+  sketchfabEmbedUrl: 'sketchfabEmbedUrl'
 }
 
 export const TutorialStepFieldNames = {
