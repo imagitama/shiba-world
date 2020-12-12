@@ -29,7 +29,7 @@ const useStyles = makeStyles({
   }
 })
 
-function VideoUploadForm({ assetId, onUploaded }) {
+function VideoUploadForm({ assetId, userId, onUploaded }) {
   const [uploadedUrl, setUploadedUrl] = useState(false)
   const classes = useStyles()
 
@@ -64,7 +64,8 @@ function VideoUploadForm({ assetId, onUploaded }) {
             <li>under 2mb</li>
           </ul>
           <FileUploader
-            directoryPath={`pedestals/${assetId}`}
+            directoryPath={`pedestals/${userId ? 'users/' : ''}${assetId ||
+              userId}`}
             onDownloadUrl={onUploadedVideo}
           />
         </>
@@ -73,7 +74,7 @@ function VideoUploadForm({ assetId, onUploaded }) {
   )
 }
 
-function ImageUploadForm({ assetId, onUploaded }) {
+function ImageUploadForm({ assetId, userId, onUploaded }) {
   const [uploadedUrl, setUploadedUrl] = useState(false)
   const classes = useStyles()
 
@@ -112,7 +113,8 @@ function ImageUploadForm({ assetId, onUploaded }) {
             <li>under 200kb</li>
           </ul>
           <FileUploader
-            directoryPath={`pedestals/${assetId}`}
+            directoryPath={`pedestals/${userId ? 'users/' : ''}${assetId ||
+              userId}`}
             onDownloadUrl={onUploadedFallbackImage}
           />
         </>
@@ -126,14 +128,18 @@ export default ({ assetId, onDone }) => {
   const [uploadedVideoUrl, setUploadedVideoUrl] = useState('')
   const [uploadedFallbackImageUrl, setUploadedFallbackImageUrl] = useState('')
   const [isSaving, , isSaveError, save] = useDatabaseSave(
-    CollectionNames.Assets,
-    assetId
+    assetId ? CollectionNames.Assets : CollectionNames.Users,
+    assetId || userId
   )
   const classes = useStyles()
 
   const onSaveBtnClick = async () => {
     try {
-      trackAction('ViewAsset', 'Click save pedestal button', assetId)
+      trackAction(
+        assetId ? 'ViewAsset' : 'MyAccount',
+        'Click save pedestal button',
+        assetId
+      )
 
       await save({
         [AssetFieldNames.pedestalVideoUrl]: uploadedVideoUrl,
@@ -145,18 +151,26 @@ export default ({ assetId, onDone }) => {
         )
       })
 
-      onDone()
+      if (onDone) {
+        onDone()
+      }
     } catch (err) {
       console.error(err)
       handleError(err)
     }
   }
   if (isSaving) {
-    return <LoadingIndicator message="Saving asset..." />
+    return (
+      <LoadingIndicator
+        message={`Saving ${assetId ? 'asset' : 'your account'}...`}
+      />
+    )
   }
 
   if (isSaveError) {
-    return <ErrorMessage>Failed to save asset</ErrorMessage>
+    return (
+      <ErrorMessage>Failed to save {assetId ? 'asset' : 'user'}</ErrorMessage>
+    )
   }
 
   return (
@@ -166,7 +180,7 @@ export default ({ assetId, onDone }) => {
           <Heading variant="h3" className={classes.heading}>
             Step 3: Save
           </Heading>
-          <p>You can now save the pedestal for the asset by clicking below:</p>
+          <p>You can now save the pedestal by clicking below:</p>
           <Button onClick={onSaveBtnClick}>Save</Button>
         </>
       ) : uploadedVideoUrl ? (

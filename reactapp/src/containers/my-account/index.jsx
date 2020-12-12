@@ -28,6 +28,7 @@ import {
   queryForTabletsOrBelow,
   mediaQueryForTabletsOrBelow
 } from '../../media-queries'
+import PedestalUploadForm from '../../components/pedestal-upload-form'
 
 function WelcomeMessage() {
   const [isLoading, isErrored, user] = useUserRecord()
@@ -162,6 +163,9 @@ export default () => {
                 )
               }
             />
+            {userId === '04D3yeAUxTMWo8MxscQImHJwtLV2' && (
+              <PedestalUploadForm userId="04D3yeAUxTMWo8MxscQImHJwtLV2" />
+            )}
           </TabPanel>
           <TabPanel value={activeTabIdx} index={4}>
             <Heading variant="h2">Social Media</Heading>

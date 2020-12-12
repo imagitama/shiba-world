@@ -25,6 +25,7 @@ import SocialMediaList from '../social-media-list'
 import Button from '../button'
 import AuthorResults from '../author-results'
 import Avatar from '../avatar'
+import Pedestal from '../pedestal'
 
 import * as routes from '../../routes'
 import { createRef, isFallbackImageDefinition } from '../../utils'
@@ -232,39 +233,17 @@ export default ({ userId }) => {
 
   const {
     [UserFieldNames.username]: username = '',
-    [UserFieldNames.isBanned]: isBanned
+    [UserFieldNames.isBanned]: isBanned,
+    [AssetFieldNames.pedestalVideoUrl]: pedestalVideoUrl,
+    [AssetFieldNames.pedestalFallbackImageUrl]: pedestalFallbackImageUrl
   } = user
 
   if (!username) {
     return <ErrorMessage>User does not appear to exist</ErrorMessage>
   }
 
-  return (
+  const PedestalContents = () => (
     <>
-      <Helmet>
-        <title>View the assets uploaded by {username} | VRCArena</title>
-        <meta
-          name="description"
-          content={`Browse all of the accessories, animations, avatars, news articles, tutorials and more uploaded by ${username}`}
-        />
-      </Helmet>
-      <Avatar
-        username={user.username}
-        url={
-          user && user[UserFieldNames.avatarUrl]
-            ? isFallbackImageDefinition(user[UserFieldNames.avatarUrl])
-              ? user[UserFieldNames.avatarUrl].url
-              : user[UserFieldNames.avatarUrl]
-            : null
-        }
-        fallbackUrl={
-          user &&
-          user[UserFieldNames.avatarUrl] &&
-          isFallbackImageDefinition(user[UserFieldNames.avatarUrl])
-            ? user[UserFieldNames.avatarUrl].fallbackUrl
-            : null
-        }
-      />
       <Heading
         variant="h1"
         className={`${classes.username} ${isBanned ? classes.isBanned : ''}`}>
@@ -279,6 +258,46 @@ export default ({ userId }) => {
       )}
       {isStaffMember(user) && <StaffMemberMessage />}
       <Profile userId={userId} />
+    </>
+  )
+
+  return (
+    <>
+      <Helmet>
+        <title>View the assets uploaded by {username} | VRCArena</title>
+        <meta
+          name="description"
+          content={`Browse all of the accessories, animations, avatars, news articles, tutorials and more uploaded by ${username}`}
+        />
+      </Helmet>
+      {pedestalVideoUrl ? (
+        <Pedestal
+          videoUrl={pedestalVideoUrl}
+          fallbackImageUrl={pedestalFallbackImageUrl}>
+          <PedestalContents />
+        </Pedestal>
+      ) : (
+        <>
+          <Avatar
+            username={user.username}
+            url={
+              user && user[UserFieldNames.avatarUrl]
+                ? isFallbackImageDefinition(user[UserFieldNames.avatarUrl])
+                  ? user[UserFieldNames.avatarUrl].url
+                  : user[UserFieldNames.avatarUrl]
+                : null
+            }
+            fallbackUrl={
+              user &&
+              user[UserFieldNames.avatarUrl] &&
+              isFallbackImageDefinition(user[UserFieldNames.avatarUrl])
+                ? user[UserFieldNames.avatarUrl].fallbackUrl
+                : null
+            }
+          />
+          <PedestalContents />
+        </>
+      )}
       <Heading variant="h2">Comments</Heading>
       <CommentList collectionName={CollectionNames.Users} parentId={userId} />
       <AddCommentForm
