@@ -108,8 +108,8 @@ export default [
       },
       {
         id: 'adult',
-        url: routes.adultAssets,
-        label: 'Adult Content',
+        url: routes.nsfw,
+        label: 'NSFW Content',
         requiresAdultContentEnabled: true
       },
       {

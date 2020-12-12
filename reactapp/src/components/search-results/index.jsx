@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 
 import useAlgoliaSearch from '../../hooks/useAlgoliaSearch'
 import useUserRecord from '../../hooks/useUserRecord'
+import useStorage from '../../hooks/useStorage'
 
 import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
@@ -16,6 +17,7 @@ import UserList from '../user-list'
 import { searchIndexNames } from '../../modules/app'
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
+import { alreadyOver18Key } from '../../config'
 
 function ViewAllAuthorsBtn() {
   return (
@@ -39,11 +41,14 @@ export default () => {
     })
   )
   const [, , user] = useUserRecord()
+  const [isAlreadyOver18] = useStorage(alreadyOver18Key)
 
   const [isLoading, isErrored, hits] = useAlgoliaSearch(
     searchIndexName,
     searchTerm,
-    user && user.enabledAdultContent ? undefined : 'isAdult != 1'
+    (user && user.enabledAdultContent) || isAlreadyOver18
+      ? undefined
+      : 'isAdult != 1'
   )
 
   if (isLoading || !hits) {

@@ -120,7 +120,7 @@ const Streams = lazy(() =>
   catchChunkDeaths(() => import('./containers/streams'))
 )
 const About = lazy(() => catchChunkDeaths(() => import('./containers/about')))
-const AdultAssets = lazy(() =>
+const Nsfw = lazy(() =>
   catchChunkDeaths(() => import('./containers/adult-assets'))
 )
 const ViewAuthor = lazy(() =>
@@ -356,7 +356,7 @@ const MainContent = () => {
         <Route exact path={routes.viewRequestWithVar} component={ViewRequest} />
         <Route exact path={routes.streams} component={Streams} />
         <Route exact path={routes.about} component={About} />
-        <Route exact path={routes.adultAssets} component={AdultAssets} />
+        <Route exact path={routes.nsfw} component={Nsfw} />
         <Route exact path={routes.authors} component={Authors} />
         <Route exact path={routes.createAuthor} component={EditAuthor} />
         <Route exact path={routes.editAuthorWithVar} component={EditAuthor} />

@@ -26,3 +26,5 @@ export const otherSpeciesMeta = {
   [SpeciesFieldNames.thumbnailSourceUrl]: otherSpeciesThumbnailUrl,
   [SpeciesFieldNames.fallbackThumbnailUrl]: otherSpeciesFallbackThumbnailUrl
 }
+
+export const alreadyOver18Key = 'already-over-18'
