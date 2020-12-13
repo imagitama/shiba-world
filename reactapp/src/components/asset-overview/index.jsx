@@ -251,6 +251,10 @@ const useStyles = makeStyles({
   sketchfabEmbed: {
     width: '100%',
     height: '400px'
+  },
+  viewSketchfabEmbedBtn: {
+    textAlign: 'center',
+    padding: '1rem 0 0'
   }
 })
 
@@ -615,19 +619,21 @@ export default ({ assetId }) => {
 
   const ViewSketchfabEmbedButton = () =>
     sketchfabEmbedUrl ? (
-      <Button
-        onClick={() => {
-          setIsSketchfabEmbedVisible(!isSketchfabEmbedVisible)
-          trackAction(
-            analyticsCategoryName,
-            'Click view 3D model button',
-            assetId
-          )
-        }}
-        icon={<ControlCameraIcon />}
-        color="default">
-        View 3D Model
-      </Button>
+      <>
+        <Button
+          onClick={() => {
+            setIsSketchfabEmbedVisible(!isSketchfabEmbedVisible)
+            trackAction(
+              analyticsCategoryName,
+              'Click view 3D model button',
+              assetId
+            )
+          }}
+          icon={<ControlCameraIcon />}
+          color="default">
+          Toggle 3D Model
+        </Button>
+      </>
     ) : null
 
   const Description = () => (
@@ -761,7 +767,16 @@ export default ({ assetId }) => {
         <div className={classes.leftCol}>
           {videoUrl && <VideoPlayer url={videoUrl} />}
 
-          {pedestalVideoUrl ? null : <Description />}
+          {pedestalVideoUrl ? null : (
+            <>
+              {sketchfabEmbedUrl ? (
+                <div className={classes.viewSketchfabEmbedBtn}>
+                  <ViewSketchfabEmbedButton />
+                </div>
+              ) : null}
+              <Description />
+            </>
+          )}
 
           {downloadUrls.length ? (
             <>
