@@ -32,7 +32,8 @@ function Step({ step, number }) {
       <div className={classes.description}>
         <Markdown source={step[TutorialStepFieldNames.description]} />
       </div>
-      {step[TutorialStepFieldNames.imageUrls] ? (
+      {step[TutorialStepFieldNames.imageUrls] &&
+      step[TutorialStepFieldNames.imageUrls].fallbackUrl ? (
         <div>
           <img
             src={step[TutorialStepFieldNames.imageUrls].fallbackUrl}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import Markdown from 'react-markdown'
 import { makeStyles } from '@material-ui/core/styles'
 
 import {
@@ -39,6 +40,45 @@ function Label({ children }) {
   return <div className={classes.label}>{children}</div>
 }
 
+const doesStepNeedSaving = (existingStepData, newStepData) => {
+  if (
+    existingStepData[TutorialStepFieldNames.title] !==
+    newStepData[TutorialStepFieldNames.title]
+  ) {
+    return true
+  }
+  if (
+    existingStepData[TutorialStepFieldNames.description] !==
+    newStepData[TutorialStepFieldNames.description]
+  ) {
+    return true
+  }
+  if (
+    existingStepData[TutorialStepFieldNames.imageUrls] &&
+    newStepData[TutorialStepFieldNames.imageUrls]
+  ) {
+    if (
+      existingStepData[TutorialStepFieldNames.imageUrls].fallbackUrl !==
+      newStepData[TutorialStepFieldNames.imageUrls].fallbackUrl
+    ) {
+      return true
+    }
+  }
+  if (
+    existingStepData[TutorialStepFieldNames.imageUrls] &&
+    !newStepData[TutorialStepFieldNames.imageUrls]
+  ) {
+    return true
+  }
+  if (
+    !existingStepData[TutorialStepFieldNames.imageUrls] &&
+    newStepData[TutorialStepFieldNames.imageUrls]
+  ) {
+    return true
+  }
+  return false
+}
+
 function StepEditor({
   assetId,
   number,
@@ -56,6 +96,8 @@ function StepEditor({
   const updateStepField = (fieldName, newValue) =>
     setStepFields({ ...stepFields, [fieldName]: newValue })
 
+  const showSaveBtn = doesStepNeedSaving(step, stepFields)
+
   return (
     <Paper className={classes.step}>
       <div>
@@ -63,13 +105,14 @@ function StepEditor({
           {number}. {step[TutorialStepFieldNames.title]}
         </strong>
         <br />
-        {step[TutorialStepFieldNames.description]}
+        <Markdown source={step[TutorialStepFieldNames.description]} />
         <br />
-        {step[TutorialStepFieldNames.imageUrls] ? (
+        {step[TutorialStepFieldNames.imageUrls] &&
+        step[TutorialStepFieldNames.imageUrls].fallbackUrl ? (
           <>
             Attached image:{' '}
             <img
-              src={step[TutorialStepFieldNames.imageUrls.fallbackUrl]}
+              src={step[TutorialStepFieldNames.imageUrls].fallbackUrl}
               alt="Attachment for step"
             />
           </>
@@ -113,7 +156,9 @@ function StepEditor({
         />
 
         <div className={classes.controls}>
-          <Button onClick={() => onSave(stepFields)}>Save</Button>
+          {showSaveBtn && (
+            <Button onClick={() => onSave(stepFields)}>Save</Button>
+          )}
           {isFirst ? null : (
             <Button onClick={() => onMoveUp()} color="default">
               Move Up
@@ -209,10 +254,15 @@ export default ({ assetId, existingSteps, onSave }) => {
     const step = stepsBeingEdited[stepIdx]
     const newStep = {
       ...step,
-      ...newStepFields,
-      [TutorialStepFieldNames.imageUrls]:
+      ...newStepFields
+    }
+
+    // fix undefined error if no image attached
+    if (newStepFields[TutorialStepFieldNames.imageUrls]) {
+      newStep[TutorialStepFieldNames.imageUrls] =
         newStepFields[TutorialStepFieldNames.imageUrls]
     }
+
     const newStepsBeingEdited = [...stepsBeingEdited]
     newStepsBeingEdited[stepIdx] = newStep
 
