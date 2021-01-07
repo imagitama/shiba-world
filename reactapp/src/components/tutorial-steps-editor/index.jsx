@@ -98,6 +98,8 @@ function StepEditor({
 
   const showSaveBtn = doesStepNeedSaving(step, stepFields)
 
+  console.log(step, stepFields)
+
   return (
     <Paper className={classes.step}>
       <div>
@@ -108,12 +110,31 @@ function StepEditor({
         <Markdown source={step[TutorialStepFieldNames.description]} />
         <br />
         {step[TutorialStepFieldNames.imageUrls] &&
-        step[TutorialStepFieldNames.imageUrls].fallbackUrl ? (
+        step[TutorialStepFieldNames.imageUrls].url ? (
+          <>
+            Attached image:{' '}
+            <picture>
+              <source
+                srcSet={step[TutorialStepFieldNames.imageUrls].url}
+                type="image/webp"
+              />
+              <source
+                srcSet={step[TutorialStepFieldNames.imageUrls].fallbackUrl}
+                type="image/png"
+              />
+              <img
+                src={step[TutorialStepFieldNames.imageUrls].fallbackUrl}
+                alt={`Attachment for step`}
+              />
+            </picture>
+          </>
+        ) : step[TutorialStepFieldNames.imageUrls] &&
+          step[TutorialStepFieldNames.imageUrls].fallbackUrl ? (
           <>
             Attached image:{' '}
             <img
               src={step[TutorialStepFieldNames.imageUrls].fallbackUrl}
-              alt="Attachment for step"
+              alt={`Attachment for step`}
             />
           </>
         ) : null}

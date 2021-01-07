@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Lightbox from 'react-image-lightbox'
 import { makeStyles } from '@material-ui/core/styles'
 import 'react-image-lightbox/style.css'
+import { isFallbackImageDefinition } from '../../utils'
 
 const useStyles = makeStyles({
   thumbnail: {
@@ -11,6 +12,16 @@ const useStyles = makeStyles({
     '&:hover': { cursor: 'pointer ' }
   }
 })
+
+function getSrcForIndex(index, urls) {
+  const urlOrUrls = urls[index]
+
+  if (isFallbackImageDefinition(urlOrUrls)) {
+    return urlOrUrls.url
+  }
+
+  return urlOrUrls
+}
 
 export default ({
   urls,
@@ -34,9 +45,12 @@ export default ({
     <div>
       {isOpen && (
         <Lightbox
-          mainSrc={urls[activePhotoIdx]}
-          nextSrc={urls[(activePhotoIdx + 1) % urls.length]}
-          prevSrc={urls[(activePhotoIdx + urls.length - 1) % urls.length]}
+          mainSrc={getSrcForIndex(activePhotoIdx, urls)}
+          nextSrc={getSrcForIndex((activePhotoIdx + 1) % urls.length, urls)}
+          prevSrc={getSrcForIndex(
+            (activePhotoIdx + urls.length - 1) % urls.length,
+            urls
+          )}
           onCloseRequest={() => setIsOpen(false)}
           onMovePrevRequest={() => {
             setActivePhotoIdx((activePhotoIdx + urls.length - 1) % urls.length)
@@ -52,14 +66,30 @@ export default ({
           }}
         />
       )}
-      {urls.map((url, idx) => (
-        <img
-          key={url}
-          src={url}
-          onClick={() => onThumbnailClick(idx)}
-          className={classes.thumbnail}
-          alt={`Thumbnail ${idx}`}
-        />
+      {urls.map((urlOrUrls, idx) => (
+        <picture>
+          {isFallbackImageDefinition(urlOrUrls) ? (
+            <>
+              <source srcSet={urlOrUrls.url} type="image/webp" />
+              <source srcSet={urlOrUrls.fallbackUrl} type="image/png" />
+            </>
+          ) : null}
+          <img
+            key={
+              isFallbackImageDefinition(urlOrUrls)
+                ? urlOrUrls.fallbackUrl
+                : urlOrUrls
+            }
+            src={
+              isFallbackImageDefinition(urlOrUrls)
+                ? urlOrUrls.fallbackUrl
+                : urlOrUrls
+            }
+            onClick={() => onThumbnailClick(idx)}
+            className={classes.thumbnail}
+            alt={`Thumbnail ${idx}`}
+          />
+        </picture>
       ))}
     </div>
   )

@@ -3,6 +3,7 @@ import Markdown from 'react-markdown'
 import { makeStyles } from '@material-ui/core/styles'
 
 import Paper from '../paper'
+import ImageGallery from '../image-gallery'
 import { TutorialStepFieldNames } from '../../hooks/useDatabaseQuery'
 
 const useStyles = makeStyles({
@@ -32,15 +33,9 @@ function Step({ step, number }) {
       <div className={classes.description}>
         <Markdown source={step[TutorialStepFieldNames.description]} />
       </div>
-      {step[TutorialStepFieldNames.imageUrls] &&
-      step[TutorialStepFieldNames.imageUrls].fallbackUrl ? (
-        <div>
-          <img
-            src={step[TutorialStepFieldNames.imageUrls].fallbackUrl}
-            alt="Attachment for step"
-          />
-        </div>
-      ) : null}
+      {step[TutorialStepFieldNames.imageUrls] && (
+        <ImageGallery urls={[step[TutorialStepFieldNames.imageUrls]]} />
+      )}
     </Paper>
   )
 }

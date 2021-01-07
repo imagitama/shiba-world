@@ -7,7 +7,7 @@ import Button from '../button'
 import useFileUpload from '../../hooks/useFileUpload'
 import BodyText from '../body-text'
 import { handleError } from '../../error-handling'
-// import { callFunction } from '../../firebase'
+import { callFunction } from '../../firebase'
 
 const useStyles = makeStyles({
   root: {
@@ -161,22 +161,19 @@ function Output({
       )}`
       const fileToUpload = new File([blob], filename)
 
-      const uploadedUrl = await upload(
-        fileToUpload,
-        `${directoryPath}/${filename}`
-      )
+      const uploadPath = `${directoryPath}/${filename}`
+
+      console.debug(`Upload ${uploadPath}`)
+
+      const uploadedUrl = await upload(fileToUpload, uploadPath)
 
       setIsOptimizing(true)
 
-      // until Google sorts its shit out we cannot call this function right now
-      // as it is returning status "crash" for some people included me :(
-      // const {
-      //   data: { optimizedImageUrl }
-      // } = await callFunction('optimizeImage', {
-      //   imageUrl: uploadedUrl
-      // })
-
-      const optimizedImageUrl = ''
+      const {
+        data: { optimizedImageUrl }
+      } = await callFunction('optimizeImage', {
+        imageUrl: uploadedUrl
+      })
 
       setIsOptimizing(false)
       setUploadedUrl(uploadedUrl)
@@ -287,8 +284,8 @@ function Output({
       Output:
       <img
         src={croppedImagePreviewUrl}
-        width={width}
-        height={height}
+        width={requiredWidth || width}
+        height={requiredHeight || height}
         alt="Uploaded preview"
       />
       <br />

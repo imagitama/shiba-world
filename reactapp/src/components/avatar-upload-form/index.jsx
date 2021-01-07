@@ -90,6 +90,8 @@ export default ({ onClick = null }) => {
             avatarUrlOrUrls
               ? isFallbackImageDefinition(avatarUrlOrUrls)
                 ? avatarUrlOrUrls.url
+                  ? avatarUrlOrUrls.url
+                  : avatarUrlOrUrls.fallbackUrl
                 : avatarUrlOrUrls
               : defaultAvatarUrl
           }
