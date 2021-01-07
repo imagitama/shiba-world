@@ -8,7 +8,6 @@ import CategorySelector from './components/category-selector'
 import FormField, { formFieldType } from './components/form-field'
 import InvalidMessage from './components/invalid-message'
 import ChildrenInput from './components/children-input'
-import AuthorInput from './components/author-input'
 import PopularTagsSelector from './components/popular-tags-selector'
 import SpeciesOutput from './components/species-output'
 
@@ -436,18 +435,12 @@ export default ({
         </>
       )}
       <Heading variant="h2">Attachments</Heading>
-      <p>This has been moved to the asset overview.</p>
-      <Heading variant="h3">Additional settings</Heading>
-      <AuthorInput
-        author={fieldData[AssetFieldNames.author]}
-        onNewAuthorId={newAuthorId =>
-          onFieldChange(
-            AssetFieldNames.author,
-            createRef(CollectionNames.Authors, newAuthorId)
-          )
-        }
-        deleteAuthor={() => onFieldChange(AssetFieldNames.author, null)}
-      />
+      <p>Attach files and images in the asset overview after you submit.</p>
+      <Heading variant="h2">Author</Heading>
+      <p>
+        You can set the author (ie "Awtter by Shade The Bat") after you submit
+        (in sidebar).
+      </p>
       <br />
       <ChildrenInput
         assetChildren={fieldData[AssetFieldNames.children]}

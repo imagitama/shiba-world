@@ -76,6 +76,7 @@ import VideoList from './components/video-list'
 
 import Pedestal from '../pedestal'
 import OwnerEditor from '../owner-editor'
+import ChangeAuthorForm from '../change-author-form'
 import DownloadAssetButton from '../download-asset-button'
 import VisitSourceButton from '../visit-source-button'
 import ChangeDiscordServerForm from '../change-discord-server-form'
@@ -990,6 +991,13 @@ export default ({ assetId }) => {
                 </Control>
                 <Control>
                   <OwnerEditor
+                    collectionName={CollectionNames.Assets}
+                    id={assetId}
+                    actionCategory={actionCategory}
+                  />
+                </Control>
+                <Control>
+                  <ChangeAuthorForm
                     collectionName={CollectionNames.Assets}
                     id={assetId}
                     actionCategory={actionCategory}
