@@ -1,6 +1,6 @@
 import React from 'react'
 import shortid from 'shortid'
-import FallbackImageUploader from '../../../fallback-image-uploader'
+import OptimizedImageUploader from '../../../optimized-image-uploader'
 import { fixAccessingImagesUsingToken } from '../../../../utils'
 
 export default ({
@@ -11,7 +11,6 @@ export default ({
     width: 200,
     height: 200,
     directoryName: 'untitled',
-    fallbackFieldName: '',
     prefixWithHash: true
   },
   setFieldsValues
@@ -26,14 +25,9 @@ export default ({
           height={fieldProperties.height}
         />
       )}
-      <FallbackImageUploader
-        onUploadedUrls={({ url, fallbackUrl }) => {
-          if (fieldProperties.fallbackFieldName) {
-            setFieldsValues({
-              [name]: url,
-              [fieldProperties.fallbackFieldName]: fallbackUrl
-            })
-          } else if (onChange) {
+      <OptimizedImageUploader
+        onUploadedUrl={url => {
+          if (onChange) {
             onChange(url)
           }
         }}

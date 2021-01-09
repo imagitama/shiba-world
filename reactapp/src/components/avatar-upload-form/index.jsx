@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
-import FallbackImageUploader from '../fallback-image-uploader'
+import OptimizedImageUploader from '../optimized-image-uploader'
 
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { CollectionNames, UserFieldNames } from '../../hooks/useDatabaseQuery'
@@ -11,7 +11,7 @@ import useUserRecord from '../../hooks/useUserRecord'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import { handleError } from '../../error-handling'
-import { createRef, isFallbackImageDefinition } from '../../utils'
+import { createRef } from '../../utils'
 import defaultAvatarUrl from '../../assets/images/default-avatar.png'
 
 const useStyles = makeStyles({
@@ -45,17 +45,14 @@ export default ({ onClick = null }) => {
     userId
   )
 
-  const onUploadedUrls = async ({ url, fallbackUrl }) => {
+  const onUploadedUrl = async url => {
     try {
       if (onClick) {
         onClick()
       }
 
       await save({
-        [UserFieldNames.avatarUrl]: {
-          url,
-          fallbackUrl
-        },
+        [UserFieldNames.avatarUrl]: url,
         [UserFieldNames.lastModifiedBy]: createRef(
           CollectionNames.Users,
           userId
@@ -76,30 +73,22 @@ export default ({ onClick = null }) => {
     return <ErrorMessage>Failed to upload your avatar</ErrorMessage>
   }
 
-  const { [UserFieldNames.avatarUrl]: avatarUrlOrUrls } = user
+  const { [UserFieldNames.avatarUrl]: avatarUrl } = user
 
   return (
-    <FallbackImageUploader
-      onUploadedUrls={onUploadedUrls}
+    <OptimizedImageUploader
+      onUploadedUrl={onUploadedUrl}
       directoryPath={`avatars/${userId}`}
       requiredWidth={200}
       requiredHeight={200}>
       <div className={classes.container}>
         <img
-          src={
-            avatarUrlOrUrls
-              ? isFallbackImageDefinition(avatarUrlOrUrls)
-                ? avatarUrlOrUrls.url
-                  ? avatarUrlOrUrls.url
-                  : avatarUrlOrUrls.fallbackUrl
-                : avatarUrlOrUrls
-              : defaultAvatarUrl
-          }
+          src={avatarUrl ? avatarUrl : defaultAvatarUrl}
           className={classes.image}
           alt="Avatar upload preview"
         />
         <div className={classes.msg}>Click to edit</div>
       </div>
-    </FallbackImageUploader>
+    </OptimizedImageUploader>
   )
 }

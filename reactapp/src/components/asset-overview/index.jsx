@@ -470,7 +470,7 @@ export default ({ assetId }) => {
 
     setBannerUrls(result[AssetFieldNames.bannerUrl])
 
-    return () => setBannerUrls({ url: '', fallbackUrl: '' })
+    return () => setBannerUrls({ url: '' })
   }, [result ? result.title : null])
 
   if (isLoading) {

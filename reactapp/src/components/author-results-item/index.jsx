@@ -37,9 +37,7 @@ const useStyles = makeStyles({
   }
 })
 
-export default ({
-  author: { id, name, categories = [], avatarUrl = '', fallbackAvatarUrl = '' }
-}) => {
+export default ({ author: { id, name, categories = [], avatarUrl = '' } }) => {
   const classes = useStyles()
 
   return (
@@ -47,11 +45,7 @@ export default ({
       <Card>
         <CardActionArea>
           <Link to={routes.viewAuthorWithVar.replace(':authorId', id)}>
-            <Avatar
-              url={avatarUrl || fallbackAvatarUrl}
-              fallbackUrl={fallbackAvatarUrl}
-              username={name}
-            />
+            <Avatar url={avatarUrl} username={name} />
             <CardContent className={classes.content}>
               <Typography variant="h5" component="h2">
                 {name}

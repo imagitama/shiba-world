@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom'
 
 import * as routes from '../../routes'
 import { UserFieldNames } from '../../hooks/useDatabaseQuery'
-import { isFallbackImageDefinition } from '../../utils'
 
 import Avatar, { sizes } from '../avatar'
 
@@ -60,16 +59,7 @@ function User({ user }) {
           <Avatar
             url={
               user && user[UserFieldNames.avatarUrl]
-                ? isFallbackImageDefinition(user[UserFieldNames.avatarUrl])
-                  ? user[UserFieldNames.avatarUrl].url
-                  : user[UserFieldNames.avatarUrl]
-                : null
-            }
-            fallbackUrl={
-              user &&
-              user[UserFieldNames.avatarUrl] &&
-              isFallbackImageDefinition(user[UserFieldNames.avatarUrl])
-                ? user[UserFieldNames.avatarUrl].fallbackUrl
+                ? user[UserFieldNames.avatarUrl]
                 : null
             }
             size={sizes.SMALL}

@@ -9,7 +9,6 @@ import * as routes from '../../routes'
 import useUserRecord from '../../hooks/useUserRecord'
 import { trackAction } from '../../analytics'
 import { UserFieldNames } from '../../hooks/useDatabaseQuery'
-import { isFallbackImageDefinition } from '../../utils'
 
 import Avatar, { sizes } from '../avatar'
 import Button from '../button'
@@ -131,16 +130,7 @@ export default () => {
           <Avatar
             url={
               user && user[UserFieldNames.avatarUrl]
-                ? isFallbackImageDefinition(user[UserFieldNames.avatarUrl])
-                  ? user[UserFieldNames.avatarUrl].url
-                  : user[UserFieldNames.avatarUrl]
-                : null
-            }
-            fallbackUrl={
-              user &&
-              user[UserFieldNames.avatarUrl] &&
-              isFallbackImageDefinition(user[UserFieldNames.avatarUrl])
-                ? user[UserFieldNames.avatarUrl].fallbackUrl
+                ? user[UserFieldNames.avatarUrl]
                 : null
             }
             size={sizes.TINY}

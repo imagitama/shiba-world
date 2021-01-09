@@ -395,7 +395,7 @@ export default ({
       <BannerUploader
         directoryPath="asset-banners"
         filePrefix={shortid.generate()}
-        onUploadedUrls={urls => onFieldChange(AssetFieldNames.bannerUrl, urls)}
+        onUploadedUrl={url => onFieldChange(AssetFieldNames.bannerUrl, url)}
       />
       <Heading variant="h3">Tags</Heading>
       Click a popular tag to add it:{' '}

@@ -27,8 +27,7 @@ export default [
     fieldProperties: {
       width: THUMBNAIL_WIDTH,
       height: THUMBNAIL_HEIGHT,
-      directoryName: 'author-avatars',
-      fallbackFieldName: AuthorFieldNames.fallbackAvatarUrl
+      directoryName: 'author-avatars'
     },
     default: ''
   },
@@ -107,8 +106,7 @@ export default [
     fieldProperties: {
       width: BANNER_WIDTH,
       height: BANNER_HEIGHT,
-      directoryName: 'author-banners',
-      fallbackFieldName: AuthorFieldNames.fallbackBannerUrl
+      directoryName: 'author-banners'
     },
     default: ''
   },

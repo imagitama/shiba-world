@@ -16,7 +16,7 @@ import useDatabaseQuery, {
   AssetFieldNames
 } from '../../hooks/useDatabaseQuery'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
-import { createRef, isFallbackImageDefinition } from '../../utils'
+import { createRef } from '../../utils'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import { handleError } from '../../error-handling'
 import { trackAction } from '../../analytics'
@@ -26,7 +26,7 @@ import VideoPlayer from '../video-player'
 import LoadingIndicator from '../loading-indicator'
 import Button from '../button'
 import ErrorMessage from '../error-message'
-import FallbackImageUploader from '../fallback-image-uploader'
+import OptimizedImageUploader from '../optimized-image-uploader'
 
 const useStyles = makeStyles({
   item: { margin: '0 0 1rem 0', padding: '2rem' },
@@ -40,7 +40,7 @@ const useStyles = makeStyles({
 const FileAttacherItem = ({ urlOrUrls, onRemove, onMoveUp, onMoveDown }) => {
   const classes = useStyles()
 
-  const url = isFallbackImageDefinition(urlOrUrls) ? urlOrUrls.url : urlOrUrls
+  const url = urlOrUrls
 
   return (
     <Paper className={classes.item}>
@@ -95,14 +95,9 @@ export default ({ assetId, onDone }) => {
     setIsAttachingImage(null)
   }
 
-  const onFileRemoved = fileUrl => {
-    const urlToFind = isFallbackImageDefinition(fileUrl) ? fileUrl.url : fileUrl
-
+  const onFileRemoved = urlToFind => {
     setNewFileUrls(
       newFileUrls.filter(urlOrUrls => {
-        if (isFallbackImageDefinition(urlOrUrls)) {
-          return urlOrUrls.url !== urlToFind
-        }
         return urlOrUrls !== urlToFind
       })
     )
@@ -132,15 +127,8 @@ export default ({ assetId, onDone }) => {
     return <ErrorMessage>Failed to load asset</ErrorMessage>
   }
 
-  const moveFileUp = fileUrlOrUrls => {
-    const urlToFind = isFallbackImageDefinition(fileUrlOrUrls)
-      ? fileUrlOrUrls.url
-      : fileUrlOrUrls
-
+  const moveFileUp = urlToFind => {
     const originalIndex = newFileUrls.findIndex(item => {
-      if (isFallbackImageDefinition(item)) {
-        return item.url === urlToFind
-      }
       return item === urlToFind
     })
 
@@ -153,15 +141,8 @@ export default ({ assetId, onDone }) => {
     )
   }
 
-  const moveFileDown = fileUrlOrUrls => {
-    const urlToFind = isFallbackImageDefinition(fileUrlOrUrls)
-      ? fileUrlOrUrls.url
-      : fileUrlOrUrls
-
+  const moveFileDown = urlToFind => {
     const originalIndex = newFileUrls.findIndex(item => {
-      if (isFallbackImageDefinition(item)) {
-        return item.url === urlToFind
-      }
       return item === urlToFind
     })
 
@@ -196,25 +177,21 @@ export default ({ assetId, onDone }) => {
 
   return (
     <>
-      {newFileUrls.map(fileUrlOrUrls => (
+      {newFileUrls.map(url => (
         <FileAttacherItem
-          key={
-            isFallbackImageDefinition(fileUrlOrUrls)
-              ? fileUrlOrUrls.url
-              : fileUrlOrUrls
-          }
-          urlOrUrls={fileUrlOrUrls}
-          onRemove={() => onFileRemoved(fileUrlOrUrls)}
-          onMoveUp={() => moveFileUp(fileUrlOrUrls)}
-          onMoveDown={() => moveFileDown(fileUrlOrUrls)}
+          key={url}
+          urlOrUrls={url}
+          onRemove={() => onFileRemoved(url)}
+          onMoveUp={() => moveFileUp(url)}
+          onMoveDown={() => moveFileDown(url)}
         />
       ))}
       <Paper className={classes.uploader}>
         {isAttachingImage === true ? (
-          <FallbackImageUploader
+          <OptimizedImageUploader
             directoryPath="asset-uploads"
             filePrefix={shortid.generate()}
-            onUploadedUrls={onFileAttached}
+            onUploadedUrl={onFileAttached}
           />
         ) : isAttachingImage === false ? (
           <FileUploader

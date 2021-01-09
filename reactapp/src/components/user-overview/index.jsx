@@ -28,7 +28,7 @@ import Avatar from '../avatar'
 import Pedestal from '../pedestal'
 
 import * as routes from '../../routes'
-import { createRef, isFallbackImageDefinition } from '../../utils'
+import { createRef } from '../../utils'
 import { trackAction } from '../../analytics'
 import { canEditUsers } from '../../permissions'
 
@@ -282,16 +282,7 @@ export default ({ userId }) => {
             username={user.username}
             url={
               user && user[UserFieldNames.avatarUrl]
-                ? isFallbackImageDefinition(user[UserFieldNames.avatarUrl])
-                  ? user[UserFieldNames.avatarUrl].url
-                  : user[UserFieldNames.avatarUrl]
-                : null
-            }
-            fallbackUrl={
-              user &&
-              user[UserFieldNames.avatarUrl] &&
-              isFallbackImageDefinition(user[UserFieldNames.avatarUrl])
-                ? user[UserFieldNames.avatarUrl].fallbackUrl
+                ? user[UserFieldNames.avatarUrl]
                 : null
             }
           />

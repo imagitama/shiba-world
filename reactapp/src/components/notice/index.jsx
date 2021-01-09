@@ -9,7 +9,6 @@ import Markdown from 'react-markdown'
 import useStorage, { keys } from '../../hooks/useStorage'
 import { UserFieldNames } from '../../hooks/useDatabaseQuery'
 import { trackAction } from '../../analytics'
-import { isFallbackImageDefinition } from '../../utils'
 
 import Avatar, { sizes } from '../avatar'
 
@@ -65,9 +64,7 @@ export default ({ id, title, message, createdBy }) => {
         <Avatar
           url={
             createdBy && createdBy[UserFieldNames.avatarUrl]
-              ? isFallbackImageDefinition(createdBy[UserFieldNames.avatarUrl])
-                ? createdBy[UserFieldNames.avatarUrl].url
-                : createdBy[UserFieldNames.avatarUrl]
+              ? createdBy[UserFieldNames.avatarUrl]
               : null
           }
           username={createdBy ? createdBy.username : ''}

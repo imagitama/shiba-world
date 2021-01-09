@@ -56,7 +56,6 @@ const useStyles = makeStyles({
 function Item({
   name,
   shortDescription,
-  thumbnailUrl,
   optimizedThumbnailUrl,
   onClick,
   isSelected
@@ -67,15 +66,11 @@ function Item({
       <Card className={isSelected ? classes.isSelected : ''}>
         <CardActionArea className={classes.contentsWrapper} onClick={onClick}>
           <div className={classes.media}>
-            <picture>
-              <source srcSet={optimizedThumbnailUrl} type="image/webp" />
-              <source srcSet={thumbnailUrl} type="image/png" />
-              <img
-                src={thumbnailUrl}
-                alt={`Thumbnail for species ${name}`}
-                className={classes.thumbnail}
-              />
-            </picture>
+            <img
+              src={optimizedThumbnailUrl}
+              alt={`Thumbnail for species ${name}`}
+              className={classes.thumbnail}
+            />
           </div>
           <CardContent className={classes.content}>
             <Typography variant="h5" component="h2">

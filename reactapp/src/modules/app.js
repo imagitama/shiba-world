@@ -104,8 +104,7 @@ export default (state = initialState, action) => {
     case SET_BANNER_URLS:
       return {
         ...state,
-        bannerUrl: action.payload.url,
-        bannerFallbackUrl: action.payload.fallbackUrl
+        bannerUrl: action.payload.url
       }
 
     default:

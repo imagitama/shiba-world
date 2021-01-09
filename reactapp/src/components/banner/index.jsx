@@ -38,12 +38,9 @@ export default () => {
   const classes = useStyles()
   const imageRef = useRef()
   const [lastKnownBannerUrl, setLastKnownBannerUrl] = useState(null)
-  const { bannerUrl, bannerFallbackUrl } = useSelector(
-    ({ app: { bannerUrl, bannerFallbackUrl } }) => ({
-      bannerUrl,
-      bannerFallbackUrl
-    })
-  )
+  const { bannerUrl } = useSelector(({ app: { bannerUrl } }) => ({
+    bannerUrl
+  }))
   const [isLoaded, setIsLoaded] = useState(false)
   const timeoutRef = useRef()
 
@@ -61,8 +58,7 @@ export default () => {
     timeoutRef.current = setTimeout(
       () => {
         setLastKnownBannerUrl({
-          url: bannerUrl || bannerFallbackUrl,
-          fallbackUrl: bannerFallbackUrl
+          url: bannerUrl
         })
       },
       isLoaded ? 500 : 0
@@ -75,31 +71,19 @@ export default () => {
     return null
   }
 
-  const { url, fallbackUrl } = lastKnownBannerUrl
+  const { url } = lastKnownBannerUrl
 
   return (
     <div
       className={`${classes.root} ${
         isLoaded ? classes.loaded : classes.unloaded
       }`}>
-      <picture>
-        {url && (
-          <source
-            srcSet={fixAccessingImagesUsingToken(url)}
-            type="image/webp"
-          />
-        )}
-        <source
-          srcSet={fixAccessingImagesUsingToken(fallbackUrl)}
-          type="image/png"
-        />
-        <img
-          src={fixAccessingImagesUsingToken(fallbackUrl)}
-          alt={'Banner for the page'}
-          ref={imageRef}
-          className={classes.image}
-        />
-      </picture>
+      <img
+        src={fixAccessingImagesUsingToken(url)}
+        alt={'Banner for the page'}
+        ref={imageRef}
+        className={classes.image}
+      />
     </div>
   )
 }

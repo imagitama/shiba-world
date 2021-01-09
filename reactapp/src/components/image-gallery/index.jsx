@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import Lightbox from 'react-image-lightbox'
 import { makeStyles } from '@material-ui/core/styles'
 import 'react-image-lightbox/style.css'
-import { isFallbackImageDefinition } from '../../utils'
 
 const useStyles = makeStyles({
   thumbnail: {
@@ -15,11 +14,6 @@ const useStyles = makeStyles({
 
 function getSrcForIndex(index, urls) {
   const urlOrUrls = urls[index]
-
-  if (isFallbackImageDefinition(urlOrUrls)) {
-    return urlOrUrls.url
-  }
-
   return urlOrUrls
 }
 
@@ -66,25 +60,11 @@ export default ({
           }}
         />
       )}
-      {urls.map((urlOrUrls, idx) => (
+      {urls.map((url, idx) => (
         <picture>
-          {isFallbackImageDefinition(urlOrUrls) ? (
-            <>
-              <source srcSet={urlOrUrls.url} type="image/webp" />
-              <source srcSet={urlOrUrls.fallbackUrl} type="image/png" />
-            </>
-          ) : null}
           <img
-            key={
-              isFallbackImageDefinition(urlOrUrls)
-                ? urlOrUrls.fallbackUrl
-                : urlOrUrls
-            }
-            src={
-              isFallbackImageDefinition(urlOrUrls)
-                ? urlOrUrls.fallbackUrl
-                : urlOrUrls
-            }
+            key={url}
+            src={url}
             onClick={() => onThumbnailClick(idx)}
             className={classes.thumbnail}
             alt={`Thumbnail ${idx}`}

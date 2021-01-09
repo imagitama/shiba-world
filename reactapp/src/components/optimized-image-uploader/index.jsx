@@ -32,7 +32,7 @@ function renameJpgToPng(path) {
 }
 
 function Output({
-  onUploadedUrls,
+  onUploadedUrl,
   requiredWidth = null,
   requiredHeight = null,
   directoryPath = '',
@@ -178,10 +178,7 @@ function Output({
       setIsOptimizing(false)
       setUploadedUrl(uploadedUrl)
 
-      onUploadedUrls({
-        fallbackUrl: uploadedUrl,
-        url: optimizedImageUrl
-      })
+      onUploadedUrl(optimizedImageUrl)
     } catch (err) {
       console.error('Failed to crop image', err)
       handleError(err)

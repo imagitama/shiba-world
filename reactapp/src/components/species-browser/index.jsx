@@ -69,7 +69,6 @@ const Species = ({
   id,
   title,
   description,
-  backupThumbnailUrl,
   optimizedThumbnailUrl,
   onSpeciesClick = null,
   isFullWidth = false
@@ -93,21 +92,11 @@ const Species = ({
               }
             }}>
             <div className={classes.thumbnailWrapper}>
-              <picture>
-                <source
-                  srcSet={fixAccessingImagesUsingToken(optimizedThumbnailUrl)}
-                  type="image/webp"
-                />
-                <source
-                  srcSet={fixAccessingImagesUsingToken(backupThumbnailUrl)}
-                  type="image/png"
-                />
-                <img
-                  src={fixAccessingImagesUsingToken(backupThumbnailUrl)}
-                  alt={`Thumbnail for species ${title}`}
-                  className={classes.thumbnail}
-                />
-              </picture>
+              <img
+                src={fixAccessingImagesUsingToken(optimizedThumbnailUrl)}
+                alt={`Thumbnail for species ${title}`}
+                className={classes.thumbnail}
+              />
             </div>
             <CardContent classes={{ root: classes.cardContent }}>
               <Typography gutterBottom variant="h5" component="h3">

@@ -37,8 +37,7 @@ export default [
     fieldProperties: {
       width: 300,
       height: 300,
-      directoryName: 'species-thumbnails',
-      fallbackFieldName: SpeciesFieldNames.fallbackThumbnailUrl
+      directoryName: 'species-thumbnails'
     },
     isRequired: true
   },

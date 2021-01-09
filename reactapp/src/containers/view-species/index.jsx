@@ -128,29 +128,15 @@ const SpeciesResult = ({ speciesIdOrSlug }) => {
           }`}
           target="_blank"
           rel="noopener noreferrer">
-          <picture>
-            <source
-              srcSet={fixAccessingImagesUsingToken(
-                species[SpeciesFieldNames.thumbnailUrl]
-              )}
-              type="image/webp"
-            />
-            <source
-              srcSet={fixAccessingImagesUsingToken(
-                species[SpeciesFieldNames.fallbackThumbnailUrl]
-              )}
-              type="image/png"
-            />
-            <img
-              src={fixAccessingImagesUsingToken(
-                species[SpeciesFieldNames.fallbackThumbnailUrl]
-              )}
-              alt={`Thumbnail for species ${
-                species[SpeciesFieldNames.pluralName]
-              }`}
-              className={classes.thumbnail}
-            />
-          </picture>
+          <img
+            src={fixAccessingImagesUsingToken(
+              species[SpeciesFieldNames.thumbnailUrl]
+            )}
+            alt={`Thumbnail for species ${
+              species[SpeciesFieldNames.pluralName]
+            }`}
+            className={classes.thumbnail}
+          />
         </a>
       </div>
       <Heading variant="h1">

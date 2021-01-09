@@ -17,7 +17,7 @@ import TextInput from '../text-input'
 import Paper from '../paper'
 import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
-import FallbackImageUploader from '../fallback-image-uploader'
+import OptimizedImageUploader from '../optimized-image-uploader'
 
 const useStyles = makeStyles({
   step: {
@@ -52,17 +52,6 @@ const doesStepNeedSaving = (existingStepData, newStepData) => {
     newStepData[TutorialStepFieldNames.description]
   ) {
     return true
-  }
-  if (
-    existingStepData[TutorialStepFieldNames.imageUrls] &&
-    newStepData[TutorialStepFieldNames.imageUrls]
-  ) {
-    if (
-      existingStepData[TutorialStepFieldNames.imageUrls].fallbackUrl !==
-      newStepData[TutorialStepFieldNames.imageUrls].fallbackUrl
-    ) {
-      return true
-    }
   }
   if (
     existingStepData[TutorialStepFieldNames.imageUrls] &&
@@ -109,35 +98,15 @@ function StepEditor({
         <br />
         <Markdown source={step[TutorialStepFieldNames.description]} />
         <br />
-        {step[TutorialStepFieldNames.imageUrls] &&
-        step[TutorialStepFieldNames.imageUrls].url ? (
-          <>
-            Attached image:{' '}
-            <picture>
-              <source
-                srcSet={step[TutorialStepFieldNames.imageUrls].url}
-                type="image/webp"
-              />
-              <source
-                srcSet={step[TutorialStepFieldNames.imageUrls].fallbackUrl}
-                type="image/png"
-              />
-              <img
-                src={step[TutorialStepFieldNames.imageUrls].fallbackUrl}
-                alt={`Attachment for step`}
-              />
-            </picture>
-          </>
-        ) : step[TutorialStepFieldNames.imageUrls] &&
-          step[TutorialStepFieldNames.imageUrls].fallbackUrl ? (
+        {step[TutorialStepFieldNames.imageUrls] && (
           <>
             Attached image:{' '}
             <img
-              src={step[TutorialStepFieldNames.imageUrls].fallbackUrl}
+              src={step[TutorialStepFieldNames.imageUrls]}
               alt={`Attachment for step`}
             />
           </>
-        ) : null}
+        )}
       </div>
       <div>
         {/* <Label>Number (eg. 1)</Label>
@@ -169,10 +138,10 @@ function StepEditor({
           style={{ width: '100%' }}
         />
         <Label>Attached Image</Label>
-        <FallbackImageUploader
+        <OptimizedImageUploader
           directoryPath={`tutorial-step-attachments/${assetId}`}
-          onUploadedUrls={result => {
-            updateStepField(TutorialStepFieldNames.imageUrls, result)
+          onUploadedUrl={optimizedUrl => {
+            updateStepField(TutorialStepFieldNames.imageUrls, optimizedUrl)
           }}
         />
 

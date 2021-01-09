@@ -133,13 +133,10 @@ export default ({
     }
 
     setBannerUrls({
-      url:
-        result[AuthorFieldNames.bannerUrl] ||
-        result[AuthorFieldNames.fallbackBannerUrl],
-      fallbackUrl: result[AuthorFieldNames.fallbackBannerUrl]
+      url: result[AuthorFieldNames.bannerUrl]
     })
 
-    return () => setBannerUrls({ url: '', fallbackUrl: '' })
+    return () => setBannerUrls({ url: '' })
   }, [result ? result[AuthorFieldNames.name] : null])
 
   if (isLoading) {
@@ -164,8 +161,7 @@ export default ({
     [AuthorFieldNames.lastModifiedBy]: lastModifiedBy,
     [AuthorFieldNames.isOpenForCommission]: isOpenForCommission,
     [AuthorFieldNames.commissionInfo]: commissionInfo,
-    [AuthorFieldNames.avatarUrl]: avatarUrl,
-    [AuthorFieldNames.fallbackAvatarUrl]: fallbackAvatarUrl
+    [AuthorFieldNames.avatarUrl]: avatarUrl
   } = result
 
   return (
@@ -178,11 +174,7 @@ export default ({
         />
       </Helmet>
 
-      <Avatar
-        url={avatarUrl || fallbackAvatarUrl}
-        fallbackUrl={fallbackAvatarUrl}
-        username={name}
-      />
+      <Avatar url={avatarUrl} username={name} />
 
       <Heading variant="h1">
         <Link to={routes.viewAuthorWithVar.replace(':authorId', authorId)}>

@@ -84,7 +84,7 @@ export const TutorialStepFieldNames = {
   number: 'number', // 1 onwards
   title: 'title',
   description: 'description',
-  imageUrls: 'imageUrls', // { url: string, fallbackUrl: string }
+  imageUrls: 'imageUrls', // todo: rename to imageUrl
   youtubeUrl: 'youtubeUrl'
 }
 
@@ -225,7 +225,7 @@ export const AuthorFieldNames = {
   commissionInfo: 'commissionInfo',
   showCommissionStatusForAssets: 'showCommissionStatusForAssets',
   avatarUrl: 'avatarUrl',
-  fallbackAvatarUrl: 'fallbackAvatarUrl',
+  // fallbackAvatarUrl: 'fallbackAvatarUrl', REMOVED
   bannerUrl: 'bannerUrl',
   fallbackBannerUrl: 'fallbackBannerUrl'
 }
