@@ -1,11 +1,9 @@
-import React, { Fragment, useState } from 'react'
+import React from 'react'
 import { ResponsiveContainer, PieChart, Pie, Legend, Cell } from 'recharts'
 import { makeStyles } from '@material-ui/core/styles'
-import TextField from '@material-ui/core/TextField'
 
 import Paper from '../paper'
 
-import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useDatabaseQuery, {
   CollectionNames,
   PollResponsesFieldNames,
@@ -16,13 +14,10 @@ import useGuestUserRecord from '../../hooks/useGuestUserRecord'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import { createRef } from '../../utils'
-import { handleError } from '../../error-handling'
-import { getHasVotedInPoll, setHasVotedInPoll } from '../../polls'
-import { trackAction } from '../../analytics'
+import { getHasVotedInPoll } from '../../polls'
 import { mediaQueryForMobiles } from '../../media-queries'
 
 import LoadingIndicator from '../loading-indicator'
-import Button from '../button'
 
 const useStyles = makeStyles({
   root: {
@@ -45,99 +40,6 @@ const useStyles = makeStyles({
 })
 
 const ANSWER_TEXT_OTHER = 'Other'
-
-function Answers({ pollId, answers, isOtherAllowed = false }) {
-  const [, , user] = useUserRecord()
-  const [, , guestUser] = useGuestUserRecord()
-  const [isSaving, , , save] = useDatabaseSave(CollectionNames.PollResponses)
-  const [isEnteringOther, setIsEnteringOther] = useState(false)
-  const [otherText, setOtherText] = useState('')
-
-  const onAnswerClick = async (answerText, otherText = '') => {
-    try {
-      trackAction('Poll', 'Click answer button', {
-        pollId,
-        answer: answerText,
-        otherText
-      })
-
-      if (!user && !guestUser) {
-        console.warn('No user or guest user - should never happen')
-        return
-      }
-
-      // TODO: When user votes as guest THEN logs in, update their pollResponse to change from guest ID to logged in ID
-
-      await save({
-        poll: createRef(CollectionNames.Polls, pollId),
-        answer: answerText,
-        otherText,
-        createdBy: user
-          ? createRef(CollectionNames.Users, user.id)
-          : createRef(CollectionNames.GuestUsers, guestUser.id),
-        createdAt: new Date()
-      })
-
-      setHasVotedInPoll(pollId)
-    } catch (err) {
-      console.error(err)
-      handleError(err)
-    }
-  }
-
-  if (isSaving) {
-    return <LoadingIndicator />
-  }
-
-  if (isEnteringOther) {
-    return (
-      <>
-        <TextField
-          variant="filled"
-          onChange={e => setOtherText(e.target.value)}
-          value={otherText}
-          label="Enter your answer"
-        />{' '}
-        <Button
-          onClick={() => onAnswerClick(ANSWER_TEXT_OTHER, otherText)}
-          color="primary">
-          Save
-        </Button>{' '}
-        <Button onClick={() => setIsEnteringOther(false)} color="default">
-          Cancel
-        </Button>
-      </>
-    )
-  }
-
-  return (
-    <>
-      {answers.map(answerText => (
-        <Fragment key={answerText}>
-          <Answer
-            answer={answerText}
-            onClick={() => onAnswerClick(answerText)}
-          />{' '}
-        </Fragment>
-      ))}
-      {isOtherAllowed && (
-        <Answer
-          answer={ANSWER_TEXT_OTHER}
-          onClick={() => setIsEnteringOther(true)}
-        />
-      )}
-    </>
-  )
-}
-
-function Answer({ answer, onClick }) {
-  const classes = useStyles()
-  return (
-    <Button onClick={onClick} color="default" className={classes.answerBtn}>
-      {answer}
-    </Button>
-  )
-}
 
 // Source: https://sashamaps.net/docs/tools/20-colors/
 const colors = [
@@ -240,7 +142,7 @@ export default ({
 
   const hasVotedInPoll = getHasVotedInPoll(pollId)
 
-  const [isLoadingVotes, , votesForUser] = useDatabaseQuery(
+  const [isLoadingVotes] = useDatabaseQuery(
     CollectionNames.PollResponses,
 
     hasVotedInPoll
@@ -272,14 +174,8 @@ export default ({
       <div className={classes.col}>
         {isLoadingUser || isLoadingGuest || isLoadingVotes ? (
           <LoadingIndicator />
-        ) : (votesForUser && votesForUser.length) || hasVotedInPoll ? (
-          <PollResults
-            pollId={pollId}
-            answers={answers}
-            isOtherAllowed={isOtherAllowed}
-          />
         ) : (
-          <Answers
+          <PollResults
             pollId={pollId}
             answers={answers}
             isOtherAllowed={isOtherAllowed}

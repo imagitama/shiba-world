@@ -24,10 +24,10 @@ import {
   PATREON_BECOME_PATRON_URL
 } from '../../config'
 
-import Searchbar from '../searchbar'
 import MobileMenu from '../mobile-menu'
 import DesktopMenu from '../desktop-menu'
 import DesktopAccountMenu from '../desktop-account-menu'
+import ErrorMessage from '../error-message'
 
 // when the navigation starts obstructing the logo
 const mediaQueryForMenuLogoCollision = '@media (max-width: 1280px)'
@@ -35,7 +35,7 @@ const mediaQueryForMenuLogoCollision = '@media (max-width: 1280px)'
 const useStyles = makeStyles({
   root: {
     position: 'relative',
-    padding: '1rem 1rem 0',
+    padding: '1rem',
     [mediaQueryForMobiles]: {
       padding: '0.5rem 0.5rem 0'
     }
@@ -147,6 +147,9 @@ const useStyles = makeStyles({
     width: '4rem',
     height: '3rem',
     fill: 'white'
+  },
+  readOnlyMessage: {
+    margin: '1rem'
   }
 })
 
@@ -163,64 +166,72 @@ export default () => {
   }
 
   return (
-    <header className={classes.root}>
-      <div className={classes.logoWrapper}>
-        <Link to={routes.home} title="Go to the homepage of VRCArena">
-          <Logo className={classes.logo} />
-        </Link>
-        <div className={classes.socialIcons}>
-          <a
-            href={TWITTER_URL}
-            title="Visit our Twitter"
-            onClick={() => trackAction('Header', 'Click visit Twitter icon')}>
-            <TwitterIcon />
-          </a>
-          <a
-            href={DISCORD_URL}
-            title="Visit our Discord"
-            onClick={() => trackAction('Header', 'Click visit Discord icon')}>
-            <DiscordIcon />
-          </a>
-          <a
-            href={PATREON_BECOME_PATRON_URL}
-            title="Visit our Patreon"
-            onClick={() => trackAction('Header', 'Click visit Patreon icon')}>
-            <PatreonIcon />
-          </a>
+    <>
+      <header className={classes.root}>
+        <div className={classes.logoWrapper}>
+          <Link to={routes.home} title="Go to the homepage of VRCArena">
+            <Logo className={classes.logo} />
+          </Link>
+          <div className={classes.socialIcons}>
+            <a
+              href={TWITTER_URL}
+              title="Visit our Twitter"
+              onClick={() => trackAction('Header', 'Click visit Twitter icon')}>
+              <TwitterIcon />
+            </a>
+            <a
+              href={DISCORD_URL}
+              title="Visit our Discord"
+              onClick={() => trackAction('Header', 'Click visit Discord icon')}>
+              <DiscordIcon />
+            </a>
+            <a
+              href={PATREON_BECOME_PATRON_URL}
+              title="Visit our Patreon"
+              onClick={() => trackAction('Header', 'Click visit Patreon icon')}>
+              <PatreonIcon />
+            </a>
+          </div>
         </div>
-      </div>
 
-      <div className={classes.searchBar}>
-        <div className={classes.searchBarInner}>
-          <Searchbar />
+        <div className={classes.searchBar}>
+          <div className={classes.searchBarInner} />
         </div>
-      </div>
 
-      {!isMobile && (
-        <div className={classes.desktopMenu}>
-          <DesktopMenu />
-        </div>
-      )}
-
-      <div className={classes.floatingMenu}>
-        {!isMobile && <DesktopAccountMenu />}
-        {isMobile && (
-          <Button
-            className={classes.menuToggleButton}
-            onClick={onToggleMobileMenuClick}>
-            <MenuIcon className={classes.menuToggleIcon} />
-            <span hidden>Menu</span>
-          </Button>
+        {!isMobile && (
+          <div className={classes.desktopMenu}>
+            <DesktopMenu />
+          </div>
         )}
+
+        <div className={classes.floatingMenu}>
+          {!isMobile && <DesktopAccountMenu />}
+          {isMobile && (
+            <Button
+              className={classes.menuToggleButton}
+              onClick={onToggleMobileMenuClick}>
+              <MenuIcon className={classes.menuToggleIcon} />
+              <span hidden>Menu</span>
+            </Button>
+          )}
+        </div>
+
+        {isMobile && <MobileMenu />}
+
+        <div
+          className={`${classes.background} ${
+            bannerUrl ? classes.withBanner : ''
+          }`}
+        />
+      </header>
+
+      <div className={classes.readOnlyMessage}>
+        <ErrorMessage>
+          The site is currently in read-only mode. Please visit our{' '}
+          <a href="https://twitter.com/VRCArena">Twitter</a> or{' '}
+          <a href="https://discord.com/invite/UVs9V58">Discord</a> for updates.
+        </ErrorMessage>
       </div>
-
-      {isMobile && <MobileMenu />}
-
-      <div
-        className={`${classes.background} ${
-          bannerUrl ? classes.withBanner : ''
-        }`}
-      />
-    </header>
+    </>
   )
 }
