@@ -1,0 +1,13 @@
+{
+  "name": "replace-png-with-webp",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "GOOGLE_APPLICATION_CREDENTIALS=credentials.json node src/main.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "firebase-admin": "^9.4.2"
+  }
+}
