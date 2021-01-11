@@ -149,5 +149,9 @@ service cloud.firestore {
       allow update: if isEditor() || isAdmin();
       allow create: if isEditor() || isAdmin();
     }
+
+    match /pollTallies/{document=**} {
+      allow read;
+    }
   }
 }
