@@ -92,12 +92,12 @@ export default (
         return
       }
 
-      const scrollAmount = window.pageYOffset
+      const scrollAmount = Math.floor(window.pageYOffset)
+      const offsetMinusInner = document.body.offsetHeight - window.innerHeight
 
-      if (
-        Math.floor(scrollAmount) ===
-        document.body.offsetHeight - window.innerHeight
-      ) {
+      console.log(scrollAmount, offsetMinusInner)
+
+      if (offsetMinusInner - scrollAmount <= 5) {
         // prevent edge case when user scrolls HEAPS and React is still re-rendering
         if (isChangingPageNumberRef.current) {
           console.debug('Cannot change page number (changing already)')
