@@ -6,7 +6,7 @@ module.exports.summariesIdTags = summariesIdTags
 const tagsKeyAllTags = 'allTags'
 module.exports.tagsKeyAllTags = tagsKeyAllTags
 
-module.exports.getAllTags = async () => {
+const getAllTags = async () => {
   const { docs } = await db
     .collection(CollectionNames.Assets)
     .where(AssetFieldNames.isAdult, '==', false)
@@ -23,6 +23,7 @@ module.exports.getAllTags = async () => {
     return allTags.concat(tags)
   }, [])
 }
+module.exports.getAllTags = getAllTags
 
 module.exports.addTagsToCache = async (tags) => {
   if (!tags) {

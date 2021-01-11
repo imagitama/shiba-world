@@ -16,6 +16,8 @@ exports.syncDiscordServerById = require('./src/functions/syncDiscordServerById')
 exports.syncIndex = require('./src/functions/syncIndex')
 exports.syncTags = require('./src/functions/syncTags')
 exports.onDiscordMessageQueued = require('./src/functions/onDiscordMessageQueued')
+exports.onPollResponseCreated = require('./src/functions/onPollResponseCreated')
+exports.tallyPolls = require('./src/functions/tallyPolls')
 
 const IS_BACKUP_ENABLED = config.global.isBackupEnabled !== 'false'
 

@@ -24,12 +24,18 @@ const CollectionNames = {
   Profiles: 'profiles',
   Mail: 'mail',
   Summaries: 'summaries',
-  Tweets: 'tweets',
+  Downloads: 'downloads',
+  Requests: 'requests',
   Notifications: 'notifications',
+  Polls: 'polls',
+  PollResponses: 'pollResponses',
+  GuestUsers: 'guestUsers',
   Authors: 'authors',
   DiscordServers: 'discordServers',
-  Patreons: 'patreons',
-  DiscordMessages: 'discordMessages',
+  Likes: 'likes',
+  Species: 'species',
+  Special: 'special',
+  PollTallies: 'pollTallies',
 }
 module.exports.CollectionNames = CollectionNames
 
@@ -171,6 +177,28 @@ const LikeFieldNames = {
 }
 module.exports.LikeFieldNames = LikeFieldNames
 
+const PollsFieldNames = {
+  question: 'question',
+  answers: 'answers',
+  isClosed: 'isClosed',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+}
+module.exports.PollsFieldNames = PollsFieldNames
+
+const PollResponsesFieldNames = {
+  poll: 'poll',
+  answer: 'answer',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+}
+module.exports.PollResponsesFieldNames = PollResponsesFieldNames
+
+const PollTalliesFieldNames = {
+  tally: 'tally',
+}
+module.exports.PollTalliesFieldNames = PollTalliesFieldNames
+
 module.exports.isNotApproved = (docData) => {
   return docData.isApproved === false
 }
@@ -214,6 +242,7 @@ module.exports.replaceReferencesWithString = (object) => {
         newObject[key] = module.exports.replaceReferencesWithString(val)
 
         // if special firebase date object
+        /* eslint-disable-next-line */
       } else if (val.hasOwnProperty('_seconds')) {
         const newVal = secondsToDate(val._seconds)
         newObject[key] = newVal.toString()

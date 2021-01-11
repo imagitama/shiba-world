@@ -9,7 +9,6 @@ const {
   AssetFieldNames,
   CommentFieldNames,
   UserFieldNames,
-  Operators,
 } = require('../firebase')
 const {
   storeInNotifications,

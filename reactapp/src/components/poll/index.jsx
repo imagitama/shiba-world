@@ -13,7 +13,7 @@ import useDatabaseQuery, {
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import useGuestUserRecord from '../../hooks/useGuestUserRecord'
-import useFirebaseUserId from '../../hooks/useFirebaseUserId'
+// import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import { createRef } from '../../utils'
 import { handleError } from '../../error-handling'
@@ -23,6 +23,7 @@ import { mediaQueryForMobiles } from '../../media-queries'
 
 import LoadingIndicator from '../loading-indicator'
 import Button from '../button'
+import ErrorMessage from '../error-message'
 
 const useStyles = makeStyles({
   root: {
@@ -166,38 +167,27 @@ const colors = [
 ]
 
 function PollResults({ pollId, answers, isOtherAllowed }) {
-  const userId = useFirebaseUserId()
+  // const userId = useFirebaseUserId()
   const classes = useStyles()
-  const [isLoadingResults, , results] = useDatabaseQuery(
-    CollectionNames.PollResponses,
-    [
-      [
-        PollResponsesFieldNames.poll,
-        Operators.EQUALS,
-        createRef(CollectionNames.Polls, pollId)
-      ]
-    ]
+  const [isLoadingTally, isErrorLoadingTally, result] = useDatabaseQuery(
+    CollectionNames.PollTallies,
+    pollId
   )
 
-  if (isLoadingResults || !results) {
+  if (isLoadingTally || !result) {
     return <LoadingIndicator />
   }
 
-  const answerTally = results.reduce(
-    (currentTally, pollResponse) => ({
-      ...currentTally,
-      [pollResponse[PollResponsesFieldNames.answer]]: currentTally[
-        pollResponse[PollResponsesFieldNames.answer]
-      ]
-        ? currentTally[pollResponse[PollResponsesFieldNames.answer]] + 1
-        : 1
-    }),
-    {}
-  )
+  if (isErrorLoadingTally) {
+    return <ErrorMessage>Failed to load poll results</ErrorMessage>
+  }
 
-  const loggedInUsersPollResponse = results.find(
-    result => result[PollResponsesFieldNames.createdBy].id === userId
-  )
+  // const loggedInUsersPollResponse = results.find(
+  //   result => result[PollResponsesFieldNames.createdBy].id === userId
+  // )
+  const loggedInUsersPollResponse = 'abcdef'
+
+  const { tally } = result
 
   const chartData = answers
     .concat(isOtherAllowed ? [ANSWER_TEXT_OTHER] : [])
@@ -208,7 +198,7 @@ function PollResults({ pollId, answers, isOtherAllowed }) {
           ? '*'
           : ''
       }`,
-      value: answerTally[answerText] || 0
+      value: tally[answerText] || 0
     }))
 
   return (

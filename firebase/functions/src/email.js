@@ -15,7 +15,7 @@ module.exports.notifyUsersOfUnapprovedAsset = async (assetId, assetData) => {
   let recipientEmails = []
 
   /* eslint-disable no-await-in-loop */
-  for (user of editorUsers) {
+  for (const user of editorUsers) {
     // Awaiting like this will cause a bottleneck with a lot of results as it does it in sequence
     const profileDoc = await db
       .collection(CollectionNames.Profiles)

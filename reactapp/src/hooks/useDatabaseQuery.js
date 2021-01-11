@@ -36,7 +36,8 @@ export const CollectionNames = {
   DiscordServers: 'discordServers',
   Likes: 'likes',
   Species: 'species',
-  Special: 'special'
+  Special: 'special',
+  PollTallies: 'pollTallies'
 }
 
 export const specialCollectionIds = {
@@ -324,7 +325,7 @@ export const mapDates = doc => {
 }
 
 const getDataFromReference = async record => {
-  console.debug(`get ${record.id}`)
+  console.debug(`get ${record.path}`)
   const result = await record.get()
   return {
     ...result.data(),

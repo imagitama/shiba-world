@@ -1,6 +1,7 @@
 const functions = require('firebase-functions')
 const { replaceReferencesWithString } = require('../firebase')
 const { getDifferenceInObjects } = require('../utils')
+const { storeInHistory } = require('../history')
 
 module.exports = functions.firestore
   .document('requests/{requestId}')

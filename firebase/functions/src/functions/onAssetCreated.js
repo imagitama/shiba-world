@@ -7,6 +7,7 @@ const {
   isNotApproved,
   AssetFieldNames,
   UserFieldNames,
+  isAdult,
 } = require('../firebase')
 const { notifyUsersOfUnapprovedAsset } = require('../email')
 const {
