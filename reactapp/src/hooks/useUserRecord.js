@@ -4,7 +4,12 @@ import { firestore } from 'firebase/app'
 import { Map, is } from 'immutable'
 import { CollectionNames, formatRawDoc } from './useDatabaseQuery'
 import useFirebaseUserId from './useFirebaseUserId'
-import { USER_LOADED, USER_UNLOADED } from '../modules/user'
+import {
+  USER_LOADED,
+  USER_UNLOADED,
+  USER_IS_LOADING,
+  USER_IS_DONE_LOADING
+} from '../modules/user'
 
 let isSubscribed = false
 
@@ -37,6 +42,8 @@ export default fieldToSubscribeTo => {
   const unsubscribeRef = useRef()
   const lastKnownUidRef = useRef()
 
+  console.log('isLoading', isLoading)
+
   useEffect(() => {
     // If they logged out
     if (lastKnownUidRef.current && !uid) {
@@ -49,6 +56,9 @@ export default fieldToSubscribeTo => {
     lastKnownUidRef.current = uid
 
     if (!uid) {
+      dispatch({
+        type: USER_IS_DONE_LOADING
+      })
       return
     }
 
@@ -62,6 +72,10 @@ export default fieldToSubscribeTo => {
 
     async function main() {
       try {
+        dispatch({
+          type: USER_IS_LOADING
+        })
+
         unsubscribeRef.current = firestore()
           .collection(CollectionNames.Users)
           .doc(uid)

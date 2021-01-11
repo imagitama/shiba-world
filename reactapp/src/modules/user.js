@@ -1,10 +1,11 @@
 export const USER_IS_LOADING = 'user/USER_IS_LOADING'
+export const USER_IS_DONE_LOADING = 'user/USER_IS_DONE_LOADING'
 export const USER_IS_ERRORED = 'user/USER_IS_ERRORED'
 export const USER_LOADED = 'user/USER_LOADED'
 export const USER_UNLOADED = 'user/USER_UNLOADED'
 
 const initialState = {
-  isLoading: false,
+  isLoading: true,
   isErrored: false,
   record: null // initialize as null for setup profile component
 }
@@ -15,6 +16,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         isLoading: true
+      }
+
+    case USER_IS_DONE_LOADING:
+      return {
+        ...state,
+        isLoading: false
       }
 
     case USER_IS_ERRORED:
