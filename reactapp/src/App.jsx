@@ -16,6 +16,7 @@ import ViewSpecies from './containers/view-species'
 import ViewSpeciesCategory from './containers/view-species-category'
 import ViewCategory from './containers/view-category'
 import ViewAllSpecies from './containers/view-all-species'
+import VsScreen from './containers/vs-screen'
 
 import PageHeader from './components/header'
 import PageFooter from './components/footer'
@@ -380,6 +381,7 @@ const MainContent = () => {
         <Route exact path={routes.patreon} component={Patreon} />
         <Route exact path={routes.resetPassword} component={ResetPassword} />
         <Route exact path={routes.pedestals} component={Pedestals} />
+        <Route exact path={routes.vsScreen} component={VsScreen} />
         <Route
           component={() => (
             <ErrorContainer code={404} message="Page not found" />

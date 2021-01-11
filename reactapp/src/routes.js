@@ -47,6 +47,7 @@ export const createSpecies = '/species/create'
 export const patreon = '/patreon'
 export const resetPassword = '/reset-password'
 export const pedestals = '/pedestals'
+export const vsScreen = '/vs-screen'
 
 // Outdated routes
 export const browseAssets = '/browse'
