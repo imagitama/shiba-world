@@ -334,7 +334,11 @@ const getDataFromReference = async record => {
   }
 }
 
-const mapReferences = async (doc, fetchChildren = true) => {
+const mapReferences = async (
+  doc,
+  fetchChildren = true,
+  populateRefs = false
+) => {
   if (!doc) {
     return doc
   }
@@ -347,7 +351,11 @@ const mapReferences = async (doc, fetchChildren = true) => {
 
   const results = await Promise.all(
     Object.entries(newDoc).map(async ([key, value]) => {
-      if (value && value instanceof firestore.DocumentReference) {
+      if (
+        value &&
+        value instanceof firestore.DocumentReference &&
+        populateRefs
+      ) {
         return [key, await getDataFromReference(value)]
       }
       // Bad hack for the Notifications Added comment author field :)
@@ -364,8 +372,12 @@ const mapReferences = async (doc, fetchChildren = true) => {
 }
 
 // the 2nd arg is to avoid an infinite loop with fetching children who then have children that refer to the parent
-export async function formatRawDoc(doc, fetchChildren = true) {
-  const formattedDocs = await formatRawDocs([doc], fetchChildren)
+export async function formatRawDoc(
+  doc,
+  fetchChildren = true,
+  populateRefs = false
+) {
+  const formattedDocs = await formatRawDocs([doc], fetchChildren, populateRefs)
   return formattedDocs[0]
 }
 
@@ -427,7 +439,11 @@ async function mapDocArrays(doc, fetchChildren = true) {
 }
 
 // the 2nd arg is to avoid an infinite loop with fetching children who then have children that refer to the parent
-export async function formatRawDocs(docs, fetchChildren = true) {
+export async function formatRawDocs(
+  docs,
+  fetchChildren = true,
+  populateRefs = false
+) {
   const docsWithDates = docs
     .map(doc =>
       !doc.exists
@@ -442,9 +458,16 @@ export async function formatRawDocs(docs, fetchChildren = true) {
     .map(mapDates)
 
   const mappedRefs = await Promise.all(
-    docsWithDates.map(doc => mapReferences(doc, fetchChildren))
+    docsWithDates.map(doc => mapReferences(doc, fetchChildren, populateRefs))
   )
   return Promise.all(mappedRefs.map(ref => mapDocArrays(ref, fetchChildren)))
+}
+
+function getLimitAsString(limit) {
+  if (!limit) {
+    return ''
+  }
+  return limit
 }
 
 export function getOrderByAsString(orderBy) {
@@ -460,7 +483,8 @@ export default (
   limit,
   orderBy,
   subscribe = true,
-  startAfter = undefined
+  startAfter = undefined,
+  populateRefs = false
 ) => {
   const [recordOrRecords, setRecordOrRecords] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -470,6 +494,7 @@ export default (
   const whereClausesAsString = getWhereClausesAsString(whereClauses)
   const orderByAsString = getOrderByAsString(orderBy)
   const startAfterAsString = getStartAfterAsString(startAfter)
+  const limitAsString = getLimitAsString(limit)
 
   async function doIt() {
     try {
@@ -478,7 +503,7 @@ export default (
           'useDatabaseQuery',
           collectionName,
           whereClausesAsString,
-          limit,
+          limitAsString,
           orderByAsString,
           startAfterAsString
         )
@@ -524,9 +549,11 @@ export default (
 
       async function processResults(results) {
         if (isGettingSingleRecord) {
-          setRecordOrRecords(await formatRawDoc(results))
+          setRecordOrRecords(await formatRawDoc(results, true, populateRefs))
         } else {
-          setRecordOrRecords(await formatRawDocs(results.docs))
+          setRecordOrRecords(
+            await formatRawDocs(results.docs, true, populateRefs)
+          )
         }
 
         setIsLoading(false)
@@ -570,7 +597,8 @@ export default (
     collectionName,
     whereClausesAsString,
     orderByAsString,
-    startAfterAsString
+    startAfterAsString,
+    limitAsString
   ])
 
   return [isLoading, isErrored, recordOrRecords]

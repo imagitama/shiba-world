@@ -42,8 +42,6 @@ export default fieldToSubscribeTo => {
   const unsubscribeRef = useRef()
   const lastKnownUidRef = useRef()
 
-  console.log('isLoading', isLoading)
-
   useEffect(() => {
     // If they logged out
     if (lastKnownUidRef.current && !uid) {

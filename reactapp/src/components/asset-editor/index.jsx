@@ -12,7 +12,7 @@ import PopularTagsSelector from './components/popular-tags-selector'
 import SpeciesOutput from './components/species-output'
 
 import Heading from '../heading'
-import ThumbnailUploader from '../thumbnail-uploader'
+import OptimizedImageUploader from '../optimized-image-uploader'
 import BannerUploader from '../banner-uploader'
 import Button from '../button'
 import TagChip from '../tag-chip'
@@ -360,10 +360,12 @@ export default ({
         <strong>Please use the form below to upload a thumbnail</strong>
       )}
       <Heading variant="h4">Upload</Heading>
-      <ThumbnailUploader
+      <OptimizedImageUploader
         directoryPath="asset-thumbnails"
         filePrefix={shortid.generate()}
-        onUploaded={url => onFieldChange(AssetFieldNames.thumbnailUrl, url)}
+        onUploadedUrl={url => onFieldChange(AssetFieldNames.thumbnailUrl, url)}
+        requiredWidth={300}
+        requiredHeight={300}
       />
       <Heading variant="h2">Source</Heading>
       <FormField

@@ -59,8 +59,6 @@ export default (
   const isChangingPageNumberRef = useRef(false)
 
   const isAtEndOfQuery = queryResults && queryResults.length === 0
-
-  console.log('isAtEnd?', isAtEndOfQuery)
   const isAllowedToChangePageNumber = !isLoading && !isAtEndOfQuery
 
   useEffect(() => {

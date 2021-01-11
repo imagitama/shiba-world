@@ -140,10 +140,13 @@ export default ({ assetId = null, limit = 20 }) => {
         ]
       : undefined,
     limit,
-    [HistoryFieldNames.createdAt, OrderDirections.DESC]
+    [HistoryFieldNames.createdAt, OrderDirections.DESC],
+    false,
+    undefined,
+    true
   )
 
-  if (isLoading) {
+  if (isLoading || !results) {
     return <LoadingIndicator />
   }
 

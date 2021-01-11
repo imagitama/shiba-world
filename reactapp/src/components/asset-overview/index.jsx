@@ -430,7 +430,12 @@ const pickNonFallbackUrl = urlOrUrls => {
 export default ({ assetId }) => {
   const [isLoading, isErrored, result] = useDatabaseQuery(
     CollectionNames.Assets,
-    assetId
+    assetId,
+    undefined,
+    undefined,
+    true,
+    undefined,
+    true
   )
   const classes = useStyles()
   const [, , user] = useUserRecord()
