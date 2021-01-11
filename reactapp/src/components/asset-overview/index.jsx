@@ -259,7 +259,6 @@ const useStyles = makeStyles({
   }
 })
 
-const allSpeciesLabel = 'All Species'
 const analyticsCategoryName = 'ViewAsset'
 
 function getCategoryDisplayName(category) {
@@ -606,8 +605,8 @@ export default ({ assetId }) => {
               </>
             ) : (
               <>
-                {allSpeciesLabel}
-                <EnableSpeciesEditorIcon /> -{' '}
+                {isOwnerOrEditor && '(no species)'}
+                <EnableSpeciesEditorIcon />
                 <Link
                   to={routes.viewCategoryWithVar.replace(
                     ':categoryName',

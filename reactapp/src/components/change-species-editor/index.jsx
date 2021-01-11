@@ -7,7 +7,8 @@ import Button from '../button'
 import useDatabaseQuery, {
   CollectionNames,
   AssetFieldNames,
-  SpeciesFieldNames
+  SpeciesFieldNames,
+  OrderDirections
 } from '../../hooks/useDatabaseQuery'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
@@ -34,7 +35,10 @@ function isSpeciesIdActive(speciesId, allActiveSpeciesRefs) {
 
 function SpeciesButtons({ activeSpeciesRefs, onClickSpeciesWithId }) {
   const [isLoading, isErrored, results] = useDatabaseQuery(
-    CollectionNames.Species
+    CollectionNames.Species,
+    undefined,
+    undefined,
+    [SpeciesFieldNames.singularName, OrderDirections.ASC]
   )
   const classes = useStyles()
 
