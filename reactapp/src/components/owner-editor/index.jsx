@@ -11,6 +11,7 @@ import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import { handleError } from '../../error-handling'
 import { trackAction } from '../../analytics'
 import { createRef } from '../../utils'
+import { doesDocumentExist } from '../../firestore'
 
 export default ({ collectionName, id, actionCategory }) => {
   const userId = useFirebaseUserId()
@@ -21,6 +22,7 @@ export default ({ collectionName, id, actionCategory }) => {
   )
   const [isEditorOpen, setIsEditorOpen] = useState(false)
   const [ownerUserIdValue, setOwnerUserIdValue] = useState(null)
+  const [userDoesNotExist, setUserDoesNotExist] = useState(null)
 
   useEffect(() => {
     if (!result) {
@@ -64,6 +66,13 @@ export default ({ collectionName, id, actionCategory }) => {
     try {
       trackAction(actionCategory, 'Click save new owner button', id)
 
+      setUserDoesNotExist(false)
+
+      if (!(await doesDocumentExist(CollectionNames.Users, ownerUserIdValue))) {
+        setUserDoesNotExist(true)
+        return
+      }
+
       const newValue = ownerUserIdValue
         ? createRef(CollectionNames.Users, ownerUserIdValue)
         : null
@@ -98,6 +107,7 @@ export default ({ collectionName, id, actionCategory }) => {
         value={ownerUserIdValue}
       />
       <Button onClick={onSaveBtnClick}>Save</Button>
+      {userDoesNotExist && 'User does not exist!'}
     </>
   )
 }

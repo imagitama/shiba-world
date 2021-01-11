@@ -9,9 +9,11 @@ export function quickDeleteRecord(collectionName, id) {
     .delete()
 }
 
-export function doesDocumentExist(collectionName, id) {
-  return firestore()
+export async function doesDocumentExist(collectionName, id) {
+  const doc = await firestore()
     .collection(collectionName)
     .doc(id)
-    .exists()
+    .get()
+
+  return doc.exists
 }
