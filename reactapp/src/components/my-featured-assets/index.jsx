@@ -18,7 +18,7 @@ export default () => {
     true
   )
 
-  if (isLoading || !result) {
+  if (isLoading) {
     return <LoadingIndicator message="Loading featured assets..." />
   }
 
@@ -26,11 +26,7 @@ export default () => {
     return <ErrorMessage>Failed to load featured assets</ErrorMessage>
   }
 
-  const { assets } = result
-
-  console.log(result)
-
-  if (!assets.length) {
+  if (!result || !result.assets.length) {
     return (
       <ErrorMessage>
         You do not have any featured assets. If you are a patron you can view an
@@ -39,5 +35,5 @@ export default () => {
     )
   }
 
-  return <AssetResults assets={assets} />
+  return <AssetResults assets={result.assets} />
 }
