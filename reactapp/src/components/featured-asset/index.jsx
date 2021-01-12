@@ -6,12 +6,9 @@ import CardActionArea from '@material-ui/core/CardActionArea'
 import CardContent from '@material-ui/core/CardContent'
 import CardMedia from '@material-ui/core/CardMedia'
 import Typography from '@material-ui/core/Typography'
-import Chip from '@material-ui/core/Chip'
 import LazyLoad from 'react-lazyload'
-import RoomIcon from '@material-ui/icons/Room'
 
 import * as routes from '../../routes'
-import FormattedDate from '../formatted-date'
 import { mediaQueryForMobiles } from '../../media-queries'
 import useDatabaseQuery, {
   CollectionNames,
@@ -84,23 +81,6 @@ const maxLength = 300
 
 function truncateTextAndAddEllipsis(text) {
   return text.length >= maxLength ? `${text.slice(0, maxLength)}...` : text
-}
-
-function ExtraChips({ isAdult, isApproved, isPrivate, isPinned }) {
-  const classes = useStyles()
-  return (
-    <div className={classes.extraChips}>
-      {isAdult && <Chip label="NSFW" className={classes.extraChip} />}
-      {!isApproved && <Chip label="Unapproved" className={classes.extraChip} />}
-      {isPrivate && <Chip label="Private" className={classes.extraChip} />}
-      {isPinned && (
-        <Chip
-          label={<RoomIcon />}
-          className={`${classes.extraChip} ${classes.extraChipWithIcon}`}
-        />
-      )}
-    </div>
-  )
 }
 
 export default () => {
