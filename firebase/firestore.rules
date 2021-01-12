@@ -153,5 +153,11 @@ service cloud.firestore {
     match /pollTallies/{document=**} {
       allow read;
     }
+
+    match /featuredAssetsForUsers/{document=**} {
+      allow read;
+      allow update: if ((request.auth.uid == resource.id) && isNotBanned());
+      allow create: if isLoggedIn() && isNotBanned();
+    }
   }
 }
