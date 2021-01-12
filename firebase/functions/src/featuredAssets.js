@@ -69,7 +69,7 @@ module.exports.syncFeaturedAssets = async () => {
         (item) => item.id === activeAsset[ActiveAssetFieldNames.asset].id
       ))
   ) {
-    pickFeaturedAsset()
+    await pickFeaturedAsset()
   }
 }
 
@@ -85,6 +85,10 @@ const pickFeaturedAsset = async () => {
   let alreadyFeaturedAssets = specialDoc.get(
     SpecialFieldNames.alreadyFeaturedAssets
   )
+
+  if (!alreadyFeaturedAssets) {
+    alreadyFeaturedAssets = []
+  }
 
   let remainingAssets = rotation.filter(
     (assetInRotation) =>
