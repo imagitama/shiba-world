@@ -30,7 +30,6 @@ import EndorseAssetButton from '../endorse-asset-button'
 import TagChip from '../tag-chip'
 import Heading from '../heading'
 import Button from '../button'
-import AssetThumbnail from '../asset-thumbnail'
 import VideoPlayer from '../video-player'
 import ApproveAssetButton from '../approve-asset-button'
 import DeleteAssetButton from '../delete-asset-button'
@@ -44,6 +43,7 @@ import AssetAttachmentUploader from '../asset-attachment-uploader'
 import TutorialStepsEditor from '../tutorial-steps-editor'
 import TutorialSteps from '../tutorial-steps'
 import PedestalUploadForm from '../pedestal-upload-form'
+import ThumbnailUploader from '../thumbnail-uploader'
 
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
@@ -62,7 +62,7 @@ import {
   mediaQueryForTabletsOrBelow,
   mediaQueryForMobiles
 } from '../../media-queries'
-import { THUMBNAIL_WIDTH } from '../../config'
+import { THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT } from '../../config'
 
 import NotApprovedMessage from './components/not-approved-message'
 import DeletedMessage from './components/deleted-message'
@@ -136,12 +136,15 @@ const useStyles = makeStyles({
   },
 
   thumbnailWrapper: {
+    position: 'relative',
     flexShrink: 0,
     width: '200px',
+    height: '200px',
     textAlign: 'center',
 
     [mediaQueryForMobiles]: {
-      width: '100%'
+      width: '100%',
+      height: 'auto'
     }
   },
 
@@ -256,6 +259,20 @@ const useStyles = makeStyles({
   viewSketchfabEmbedBtn: {
     textAlign: 'center',
     padding: '1rem 0 0'
+  },
+  editThumbnailIcon: {
+    width: '40px',
+    height: '40px',
+    position: 'absolute',
+    bottom: '5px',
+    right: '5px',
+    padding: '5px',
+    background: 'rgba(0,0,0,0.3)',
+    borderRadius: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer'
   }
 })
 
@@ -447,6 +464,7 @@ export default ({ assetId }) => {
   const [isEditingPedestal, setIsEditingPedestal] = useState(false)
   const [isSketchfabEmbedVisible, setIsSketchfabEmbedVisible] = useState(false)
   const [isEditingSketchfabEmbed, setIsEditingSketchfabEmbed] = useState(false)
+  const [isThumbnailEditorOpen, setIsThumbnailEditorOpen] = useState(false)
   const hideChangeSpeciesTimeoutRef = useRef()
 
   const dispatch = useDispatch()
@@ -710,12 +728,41 @@ export default ({ assetId }) => {
       ) : (
         <div className={classes.thumbAndTitle}>
           <div className={classes.thumbnailWrapper}>
-            <AssetThumbnail url={thumbnailUrl} className={classes.thumbnail} />
+            <img
+              src={thumbnailUrl}
+              width={THUMBNAIL_WIDTH}
+              height={THUMBNAIL_HEIGHT}
+              alt="Thumbnail for asset"
+              className={classes.thumbnail}
+            />
+            {isOwnerOrEditor && (
+              <div
+                className={classes.editThumbnailIcon}
+                onClick={() => {
+                  trackAction(
+                    analyticsCategoryName,
+                    'Click edit thumbnail icon'
+                  )
+                  setIsThumbnailEditorOpen(true)
+                }}>
+                <EditIcon />
+              </div>
+            )}
           </div>
           <div className={classes.titlesWrapper}>
             <AssetTitle />
           </div>
         </div>
+      )}
+
+      {isThumbnailEditorOpen && (
+        <>
+          <Heading variant="h3">Edit Thumbnail</Heading>
+          <ThumbnailUploader
+            assetId={assetId}
+            onDone={() => setIsThumbnailEditorOpen(false)}
+          />
+        </>
       )}
 
       {isEditingPedestal && (

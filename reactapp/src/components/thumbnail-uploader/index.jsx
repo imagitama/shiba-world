@@ -1,219 +1,67 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-import Paper from '@material-ui/core/Paper'
-import ReactCrop from 'react-image-crop'
-import 'react-image-crop/dist/ReactCrop.css'
-import Button from '../button'
-import useFileUpload from '../../hooks/useFileUpload'
-import BodyText from '../body-text'
+import React, { useRef, useEffect } from 'react'
+import shortid from 'shortid'
+
+import { CollectionNames, AssetFieldNames } from '../../hooks/useDatabaseQuery'
+import useDatabaseSave from '../../hooks/useDatabaseSave'
+import useFirebaseUserId from '../../hooks/useFirebaseUserId'
+
+import LoadingIndicator from '../loading-indicator'
+import ErrorMessage from '../error-message'
+import SuccessMessage from '../success-message'
+import OptimizedImageUploader from '../optimized-image-uploader'
+
+import { createRef } from '../../utils'
 import { handleError } from '../../error-handling'
-import { THUMBNAIL_WIDTH } from '../../config'
 
-const useStyles = makeStyles({
-  root: {
-    padding: '1rem'
-  }
-})
-
-const thumbnailWidthAndHeight = THUMBNAIL_WIDTH
-
-function renameJpgToPng(path) {
-  return path.replace('.jpeg', '.png').replace('.jpg', '.png')
-}
-
-function Output({ onUploaded, directoryPath = '', filePrefix = '' }) {
-  const [cropX, setCropX] = useState(0)
-  const [cropY, setCropY] = useState(0)
-  const [width, setWidth] = useState(0)
-  const [height, setHeight] = useState(0)
-  const [imageSrc, setImageSrc] = useState(null)
-  const [isUploading, percentageDone, , , upload] = useFileUpload()
-  const [uploadedUrl, setUploadedUrl] = useState(null)
-  const imageRef = useRef()
-  const selectedFileRef = useRef()
-  const [croppedImagePreviewUrl, setCroppedImagePreviewUrl] = useState('')
+export default ({ assetId, onDone }) => {
+  const userId = useFirebaseUserId()
+  const [isSaving, isSuccess, isErrored, save] = useDatabaseSave(
+    CollectionNames.Assets,
+    assetId
+  )
+  const timeoutRef = useRef()
 
   useEffect(() => {
-    if (!imageRef.current) {
-      return
-    }
+    return () => clearTimeout(timeoutRef.current)
+  }, [])
 
-    async function main() {
-      try {
-        const canvas = await cropImageElementAndGetCanvas()
-        const url = canvas.toDataURL('image/jpeg')
-        setCroppedImagePreviewUrl(url)
-      } catch (err) {
-        console.error('Failed to generate cropped image preview url', err)
-        handleError(err)
-      }
-    }
-    main()
-  }, [cropX, cropY, width, height])
-
-  const onFileChange = files => {
-    const reader = new FileReader()
-    const selectedFile = files[0]
-    selectedFileRef.current = selectedFile
-
-    reader.addEventListener('load', () => {
-      setImageSrc(reader.result)
-    })
-
-    reader.readAsDataURL(selectedFile)
+  if (isSaving) {
+    return <LoadingIndicator message="Saving..." />
   }
 
-  const onCancelBtnClick = () => {
-    selectedFileRef.current = null
-    setImageSrc(null)
-    setUploadedUrl(null)
+  if (isErrored) {
+    return <ErrorMessage>Failed to save thumbnail</ErrorMessage>
   }
 
-  const cropImageElementAndGetCanvas = async () => {
-    return new Promise(resolve => {
-      const canvas = document.createElement('canvas')
-      canvas.width = thumbnailWidthAndHeight
-      canvas.height = thumbnailWidthAndHeight
-
-      const image = imageRef.current
-      const scaleX = image.naturalWidth / image.width
-      const scaleY = image.naturalHeight / image.height
-
-      const ctx = canvas.getContext('2d')
-      ctx.drawImage(
-        image,
-        cropX * scaleX,
-        cropY * scaleY,
-        width * scaleX,
-        height * scaleY,
-        0,
-        0,
-        thumbnailWidthAndHeight,
-        thumbnailWidthAndHeight
-      )
-      resolve(canvas)
-    })
+  if (isSuccess) {
+    return <SuccessMessage>Thumbnail has been changed!</SuccessMessage>
   }
 
-  const cropImageElementAndGetBlob = async (asJpeg = false) => {
-    const canvas = await cropImageElementAndGetCanvas()
-
-    return new Promise(resolve => {
-      // PNG is way slower to use JPEG for previews
-      if (asJpeg) {
-        canvas.toBlob(resolve, 'image/jpeg', 1)
-      } else {
-        canvas.toBlob(resolve)
-      }
-    })
-  }
-
-  const onPerformCropBtnClick = async () => {
+  const onUploaded = async url => {
     try {
-      const blob = await cropImageElementAndGetBlob()
+      await save({
+        [AssetFieldNames.thumbnailUrl]: url,
+        [AssetFieldNames.lastModifiedBy]: createRef(
+          CollectionNames.Users,
+          userId
+        ),
+        [AssetFieldNames.lastModifiedAt]: new Date()
+      })
 
-      const filename = `${filePrefix ? `${filePrefix}___` : ''}${renameJpgToPng(
-        selectedFileRef.current.name
-      )}`
-      const fileToUpload = new File([blob], filename)
-
-      const uploadedUrl = await upload(
-        fileToUpload,
-        `${directoryPath}/${filename}`
-      )
-
-      setUploadedUrl(uploadedUrl)
-      onUploaded(uploadedUrl)
+      timeoutRef.current = setTimeout(() => onDone(), 2000)
     } catch (err) {
-      console.error('Failed to crop image', err)
+      console.error('Failed to upload thumbnail for asset', err)
       handleError(err)
     }
   }
 
-  if (uploadedUrl) {
-    return (
-      <>
-        <img
-          src={uploadedUrl}
-          width={thumbnailWidthAndHeight}
-          height={thumbnailWidthAndHeight}
-          alt="Uploaded preview"
-        />
-        <Button onClick={onCancelBtnClick} color="default">
-          Try Again
-        </Button>
-      </>
-    )
-  }
-
-  if (isUploading) {
-    return `Uploading ${parseInt(percentageDone)}%...`
-  }
-
-  if (!imageSrc) {
-    return (
-      <>
-        <BodyText>
-          Select a JPG or PNG and you will be able to crop it to{' '}
-          {thumbnailWidthAndHeight}x{thumbnailWidthAndHeight}
-        </BodyText>
-        <input
-          type="file"
-          onChange={event => onFileChange(event.target.files)}
-          accept="image/png,image/jpeg"
-        />
-      </>
-    )
-  }
-
   return (
-    <>
-      Now crop the image:
-      <ReactCrop
-        src={imageSrc}
-        onChange={newCrop => {
-          // If you store the whole object it invalidates a dep and causes infinite loop
-          setCropX(newCrop.x)
-          setCropY(newCrop.y)
-          setWidth(newCrop.width)
-          setHeight(newCrop.height)
-        }}
-        onImageLoaded={img => {
-          imageRef.current = img
-        }}
-        style={{ width: '100%' }}
-        crop={{
-          x: cropX,
-          y: cropY,
-          width: width ? width : undefined,
-          height: height ? height : 100,
-          aspect: 1,
-          lock: true,
-          unit: width && height ? 'px' : '%'
-        }}
-      />
-      Output:
-      <img
-        src={croppedImagePreviewUrl}
-        width={thumbnailWidthAndHeight}
-        height={thumbnailWidthAndHeight}
-        alt="Uploaded preview"
-      />
-      <br />
-      <Button onClick={onCancelBtnClick} color="default">
-        Cancel
-      </Button>
-      <Button onClick={onPerformCropBtnClick}>Submit</Button>
-    </>
-  )
-}
-
-export default props => {
-  const classes = useStyles()
-
-  return (
-    <Paper className={classes.root}>
-      <Output {...props} />
-    </Paper>
+    <OptimizedImageUploader
+      directoryPath="asset-thumbnails"
+      filePrefix={shortid.generate()}
+      onUploadedUrl={onUploaded}
+      requiredWidth={300}
+      requiredHeight={300}
+    />
   )
 }
