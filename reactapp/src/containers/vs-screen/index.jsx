@@ -44,13 +44,14 @@ const useStyles = makeStyles({
   title: {
     width: '100%',
     position: 'absolute',
-    bottom: '50%',
+    bottom: '44%',
     right: '-30%',
     color: '#FFF',
-    textShadow: '1px 1px 1px #000',
+    textShadow: '0 0 2px #000',
     opacity: 0,
     transition: 'all 100ms',
-    transform: 'rotate(-76deg)'
+    transform: 'rotate(-76deg)',
+    fontSize: '150%'
   }
 })
 
