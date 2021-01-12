@@ -12,6 +12,7 @@ const storeInNotifications = (
   recipientRef,
   data = null
 ) => {
+  console.debug('Storing notification', message, recipientRef.id)
   return db.collection(CollectionNames.Notifications).add({
     [NotificationsFieldNames.message]: message,
     [NotificationsFieldNames.parent]: parentRef,

@@ -30,12 +30,12 @@ module.exports.addTagsToCache = async (tags) => {
     return
   }
 
-  const tagsDoc = await db
-    .collection(CollectionNames.Summaries)
-    .doc(summariesIdTags)
-  const tagsRecord = await tagsDoc.get()
+  console.debug('Adding tags to cache', tags)
+
+  const tagsRef = db.collection(CollectionNames.Summaries).doc(summariesIdTags)
+  const tagsDoc = await tagsRef.get()
   let allTags = []
-  const knownTags = tagsRecord.get(tagsKeyAllTags)
+  const knownTags = tagsDoc.get(tagsKeyAllTags)
 
   if (knownTags) {
     allTags = knownTags.concat(tags)
@@ -47,7 +47,9 @@ module.exports.addTagsToCache = async (tags) => {
     (tag, idx) => allTags.indexOf(tag) === idx
   )
 
-  await tagsDoc.set({
+  await tagsRef.set({
     [tagsKeyAllTags]: allTagsWithoutDupes,
   })
+
+  console.debug('Finished adding tags to cache')
 }

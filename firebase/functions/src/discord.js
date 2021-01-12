@@ -20,6 +20,8 @@ const channelNames = {
 module.exports.channelNames = channelNames
 
 const emitToDiscord = async (webhookUrl, message, embeds = []) => {
+  console.debug('Emitting to discord', webhookUrl, message)
+
   if (!IS_DISCORD_ENABLED) {
     return Promise.resolve()
   }

@@ -37,6 +37,7 @@ const CollectionNames = {
   Special: 'special',
   PollTallies: 'pollTallies',
   FeaturedAssetsForUsers: 'featuredAssetsForUsers',
+  Tweets: 'tweets',
 }
 module.exports.CollectionNames = CollectionNames
 

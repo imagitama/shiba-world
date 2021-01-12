@@ -37,6 +37,7 @@ module.exports.sendTweet = (status) => {
 }
 
 module.exports.insertTweetRecordInDatabase = (status) => {
+  console.debug('Inserting tweet', status)
   return db.collection(CollectionNames.Tweets).add({
     status,
     createdAt: new Date(),
