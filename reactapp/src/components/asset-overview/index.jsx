@@ -482,15 +482,11 @@ export default ({ assetId }) => {
   }, [result ? result.title : null])
 
   useEffect(() => {
-    if (
-      !result ||
-      !result[AssetFieldNames.bannerUrl] ||
-      !result[AssetFieldNames.bannerUrl].url
-    ) {
+    if (!result || !result[AssetFieldNames.bannerUrl]) {
       return
     }
 
-    setBannerUrls(result[AssetFieldNames.bannerUrl])
+    setBannerUrls({ url: result[AssetFieldNames.bannerUrl] })
 
     return () => setBannerUrls({ url: '' })
   }, [result ? result.title : null])
