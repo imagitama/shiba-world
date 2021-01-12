@@ -17,6 +17,7 @@ import NoPermissionMessage from '../../components/no-permission-message'
 import MyUploads from '../../components/my-uploads'
 import SocialMediaUsernamesEditor from '../../components/social-media-usernames-editor'
 import BioEditor from '../../components/bio-editor'
+import MyFeaturedAssets from '../../components/my-featured-assets'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
@@ -179,6 +180,8 @@ export default () => {
           <TabPanel value={activeTabIdx} index={patreonConnectFormTabIdx}>
             <Heading variant="h2">Patreon</Heading>
             <PatreonConnectForm />
+            <Heading variant="h3">My Featured Assets</Heading>
+            <MyFeaturedAssets />
           </TabPanel>
           <TabPanel value={activeTabIdx} index={6}>
             <Heading variant="h2">Your Uploads</Heading>

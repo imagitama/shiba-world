@@ -1089,6 +1089,26 @@ export default ({ assetId }) => {
                 </Control>
               </>
             ) : null}
+            {isAbleToEditPedestal || true ? (
+              <>
+                <Control>
+                  {isAdult ? (
+                    'You can not feature adult assets'
+                  ) : (
+                    <FeatureAssetButton
+                      assetId={assetId}
+                      onClick={() =>
+                        trackAction(
+                          analyticsCategoryName,
+                          'Click feature asset button',
+                          assetId
+                        )
+                      }
+                    />
+                  )}
+                </Control>
+              </>
+            ) : null}
             {isApprover && <Heading variant="h4">Editor Actions</Heading>}
             {isApprover && (
               <Control>
@@ -1121,18 +1141,6 @@ export default ({ assetId }) => {
                       newValue === true
                         ? 'Click pin asset button'
                         : 'Click unpin asset button',
-                      assetId
-                    )
-                  }
-                />
-                <FeatureAssetButton
-                  assetId={assetId}
-                  onClick={({ newValue }) =>
-                    trackAction(
-                      analyticsCategoryName,
-                      newValue === true
-                        ? 'Click feature asset button'
-                        : 'Click unfeature asset button',
                       assetId
                     )
                   }

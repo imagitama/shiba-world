@@ -56,6 +56,14 @@ export function canEditAsset(currentUser, createdBy, ownedBy) {
   return false
 }
 
+export function isUserAPatron(currentUser) {
+  if (currentUser && currentUser[UserFieldNames.isPatron]) {
+    return true
+  }
+
+  return false
+}
+
 export function canEditPedestal(currentUser, createdBy, ownedBy) {
   if (!canEditAsset(currentUser, createdBy, ownedBy)) {
     return false

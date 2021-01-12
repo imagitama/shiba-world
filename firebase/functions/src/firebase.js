@@ -36,6 +36,7 @@ const CollectionNames = {
   Species: 'species',
   Special: 'special',
   PollTallies: 'pollTallies',
+  FeaturedAssetsForUsers: 'featuredAssetsForUsers',
 }
 module.exports.CollectionNames = CollectionNames
 
@@ -198,6 +199,21 @@ const PollTalliesFieldNames = {
   tally: 'tally',
 }
 module.exports.PollTalliesFieldNames = PollTalliesFieldNames
+
+const FeaturedAssetForUsersFieldNames = {
+  assets: 'assets',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt',
+}
+module.exports.FeaturedAssetForUsersFieldNames = FeaturedAssetForUsersFieldNames
+
+const specialCollectionIds = {
+  featured: 'featured', // TODO: Remove
+  featuredAssets: 'featuredAssets',
+}
+module.exports.specialCollectionIds = specialCollectionIds
 
 module.exports.isNotApproved = (docData) => {
   return docData.isApproved === false

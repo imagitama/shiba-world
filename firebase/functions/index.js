@@ -19,6 +19,12 @@ exports.onDiscordMessageQueued = require('./src/functions/onDiscordMessageQueued
 exports.onPollResponseCreated = require('./src/functions/onPollResponseCreated')
 exports.tallyPolls = require('./src/functions/tallyPolls')
 
+// featured assets
+exports.pickFeaturedAsset = require('./src/functions/pickFeaturedAsset')
+exports.syncFeaturedAssets = require('./src/functions/syncFeaturedAssets')
+exports.onFeaturedAssetsForUsersCreated = require('./src/functions/onFeaturedAssetsForUsersCreated')
+exports.onFeaturedAssetsForUsersUpdated = require('./src/functions/onFeaturedAssetsForUsersUpdated')
+
 const IS_BACKUP_ENABLED = config.global.isBackupEnabled !== 'false'
 
 if (IS_BACKUP_ENABLED) {

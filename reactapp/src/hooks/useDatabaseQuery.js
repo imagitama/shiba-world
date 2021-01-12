@@ -37,15 +37,19 @@ export const CollectionNames = {
   Likes: 'likes',
   Species: 'species',
   Special: 'special',
-  PollTallies: 'pollTallies'
+  PollTallies: 'pollTallies',
+  FeaturedAssetsForUsers: 'featuredAssetsForUsers'
 }
 
 export const specialCollectionIds = {
-  featured: 'featured'
+  featured: 'featured', // TODO: Remove
+  featuredAssets: 'featuredAssets'
 }
 
-export const FeaturedAssetFieldNames = {
-  asset: 'asset',
+export const FeaturedAssetForUsersFieldNames = {
+  assets: 'assets',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
   lastModifiedBy: 'lastModifiedBy',
   lastModifiedAt: 'lastModifiedAt'
 }

@@ -1,10 +1,11 @@
 import React from 'react'
+import StarIcon from '@material-ui/icons/Star'
+
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import useDatabaseQuery, {
   CollectionNames,
-  specialCollectionIds,
-  FeaturedAssetFieldNames
+  FeaturedAssetForUsersFieldNames
 } from '../../hooks/useDatabaseQuery'
 
 import { handleError } from '../../error-handling'
@@ -12,18 +13,24 @@ import { createRef } from '../../utils'
 
 import Button from '../button'
 
-export default ({ assetId, onClick = null }) => {
-  // TODO: Check if they are editor! We are assuming the parent does this = not good
+const removeFromFeatured = (assetId, assetRefs) => {
+  return assetRefs.filter(assetRef => assetRef.id !== assetId)
+}
 
+const addToFeatured = (assetId, assetRefs) => {
+  return assetRefs.concat([createRef(CollectionNames.Assets, assetId)])
+}
+
+export default ({ assetId, onClick = null }) => {
   const userId = useFirebaseUserId()
 
   const [isLoading, isErroredLoadingFeatured, result] = useDatabaseQuery(
-    CollectionNames.Special,
-    specialCollectionIds.featured
+    CollectionNames.FeaturedAssetsForUsers,
+    userId
   )
   const [isSaving, , isSaveErrored, save] = useDatabaseSave(
-    CollectionNames.Special,
-    specialCollectionIds.featured
+    CollectionNames.FeaturedAssetsForUsers,
+    userId
   )
 
   if (isLoading || isSaving) {
@@ -35,26 +42,27 @@ export default ({ assetId, onClick = null }) => {
   }
 
   const isFeatured =
-    result[FeaturedAssetFieldNames.asset] &&
-    result[FeaturedAssetFieldNames.asset].id === assetId
+    result && result.assets && result.assets.find(asset => asset.id === assetId)
+
+  if (!isFeatured && result && result.assets && result.assets.length > 0) {
+    return <span>You can only have 1 featured asset at a time</span>
+  }
 
   const onBtnClick = async () => {
     try {
-      const newValue = !isFeatured
-
       if (onClick) {
-        onClick(newValue)
+        onClick()
       }
 
       await save({
-        [FeaturedAssetFieldNames.asset]: newValue
-          ? createRef(CollectionNames.Assets, assetId)
-          : null,
-        [FeaturedAssetFieldNames.lastModifiedBy]: createRef(
+        [FeaturedAssetForUsersFieldNames.assets]: isFeatured
+          ? removeFromFeatured(assetId, result ? result.assets : [])
+          : addToFeatured(assetId, result ? result.assets : []),
+        [FeaturedAssetForUsersFieldNames.lastModifiedBy]: createRef(
           CollectionNames.Users,
           userId
         ),
-        [FeaturedAssetFieldNames.lastModifiedAt]: new Date()
+        [FeaturedAssetForUsersFieldNames.lastModifiedAt]: new Date()
       })
     } catch (err) {
       console.error('Failed to feature or unfeature asset', err)
@@ -63,7 +71,7 @@ export default ({ assetId, onClick = null }) => {
   }
 
   return (
-    <Button color="default" onClick={onBtnClick}>
+    <Button color="default" onClick={onBtnClick} icon={<StarIcon />}>
       {isFeatured ? 'Unfeature' : 'Feature'}
     </Button>
   )

@@ -13,7 +13,11 @@ import RoomIcon from '@material-ui/icons/Room'
 import * as routes from '../../routes'
 import FormattedDate from '../formatted-date'
 import { mediaQueryForMobiles } from '../../media-queries'
-import useDatabaseQuery, { mapDates } from '../../hooks/useDatabaseQuery'
+import useDatabaseQuery, {
+  CollectionNames,
+  mapDates,
+  specialCollectionIds
+} from '../../hooks/useDatabaseQuery'
 import { trackAction } from '../../analytics'
 import Heading from '../heading'
 
@@ -100,23 +104,20 @@ function ExtraChips({ isAdult, isApproved, isPrivate, isPinned }) {
 }
 
 export default () => {
-  const [, , result] = useDatabaseQuery('special', 'featured')
+  const [, , result] = useDatabaseQuery(
+    CollectionNames.Special,
+    specialCollectionIds.featuredAssets
+  )
   const classes = useStyles()
 
-  if (!result || !result.asset) {
+  if (!result || !result.activeAsset) {
     return null
   }
 
-  const {
-    id,
-    title,
-    description,
-    thumbnailUrl,
-    isAdult,
-    isApproved,
-    isPrivate,
-    createdAt
-  } = mapDates(result.asset)
+  const { asset, title, description, thumbnailUrl } = mapDates(
+    result.activeAsset
+  )
+  const id = asset.id
 
   return (
     <>
@@ -129,11 +130,6 @@ export default () => {
             to={routes.viewAssetWithVar.replace(':assetId', id)}
             onClick={() => trackAction('Home', 'Click featured asset')}
             className={classes.cols}>
-            <ExtraChips
-              isAdult={isAdult}
-              isApproved={isApproved}
-              isPrivate={isPrivate}
-            />
             <LazyLoad width={200} height={200}>
               <CardMedia
                 className={classes.media}
@@ -145,11 +141,6 @@ export default () => {
               <Typography variant="h5" component="h2">
                 {title}
               </Typography>
-              {createdAt && (
-                <div className={classes.date}>
-                  <FormattedDate date={createdAt} />
-                </div>
-              )}
               <Typography variant="body2" color="textSecondary" component="p">
                 {truncateTextAndAddEllipsis(description)}
               </Typography>
