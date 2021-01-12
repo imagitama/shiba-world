@@ -1094,6 +1094,10 @@ export default ({ assetId }) => {
                 <Control>
                   {isAdult ? (
                     'You can not feature adult assets'
+                  ) : !isApproved ? (
+                    'You can not feature unapproved assets'
+                  ) : isDeleted ? (
+                    'You cannot feature deleted assets'
                   ) : (
                     <FeatureAssetButton
                       assetId={assetId}
