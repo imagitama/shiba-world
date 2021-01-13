@@ -87,8 +87,6 @@ function StepEditor({
 
   const showSaveBtn = doesStepNeedSaving(step, stepFields)
 
-  console.log(step, stepFields)
-
   return (
     <Paper className={classes.step}>
       <div>

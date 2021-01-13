@@ -30,6 +30,7 @@ import {
   mediaQueryForTabletsOrBelow
 } from '../../media-queries'
 import PedestalUploadForm from '../../components/pedestal-upload-form'
+import MyAssetAmendments from '../../components/my-asset-amendments'
 
 function WelcomeMessage() {
   const [isLoading, isErrored, user] = useUserRecord()
@@ -120,6 +121,7 @@ export default () => {
           <Tab label="Social" index={4} />
           <Tab label="Patreon" index={patreonConnectFormTabIdx} />
           <Tab label="Uploads" index={6} />
+          <Tab label="Amendments" index={7} />
         </Tabs>
         <div className={classes.tabPanels}>
           <TabPanel value={activeTabIdx} index={0}>
@@ -186,6 +188,10 @@ export default () => {
           <TabPanel value={activeTabIdx} index={6}>
             <Heading variant="h2">Your Uploads</Heading>
             <MyUploads />
+          </TabPanel>
+          <TabPanel value={activeTabIdx} index={7}>
+            <Heading variant="h2">Amendments</Heading>
+            <MyAssetAmendments />
           </TabPanel>
         </div>
       </div>

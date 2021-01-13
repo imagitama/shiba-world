@@ -28,3 +28,8 @@ export const otherSpeciesMeta = {
 }
 
 export const alreadyOver18Key = 'already-over-18'
+
+export const paths = {
+  assetThumbnailDir: 'asset-thumbnails',
+  assetBannerDir: 'asset-banners'
+}

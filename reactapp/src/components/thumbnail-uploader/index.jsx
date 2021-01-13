@@ -12,6 +12,7 @@ import OptimizedImageUploader from '../optimized-image-uploader'
 
 import { createRef } from '../../utils'
 import { handleError } from '../../error-handling'
+import { paths } from '../../config'
 
 export default ({ assetId, onDone }) => {
   const userId = useFirebaseUserId()
@@ -57,7 +58,7 @@ export default ({ assetId, onDone }) => {
 
   return (
     <OptimizedImageUploader
-      directoryPath="asset-thumbnails"
+      directoryPath={paths.assetThumbnailDir}
       filePrefix={shortid.generate()}
       onUploadedUrl={onUploaded}
       requiredWidth={300}

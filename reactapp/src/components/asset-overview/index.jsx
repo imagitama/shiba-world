@@ -44,6 +44,7 @@ import TutorialStepsEditor from '../tutorial-steps-editor'
 import TutorialSteps from '../tutorial-steps'
 import PedestalUploadForm from '../pedestal-upload-form'
 import ThumbnailUploader from '../thumbnail-uploader'
+import TagAmendmentForm from '../tag-amendment-form'
 
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
@@ -82,6 +83,7 @@ import VisitSourceButton from '../visit-source-button'
 import ChangeDiscordServerForm from '../change-discord-server-form'
 import SketchfabEmbed from '../sketchfab-embed'
 import SketchfabEmbedEditor from '../sketchfab-embed-editor'
+import AssetAmendments from '../asset-amendments'
 
 const useStyles = makeStyles({
   root: {
@@ -465,6 +467,7 @@ export default ({ assetId }) => {
   const [isSketchfabEmbedVisible, setIsSketchfabEmbedVisible] = useState(false)
   const [isEditingSketchfabEmbed, setIsEditingSketchfabEmbed] = useState(false)
   const [isThumbnailEditorOpen, setIsThumbnailEditorOpen] = useState(false)
+  const [isTagEditorOpen, setIsTagEditorOpen] = useState(false)
   const hideChangeSpeciesTimeoutRef = useRef()
 
   const dispatch = useDispatch()
@@ -552,6 +555,7 @@ export default ({ assetId }) => {
   const isApprover = canApproveAsset(user)
   const isOwnerOrEditor = canEditAsset(user, createdBy, ownedBy)
   const isAbleToEditPedestal = canEditPedestal(user, createdBy, ownedBy)
+  const canAmend = user !== null
 
   const EnableSpeciesEditorIcon = () => {
     if (isOwnerOrEditor && !isSpeciesEditorOpen) {
@@ -910,6 +914,38 @@ export default ({ assetId }) => {
             {tags
               ? tags.map(tagName => <TagChip key={tagName} tagName={tagName} />)
               : '(no tags)'}
+            {canAmend && !isTagEditorOpen && (
+              <TagChip
+                icon={<EditIcon />}
+                tagName="Edit Tags"
+                onClick={() => {
+                  setIsTagEditorOpen(true)
+                  trackAction(
+                    analyticsCategoryName,
+                    'Click open tag amendment form button'
+                  )
+                }}
+                isFilled={false}
+              />
+            )}
+            {isTagEditorOpen && (
+              <TagAmendmentForm
+                assetId={assetId}
+                onDone={() => {
+                  trackAction(
+                    analyticsCategoryName,
+                    'Click submit tag amendment button'
+                  )
+                }}
+                onCancel={() => {
+                  setIsTagEditorOpen(false)
+                  trackAction(
+                    analyticsCategoryName,
+                    'Click cancel tag amendment button'
+                  )
+                }}
+              />
+            )}
           </div>
         </div>
 
@@ -1167,6 +1203,13 @@ export default ({ assetId }) => {
         <LazyLoad>
           <Heading variant="h2">History</Heading>
           <AdminHistory assetId={assetId} limit={10} />
+        </LazyLoad>
+      )}
+
+      {isOwnerOrEditor && (
+        <LazyLoad>
+          <Heading variant="h2">Amendments</Heading>
+          <AssetAmendments assetId={assetId} />
         </LazyLoad>
       )}
     </div>

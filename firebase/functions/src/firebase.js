@@ -38,8 +38,21 @@ const CollectionNames = {
   PollTallies: 'pollTallies',
   FeaturedAssetsForUsers: 'featuredAssetsForUsers',
   Tweets: 'tweets',
+  AssetAmendments: 'assetAmendments',
 }
 module.exports.CollectionNames = CollectionNames
+
+const AssetAmendmentFieldNames = {
+  asset: 'asset',
+  fields: 'fields',
+  comments: 'comments',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  isRejected: 'isRejected',
+}
+module.exports.AssetAmendmentFieldNames = AssetAmendmentFieldNames
 
 const AssetFieldNames = {
   title: 'title',
@@ -59,9 +72,17 @@ const AssetFieldNames = {
   thumbnailUrl: 'thumbnailUrl',
   fileUrls: 'fileUrls',
   description: 'description',
-  authorName: 'authorName',
-  children: 'children',
+  authorName: 'authorName', // deprecated
   author: 'author',
+  children: 'children',
+  ownedBy: 'ownedBy',
+  isPinned: 'isPinned',
+  discordServer: 'discordServer',
+  bannerUrl: 'bannerUrl',
+  tutorialSteps: 'tutorialSteps',
+  pedestalVideoUrl: 'pedestalVideoUrl',
+  pedestalFallbackImageUrl: 'pedestalFallbackImageUrl',
+  sketchfabEmbedUrl: 'sketchfabEmbedUrl',
 }
 module.exports.AssetFieldNames = AssetFieldNames
 
@@ -250,7 +271,7 @@ module.exports.replaceReferencesWithString = (object) => {
       newObject[key] = val
       // array
     } else if (Array.isArray(val)) {
-      newObject[key] = val
+      newObject[key] = val.map(module.exports.replaceReferencesWithString)
 
       // complex thing
     } else if (typeof val === 'object') {
@@ -270,7 +291,7 @@ module.exports.replaceReferencesWithString = (object) => {
 
         // if plain object
       } else if (val.constructor === Object) {
-        newObject[key] = val
+        newObject[key] = module.exports.replaceReferencesWithString(val)
 
         // anything else
       } else {

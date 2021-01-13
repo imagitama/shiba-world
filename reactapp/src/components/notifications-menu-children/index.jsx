@@ -140,8 +140,6 @@ export default ({ onClose, isMobile = false }) => {
     true
   )
 
-  console.log(results)
-
   useEffect(() => {
     if (!results) {
       return

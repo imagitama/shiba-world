@@ -33,6 +33,7 @@ import {
   convertDocToRef,
   isDocument
 } from '../../utils'
+import { paths } from '../../config'
 
 const useStyles = makeStyles({
   controls: { marginTop: '2rem', textAlign: 'center' }
@@ -361,7 +362,7 @@ export default ({
       )}
       <Heading variant="h4">Upload</Heading>
       <OptimizedImageUploader
-        directoryPath="asset-thumbnails"
+        directoryPath={paths.assetThumbnailDir}
         filePrefix={shortid.generate()}
         onUploadedUrl={url => onFieldChange(AssetFieldNames.thumbnailUrl, url)}
         requiredWidth={300}
@@ -395,7 +396,7 @@ export default ({
       )}
       <Heading variant="h4">Upload</Heading>
       <BannerUploader
-        directoryPath="asset-banners"
+        directoryPath={paths.assetBannerDir}
         filePrefix={shortid.generate()}
         onUploadedUrl={url => onFieldChange(AssetFieldNames.bannerUrl, url)}
       />

@@ -38,7 +38,8 @@ export const CollectionNames = {
   Species: 'species',
   Special: 'special',
   PollTallies: 'pollTallies',
-  FeaturedAssetsForUsers: 'featuredAssetsForUsers'
+  FeaturedAssetsForUsers: 'featuredAssetsForUsers',
+  AssetAmendments: 'assetAmendments'
 }
 
 export const specialCollectionIds = {
@@ -83,6 +84,17 @@ export const AssetFieldNames = {
   pedestalVideoUrl: 'pedestalVideoUrl',
   pedestalFallbackImageUrl: 'pedestalFallbackImageUrl',
   sketchfabEmbedUrl: 'sketchfabEmbedUrl'
+}
+
+export const AssetAmendmentFieldNames = {
+  asset: 'asset',
+  fields: 'fields',
+  comments: 'comments',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  isRejected: 'isRejected'
 }
 
 export const TutorialStepFieldNames = {

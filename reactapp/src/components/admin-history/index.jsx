@@ -111,6 +111,7 @@ function HistoryData({ data }) {
       </ul>
     )
   }
+  return null
 }
 
 function ParentLabel({ parent }) {

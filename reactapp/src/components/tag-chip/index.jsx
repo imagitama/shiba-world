@@ -12,7 +12,8 @@ export default ({
   tagName,
   isFilled = true,
   isDisabled = false,
-  onClick = null
+  onClick = null,
+  icon = null
 }) => {
   const classes = useStyles()
 
@@ -24,6 +25,7 @@ export default ({
       disabled={isDisabled}
       clickable={!isDisabled}
       onClick={isDisabled !== true ? onClick : undefined}
+      icon={icon}
     />
   )
 
