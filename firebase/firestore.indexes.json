@@ -446,6 +446,21 @@
           "order": "DESCENDING"
         }
       ]
+    },
+    {
+      "CUSTOM_PAGE_NAME": "HeaderNotifications",
+      "collectionGroup": "notifications",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "recipient",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
     }
   ],
   "fieldOverrides": []

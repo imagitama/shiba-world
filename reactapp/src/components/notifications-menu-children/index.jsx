@@ -97,7 +97,13 @@ function getCollectionNameForResult(result) {
   if (result.parentPath) {
     return result.parentPath
   }
-  return result.refPath.split('/')[0]
+  if (result.refPath) {
+    return result.refPath.split('/')[0]
+  }
+  if (result.path) {
+    return result.path.split('/')[0]
+  }
+  return ''
 }
 
 function getLinkUrl(parent) {
@@ -128,8 +134,13 @@ export default ({ onClose, isMobile = false }) => {
         ]
       : false, // do not query if not logged in
     100,
-    [NotificationsFieldNames.createdAt, OrderDirections.DESC]
+    [NotificationsFieldNames.createdAt, OrderDirections.DESC],
+    false,
+    undefined,
+    true
   )
+
+  console.log(results)
 
   useEffect(() => {
     if (!results) {
