@@ -28,6 +28,7 @@ import LoadingIndicator from './components/loading-indicator'
 import UnapprovedAssetsMessage from './components/unapproved-assets-message'
 import BannedNotice from './components/banned-notice'
 import Banner from './components/banner'
+import PendingAssetAmendmentsMessage from './components/pending-asset-amendments-message'
 
 import useUserRecord from './hooks/useUserRecord'
 import useSearchTerm from './hooks/useSearchTerm'
@@ -159,6 +160,9 @@ const ResetPassword = lazy(() =>
 )
 const Pedestals = lazy(() =>
   catchChunkDeaths(() => import('./containers/pedestals'))
+)
+const AdminAssetAmendments = lazy(() =>
+  catchChunkDeaths(() => import('./containers/admin-asset-amendments'))
 )
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
@@ -383,6 +387,11 @@ const MainContent = () => {
         <Route exact path={routes.pedestals} component={Pedestals} />
         <Route exact path={routes.vsScreen} component={VsScreen} />
         <Route
+          exact
+          path={routes.adminAssetAmendments}
+          component={AdminAssetAmendments}
+        />
+        <Route
           component={() => (
             <ErrorContainer code={404} message="Page not found" />
           )}
@@ -405,6 +414,7 @@ export default () => {
             <BannedNotice />
             <Notices />
             <UnapprovedAssetsMessage />
+            <PendingAssetAmendmentsMessage />
             <MainContent />
           </div>
         </main>

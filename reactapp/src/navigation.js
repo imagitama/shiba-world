@@ -135,6 +135,12 @@ export default [
         label: 'Admin - Polls',
         url: routes.adminPolls,
         requiresAdmin: true
+      },
+      {
+        id: 'admin-asset-amendments',
+        label: 'Admin - Amendments',
+        url: routes.adminAssetAmendments,
+        requiresAdmin: true
       }
     ]
   }

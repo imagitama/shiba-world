@@ -48,6 +48,7 @@ export const patreon = '/patreon'
 export const resetPassword = '/reset-password'
 export const pedestals = '/pedestals'
 export const vsScreen = '/vs-screen'
+export const adminAssetAmendments = '/admin/asset-amendments'
 
 // Outdated routes
 export const browseAssets = '/browse'
