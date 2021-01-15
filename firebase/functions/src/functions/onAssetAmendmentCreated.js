@@ -8,6 +8,10 @@ const {
   UserFieldNames,
 } = require('../firebase')
 const { storeInNotifications } = require('../notifications')
+const {
+  emitToDiscordEditorNotifications,
+  getEmbedForViewAsset,
+} = require('../discord')
 
 module.exports = functions.firestore
   .document(`${CollectionNames.AssetAmendments}/{id}`)
@@ -38,5 +42,10 @@ module.exports = functions.firestore
       `User "${creatorUsername}" has created an amendment for your asset "${assetTitle}"`,
       assetRef,
       assetOwnerRef
+    )
+
+    await emitToDiscordEditorNotifications(
+      `User "${creatorUsername}" amended asset "${assetTitle}" with new tags`,
+      [getEmbedForViewAsset(assetRef.id)]
     )
   })
