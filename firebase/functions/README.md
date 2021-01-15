@@ -12,20 +12,12 @@ When running functions locally you must have a `credentials.json` file in the ro
 
 ## Emulating locally
 
-Run HTTP callable functions locally:
+You can test functions locally by using the Firebase emulator. Note it depends on Java (Ubuntu: `sudo apt install default-jre`).
 
 1. `npm run load-local-config`
 2. `npm run serve`
 
 Then run the web app using `npm run start:emulator` which connects to the local webserver
-
-## IAM
-
-For the `optimizeImage` function to work you must grant a "sign" permission.
-
-1. Go to IAM: https://console.cloud.google.com/iam-admin/iam?project=PROJECT_NAME
-2. Go to "App Engine default service account" and edit
-3. Add "Service Account Token Creator" and click Save
 
 ## Deploying
 
