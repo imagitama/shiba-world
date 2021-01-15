@@ -289,7 +289,7 @@
         },
         {
           "fieldPath": "category",
-          "arrayConfig": "ASCENDING"
+          "order": "ASCENDING"
         },
         {
           "fieldPath": "isApproved",
@@ -316,11 +316,11 @@
       "fields": [
         {
           "fieldPath": "category",
-          "arrayConfig": "ASCENDING"
+          "order": "ASCENDING"
         },
         {
           "fieldPath": "species",
-          "arrayConfig": "ASCENDING"
+          "order": "ASCENDING"
         },
         {
           "fieldPath": "isAdult",
