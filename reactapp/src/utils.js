@@ -2,16 +2,20 @@ import firebase from 'firebase/app'
 import 'firebase/firestore'
 import { AuthorFieldNames, UserFieldNames } from './hooks/useDatabaseQuery'
 
-export function scrollToTop(isSmooth) {
+export function scrollToTop(isSmooth = true) {
   return scrollTo(0, isSmooth)
 }
 
-export function scrollTo(x, isSmooth) {
+export function scrollTo(x, isSmooth = true) {
   window.scrollTo({
     top: x,
     left: 0,
     behavior: isSmooth ? 'smooth' : 'auto'
   })
+}
+
+export function scrollToElement(element, isSmooth = true, padding = 0) {
+  return scrollTo(element.getBoundingClientRect().top - padding, isSmooth)
 }
 
 export function getDescriptionForHtmlMeta(desc) {

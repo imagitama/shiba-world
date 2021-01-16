@@ -10,6 +10,7 @@ import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
 import Heading from '../heading'
 import Button from '../button'
+import PedestalColumns from '../pedestal-columns'
 
 import { createRef } from '../../utils'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
@@ -18,7 +19,7 @@ import { trackAction } from '../../analytics'
 
 const useStyles = makeStyles({
   root: {
-    margin: '1rem 0'
+    marginRight: '1rem'
   },
   heading: {
     margin: '0 0 1rem 0'
@@ -60,6 +61,10 @@ function VideoUploadForm({ assetId, userId, onUploaded }) {
           </p>
           <ul>
             <li>1000x1000</li>
+            <li>10 second duration</li>
+            <li>
+              360 degree rotation of your 3D model (do NOT spin more than once)
+            </li>
             <li>transparent .webm</li>
             <li>under 2mb</li>
           </ul>
@@ -123,7 +128,7 @@ function ImageUploadForm({ assetId, userId, onUploaded }) {
   )
 }
 
-export default ({ assetId, onDone }) => {
+export default ({ assetId, onDone, children, onCancel, actionCategory }) => {
   const userId = useFirebaseUserId()
   const [uploadedVideoUrl, setUploadedVideoUrl] = useState('')
   const [uploadedFallbackImageUrl, setUploadedFallbackImageUrl] = useState('')
@@ -135,11 +140,7 @@ export default ({ assetId, onDone }) => {
 
   const onSaveBtnClick = async () => {
     try {
-      trackAction(
-        assetId ? 'ViewAsset' : 'MyAccount',
-        'Click save pedestal button',
-        assetId
-      )
+      trackAction(actionCategory, 'Click save pedestal button', assetId)
 
       await save({
         [AssetFieldNames.pedestalVideoUrl]: uploadedVideoUrl,
@@ -174,26 +175,35 @@ export default ({ assetId, onDone }) => {
   }
 
   return (
-    <Paper className={classes.root}>
-      {uploadedVideoUrl && uploadedFallbackImageUrl ? (
-        <>
-          <Heading variant="h3" className={classes.heading}>
-            Step 3: Save
-          </Heading>
-          <p>You can now save the pedestal by clicking below:</p>
-          <Button onClick={onSaveBtnClick}>Save</Button>
-        </>
-      ) : uploadedVideoUrl ? (
-        <ImageUploadForm
-          assetId={assetId}
-          onUploaded={url => setUploadedFallbackImageUrl(url)}
-        />
-      ) : (
-        <VideoUploadForm
-          assetId={assetId}
-          onUploaded={url => setUploadedVideoUrl(url)}
-        />
-      )}
-    </Paper>
+    <PedestalColumns
+      leftCol={
+        <Paper className={classes.root}>
+          {uploadedVideoUrl && uploadedFallbackImageUrl ? (
+            <>
+              <Heading variant="h3" className={classes.heading}>
+                Step 3: Save
+              </Heading>
+              <p>You can now save the pedestal by clicking below:</p>
+              <Button onClick={onSaveBtnClick}>Save</Button>
+            </>
+          ) : uploadedVideoUrl ? (
+            <ImageUploadForm
+              assetId={assetId}
+              onUploaded={url => setUploadedFallbackImageUrl(url)}
+            />
+          ) : (
+            <VideoUploadForm
+              assetId={assetId}
+              onUploaded={url => setUploadedVideoUrl(url)}
+            />
+          )}
+          <br />
+          <Button onClick={onCancel} color="default">
+            Cancel
+          </Button>
+        </Paper>
+      }
+      rightCol={children}
+    />
   )
 }

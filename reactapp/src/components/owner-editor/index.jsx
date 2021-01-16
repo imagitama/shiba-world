@@ -92,7 +92,7 @@ export default ({ collectionName, id, actionCategory }) => {
     return (
       <Button
         onClick={() => setIsEditorOpen(true)}
-        color="default"
+        color="tertiary"
         icon={<AccessibilityIcon />}>
         Change Owner
       </Button>

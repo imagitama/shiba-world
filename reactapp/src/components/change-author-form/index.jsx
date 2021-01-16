@@ -18,6 +18,7 @@ import { searchIndexNames } from '../../modules/app'
 import { handleError } from '../../error-handling'
 import { trackAction } from '../../analytics'
 import { createRef } from '../../utils'
+import { formHideDelay } from '../../config'
 
 function SearchForm({ searchTerm, onSelectIdAndName }) {
   const [isSearching, isErrored, results] = useAlgoliaSearch(
@@ -68,7 +69,7 @@ function CreateForm({ onDoneWithIdAndName, actionCategory }) {
     if (isSuccess) {
       timeoutRef.current = setTimeout(() => {
         onDoneWithIdAndName(createdDocumentId.current, authorName)
-      }, 2000)
+      }, formHideDelay)
     }
 
     return () => clearTimeout(timeoutRef.current)
@@ -180,7 +181,7 @@ export default ({ collectionName, id, actionCategory }) => {
     return (
       <Button
         onClick={() => setIsEditorOpen(true)}
-        color="default"
+        color="tertiary"
         icon={<CopyrightIcon />}>
         Change Author
       </Button>

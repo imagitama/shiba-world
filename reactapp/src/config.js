@@ -33,3 +33,5 @@ export const paths = {
   assetThumbnailDir: 'asset-thumbnails',
   assetBannerDir: 'asset-banners'
 }
+
+export const formHideDelay = 2000

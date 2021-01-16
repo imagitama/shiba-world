@@ -6,7 +6,6 @@ import { Helmet } from 'react-helmet'
 import EditIcon from '@material-ui/icons/Edit'
 import ReportIcon from '@material-ui/icons/Report'
 import LoyaltyIcon from '@material-ui/icons/Loyalty'
-import HighlightIcon from '@material-ui/icons/Highlight'
 import ControlCameraIcon from '@material-ui/icons/ControlCamera'
 import { useDispatch } from 'react-redux'
 import LazyLoad from 'react-lazyload'
@@ -15,8 +14,7 @@ import useDatabaseQuery, {
   CollectionNames,
   AuthorFieldNames,
   AssetFieldNames,
-  DiscordServerFieldNames,
-  AssetCategories
+  DiscordServerFieldNames
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import { setBannerUrls as setBannerUrlsAction } from '../../modules/app'
@@ -31,20 +29,10 @@ import TagChip from '../tag-chip'
 import Heading from '../heading'
 import Button from '../button'
 import VideoPlayer from '../video-player'
-import ApproveAssetButton from '../approve-asset-button'
-import DeleteAssetButton from '../delete-asset-button'
-import PinAssetButton from '../pin-asset-button'
-import FeatureAssetButton from '../feature-asset-button'
 import ImageGallery from '../image-gallery'
 import AdminHistory from '../admin-history'
-import ChangeSpeciesEditor from '../change-species-editor'
 import OpenForCommissionsMessage from '../open-for-commissions-message'
-import AssetAttachmentUploader from '../asset-attachment-uploader'
-import TutorialStepsEditor from '../tutorial-steps-editor'
 import TutorialSteps from '../tutorial-steps'
-import PedestalUploadForm from '../pedestal-upload-form'
-import ThumbnailUploader from '../thumbnail-uploader'
-import TagAmendmentForm from '../tag-amendment-form'
 
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
@@ -53,7 +41,6 @@ import {
   getOpenGraphUrlForRouteUrl,
   canApproveAsset,
   canEditAsset,
-  canEditPedestal,
   isUrlAnImage,
   isUrlAVideo,
   isUrlNotAnImageOrVideo
@@ -76,13 +63,9 @@ import SpeciesOutput from './components/species-output'
 import VideoList from './components/video-list'
 
 import Pedestal from '../pedestal'
-import OwnerEditor from '../owner-editor'
-import ChangeAuthorForm from '../change-author-form'
 import DownloadAssetButton from '../download-asset-button'
 import VisitSourceButton from '../visit-source-button'
-import ChangeDiscordServerForm from '../change-discord-server-form'
 import SketchfabEmbed from '../sketchfab-embed'
-import SketchfabEmbedEditor from '../sketchfab-embed-editor'
 import AssetAmendments from '../asset-amendments'
 
 const useStyles = makeStyles({
@@ -434,8 +417,6 @@ function MobilePrimaryBtn({
   )
 }
 
-const actionCategory = 'ViewAsset'
-
 // in future we need to serve up the fallback url but for now
 // assume users are using modern browsers
 const pickNonFallbackUrl = urlOrUrls => {
@@ -445,7 +426,7 @@ const pickNonFallbackUrl = urlOrUrls => {
   return urlOrUrls.url
 }
 
-export default ({ assetId }) => {
+export default ({ assetId, switchEditorOpen }) => {
   const [isLoading, isErrored, result] = useDatabaseQuery(
     CollectionNames.Assets,
     assetId,
@@ -458,20 +439,12 @@ export default ({ assetId }) => {
   const classes = useStyles()
   const [, , user] = useUserRecord()
   const [isReportMessageOpen, setIsReportMessageOpen] = useState(false)
-  const [isSpeciesEditorOpen, setIsSpeciesEditorOpen] = useState(false)
-  const [isAttachFileFormOpen, setIsAttachFileFormOpen] = useState(false)
-  const [isTutorialStepsEditorOpen, setIsTutorialStepsEditorOpen] = useState(
-    false
-  )
-  const [isEditingPedestal, setIsEditingPedestal] = useState(false)
   const [isSketchfabEmbedVisible, setIsSketchfabEmbedVisible] = useState(false)
-  const [isEditingSketchfabEmbed, setIsEditingSketchfabEmbed] = useState(false)
-  const [isThumbnailEditorOpen, setIsThumbnailEditorOpen] = useState(false)
-  const [isTagEditorOpen, setIsTagEditorOpen] = useState(false)
   const hideChangeSpeciesTimeoutRef = useRef()
 
   const dispatch = useDispatch()
   const setBannerUrls = urls => dispatch(setBannerUrlsAction(urls))
+  const unloadBannerOnUnmountRef = useRef(true)
 
   useEffect(() => {
     if (result && !result.title) {
@@ -491,7 +464,12 @@ export default ({ assetId }) => {
 
     setBannerUrls({ url: result[AssetFieldNames.bannerUrl] })
 
-    return () => setBannerUrls({ url: '' })
+    return () => {
+      // if switching to edit mode do not unload
+      if (unloadBannerOnUnmountRef.current) {
+        setBannerUrls({ url: '' })
+      }
+    }
   }, [result ? result.title : null])
 
   if (isLoading) {
@@ -552,43 +530,7 @@ export default ({ assetId }) => {
     .filter(isUrlAVideo)
     .filter(fileUrl => fileUrl !== thumbnailUrl)
 
-  const isApprover = canApproveAsset(user)
   const isOwnerOrEditor = canEditAsset(user, createdBy, ownedBy)
-  const isAbleToEditPedestal = canEditPedestal(user, createdBy, ownedBy)
-  const canAmend = user !== null
-
-  const EnableSpeciesEditorIcon = () => {
-    if (isOwnerOrEditor && !isSpeciesEditorOpen) {
-      return (
-        <span className={classes.enableSpeciesEditorIcon}>
-          <EditIcon onClick={() => setIsSpeciesEditorOpen(true)} />
-        </span>
-      )
-    }
-    return null
-  }
-
-  const EnableAttachFileButton = () => {
-    if (isOwnerOrEditor && !isAttachFileFormOpen) {
-      return (
-        <span>
-          <Button
-            onClick={() => setIsAttachFileFormOpen(true)}
-            icon={<EditIcon />}
-            color="default">
-            Modify Attachments
-          </Button>
-        </span>
-      )
-    }
-    return null
-  }
-
-  const onDoneChangingSpecies = () => {
-    setTimeout(() => {
-      setIsSpeciesEditorOpen(false)
-    }, 2000)
-  }
 
   if (isDeleted && !canApproveAsset(user)) {
     return <ErrorMessage>This asset has been deleted.</ErrorMessage>
@@ -612,7 +554,6 @@ export default ({ assetId }) => {
             {species.length ? (
               <>
                 <SpeciesOutput species={species} />
-                <EnableSpeciesEditorIcon />
                 {' / '}
                 <Link
                   to={routes.viewSpeciesCategoryWithVar
@@ -623,8 +564,6 @@ export default ({ assetId }) => {
               </>
             ) : (
               <>
-                {isOwnerOrEditor && '(no species)'}
-                <EnableSpeciesEditorIcon />
                 <Link
                   to={routes.viewCategoryWithVar.replace(
                     ':categoryName',
@@ -735,66 +674,11 @@ export default ({ assetId }) => {
               alt="Thumbnail for asset"
               className={classes.thumbnail}
             />
-            {isOwnerOrEditor && (
-              <div
-                className={classes.editThumbnailIcon}
-                onClick={() => {
-                  trackAction(
-                    analyticsCategoryName,
-                    'Click edit thumbnail icon'
-                  )
-                  setIsThumbnailEditorOpen(true)
-                }}>
-                <EditIcon />
-              </div>
-            )}
           </div>
           <div className={classes.titlesWrapper}>
             <AssetTitle />
           </div>
         </div>
-      )}
-
-      {isThumbnailEditorOpen && (
-        <>
-          <Heading variant="h3">Edit Thumbnail</Heading>
-          <ThumbnailUploader
-            assetId={assetId}
-            onDone={() => setIsThumbnailEditorOpen(false)}
-          />
-        </>
-      )}
-
-      {isEditingPedestal && (
-        <>
-          <Heading variant="h3">Edit Pedestal</Heading>
-          <PedestalUploadForm
-            assetId={assetId}
-            onDone={() => setIsEditingPedestal(false)}
-          />
-        </>
-      )}
-
-      {isSpeciesEditorOpen && (
-        <>
-          <Heading variant="h3">Change Species</Heading>
-          <ChangeSpeciesEditor
-            assetId={assetId}
-            actionCategory={actionCategory}
-            onDone={onDoneChangingSpecies}
-          />
-        </>
-      )}
-
-      {isEditingSketchfabEmbed && (
-        <>
-          <Heading variant="h3">Embed Sketchfab</Heading>
-          <SketchfabEmbedEditor
-            assetId={assetId}
-            sketchfabEmbedUrl={sketchfabEmbedUrl}
-            onDone={() => setIsEditingSketchfabEmbed(false)}
-          />
-        </>
       )}
 
       {author &&
@@ -875,34 +759,6 @@ export default ({ assetId }) => {
             </>
           ) : null}
 
-          {isAttachFileFormOpen ? (
-            <>
-              <AssetAttachmentUploader
-                assetId={assetId}
-                onDone={() => setIsAttachFileFormOpen(false)}
-              />
-            </>
-          ) : isOwnerOrEditor ? (
-            <EnableAttachFileButton />
-          ) : null}
-
-          {isTutorialStepsEditorOpen ? (
-            <TutorialStepsEditor
-              assetId={assetId}
-              existingSteps={tutorialSteps}
-              onSave={() => {
-                setIsTutorialStepsEditorOpen(false)
-              }}
-            />
-          ) : isOwnerOrEditor && category === AssetCategories.tutorial ? (
-            <Button
-              onClick={() => setIsTutorialStepsEditorOpen(true)}
-              color="default"
-              icon={<EditIcon />}>
-              Edit Tutorial Steps
-            </Button>
-          ) : null}
-
           {children && children.length ? (
             <>
               <Heading variant="h2">Linked Assets</Heading>
@@ -914,38 +770,6 @@ export default ({ assetId }) => {
             {tags
               ? tags.map(tagName => <TagChip key={tagName} tagName={tagName} />)
               : '(no tags)'}
-            {canAmend && !isTagEditorOpen && (
-              <TagChip
-                icon={<EditIcon />}
-                tagName="Edit Tags"
-                onClick={() => {
-                  setIsTagEditorOpen(true)
-                  trackAction(
-                    analyticsCategoryName,
-                    'Click open tag amendment form button'
-                  )
-                }}
-                isFilled={false}
-              />
-            )}
-            {isTagEditorOpen && (
-              <TagAmendmentForm
-                assetId={assetId}
-                onDone={() => {
-                  trackAction(
-                    analyticsCategoryName,
-                    'Click submit tag amendment button'
-                  )
-                }}
-                onCancel={() => {
-                  setIsTagEditorOpen(false)
-                  trackAction(
-                    analyticsCategoryName,
-                    'Click cancel tag amendment button'
-                  )
-                }}
-              />
-            )}
           </div>
         </div>
 
@@ -1066,138 +890,42 @@ export default ({ assetId }) => {
                 <Heading variant="h4">Owner Actions</Heading>
                 <Control>
                   <Button
-                    url={routes.editAssetWithVar.replace(':assetId', assetId)}
+                    onClick={() => {
+                      trackAction(
+                        analyticsCategoryName,
+                        'Click switch editor button'
+                      )
+
+                      unloadBannerOnUnmountRef.current = false
+                      switchEditorOpen()
+                    }}
                     color="default"
                     icon={<EditIcon />}>
                     Edit Asset
                   </Button>
                 </Control>
-                <Control>
-                  <OwnerEditor
-                    collectionName={CollectionNames.Assets}
-                    id={assetId}
-                    actionCategory={actionCategory}
-                  />
-                </Control>
-                <Control>
-                  <ChangeAuthorForm
-                    collectionName={CollectionNames.Assets}
-                    id={assetId}
-                    actionCategory={actionCategory}
-                  />
-                </Control>
-                <Control>
-                  <span className={classes.controlHint}>
-                    If you set the source to a Discord message that you need to
-                    be invited to see, link it to a Discord server here (send a
-                    message in our Discord to add yours)
-                  </span>
-                  <ChangeDiscordServerForm
-                    collectionName={CollectionNames.Assets}
-                    id={assetId}
-                    actionCategory={actionCategory}
-                  />
-                </Control>
-                <Control>
-                  <Button
-                    onClick={() => setIsEditingSketchfabEmbed(true)}
-                    icon={<ControlCameraIcon />}
-                    color="default">
-                    Embed Sketchfab
-                  </Button>
-                </Control>
               </>
             ) : null}
-
-            {isAbleToEditPedestal && isEditingPedestal === false ? (
-              <>
-                <Control>
-                  <Button
-                    onClick={() => setIsEditingPedestal(true)}
-                    color="default"
-                    icon={<HighlightIcon />}>
-                    Set Pedestal
-                  </Button>
-                </Control>
-              </>
-            ) : null}
-            {isAbleToEditPedestal || true ? (
-              <>
-                <Control>
-                  {isAdult ? (
-                    'You can not feature adult assets'
-                  ) : !isApproved ? (
-                    'You can not feature unapproved assets'
-                  ) : isDeleted ? (
-                    'You cannot feature deleted assets'
-                  ) : (
-                    <FeatureAssetButton
-                      assetId={assetId}
-                      onClick={() =>
-                        trackAction(
-                          analyticsCategoryName,
-                          'Click feature asset button',
-                          assetId
-                        )
-                      }
-                    />
-                  )}
-                </Control>
-              </>
-            ) : null}
-            {isApprover && <Heading variant="h4">Editor Actions</Heading>}
-            {isApprover && (
-              <Control>
-                <ApproveAssetButton assetId={assetId} />
-              </Control>
-            )}
-            {isApprover && (
-              <Control>
-                <DeleteAssetButton
-                  assetId={assetId}
-                  onClick={({ newValue }) =>
-                    trackAction(
-                      analyticsCategoryName,
-                      newValue === true
-                        ? 'Click delete asset button'
-                        : 'Click undelete asset button',
-                      assetId
-                    )
-                  }
-                />
-              </Control>
-            )}
-            {isApprover && (
-              <Control>
-                <PinAssetButton
-                  assetId={assetId}
-                  onClick={({ newValue }) =>
-                    trackAction(
-                      analyticsCategoryName,
-                      newValue === true
-                        ? 'Click pin asset button'
-                        : 'Click unpin asset button',
-                      assetId
-                    )
-                  }
-                />
-              </Control>
-            )}
           </div>
         </div>
       </div>
 
       <Heading variant="h2">Comments</Heading>
-      <CommentList collectionName={CollectionNames.Assets} parentId={assetId} />
-      <AddCommentForm
-        collectionName={CollectionNames.Assets}
-        parentId={assetId}
-        onAddClick={() =>
-          trackAction(analyticsCategoryName, 'Click add comment button', {
-            assetId
-          })
-        }
-      />
+      <LazyLoad>
+        <CommentList
+          collectionName={CollectionNames.Assets}
+          parentId={assetId}
+        />
+        <AddCommentForm
+          collectionName={CollectionNames.Assets}
+          parentId={assetId}
+          onAddClick={() =>
+            trackAction(analyticsCategoryName, 'Click add comment button', {
+              assetId
+            })
+          }
+        />
+      </LazyLoad>
 
       {isOwnerOrEditor && (
         <LazyLoad>

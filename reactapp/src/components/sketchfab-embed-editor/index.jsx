@@ -66,16 +66,16 @@ export default ({ assetId, onDone }) => {
     <Paper className={classes.root}>
       <ol>
         <li>
-          view your Sketchfab model and above the Triangles and Vertices count
+          View your Sketchfab model and above the Triangles and Vertices count
           click the Embed button
         </li>
-        <li>check any options you want for your embed</li>
-        <li>select "iframe" as the format and copy the HTML code</li>
+        <li>Check any options you want for your embed</li>
+        <li>Select "iframe" as the format and copy the HTML code</li>
         <li>
-          in Notepad find the URL of the iframe (the "src" attribute) and copy
+          In Notepad find the URL of the iframe (the "src" attribute) and copy
           it into the text field below
         </li>
-        <li>click Apply to preview then click Save</li>
+        <li>Click Apply to preview then click Save</li>
       </ol>
       <TextInput
         onChange={e => setTextFieldVal(e.target.value)}
@@ -84,7 +84,10 @@ export default ({ assetId, onDone }) => {
       <Button onClick={onApplyBtnClick} color="default">
         Apply
       </Button>
+      <br />
+      <br />
       {embedUrl && <SketchfabEmbed url={embedUrl} />}
+      <br />
       <br />
       <Button onClick={onSaveBtnClick}>Save</Button>
     </Paper>

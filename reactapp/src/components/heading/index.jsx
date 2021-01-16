@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { forwardRef } from 'react'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import { mediaQueryForTabletsOrBelow } from '../../media-queries'
@@ -26,12 +26,15 @@ const useStyles = makeStyles({
   })
 })
 
-export default ({ children, variant, className = '' }) => {
+export default forwardRef(({ children, variant, className = '' }, ref) => {
   const classes = useStyles({ variant })
 
   return (
-    <Typography variant={variant} className={`${classes.heading} ${className}`}>
+    <Typography
+      variant={variant}
+      className={`${classes.heading} ${className}`}
+      ref={ref}>
       {children}
     </Typography>
   )
-}
+})

@@ -3,6 +3,8 @@ import { mediaQueryForTabletsOrBelow } from './media-queries'
 
 const colorBrand = '#6e4a9e'
 const colorBrandLight = '#9E85C4'
+const colorEditor = '#a67250'
+const colorEditorDark = '#6e4c35'
 
 const createTheme = isDark =>
   createMuiTheme({
@@ -17,6 +19,10 @@ const createTheme = isDark =>
         light: '#5C1B96',
         main: isDark ? '#9E85C4' : '#461470',
         dark: '#240b36'
+      },
+      tertiary: {
+        main: colorEditor,
+        dark: colorEditorDark
       },
       background: {
         default: isDark ? '#282828' : 'hsl(25, 1%, 90%)'

@@ -11,6 +11,7 @@ import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
+import { trackAction } from '../../analytics'
 
 import Button from '../button'
 import TextInput from '../text-input'
@@ -176,7 +177,7 @@ function moveItemInArray(from, to, array) {
   return newArray
 }
 
-export default ({ assetId, existingSteps, onSave }) => {
+export default ({ assetId, existingSteps, onSave, actionCategory }) => {
   const [stepsBeingEdited, setStepsBeingEdited] = useState([])
   const classes = useStyles()
   const [isSaving, , isSaveError, save] = useDatabaseSave(
@@ -191,6 +192,8 @@ export default ({ assetId, existingSteps, onSave }) => {
 
   const saveSteps = async () => {
     try {
+      trackAction(actionCategory, 'Click save tutorial steps', assetId)
+
       await save({
         [AssetFieldNames.tutorialSteps]: stepsBeingEdited,
         [AssetFieldNames.lastModifiedBy]: createRef(

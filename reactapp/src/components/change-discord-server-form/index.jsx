@@ -108,7 +108,7 @@ export default ({ collectionName, id, actionCategory }) => {
     return (
       <Button
         onClick={() => setIsEditorOpen(true)}
-        color="default"
+        color="tertiary"
         icon={<DiscordIcon />}>
         Change Discord Server
       </Button>

@@ -1,28 +1,9 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { mediaQueryForTabletsOrBelow } from '../../media-queries'
+import EditImageIcon from '../edit-image-icon'
+import PedestalColumns from '../pedestal-columns'
 
 const useStyles = makeStyles({
-  root: {
-    margin: '0 auto 1rem',
-    maxWidth: '1280px',
-    display: 'flex',
-    [mediaQueryForTabletsOrBelow]: {
-      flexDirection: 'column'
-    }
-  },
-  col: {
-    width: '50%',
-    position: 'relative',
-    [mediaQueryForTabletsOrBelow]: {
-      width: '100%'
-    }
-  },
-  leftCol: {},
-  rightCol: {
-    display: 'flex',
-    alignItems: 'center'
-  },
   videoWrapper: {
     position: 'relative'
   },
@@ -61,7 +42,13 @@ const useStyles = makeStyles({
   }
 })
 
-export default ({ videoUrl, fallbackImageUrl, children }) => {
+export default ({
+  videoUrl,
+  fallbackImageUrl,
+  children,
+  showEditIcon,
+  onEdit
+}) => {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
   const videoRef = useRef()
 
@@ -84,12 +71,10 @@ export default ({ videoUrl, fallbackImageUrl, children }) => {
 
   const classes = useStyles()
   return (
-    <div className={classes.root}>
-      <div className={`${classes.col} ${classes.leftCol}`}>
+    <PedestalColumns
+      leftCol={
         <div className={classes.videoWrapper}>
-          {/* <div className={classes.shadowWrapper}> */}
           <div className={classes.shadow} />
-          {/* </div> */}
           <video
             ref={videoRef}
             width="100%"
@@ -110,11 +95,11 @@ export default ({ videoUrl, fallbackImageUrl, children }) => {
               alt="Fallback"
             />
           )}
+
+          {showEditIcon && <EditImageIcon onClick={onEdit} />}
         </div>
-      </div>
-      <div className={`${classes.col} ${classes.rightCol}`}>
-        <div>{children}</div>
-      </div>
-    </div>
+      }
+      rightCol={<div>{children}</div>}
+    />
   )
 }

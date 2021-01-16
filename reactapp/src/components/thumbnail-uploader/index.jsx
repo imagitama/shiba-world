@@ -12,7 +12,7 @@ import OptimizedImageUploader from '../optimized-image-uploader'
 
 import { createRef } from '../../utils'
 import { handleError } from '../../error-handling'
-import { paths } from '../../config'
+import { paths, formHideDelay } from '../../config'
 
 export default ({ assetId, onDone }) => {
   const userId = useFirebaseUserId()
@@ -49,7 +49,7 @@ export default ({ assetId, onDone }) => {
         [AssetFieldNames.lastModifiedAt]: new Date()
       })
 
-      timeoutRef.current = setTimeout(() => onDone(), 2000)
+      timeoutRef.current = setTimeout(() => onDone(), formHideDelay)
     } catch (err) {
       console.error('Failed to upload thumbnail for asset', err)
       handleError(err)
