@@ -121,7 +121,11 @@ function AvatarAssetResults({ assets }) {
   return (
     <>
       {Object.entries(assetsBySpecies)
-        .sort(([nameA], [nameB]) => nameA.localeCompare(nameB))
+        .sort(([idA], [idB]) =>
+          speciesMetaById[idA][SpeciesFieldNames.singularName].localeCompare(
+            speciesMetaById[idB][SpeciesFieldNames.singularName]
+          )
+        )
         .map(([speciesId, assetsForSpecies]) => (
           <Fragment key={speciesId}>
             <Heading variant="h2">
