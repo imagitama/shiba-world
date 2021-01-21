@@ -26,14 +26,15 @@ const useStyles = makeStyles({
   })
 })
 
-export default forwardRef(({ children, variant, className = '' }, ref) => {
+export default forwardRef(({ children, variant, className = '', id }, ref) => {
   const classes = useStyles({ variant })
 
   return (
     <Typography
       variant={variant}
       className={`${classes.heading} ${className}`}
-      ref={ref}>
+      ref={ref}
+      id={id}>
       {children}
     </Typography>
   )

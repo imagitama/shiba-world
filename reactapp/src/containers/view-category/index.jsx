@@ -36,7 +36,8 @@ import useDatabaseQuery, {
 import useInfiniteDatabaseQuery from '../../hooks/useInfiniteDatabaseQuery'
 import useStorage, { keys as storageKeys } from '../../hooks/useStorage'
 import { mediaQueryForMobiles } from '../../media-queries'
-import { scrollTo } from '../../utils'
+import { scrollTo, scrollToTop } from '../../utils'
+import SpeciesVsSelector from '../../components/species-vs-selector'
 
 const useStyles = makeStyles({
   root: {
@@ -50,8 +51,23 @@ const useStyles = makeStyles({
       position: 'relative',
       margin: '0.5rem 0'
     }
+  },
+  headingWrapper: {
+    position: 'relative'
+  },
+  scrollToTopBtn: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    cursor: 'pointer'
+  },
+  jumpToSpeciesBtn: {
+    textAlign: 'center',
+    paddingTop: '0.5rem'
   }
 })
+
+const analyticsActionCategory = 'AssetsList'
 
 function getDisplayNameByCategoryName(categoryName) {
   return categoryMeta[categoryName].name
@@ -65,6 +81,9 @@ let avatarsScrollPosition
 const otherSpeciesKey = 'other-species'
 
 function AvatarAssetResults({ assets }) {
+  const [isSpeciesSelectorOpen, setIsSpeciesSelectorOpen] = useState(false)
+  const classes = useStyles()
+
   // Because the avatars page is very long and the most popular page of the site
   // track the user's scroll so they can click on avatars and return and not have
   // to scroll again
@@ -118,8 +137,35 @@ function AvatarAssetResults({ assets }) {
     }
   }, {})
 
+  const scrollToSpeciesId = speciesId => {
+    /* eslint-disable-next-line */
+    location.hash = `#${
+      speciesMetaById[speciesId][SpeciesFieldNames.singularName]
+    }`
+  }
+
   return (
     <>
+      {isSpeciesSelectorOpen ? (
+        <>
+          <Heading variant="h2">Jump To Species</Heading>
+          <SpeciesVsSelector onSpeciesClick={scrollToSpeciesId} />
+        </>
+      ) : (
+        <div className={classes.jumpToSpeciesBtn}>
+          <Button
+            onClick={() => {
+              trackAction(
+                analyticsActionCategory,
+                'Click jump to species button'
+              )
+              setIsSpeciesSelectorOpen(true)
+            }}>
+            Jump To Species...
+          </Button>
+        </div>
+      )}
+
       {Object.entries(assetsBySpecies)
         .sort(([idA], [idB]) =>
           speciesMetaById[idA][SpeciesFieldNames.singularName].localeCompare(
@@ -128,15 +174,31 @@ function AvatarAssetResults({ assets }) {
         )
         .map(([speciesId, assetsForSpecies]) => (
           <Fragment key={speciesId}>
-            <Heading variant="h2">
-              <Link
-                to={routes.viewSpeciesWithVar.replace(
-                  ':speciesIdOrSlug',
-                  speciesId
-                )}>
-                {speciesMetaById[speciesId][SpeciesFieldNames.singularName]}
-              </Link>
-            </Heading>
+            <div className={classes.headingWrapper}>
+              <Heading
+                variant="h2"
+                id={speciesMetaById[speciesId][SpeciesFieldNames.singularName]}>
+                <Link
+                  to={routes.viewSpeciesWithVar.replace(
+                    ':speciesIdOrSlug',
+                    speciesId
+                  )}>
+                  {speciesMetaById[speciesId][SpeciesFieldNames.singularName]}
+                </Link>
+              </Heading>
+              <span
+                className={classes.scrollToTopBtn}
+                onClick={() => {
+                  trackAction(
+                    analyticsActionCategory,
+                    'Click species scroll to top',
+                    speciesId
+                  )
+                  scrollToTop()
+                }}>
+                Top
+              </span>
+            </div>
             <BodyText>
               {speciesMetaById[speciesId][SpeciesFieldNames.shortDescription]}
             </BodyText>
@@ -251,7 +313,7 @@ export default ({
   const onNewSortFieldAndDirection = (fieldName, direction) => {
     setActiveSortFieldName(fieldName)
     setActiveSortDirection(direction)
-    trackAction('AssetsList', 'Click sort by field and direction', {
+    trackAction(analyticsActionCategory, 'Click sort by field and direction', {
       categoryName,
       fieldName,
       direction
@@ -284,7 +346,7 @@ export default ({
               const newVal = !groupAvatarsBySpecies
               setGroupAvatarsBySpecies(newVal)
               trackAction(
-                'AssetsList',
+                analyticsActionCategory,
                 'Click on group avatars by species',
                 newVal
               )
@@ -315,7 +377,7 @@ export default ({
               directionKey={storageKeys.assetsSortByDirection}
               onNewSortFieldAndDirection={onNewSortFieldAndDirection}
               onOpenDropdown={() =>
-                trackAction('AssetsList', 'Open sort dropdown', {
+                trackAction(analyticsActionCategory, 'Open sort dropdown', {
                   categoryName
                 })
               }
