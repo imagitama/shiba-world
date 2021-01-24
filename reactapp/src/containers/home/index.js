@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
@@ -19,15 +19,18 @@ import { trackAction } from '../../analytics'
 import useSearchTerm from '../../hooks/useSearchTerm'
 import useDatabaseQuery, {
   CollectionNames,
-  mapDates,
   specialCollectionIds,
   AssetCategories,
   AssetFieldNames,
   Operators,
-  OrderDirections
+  OrderDirections,
+  AuthorFieldNames,
+  UserFieldNames,
+  formatRawDoc
 } from '../../hooks/useDatabaseQuery'
 import { isAbsoluteUrl } from '../../utils'
 
+import placeholderUrl from './assets/placeholder.webp'
 import discordTileBgUrl from './assets/discord.webp'
 import patreonTileBgUrl from './assets/patreon.webp'
 import statsTileBgUrl from './assets/stats.webp'
@@ -80,7 +83,12 @@ const useStyles = makeStyles({
     bottom: 0,
     right: 0,
     margin: '0.5rem',
-    fontSize: '75%'
+    fontSize: '75%',
+    opacity: '0.5',
+    transition: 'all 200ms',
+    '&:hover': {
+      opacity: 1
+    }
   },
   fakeImage: {
     width: '300px',
@@ -95,10 +103,35 @@ const useStyles = makeStyles({
   desc: {
     padding: '0.25rem 0 0.5rem',
     lineHeight: 1.5
+  },
+  assetTitle: {
+    fontSize: '125%',
+    margin: '1rem 0 0.5rem'
   }
 })
 
 const analyticsCategoryName = 'Home'
+
+function TileDesc({ children }) {
+  const classes = useStyles()
+  return <div className={classes.desc}>{children}</div>
+}
+
+function Asset({ asset }) {
+  const classes = useStyles()
+  return (
+    <div>
+      <div className={classes.assetTitle}>{asset[AssetFieldNames.title]}</div>
+      <div>
+        {asset[AssetFieldNames.author]
+          ? `by ${asset[AssetFieldNames.author][AuthorFieldNames.name]}`
+          : `uploaded by ${
+              asset[AssetFieldNames.createdBy][UserFieldNames.username]
+            }`}
+      </div>
+    </div>
+  )
+}
 
 function Tile({
   name,
@@ -146,16 +179,18 @@ function Tile({
                 ) : Image ? (
                   Image
                 ) : (
-                  <div className={classes.fakeImage} />
+                  <img
+                    alt="Placeholder"
+                    src={placeholderUrl}
+                    className={classes.thumbnail}
+                  />
                 )}
               </div>
               <CardContent className={classes.content}>
                 <Typography variant="h5" component="h2">
                   {title}
                 </Typography>
-                {description && (
-                  <div className={classes.desc}>{description}</div>
-                )}
+                {description && <TileDesc>{description}</TileDesc>}
                 {children}
               </CardContent>
             </LinkOrAnchor>
@@ -195,33 +230,31 @@ function MostRecentAvatarTile() {
       [AssetFieldNames.isDeleted, Operators.EQUALS, false]
     ],
     1,
-    [AssetFieldNames.createdAt, OrderDirections.ASC]
+    [AssetFieldNames.createdAt, OrderDirections.DESC],
+    false,
+    undefined,
+    true
   )
 
-  if (isLoading) {
+  if (isLoading || !result || !result.length) {
     return <LoadingTile />
   }
 
-  if (!result || !result.length) {
-    return null
-  }
-
-  const { id, title, thumbnailUrl, createdAt } = result[0]
+  const { id, thumbnailUrl, createdAt } = result[0]
 
   return (
     <Tile
       name="avatars"
-      title="Avatars"
+      title="Browse Avatars"
       imageUrl={thumbnailUrl}
-      url={routes.viewAssetWithVar.replace(':assetId', id)}
-      actionLabel="Find More"
-      actionUrl={routes.viewCategoryWithVar.replace(
+      url={routes.viewCategoryWithVar.replace(
         ':categoryName',
         AssetCategories.avatar
       )}
-      metaText={<FormattedDate date={createdAt} />}
-      description={title}>
-      {' '}
+      actionLabel="View This"
+      actionUrl={routes.viewAssetWithVar.replace(':assetId', id)}
+      metaText={<FormattedDate date={createdAt} />}>
+      <Asset asset={result[0]} />
     </Tile>
   )
 }
@@ -237,33 +270,31 @@ function MostRecentAccessoryTile() {
       [AssetFieldNames.isDeleted, Operators.EQUALS, false]
     ],
     1,
-    [AssetFieldNames.createdAt, OrderDirections.DESC]
+    [AssetFieldNames.createdAt, OrderDirections.DESC],
+    false,
+    undefined,
+    true
   )
 
-  if (isLoading) {
+  if (isLoading || !result || !result.length) {
     return <LoadingTile />
   }
 
-  if (!result || !result.length) {
-    return null
-  }
-
-  const { id, title, thumbnailUrl, createdAt } = result[0]
+  const { id, thumbnailUrl, createdAt } = result[0]
 
   return (
     <Tile
       name="accessories"
-      title="Accessories"
+      title="Browse Accessories"
       imageUrl={thumbnailUrl}
-      url={routes.viewAssetWithVar.replace(':assetId', id)}
-      actionLabel="Find More"
-      actionUrl={routes.viewCategoryWithVar.replace(
+      url={routes.viewCategoryWithVar.replace(
         ':categoryName',
         AssetCategories.accessory
       )}
-      metaText={<FormattedDate date={createdAt} />}
-      description={title}>
-      {' '}
+      actionLabel="View This"
+      actionUrl={routes.viewAssetWithVar.replace(':assetId', id)}
+      metaText={<FormattedDate date={createdAt} />}>
+      <Asset asset={result[0]} />
     </Tile>
   )
 }
@@ -273,17 +304,30 @@ function FeaturedAssetTile() {
     CollectionNames.Special,
     specialCollectionIds.featuredAssets
   )
+  const [completeAsset, setCompleteAsset] = useState(null)
 
-  if (!result || !result.activeAsset) {
-    return null
+  useEffect(() => {
+    if (!result || !result.activeAsset) {
+      return
+    }
+
+    async function main() {
+      const assetDoc = await result.activeAsset.asset.get()
+
+      // dirty until I get the time to update what the function caches
+      const formattedResult = await formatRawDoc(assetDoc, true, true)
+      setCompleteAsset(formattedResult)
+    }
+
+    main()
+  }, [result === null])
+
+  if (!result || !result.activeAsset || !completeAsset) {
+    return <LoadingTile />
   }
 
-  const {
-    asset: { id },
-    title,
-    thumbnailUrl,
-    createdAt
-  } = mapDates(result.activeAsset)
+  const { title, thumbnailUrl, author } = completeAsset
+  const id = result.activeAsset.asset.id
 
   return (
     <Tile
@@ -293,9 +337,15 @@ function FeaturedAssetTile() {
       url={routes.viewAssetWithVar.replace(':assetId', id)}
       actionLabel="View Asset"
       actionUrl={routes.viewAssetWithVar.replace(':assetId', id)}
-      metaText={<FormattedDate date={createdAt} />}
-      description={title}
-    />
+      // metaText={<FormattedDate date={createdAt} />}
+    >
+      <Asset
+        asset={{
+          title,
+          author
+        }}
+      />
+    </Tile>
   )
 }
 
@@ -310,17 +360,15 @@ function MostRecentNewsTile() {
       [AssetFieldNames.category, Operators.EQUALS, AssetCategories.article],
       [AssetFieldNames.isApproved, Operators.EQUALS, true],
       [AssetFieldNames.isPrivate, Operators.EQUALS, false],
-      [AssetFieldNames.isAdult, Operators.EQUALS, false]
+      [AssetFieldNames.isAdult, Operators.EQUALS, false],
+      [AssetFieldNames.isDeleted, Operators.EQUALS, false]
     ],
-    1
+    1,
+    [AssetFieldNames.createdAt, OrderDirections.DESC]
   )
 
-  if (isLoading) {
+  if (isLoading || !result || !result.length) {
     return <LoadingTile />
-  }
-
-  if (!result || !result.length) {
-    return null
   }
 
   const { id, title, thumbnailUrl, createdAt } = result[0]
@@ -328,7 +376,7 @@ function MostRecentNewsTile() {
   return (
     <Tile
       name="news"
-      title="Recent news"
+      title="News"
       url={routes.viewAssetWithVar.replace(':assetId', id)}
       imageUrl={thumbnailUrl}
       actionLabel="Read News"
