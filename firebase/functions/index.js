@@ -19,6 +19,7 @@ exports.onDiscordMessageQueued = require('./src/functions/onDiscordMessageQueued
 exports.onPollResponseCreated = require('./src/functions/onPollResponseCreated')
 exports.tallyPolls = require('./src/functions/tallyPolls')
 exports.onAssetAmendmentCreated = require('./src/functions/onAssetAmendmentCreated')
+exports.fetchGumroadInfo = require('./src/functions/fetchGumroadInfo')
 
 // featured assets
 exports.pickFeaturedAsset = require('./src/functions/pickFeaturedAsset')

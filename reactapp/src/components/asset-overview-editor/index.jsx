@@ -9,6 +9,7 @@ import ControlCameraIcon from '@material-ui/icons/ControlCamera'
 import LaunchIcon from '@material-ui/icons/Launch'
 import LazyLoad from 'react-lazyload'
 import { useDispatch } from 'react-redux'
+import SyncIcon from '@material-ui/icons/Sync'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -46,6 +47,7 @@ import AssetTagsEditor from '../asset-tags-editor'
 import Paper from '../paper'
 import ToggleAdultForm from '../toggle-adult-form'
 import AssetSourceEditor from '../asset-source-editor'
+import SyncWithGumroadForm from '../sync-with-gumroad-form'
 
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
@@ -57,7 +59,8 @@ import {
   canEditPedestal,
   isUrlAnImage,
   isUrlAVideo,
-  isUrlNotAnImageOrVideo
+  isUrlNotAnImageOrVideo,
+  isGumroadUrl
 } from '../../utils'
 import { handleError } from '../../error-handling'
 import {
@@ -484,6 +487,9 @@ export default ({ assetId, switchEditorOpen }) => {
   const [isSourceUrlEditorOpen, setIsSourceUrlEditorOpen] = useState(false)
   const [isCategoryEditorOpen, setIsCategoryEditorOpen] = useState(false)
   const [isChildrenEditorOpen, setIsChildrenEditorOpen] = useState(false)
+  const [isSyncWithGumroadFormOpen, setIsSyncWithGumroadFormOpen] = useState(
+    false
+  )
   const hideChangeSpeciesTimeoutRef = useRef()
 
   const dispatch = useDispatch()
@@ -1051,6 +1057,31 @@ export default ({ assetId, switchEditorOpen }) => {
               }}
               editingName="Tutorial Steps"
             />
+          ) : null}
+
+          {isGumroadUrl(sourceUrl) ? (
+            isSyncWithGumroadFormOpen ? (
+              <SyncWithGumroadForm
+                assetId={assetId}
+                gumroadUrl={sourceUrl}
+                onDone={() => {
+                  setIsSyncWithGumroadFormOpen(false)
+                }}
+              />
+            ) : (
+              <Button
+                onClick={() => {
+                  trackAction(
+                    analyticsCategoryName,
+                    'Click toggle sync gumroad button'
+                  )
+                  setIsSyncWithGumroadFormOpen(true)
+                }}
+                color="tertiary"
+                icon={<SyncIcon />}>
+                Sync With Gumroad
+              </Button>
+            )
           ) : null}
 
           {isChildrenEditorOpen ? (

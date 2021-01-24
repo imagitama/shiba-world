@@ -31,6 +31,7 @@
     "node-firestore-import-export": "^1.1.0",
     "patreon": "^0.4.1",
     "sharp": "^0.26.0",
+    "turndown": "^7.0.0",
     "twit": "^2.2.11"
   },
   "devDependencies": {

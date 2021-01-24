@@ -246,3 +246,10 @@ export function fixAccessingImagesUsingToken(url) {
   }
   return url.split('?')[0]
 }
+
+export function isGumroadUrl(url) {
+  if (!url) {
+    return false
+  }
+  return url.includes('gumroad.com')
+}
