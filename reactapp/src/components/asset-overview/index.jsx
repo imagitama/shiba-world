@@ -67,6 +67,7 @@ import DownloadAssetButton from '../download-asset-button'
 import VisitSourceButton from '../visit-source-button'
 import SketchfabEmbed from '../sketchfab-embed'
 import AssetAmendments from '../asset-amendments'
+import TagAmendmentForm from '../tag-amendment-form'
 
 const useStyles = makeStyles({
   root: {
@@ -440,11 +441,16 @@ export default ({ assetId, switchEditorOpen }) => {
   const [, , user] = useUserRecord()
   const [isReportMessageOpen, setIsReportMessageOpen] = useState(false)
   const [isSketchfabEmbedVisible, setIsSketchfabEmbedVisible] = useState(false)
+  const [isTagAmendmentFormVisible, setIsTagAmendmentFormVisible] = useState(
+    false
+  )
   const hideChangeSpeciesTimeoutRef = useRef()
 
   const dispatch = useDispatch()
   const setBannerUrls = urls => dispatch(setBannerUrlsAction(urls))
   const unloadBannerOnUnmountRef = useRef(true)
+
+  const canAmend = user !== null
 
   useEffect(() => {
     if (result && !result.title) {
@@ -771,6 +777,38 @@ export default ({ assetId, switchEditorOpen }) => {
               ? tags.map(tagName => <TagChip key={tagName} tagName={tagName} />)
               : '(no tags)'}
           </div>
+          {canAmend && !isTagAmendmentFormVisible && (
+            <TagChip
+              icon={<EditIcon />}
+              tagName="Edit Tags"
+              onClick={() => {
+                setIsTagAmendmentFormVisible(true)
+                trackAction(
+                  analyticsCategoryName,
+                  'Click open tag amendment form button'
+                )
+              }}
+              isFilled={false}
+            />
+          )}
+          {isTagAmendmentFormVisible && (
+            <TagAmendmentForm
+              assetId={assetId}
+              onDone={() => {
+                trackAction(
+                  analyticsCategoryName,
+                  'Click submit tag amendment button'
+                )
+              }}
+              onCancel={() => {
+                setIsTagAmendmentFormVisible(false)
+                trackAction(
+                  analyticsCategoryName,
+                  'Click cancel tag amendment button'
+                )
+              }}
+            />
+          )}
         </div>
 
         <div className={classes.rightCol}>
