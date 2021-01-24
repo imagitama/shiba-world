@@ -21,6 +21,10 @@ exports.tallyPolls = require('./src/functions/tallyPolls')
 exports.onAssetAmendmentCreated = require('./src/functions/onAssetAmendmentCreated')
 exports.fetchGumroadInfo = require('./src/functions/fetchGumroadInfo')
 
+// homepage
+exports.syncHomepage = require('./src/functions/syncHomepage')
+exports.autoSyncHomepage = require('./src/functions/autoSyncHomepage')
+
 // featured assets
 exports.pickFeaturedAsset = require('./src/functions/pickFeaturedAsset')
 exports.syncFeaturedAssets = require('./src/functions/syncFeaturedAssets')

@@ -86,6 +86,18 @@ const AssetFieldNames = {
 }
 module.exports.AssetFieldNames = AssetFieldNames
 
+const AssetCategories = {
+  accessory: 'accessory',
+  animation: 'animation',
+  tutorial: 'tutorial',
+  avatar: 'avatar',
+  article: 'article',
+  world: 'world',
+  tool: 'tool',
+  alteration: 'alteration',
+}
+module.exports.AssetCategories = AssetCategories
+
 const CommentFieldNames = {
   comment: 'comment',
   parent: 'parent',
@@ -234,6 +246,7 @@ module.exports.FeaturedAssetForUsersFieldNames = FeaturedAssetForUsersFieldNames
 const specialCollectionIds = {
   featured: 'featured', // TODO: Remove
   featuredAssets: 'featuredAssets',
+  homepage: 'homepage',
 }
 module.exports.specialCollectionIds = specialCollectionIds
 

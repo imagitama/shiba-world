@@ -253,3 +253,10 @@ export function isGumroadUrl(url) {
   }
   return url.includes('gumroad.com')
 }
+
+export function isAbsoluteUrl(url) {
+  if (!url) {
+    return false
+  }
+  return url.includes('http')
+}

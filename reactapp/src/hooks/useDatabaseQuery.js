@@ -44,7 +44,8 @@ export const CollectionNames = {
 
 export const specialCollectionIds = {
   featured: 'featured', // TODO: Remove
-  featuredAssets: 'featuredAssets'
+  featuredAssets: 'featuredAssets',
+  homepage: 'homepage'
 }
 
 export const FeaturedAssetForUsersFieldNames = {
@@ -282,6 +283,23 @@ export const SpeciesFieldNames = {
   createdAt: 'createdAt',
   createdBy: 'createdBy',
   slug: 'slug'
+}
+
+export const HomepageFieldNames = {
+  lastUpdatedAt: 'lastUpdatedAt',
+  siteStats: 'siteStats',
+  patreon: 'patreon'
+}
+
+export const HomepageSiteStatsFieldNames = {
+  numAssets: 'numAssets',
+  numAvatars: 'numAvatars',
+  numAccessories: 'numAccessories',
+  numUsers: 'numUsers'
+}
+
+export const HomepagePatreonFieldNames = {
+  numConnectedToPatreon: 'numConnectedToPatreon'
 }
 
 export function getWhereClausesAsString(whereClauses) {
