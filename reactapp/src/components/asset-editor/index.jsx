@@ -394,8 +394,6 @@ export default ({
       )}
       <Heading variant="h4">Upload</Heading>
       <BannerUploader
-        directoryPath={paths.assetBannerDir}
-        filePrefix={shortid.generate()}
         onUploadedUrl={url => onFieldChange(AssetFieldNames.bannerUrl, url)}
       />
       <Heading variant="h3">Tags</Heading>

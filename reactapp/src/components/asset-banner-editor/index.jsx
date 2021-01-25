@@ -1,12 +1,10 @@
 import React from 'react'
-import shortid from 'shortid'
 
 import BannerUploader from '../banner-uploader'
 import LoadingIndicator from '../loading-indicator'
 import SuccessMessage from '../success-message'
 import ErrorMessage from '../error-message'
 
-import { paths } from '../../config'
 import { AssetFieldNames, CollectionNames } from '../../hooks/useDatabaseQuery'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
@@ -53,11 +51,5 @@ export default ({ assetId, onDone, actionCategory }) => {
     }
   }
 
-  return (
-    <BannerUploader
-      directoryPath={paths.assetBannerDir}
-      filePrefix={shortid.generate()}
-      onUploadedUrl={onUploadedUrl}
-    />
-  )
+  return <BannerUploader onUploadedUrl={onUploadedUrl} />
 }

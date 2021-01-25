@@ -27,8 +27,11 @@ const useStyles = makeStyles({
   }
 })
 
-function renameJpgToPng(path) {
-  return path.replace('.jpeg', '.png').replace('.jpg', '.png')
+function renameFileExtToPng(path) {
+  return path
+    .replace('.jpeg', '.png')
+    .replace('.jpg', '.png')
+    .replace('.webp', '.png')
 }
 
 function Output({
@@ -156,9 +159,9 @@ function Output({
     try {
       const blob = await cropImageElementAndGetBlob()
 
-      const filename = `${filePrefix ? `${filePrefix}___` : ''}${renameJpgToPng(
-        selectedFileRef.current.name
-      )}`
+      const filename = `${
+        filePrefix ? `${filePrefix}___` : ''
+      }${renameFileExtToPng(selectedFileRef.current.name)}`
       const fileToUpload = new File([blob], filename)
 
       const uploadPath = `${directoryPath}/${filename}`
@@ -234,11 +237,13 @@ function Output({
 
     return (
       <>
-        <BodyText>Select a JPG or PNG and you will be able to crop it</BodyText>
+        <BodyText>
+          Select a JPG/PNG/WEBP and you will be able to crop it
+        </BodyText>
         <input
           type="file"
           onChange={event => onFileChange(event.target.files)}
-          accept="image/png,image/jpeg"
+          accept="image/png,image/jpeg,image/webp"
         />
       </>
     )
