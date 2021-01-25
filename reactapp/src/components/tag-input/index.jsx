@@ -22,6 +22,23 @@ const mergeInNewTags = (currentTags, newTags) => {
   return mergedTags.filter((tag, idx) => mergedTags.indexOf(tag) === idx)
 }
 
+const popularTags = [
+  'paid',
+  'free',
+  'quest',
+  'low_poly',
+  'sdk2',
+  'sdk3',
+  'patreon_only',
+  'wip',
+  'rigged',
+  'puppeted',
+  'dynamic_bones',
+  'full_body_ready',
+  'collar',
+  'cute'
+]
+
 // NOTE: onChange does not cleanup tags for you (onDone does)
 export default ({ currentTags = [], onChange, onDone }) => {
   const classes = useStyles()
@@ -32,6 +49,8 @@ export default ({ currentTags = [], onChange, onDone }) => {
       setNewTags(currentVal => mergeInNewTags(currentVal, currentTags))
     }
   }, [currentTags ? currentTags.join('+') : null])
+
+  const onClickPopularTag = tag => setNewTags(newTags.concat([tag]))
 
   return (
     <>
@@ -49,8 +68,14 @@ export default ({ currentTags = [], onChange, onDone }) => {
         <li>all lowercase</li>
         <li>do not use the species name, author name or asset name as a tag</li>
       </ul>
-      {cleanupTags(newTags).map(newTag => (
-        <TagChip key={newTag} tagName={newTag} />
+      Popular tags:{' '}
+      {popularTags.map(tagName => (
+        <TagChip
+          key={tagName}
+          tagName={tagName}
+          isDisabled={newTags.includes(tagName)}
+          onClick={() => onClickPopularTag(tagName)}
+        />
       ))}
       <TextField
         variant="outlined"
@@ -68,6 +93,9 @@ export default ({ currentTags = [], onChange, onDone }) => {
         rows={10}
         multiline
       />
+      {cleanupTags(newTags).map(tagName => (
+        <TagChip key={tagName} tagName={tagName} />
+      ))}
       {onDone && (
         <Button onClick={() => onDone(cleanupTags(newTags))}>Done</Button>
       )}

@@ -49,7 +49,12 @@ function AssetsTable({ assets }) {
                   {title}
                 </Link>
               </TableCell>
-              <TableCell>{createdBy.username}</TableCell>
+              <TableCell>
+                <Link
+                  to={routes.viewUserWithVar.replace(':userId', createdBy.id)}>
+                  {createdBy.username}
+                </Link>
+              </TableCell>
               <TableCell>
                 <ApproveAssetButton
                   assetId={id}
@@ -72,7 +77,12 @@ function AssetsTable({ assets }) {
 export default () => {
   let [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.Assets,
-    [[AssetFieldNames.isApproved, Operators.EQUALS, false]]
+    [[AssetFieldNames.isApproved, Operators.EQUALS, false]],
+    1000,
+    undefined,
+    true,
+    undefined,
+    true
   )
 
   results = results

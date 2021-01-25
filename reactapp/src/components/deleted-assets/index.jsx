@@ -46,7 +46,12 @@ function AssetsTable({ assets }) {
                   {title}
                 </Link>
               </TableCell>
-              <TableCell>{createdBy.username}</TableCell>
+              <TableCell>
+                <Link
+                  to={routes.viewUserWithVar.replace(':userId', createdBy.id)}>
+                  {createdBy.username}
+                </Link>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -58,7 +63,12 @@ function AssetsTable({ assets }) {
 export default () => {
   let [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.Assets,
-    [[AssetFieldNames.isDeleted, Operators.EQUALS, true]]
+    [[AssetFieldNames.isDeleted, Operators.EQUALS, true]],
+    1000,
+    undefined,
+    true,
+    undefined,
+    true
   )
 
   if (isLoading) {

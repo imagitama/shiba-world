@@ -8,7 +8,6 @@ import CategorySelector from './components/category-selector'
 import FormField, { formFieldType } from './components/form-field'
 import InvalidMessage from './components/invalid-message'
 import ChildrenInput from './components/children-input'
-import PopularTagsSelector from './components/popular-tags-selector'
 import SpeciesOutput from './components/species-output'
 
 import Heading from '../heading'
@@ -400,16 +399,6 @@ export default ({
         onUploadedUrl={url => onFieldChange(AssetFieldNames.bannerUrl, url)}
       />
       <Heading variant="h3">Tags</Heading>
-      Click a popular tag to add it:{' '}
-      <PopularTagsSelector
-        currentTags={fieldData[AssetFieldNames.tags]}
-        onSelect={tagName =>
-          onFieldChange(
-            AssetFieldNames.tags,
-            fieldData[AssetFieldNames.tags].concat([tagName])
-          )
-        }
-      />
       <TagInput
         currentTags={fieldData[AssetFieldNames.tags]}
         onChange={newTags => onFieldChange(AssetFieldNames.tags, newTags)}
