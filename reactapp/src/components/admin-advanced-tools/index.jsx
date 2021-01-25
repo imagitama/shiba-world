@@ -51,7 +51,7 @@ const FunctionCaller = ({ name, label, description }) => {
       setIsSuccess(false)
       setIsError(false)
 
-      const resp = await callFunction(name)
+      const resp = await callFunction(name, {})
       console.log(`Response from function ${name}`, resp)
 
       setIsExecuting(false)
