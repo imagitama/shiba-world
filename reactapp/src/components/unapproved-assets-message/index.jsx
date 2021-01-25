@@ -38,7 +38,7 @@ export default () => {
   return (
     <Paper className={classes.paper}>
       There are {results ? results.length : '-'} assets waiting to be approved.
-      Click <Link to={routes.adminAssets}>here</Link> to approve.
+      Click <Link to={routes.admin}>here</Link> to approve (via tab).
     </Paper>
   )
 }

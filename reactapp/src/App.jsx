@@ -74,18 +74,6 @@ const MyAccount = lazy(() =>
   catchChunkDeaths(() => import('./containers/my-account'))
 )
 const Admin = lazy(() => catchChunkDeaths(() => import('./containers/admin')))
-const AdminHistory = lazy(() =>
-  catchChunkDeaths(() => import('./containers/admin-history'))
-)
-const AdminUsers = lazy(() =>
-  catchChunkDeaths(() => import('./containers/admin-users'))
-)
-const AdminAssets = lazy(() =>
-  catchChunkDeaths(() => import('./containers/admin-assets'))
-)
-const AdminPolls = lazy(() =>
-  catchChunkDeaths(() => import('./containers/admin-polls'))
-)
 const PrivacyPolicy = lazy(() =>
   catchChunkDeaths(() => import('./containers/privacy-policy'))
 )
@@ -157,9 +145,6 @@ const ResetPassword = lazy(() =>
 )
 const Pedestals = lazy(() =>
   catchChunkDeaths(() => import('./containers/pedestals'))
-)
-const AdminAssetAmendments = lazy(() =>
-  catchChunkDeaths(() => import('./containers/admin-asset-amendments'))
 )
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
@@ -278,18 +263,6 @@ const MainContent = () => {
           }}
         />
         <RouteWithMeta exact path={routes.admin} component={Admin} />
-        <RouteWithMeta exact path={routes.adminUsers} component={AdminUsers} />
-        <RouteWithMeta
-          exact
-          path={routes.adminHistory}
-          component={AdminHistory}
-        />
-        <RouteWithMeta
-          exact
-          path={routes.adminAssets}
-          component={AdminAssets}
-        />
-        <RouteWithMeta exact path={routes.adminPolls} component={AdminPolls} />
         <RouteWithMeta
           exact
           path={routes.myAccount}
@@ -378,11 +351,6 @@ const MainContent = () => {
         <Route exact path={routes.resetPassword} component={ResetPassword} />
         <Route exact path={routes.pedestals} component={Pedestals} />
         <Route exact path={routes.vsScreen} component={VsScreen} />
-        <Route
-          exact
-          path={routes.adminAssetAmendments}
-          component={AdminAssetAmendments}
-        />
         <Route
           component={() => (
             <ErrorContainer code={404} message="Page not found" />

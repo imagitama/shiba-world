@@ -113,33 +113,9 @@ export default [
         requiresAdultContentEnabled: true
       },
       {
-        id: 'admin-users',
-        label: 'Admin - Users',
-        url: routes.adminUsers,
-        requiresAdmin: true
-      },
-      {
-        id: 'admin-assets',
-        label: 'Admin - Assets',
-        url: routes.adminAssets,
-        requiresAdminOrEditor: true
-      },
-      {
-        id: 'admin-history',
-        label: 'Admin - History',
-        url: routes.adminHistory,
-        requiresAdmin: true
-      },
-      {
-        id: 'admin-polls',
-        label: 'Admin - Polls',
-        url: routes.adminPolls,
-        requiresAdmin: true
-      },
-      {
-        id: 'admin-asset-amendments',
-        label: 'Admin - Amendments',
-        url: routes.adminAssetAmendments,
+        id: 'admin',
+        label: 'Admin',
+        url: routes.admin,
         requiresAdmin: true
       }
     ]

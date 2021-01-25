@@ -41,7 +41,7 @@ export default () => {
   return (
     <Paper className={classes.paper}>
       There are {results ? results.length : '-'} asset amendments pending. Click{' '}
-      <Link to={routes.adminAssetAmendments}>here</Link> to approve.
+      <Link to={routes.admin}>here</Link> to approve (via tab).
     </Paper>
   )
 }
