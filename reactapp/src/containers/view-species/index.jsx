@@ -4,6 +4,7 @@ import Markdown from 'react-markdown'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import EditIcon from '@material-ui/icons/Edit'
+import LaunchIcon from '@material-ui/icons/Launch'
 
 import Heading from '../../components/heading'
 import RecentAssets from '../../components/recent-assets'
@@ -137,6 +138,7 @@ const SpeciesResult = ({ speciesIdOrSlug }) => {
             }`}
             className={classes.thumbnail}
           />
+          View Thumbnail Source <LaunchIcon style={{ fontSize: '100%' }} />
         </a>
       </div>
       <Heading variant="h1">
