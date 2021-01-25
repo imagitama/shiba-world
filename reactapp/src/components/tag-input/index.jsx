@@ -22,22 +22,72 @@ const mergeInNewTags = (currentTags, newTags) => {
   return mergedTags.filter((tag, idx) => mergedTags.indexOf(tag) === idx)
 }
 
-const popularTags = [
-  'paid',
-  'free',
-  'quest',
-  'low_poly',
-  'sdk2',
-  'sdk3',
-  'patreon_only',
-  'wip',
-  'rigged',
-  'puppeted',
-  'dynamic_bones',
-  'full_body_ready',
-  'collar',
-  'cute'
-]
+const popularTagsByCategory = {
+  Cost: ['paid', 'free', 'patreon_only', 'gumroad'],
+  Compatibility: [
+    'wip',
+    'quest',
+    'quest_only',
+    'pc_only',
+    'low_poly',
+    'sdk2',
+    'sdk3',
+    'good_vrchat_performance'
+  ],
+  Features: [
+    'sdk3_puppets',
+    'full_body_ready',
+    'rigged',
+    'dynamic_bones',
+    'hand_colliders',
+    'nsfw_included',
+    'blend_shapes',
+    'scene_included',
+    'blendfile_included',
+    'unity_package',
+    'prefabs_included',
+    'toggle_accessories',
+    'customizable_body'
+  ],
+
+  Textures: [
+    'uv_included',
+    'psd_included',
+    'original_texture_included',
+    'substance_painter_included',
+    'high_resolution_textures',
+    'xsfur_shader',
+    'poiyomi_shader',
+    'multiple_textures',
+    'custom_shaders',
+    'multiple_eye_colors'
+  ],
+
+  Appearance: [
+    'plantigrade',
+    'digigrade',
+    'cartoony',
+    'very_realistic',
+    'beans'
+  ],
+
+  Clothing: ['collar', 'clothes'],
+
+  Animation: [
+    'custom_animations',
+    'custom_idle_animation',
+    'custom_emotes',
+    'custom_gestures'
+  ],
+
+  Other: [
+    'remodel',
+    'depends_on_shiba',
+    'discord_server_support',
+    'neosvr_compatible',
+    'chilloutvr_compatible'
+  ]
+}
 
 // NOTE: onChange does not cleanup tags for you (onDone does)
 export default ({ currentTags = [], onChange, onDone }) => {
@@ -68,14 +118,22 @@ export default ({ currentTags = [], onChange, onDone }) => {
         <li>all lowercase</li>
         <li>do not use the species name, author name or asset name as a tag</li>
       </ul>
-      Popular tags:{' '}
-      {popularTags.map(tagName => (
-        <TagChip
-          key={tagName}
-          tagName={tagName}
-          isDisabled={newTags.includes(tagName)}
-          onClick={() => onClickPopularTag(tagName)}
-        />
+      Popular tags:
+      <br />
+      {Object.entries(popularTagsByCategory).map(([category, tags]) => (
+        <>
+          {category}
+          <div>
+            {tags.map(tagName => (
+              <TagChip
+                key={tagName}
+                tagName={tagName}
+                isDisabled={newTags.includes(tagName)}
+                onClick={() => onClickPopularTag(tagName)}
+              />
+            ))}
+          </div>
+        </>
       ))}
       <TextField
         variant="outlined"
