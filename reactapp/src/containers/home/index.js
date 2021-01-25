@@ -471,11 +471,6 @@ function SiteStatsTile() {
 }
 
 const PollTile = memo(() => {
-  useEffect(() => {
-    console.log('mount polltile')
-    return () => console.log('unmount polltile')
-  }, [])
-
   return (
     <Tile name="poll" title="Poll" double>
       <Polls />
