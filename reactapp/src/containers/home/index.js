@@ -22,11 +22,8 @@ import useDatabaseQuery, {
   specialCollectionIds,
   AssetCategories,
   AssetFieldNames,
-  Operators,
-  OrderDirections,
-  AuthorFieldNames,
-  UserFieldNames,
-  formatRawDoc
+  formatRawDoc,
+  mapDates
 } from '../../hooks/useDatabaseQuery'
 import { isAbsoluteUrl } from '../../utils'
 
@@ -125,11 +122,11 @@ function Asset({ asset }) {
     <div>
       <div className={classes.assetTitle}>{asset[AssetFieldNames.title]}</div>
       <div>
-        {asset[AssetFieldNames.author]
-          ? `by ${asset[AssetFieldNames.author][AuthorFieldNames.name]}`
-          : `uploaded by ${
-              asset[AssetFieldNames.createdBy][UserFieldNames.username]
-            }`}
+        {asset.authorName
+          ? `by ${asset.authorName}`
+          : asset.createdByName
+          ? `uploaded by ${asset.createdByName}`
+          : null}
       </div>
     </div>
   )
@@ -159,10 +156,12 @@ function Tile({
       <a href={url} onClick={onClick}>
         {children}
       </a>
-    ) : (
+    ) : url ? (
       <Link to={url} onClick={onClick}>
         {children}
       </Link>
+    ) : (
+      <>{children}</>
     )
 
   return (
@@ -258,27 +257,17 @@ function AccessoriesTile() {
 }
 
 function MostRecentAvatarTile() {
-  const [isLoading, , result] = useDatabaseQuery(
-    CollectionNames.Assets,
-    [
-      [AssetFieldNames.category, Operators.EQUALS, AssetCategories.avatar],
-      [AssetFieldNames.isApproved, Operators.EQUALS, true],
-      [AssetFieldNames.isPrivate, Operators.EQUALS, false],
-      [AssetFieldNames.isAdult, Operators.EQUALS, false],
-      [AssetFieldNames.isDeleted, Operators.EQUALS, false]
-    ],
-    1,
-    [AssetFieldNames.createdAt, OrderDirections.DESC],
-    false,
-    undefined,
-    true
-  )
+  const result = useHomepage()
 
-  if (isLoading || !result || !result.length) {
+  const {
+    assets: { mostRecentAvatar }
+  } = result || { assets: {} }
+
+  if (!mostRecentAvatar) {
     return <LoadingTile />
   }
 
-  const { id, thumbnailUrl, createdAt } = result[0]
+  const { id, thumbnailUrl, createdAt } = mapDates(mostRecentAvatar)
   const url = routes.viewAssetWithVar.replace(':assetId', id)
 
   return (
@@ -290,47 +279,35 @@ function MostRecentAvatarTile() {
       actionLabel="View Avatar"
       actionUrl={url}
       metaText={<FormattedDate date={createdAt} />}>
-      <Asset asset={result[0]} />
+      <Asset asset={mostRecentAvatar} />
     </Tile>
   )
 }
 
 function MostRecentAccessoryTile() {
-  const [isLoading, , result] = useDatabaseQuery(
-    CollectionNames.Assets,
-    [
-      [AssetFieldNames.category, Operators.EQUALS, AssetCategories.accessory],
-      [AssetFieldNames.isApproved, Operators.EQUALS, true],
-      [AssetFieldNames.isPrivate, Operators.EQUALS, false],
-      [AssetFieldNames.isAdult, Operators.EQUALS, false],
-      [AssetFieldNames.isDeleted, Operators.EQUALS, false]
-    ],
-    1,
-    [AssetFieldNames.createdAt, OrderDirections.DESC],
-    false,
-    undefined,
-    true
-  )
+  const result = useHomepage()
 
-  if (isLoading || !result || !result.length) {
+  const {
+    assets: { mostRecentAccessory }
+  } = result || { assets: {} }
+
+  if (!mostRecentAccessory) {
     return <LoadingTile />
   }
 
-  const { id, thumbnailUrl, createdAt } = result[0]
+  const { id, thumbnailUrl, createdAt } = mapDates(mostRecentAccessory)
+  const url = routes.viewAssetWithVar.replace(':assetId', id)
 
   return (
     <Tile
       name="accessories"
-      title="Browse Accessories"
+      title="Most Recent Accessory"
       imageUrl={thumbnailUrl}
-      url={routes.viewCategoryWithVar.replace(
-        ':categoryName',
-        AssetCategories.accessory
-      )}
+      url={url}
       actionLabel="View This"
-      actionUrl={routes.viewAssetWithVar.replace(':assetId', id)}
+      actionUrl={url}
       metaText={<FormattedDate date={createdAt} />}>
-      <Asset asset={result[0]} />
+      <Asset asset={mostRecentAccessory} />
     </Tile>
   )
 }
@@ -390,30 +367,24 @@ function LoadingTile() {
 }
 
 function MostRecentNewsTile() {
-  const [isLoading, , result] = useDatabaseQuery(
-    CollectionNames.Assets,
-    [
-      [AssetFieldNames.category, Operators.EQUALS, AssetCategories.article],
-      [AssetFieldNames.isApproved, Operators.EQUALS, true],
-      [AssetFieldNames.isPrivate, Operators.EQUALS, false],
-      [AssetFieldNames.isAdult, Operators.EQUALS, false],
-      [AssetFieldNames.isDeleted, Operators.EQUALS, false]
-    ],
-    1,
-    [AssetFieldNames.createdAt, OrderDirections.DESC]
-  )
+  const result = useHomepage()
 
-  if (isLoading || !result || !result.length) {
+  const {
+    assets: { mostRecentArticle }
+  } = result || { assets: {} }
+
+  if (!mostRecentArticle) {
     return <LoadingTile />
   }
 
-  const { id, title, thumbnailUrl, createdAt } = result[0]
+  const { id, title, thumbnailUrl, createdAt } = mapDates(mostRecentArticle)
+  const url = routes.viewAssetWithVar.replace(':assetId', id)
 
   return (
     <Tile
       name="news"
       title="News"
-      url={routes.viewAssetWithVar.replace(':assetId', id)}
+      url={url}
       imageUrl={thumbnailUrl}
       actionLabel="Read News"
       actionUrl={routes.news}

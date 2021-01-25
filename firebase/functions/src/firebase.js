@@ -14,6 +14,12 @@ const Operators = {
 }
 module.exports.Operators = Operators
 
+const OrderDirections = {
+  ASC: 'asc',
+  DESC: 'desc',
+}
+module.exports.OrderDirections = OrderDirections
+
 const CollectionNames = {
   Users: 'users',
   Assets: 'assets',
