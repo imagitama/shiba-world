@@ -3,8 +3,6 @@ import { ResponsiveContainer, PieChart, Pie, Legend, Cell } from 'recharts'
 import { makeStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 
-import Paper from '../paper'
-
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useDatabaseQuery, {
   CollectionNames,
@@ -254,7 +252,7 @@ export default ({
   )
 
   return (
-    <Paper className={classes.root}>
+    <div className={classes.root}>
       <div className={classes.col}>
         <strong>{question}</strong>
         <p>{description}</p>
@@ -276,6 +274,6 @@ export default ({
           />
         )}
       </div>
-    </Paper>
+    </div>
   )
 }

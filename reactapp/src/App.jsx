@@ -7,7 +7,6 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import * as routes from './routes'
 import { darkTheme } from './themes'
-import { UserFieldNames } from './hooks/useDatabaseQuery'
 
 // Do not lazy load these routes as they are very popular so they should load fast
 import Home from './containers/home'
@@ -30,9 +29,7 @@ import BannedNotice from './components/banned-notice'
 import Banner from './components/banner'
 import PendingAssetAmendmentsMessage from './components/pending-asset-amendments-message'
 
-import useUserRecord from './hooks/useUserRecord'
 import useSearchTerm from './hooks/useSearchTerm'
-import useIsLoggedIn from './hooks/useIsLoggedIn'
 
 import { scrollToTop } from './utils'
 import { searchIndexNameLabels } from './modules/app'
@@ -186,8 +183,6 @@ const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
 
 const MainContent = () => {
   const searchTerm = useSearchTerm()
-  const isLoggedIn = useIsLoggedIn()
-  const [isLoadingUser, , username] = useUserRecord(UserFieldNames.username)
   const location = useLocation()
 
   useEffect(() => {
@@ -198,12 +193,9 @@ const MainContent = () => {
     return <SearchResults />
   }
 
-  if (isLoggedIn && !isLoadingUser && !username) {
-    return <SetupProfile />
-  }
-
   return (
     <Suspense fallback={<LoadingIndicator />}>
+      <SetupProfile />
       <Switch>
         <Redirect
           // deprecated category

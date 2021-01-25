@@ -4,6 +4,8 @@ const {
   specialCollectionIds,
   FeaturedAssetForUsersFieldNames,
   AssetFieldNames,
+  AuthorFieldNames,
+  UserFieldNames,
 } = require('./firebase')
 
 const SpecialFieldNames = {
@@ -73,6 +75,25 @@ module.exports.syncFeaturedAssets = async () => {
   }
 }
 
+const getAuthorName = async (authorRef) => {
+  if (authorRef) {
+    const author = await authorRef.get()
+    const authorName = author.get(AuthorFieldNames.name)
+    return authorName
+  }
+  return null
+}
+
+const getCreatedByName = async (authorRef, createdByRef) => {
+  if (authorRef) {
+    return null
+  }
+
+  const createdBy = await createdByRef.get()
+  const createdByName = createdBy.get(UserFieldNames.username)
+  return createdByName
+}
+
 const pickFeaturedAsset = async () => {
   console.debug('Picking featured asset')
 
@@ -129,10 +150,20 @@ const pickFeaturedAsset = async () => {
       [SpecialFieldNames.alreadyFeaturedAssets]: updatedAlreadyFeaturedAssets,
       [SpecialFieldNames.activeAsset]: selectedAsset
         ? {
-            asset: selectedAsset,
+            // standard
             title: selectedAssetDoc.get(AssetFieldNames.title),
             description: selectedAssetDoc.get(AssetFieldNames.description),
             thumbnailUrl: selectedAssetDoc.get(AssetFieldNames.thumbnailUrl),
+
+            // special
+            asset: selectedAsset,
+            authorName: await getAuthorName(
+              selectedAssetDoc.get(AssetFieldNames.author)
+            ),
+            createdByName: await getCreatedByName(
+              selectedAssetDoc.get(AssetFieldNames.author),
+              selectedAssetDoc.get(AssetFieldNames.createdBy)
+            ),
           }
         : null,
     },

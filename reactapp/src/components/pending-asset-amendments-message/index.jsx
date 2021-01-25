@@ -26,17 +26,12 @@ export default () => {
   const [, , user] = useUserRecord()
   const classes = useStyles()
 
-  const performQuery = isUserStaff(user)
+  const shouldPerformQuery = isUserStaff(user)
   const [, , results] = useDatabaseQuery(
     CollectionNames.AssetAmendments,
-    performQuery
+    shouldPerformQuery
       ? [[AssetAmendmentFieldNames.isRejected, Operators.EQUALS, null]]
-      : false,
-    undefined,
-    undefined,
-    true,
-    undefined,
-    true
+      : false
   )
 
   if (!user || !isUserStaff(user) || !results || !results.length) {

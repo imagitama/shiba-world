@@ -6,6 +6,7 @@ import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { CollectionNames, UserFieldNames } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
+import useIsLoggedIn from '../../hooks/useIsLoggedIn'
 
 import ErrorMessage from '../error-message'
 import SuccessMessage from '../success-message'
@@ -18,7 +19,7 @@ import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
 import { trackAction } from '../../analytics'
 
-export default () => {
+const Form = () => {
   const userId = useFirebaseUserId()
   const [isLoadingUser, , user] = useUserRecord()
   const [isCreating, isCreateSuccess, isCreateError, create] = useDatabaseSave(
@@ -85,4 +86,15 @@ export default () => {
       <Button onClick={onSaveBtnClick}>Save</Button>
     </>
   )
+}
+
+export default () => {
+  const isLoggedIn = useIsLoggedIn()
+  const [isLoadingUser, , username] = useUserRecord(UserFieldNames.username)
+
+  if (isLoggedIn && !isLoadingUser && !username) {
+    return <Form />
+  }
+
+  return null
 }

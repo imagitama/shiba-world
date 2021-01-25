@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, memo } from 'react'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
@@ -22,7 +22,6 @@ import useDatabaseQuery, {
   specialCollectionIds,
   AssetCategories,
   AssetFieldNames,
-  formatRawDoc,
   mapDates
 } from '../../hooks/useDatabaseQuery'
 import { isAbsoluteUrl } from '../../utils'
@@ -142,8 +141,7 @@ function Tile({
   imageUrl,
   children,
   metaText,
-  double = false,
-  image: Image
+  double = false
 }) {
   const classes = useStyles()
 
@@ -170,23 +168,23 @@ function Tile({
         <Card className={classes.card}>
           <CardActionArea className={classes.contentsWrapper} onClick={onClick}>
             <LinkOrAnchor>
-              <div className={classes.media}>
-                {imageUrl ? (
-                  <img
-                    src={imageUrl}
-                    alt={`Thumbnail for tile`}
-                    className={classes.thumbnail}
-                  />
-                ) : Image ? (
-                  Image
-                ) : (
-                  <img
-                    alt="Placeholder"
-                    src={placeholderUrl}
-                    className={classes.thumbnail}
-                  />
-                )}
-              </div>
+              {!double && (
+                <div className={classes.media}>
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt={`Thumbnail for tile`}
+                      className={classes.thumbnail}
+                    />
+                  ) : (
+                    <img
+                      alt="Placeholder"
+                      src={placeholderUrl}
+                      className={classes.thumbnail}
+                    />
+                  )}
+                </div>
+              )}
               <CardContent className={classes.content}>
                 <Typography variant="h5" component="h2">
                   {title}
@@ -317,29 +315,12 @@ function FeaturedAssetTile() {
     CollectionNames.Special,
     specialCollectionIds.featuredAssets
   )
-  const [completeAsset, setCompleteAsset] = useState(null)
 
-  useEffect(() => {
-    if (!result || !result.activeAsset) {
-      return
-    }
-
-    async function main() {
-      const assetDoc = await result.activeAsset.asset.get()
-
-      // dirty until I get the time to update what the function caches
-      const formattedResult = await formatRawDoc(assetDoc, true, true)
-      setCompleteAsset(formattedResult)
-    }
-
-    main()
-  }, [result === null])
-
-  if (!result || !result.activeAsset || !completeAsset) {
+  if (!result || !result.activeAsset) {
     return <LoadingTile />
   }
 
-  const { title, thumbnailUrl, author } = completeAsset
+  const { thumbnailUrl } = result.activeAsset
   const id = result.activeAsset.asset.id
 
   return (
@@ -352,12 +333,7 @@ function FeaturedAssetTile() {
       actionUrl={routes.viewAssetWithVar.replace(':assetId', id)}
       // metaText={<FormattedDate date={createdAt} />}
     >
-      <Asset
-        asset={{
-          title,
-          author
-        }}
-      />
+      <Asset asset={result.activeAsset} />
     </Tile>
   )
 }
@@ -494,13 +470,18 @@ function SiteStatsTile() {
   )
 }
 
-function PollTile() {
+const PollTile = memo(() => {
+  useEffect(() => {
+    console.log('mount polltile')
+    return () => console.log('unmount polltile')
+  }, [])
+
   return (
-    <Tile name="poll" title="Poll" image={<Polls />} double>
-      Vote in the poll above.
+    <Tile name="poll" title="Poll" double>
+      <Polls />
     </Tile>
   )
-}
+})
 
 const homepageContext = createContext(null)
 const useHomepage = () => useContext(homepageContext)
