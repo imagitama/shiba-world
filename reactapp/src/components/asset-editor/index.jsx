@@ -15,7 +15,7 @@ import Heading from '../heading'
 import OptimizedImageUploader from '../optimized-image-uploader'
 import BannerUploader from '../banner-uploader'
 import Button from '../button'
-import TagChip from '../tag-chip'
+import TagInput from '../tag-input'
 
 import {
   AssetFieldNames,
@@ -34,6 +34,7 @@ import {
   isDocument
 } from '../../utils'
 import { paths } from '../../config'
+import { cleanupTags } from '../../utils/tags'
 
 const useStyles = makeStyles({
   controls: { marginTop: '2rem', textAlign: 'center' }
@@ -233,9 +234,7 @@ export default ({
       return
     }
 
-    fieldData.tags = fieldData.tags
-      ? fieldData.tags.map(tag => tag.trim()).filter(tag => tag)
-      : []
+    fieldData.tags = cleanupTags(fieldData.tags)
 
     const fieldDataWithDocs = fieldDataToDocs(fieldData)
 
@@ -411,21 +410,10 @@ export default ({
           )
         }
       />
-      <FormField
-        label="Tags"
-        value={fieldData[AssetFieldNames.tags].join('\n')}
-        hint={
-          'Help users find your assets using filters and searching. One tag per line. All lowercase.'
-        }
-        onChange={newVal => onFieldChange(AssetFieldNames.tags, newVal)}
-        convertToValidField={text => text.toLowerCase().split('\n')}
-        multiline
-        rows={10}
+      <TagInput
+        currentTags={fieldData[AssetFieldNames.tags]}
+        onChange={newTags => onFieldChange(AssetFieldNames.tags, newTags)}
       />
-      <br />
-      {fieldData[AssetFieldNames.tags].map(tag => (
-        <TagChip key={tag} tagName={tag} isDisabled />
-      ))}
       {fieldData[AssetFieldNames.category] === AssetCategories.tutorial && (
         <>
           <Heading variant="h2">Video</Heading>

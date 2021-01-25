@@ -110,6 +110,7 @@ export default ({
       <Heading variant="h1">Upload {nameSingular}</Heading>
       <Heading variant="h2">Select a species</Heading>
       <p>This is optional - you can select none and click Done.</p>
+      <Button onClick={() => onDone()}>Skip</Button>
       <div className={classes.items}>
         {results
           .map(result => [

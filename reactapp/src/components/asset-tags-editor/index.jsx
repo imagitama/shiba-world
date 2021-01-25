@@ -1,6 +1,4 @@
-import React, { useState } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-import TextField from '@material-ui/core/TextField'
+import React from 'react'
 
 import { AssetFieldNames, CollectionNames } from '../../hooks/useDatabaseQuery'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
@@ -9,35 +7,21 @@ import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
 import { trackAction } from '../../analytics'
 
-import TagChip from '../tag-chip'
-import Button from '../button'
-
-const useStyles = makeStyles({
-  textInput: {
-    width: '100%',
-    margin: '1rem 0'
-  }
-})
-
-// todo: move to common place
-const convertTextIntoTags = text => (text ? text.split('\n') : [])
-const convertTagsIntoText = tags => (tags ? tags.join('\n') : '')
+import TagInput from '../tag-input'
 
 export default ({ assetId, tags = [], onDone, actionCategory }) => {
   const userId = useFirebaseUserId()
-  const [newTagsValue, setNewTagsValue] = useState(tags)
   const [isSaving, isSaveSuccess, isSaveError, save] = useDatabaseSave(
     CollectionNames.Assets,
     assetId
   )
-  const classes = useStyles()
 
-  const onSaveBtnClick = async () => {
+  const onSaveBtnClick = async newTags => {
     try {
       trackAction(actionCategory, 'Click save asset tags', assetId)
 
       await save({
-        [AssetFieldNames.tags]: newTagsValue,
+        [AssetFieldNames.tags]: newTags,
         [AssetFieldNames.lastModifiedBy]: createRef(
           CollectionNames.Users,
           userId
@@ -54,30 +38,17 @@ export default ({ assetId, tags = [], onDone, actionCategory }) => {
 
   return (
     <>
-      {newTagsValue
-        ? newTagsValue.map(tagName => (
-            <TagChip key={tagName} tagName={tagName} />
-          ))
-        : '(no tags)'}
-
-      <TextField
-        variant="outlined"
-        className={classes.textInput}
-        value={convertTagsIntoText(newTagsValue)}
-        onChange={e => setNewTagsValue(convertTextIntoTags(e.target.value))}
-        rows={10}
-        multiline
+      <TagInput
+        currentTags={tags}
+        onDone={newTags => onSaveBtnClick(newTags)}
       />
-
-      {isSaving ? (
-        'Saving...'
-      ) : isSaveSuccess ? (
-        'Success!'
-      ) : isSaveError ? (
-        'Error'
-      ) : (
-        <Button onClick={onSaveBtnClick}>Save</Button>
-      )}
+      {isSaving
+        ? 'Saving...'
+        : isSaveSuccess
+        ? 'Success!'
+        : isSaveError
+        ? 'Error'
+        : null}
     </>
   )
 }
