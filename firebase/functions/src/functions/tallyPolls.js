@@ -55,6 +55,6 @@ module.exports = functions.https.onRequest(async (req, res) => {
     res.status(200).send('Polls have been tallied')
   } catch (err) {
     console.error(err)
-    res.status(500).send(`Error: ${err.message}`)
+    throw new functions.https.HttpsError('failed-to-tally-polls', err.message)
   }
 })

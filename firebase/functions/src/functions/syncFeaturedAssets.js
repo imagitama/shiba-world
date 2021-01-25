@@ -7,6 +7,9 @@ module.exports = functions.https.onRequest(async (req, res) => {
     res.status(200).send('Featured assets have been synced')
   } catch (err) {
     console.error(err)
-    res.status(500).send(`Error: ${err.message}`)
+    throw new functions.https.HttpsError(
+      'failed-to-sync-featured-assets',
+      err.message
+    )
   }
 })

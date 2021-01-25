@@ -7,6 +7,6 @@ module.exports = functions.https.onRequest(async (req, res) => {
     res.status(200).send('Homepage has been synced')
   } catch (err) {
     console.error(err)
-    res.status(500).send(`Error: ${err.message}`)
+    throw new functions.https.HttpsError('failed-to-sync-homepage', err.message)
   }
 })

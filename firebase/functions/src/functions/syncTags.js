@@ -23,6 +23,6 @@ module.exports = functions.https.onRequest(async (req, res) => {
     res.status(200).send('Tags have been synced')
   } catch (err) {
     console.error(err)
-    res.status(500).send(`Error: ${err.message}`)
+    throw new functions.https.HttpsError('failed-to-sync-tags', err.message)
   }
 })
