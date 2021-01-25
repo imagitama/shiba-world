@@ -32,7 +32,10 @@ export default ({ collectionName, parentId }) => {
       ]
     ],
     100,
-    [CommentFieldNames.createdAt, OrderDirections.DESC]
+    [CommentFieldNames.createdAt, OrderDirections.DESC],
+    true,
+    undefined,
+    true
   )
 
   if (isLoading) {

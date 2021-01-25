@@ -15,6 +15,7 @@ import UnapprovedAssets from '../../components/unapproved-assets'
 import DeletedAssets from '../../components/deleted-assets'
 import AdminAssetAmendments from '../../components/admin-asset-amendments'
 import AdminPolls from '../../components/admin-polls'
+import AdminAdvancedTools from '../../components/admin-advanced-tools'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import {
@@ -63,7 +64,7 @@ export default () => {
     return <ErrorMessage />
   }
 
-  if (!user || !user.isAdmin) {
+  if (!user || (!user.isAdmin && !user.isEditor)) {
     return <NoPermissionMessage />
   }
 
@@ -85,6 +86,7 @@ export default () => {
           <Tab label="Tag Amendments" index={4} />
           <Tab label="Asset History" index={5} />
           <Tab label="Polls" index={6} />
+          <Tab label="Advanced" index={7} />
         </Tabs>
         <div className={classes.tabPanels}>
           <TabPanel value={activeTabIdx} index={0}>
@@ -108,6 +110,9 @@ export default () => {
           </TabPanel>
           <TabPanel value={activeTabIdx} index={6}>
             <AdminPolls />
+          </TabPanel>
+          <TabPanel value={activeTabIdx} index={7}>
+            <AdminAdvancedTools />
           </TabPanel>
         </div>
       </div>
