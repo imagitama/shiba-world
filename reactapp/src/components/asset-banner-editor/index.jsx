@@ -12,7 +12,7 @@ import { createRef } from '../../utils'
 import { handleError } from '../../error-handling'
 import { trackAction } from '../../analytics'
 
-export default ({ assetId, onDone, actionCategory }) => {
+export default ({ assetId, onDone, actionCategory, noPaper }) => {
   const userId = useFirebaseUserId()
   const [isSaving, isSaveSuccess, isSaveError, save] = useDatabaseSave(
     CollectionNames.Assets,
@@ -51,5 +51,5 @@ export default ({ assetId, onDone, actionCategory }) => {
     }
   }
 
-  return <BannerUploader onUploadedUrl={onUploadedUrl} />
+  return <BannerUploader onUploadedUrl={onUploadedUrl} noPaper={noPaper} />
 }

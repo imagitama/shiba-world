@@ -10,6 +10,14 @@ import LaunchIcon from '@material-ui/icons/Launch'
 import LazyLoad from 'react-lazyload'
 import { useDispatch } from 'react-redux'
 import SyncIcon from '@material-ui/icons/Sync'
+import AttachFileIcon from '@material-ui/icons/AttachFile'
+import LinkIcon from '@material-ui/icons/Link'
+import LocalOfferIcon from '@material-ui/icons/LocalOffer'
+import TextFormatIcon from '@material-ui/icons/TextFormat'
+import PetsIcon from '@material-ui/icons/Pets'
+import CategoryIcon from '@material-ui/icons/Category'
+import CopyrightIcon from '@material-ui/icons/Copyright'
+import ImageIcon from '@material-ui/icons/Image'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -44,7 +52,6 @@ import PedestalUploadForm from '../pedestal-upload-form'
 import ThumbnailUploader from '../thumbnail-uploader'
 import AssetTitleEditor from '../asset-title-editor'
 import AssetTagsEditor from '../asset-tags-editor'
-import Paper from '../paper'
 import ToggleAdultForm from '../toggle-adult-form'
 import AssetSourceEditor from '../asset-source-editor'
 import SyncWithGumroadForm from '../sync-with-gumroad-form'
@@ -88,12 +95,13 @@ import TogglePrivateForm from '../toggle-private-form'
 
 import placeholderPedestalVideoUrl from '../../assets/videos/placeholder-pedestal.webm'
 import placeholderPedestalFallbackImageUrl from '../../assets/videos/placeholder-pedestal-fallback.webp'
-import ScrollToMe from '../scroll-to-me'
 import AssetBannerEditor from '../asset-banner-editor'
 import ChangeCategoryForm from '../change-category-form'
 import EditImageIcon from '../edit-image-icon'
 
-const useStyles = makeStyles(theme => ({
+const editorAreaBorderValue = '3px dashed rgba(255, 255, 255, 0.5)'
+
+const useStyles = makeStyles(() => ({
   root: {
     position: 'relative'
   },
@@ -145,12 +153,17 @@ const useStyles = makeStyles(theme => ({
     margin: '0 0 0.5rem'
   },
 
+  titleField: {
+    borderBottom: editorAreaBorderValue
+  },
+
   thumbnailWrapper: {
     position: 'relative',
     flexShrink: 0,
     width: '200px',
     height: '200px',
     textAlign: 'center',
+    marginBottom: '1rem',
 
     [mediaQueryForMobiles]: {
       width: '100%',
@@ -161,11 +174,16 @@ const useStyles = makeStyles(theme => ({
   thumbnail: {
     width: '100%',
     height: 'auto',
-    maxWidth: `${THUMBNAIL_WIDTH}px`
+    maxWidth: `${THUMBNAIL_WIDTH}px`,
+    display: 'block'
   },
 
   categoryMeta: {
-    fontSize: '125%'
+    fontSize: '125%',
+    '& > div': {
+      display: 'flex',
+      alignItems: 'center'
+    }
   },
   subtitle: {
     marginTop: '0.5rem'
@@ -241,13 +259,6 @@ const useStyles = makeStyles(theme => ({
     fontSize: '75%',
     display: 'block'
   },
-  enableSpeciesEditorIcon: {
-    paddingLeft: '5px',
-    cursor: 'pointer',
-    '& svg': {
-      fontSize: '1rem'
-    }
-  },
   pedestalControls: {
     margin: '2rem 0',
     [mediaQueryForTabletsOrBelow]: {
@@ -289,9 +300,16 @@ const useStyles = makeStyles(theme => ({
   },
   editIcon: {
     cursor: 'pointer',
-    color: theme.palette.tertiary.main
-    // stroke: '#FFF',
-    // strokeWidth: '1px'
+    color: '#FFF',
+    background: 'rgba(255, 255, 255, 0.1)',
+    padding: '4px',
+    borderRadius: '100%',
+    fontSize: '24px',
+    transition: 'all 100ms',
+    marginLeft: '5px',
+    '&:hover': {
+      backgroundColor: 'rgba(255, 255, 255, 0.4)'
+    }
   },
   editBannerBtn: {
     textAlign: 'center',
@@ -299,6 +317,55 @@ const useStyles = makeStyles(theme => ({
   },
   editorHeading: {
     marginTop: 0
+  },
+  editorArea: {
+    position: 'relative',
+    marginBottom: '1rem',
+    padding: '1rem',
+    border: editorAreaBorderValue,
+    transition: 'all 100ms',
+    borderRadius: '4px',
+    background: 'rgba(255, 255, 255, 0.02)'
+    // '&:hover': {
+    //   borderColor: 'rgba(255, 255, 255, 1)'
+    // }
+  },
+  noPadding: {
+    padding: 0
+  },
+  editorAreaLabel: {
+    textAlign: 'center',
+    fontSize: '125%',
+    marginBottom: '1rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  editorAreaIcon: {
+    fontSize: '100%',
+    marginLeft: '0.5rem'
+  },
+  editorAreaEditIcon: {
+    width: '40px',
+    height: '40px',
+    position: 'absolute',
+    top: '1rem',
+    right: '1rem',
+    padding: '5px',
+    background: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    zIndex: 100,
+    transition: 'all 100ms',
+    '&:hover': {
+      backgroundColor: 'rgba(255, 255, 255, 0.4)'
+    }
+  },
+  syncGumroadForm: {
+    marginTop: '1rem'
   }
 }))
 
@@ -308,7 +375,41 @@ function getCategoryDisplayName(category) {
   return `${category.substr(0, 1).toUpperCase()}${category.substr(1)}`
 }
 
-function CreatedByMessage({ author }) {
+function EditorArea({
+  label,
+  children,
+  icon: Icon,
+  onPencilClick,
+  analyticsAction,
+  noPadding
+}) {
+  const classes = useStyles()
+  return (
+    <div
+      className={`${classes.editorArea} ${noPadding ? classes.noPadding : ''}`}>
+      {label && (
+        <div className={classes.editorAreaLabel}>
+          {label} {Icon && <Icon className={classes.editorAreaIcon} />}
+        </div>
+      )}
+      {children}
+      {onPencilClick && (
+        <div
+          className={classes.editorAreaEditIcon}
+          onClick={() => {
+            if (analyticsAction) {
+              trackAction(analyticsCategoryName, analyticsAction)
+            }
+            onPencilClick()
+          }}>
+          <EditIcon />
+        </div>
+      )}
+    </div>
+  )
+}
+
+function CreatedByMessage({ author, onEditClick }) {
   const classes = useStyles()
 
   return (
@@ -320,7 +421,8 @@ function CreatedByMessage({ author }) {
             {author[AuthorFieldNames.name]}
           </Link>
         </>
-      ) : null}
+      ) : null}{' '}
+      <EditIcon onClick={onEditClick} className={classes.editIcon} />
     </span>
   )
 }
@@ -437,20 +539,6 @@ function MobilePrimaryBtn({
   )
 }
 
-const EditButton = ({ onClick, editingName, analyticsAction }) => (
-  <Button
-    onClick={() => {
-      if (analyticsAction) {
-        trackAction(analyticsCategoryName, analyticsAction)
-      }
-      onClick()
-    }}
-    icon={<EditIcon />}
-    color="tertiary">
-    Edit{editingName ? ` ${editingName}` : ''}
-  </Button>
-)
-
 // in future we need to serve up the fallback url but for now
 // assume users are using modern browsers
 const pickNonFallbackUrl = urlOrUrls => {
@@ -483,13 +571,13 @@ export default ({ assetId, switchEditorOpen }) => {
   const [isThumbnailEditorOpen, setIsThumbnailEditorOpen] = useState(false)
   const [isTagEditorOpen, setIsTagEditorOpen] = useState(false)
   const [isTitleEditorOpen, setIsTitleEditorOpen] = useState(false)
-  const [isBannerEditorOpen, setIsBannerEditorOpen] = useState(false)
   const [isSourceUrlEditorOpen, setIsSourceUrlEditorOpen] = useState(false)
   const [isCategoryEditorOpen, setIsCategoryEditorOpen] = useState(false)
   const [isChildrenEditorOpen, setIsChildrenEditorOpen] = useState(false)
   const [isSyncWithGumroadFormOpen, setIsSyncWithGumroadFormOpen] = useState(
     false
   )
+  const [isAuthorEditorOpen, setIsAuthorEditorOpen] = useState(false)
   const hideChangeSpeciesTimeoutRef = useRef()
 
   const dispatch = useDispatch()
@@ -585,20 +673,15 @@ export default ({ assetId, switchEditorOpen }) => {
   const isAbleToEditPedestal = canEditPedestal(user, createdBy, ownedBy)
 
   const EnableSpeciesEditorIcon = () => {
-    if (isOwnerOrEditor && !isSpeciesEditorOpen) {
-      return (
-        <span className={classes.enableSpeciesEditorIcon}>
-          <EditIcon
-            onClick={() => {
-              trackAction(analyticsCategoryName, 'Click edit species icon')
-              setIsSpeciesEditorOpen(true)
-            }}
-            className={classes.editIcon}
-          />
-        </span>
-      )
-    }
-    return null
+    return (
+      <EditIcon
+        onClick={() => {
+          trackAction(analyticsCategoryName, 'Click edit species icon')
+          setIsSpeciesEditorOpen(!isSpeciesEditorOpen)
+        }}
+        className={classes.editIcon}
+      />
+    )
   }
 
   if (isDeleted && !canApproveAsset(user)) {
@@ -609,7 +692,7 @@ export default ({ assetId, switchEditorOpen }) => {
     <EditIcon
       onClick={() => {
         trackAction(analyticsCategoryName, 'Click edit category icon')
-        setIsCategoryEditorOpen(true)
+        setIsCategoryEditorOpen(!isCategoryEditorOpen)
       }}
       className={classes.editIcon}
     />
@@ -618,31 +701,37 @@ export default ({ assetId, switchEditorOpen }) => {
   const AssetTitle = () => (
     <div>
       <Heading variant="h1" className={classes.title}>
-        {isTitleEditorOpen ? (
-          <AssetTitleEditor
-            title={title}
-            assetId={assetId}
-            actionCategory={analyticsCategoryName}
-            onDone={() => setIsTitleEditorOpen(false)}
-          />
-        ) : (
-          <>
-            <Link to={routes.viewAssetWithVar.replace(':assetId', assetId)}>
-              {title}
-            </Link>{' '}
-            <EditIcon
-              onClick={() => {
-                trackAction(analyticsCategoryName, 'Click edit title icon')
-                setIsTitleEditorOpen(true)
-              }}
-              className={classes.editIcon}
+        <span className={classes.titleField}>
+          {isTitleEditorOpen ? (
+            <AssetTitleEditor
+              title={title}
+              assetId={assetId}
+              actionCategory={analyticsCategoryName}
+              onDone={() => setIsTitleEditorOpen(false)}
             />
-          </>
-        )}{' '}
+          ) : (
+            <>
+              <Link to={routes.viewAssetWithVar.replace(':assetId', assetId)}>
+                {title}
+              </Link>{' '}
+              <EditIcon
+                onClick={() => {
+                  trackAction(analyticsCategoryName, 'Click edit title icon')
+                  setIsTitleEditorOpen(true)
+                }}
+                className={classes.editIcon}
+              />
+            </>
+          )}
+        </span>{' '}
         <CreatedByMessage
           author={author}
           createdBy={createdBy}
           categoryName={category}
+          onEditClick={() => {
+            trackAction(analyticsCategoryName, 'Click change author icon')
+            setIsAuthorEditorOpen(!isAuthorEditorOpen)
+          }}
         />
       </Heading>
       <div className={classes.categoryMeta}>
@@ -681,24 +770,39 @@ export default ({ assetId, switchEditorOpen }) => {
     </div>
   )
 
-  const ViewSketchfabEmbedButton = () =>
-    sketchfabEmbedUrl ? (
-      <>
-        <Button
-          onClick={() => {
-            setIsSketchfabEmbedVisible(!isSketchfabEmbedVisible)
-            trackAction(
-              analyticsCategoryName,
-              'Click view 3D model button',
-              assetId
-            )
-          }}
-          icon={<ControlCameraIcon />}
-          color="default">
-          Toggle 3D Model
-        </Button>
-      </>
-    ) : null
+  const ViewSketchfabEmbedButton = () => (
+    <EditorArea
+      label="Embed Sketchfab"
+      icon={ControlCameraIcon}
+      onPencilClick={() => setIsEditingSketchfabEmbed(true)}>
+      {isEditingSketchfabEmbed ? (
+        <SketchfabEmbedEditor
+          assetId={assetId}
+          sketchfabEmbedUrl={sketchfabEmbedUrl}
+          actionCategory={analyticsCategoryName}
+          onDone={() => setIsEditingSketchfabEmbed(false)}
+        />
+      ) : sketchfabEmbedUrl ? (
+        <>
+          <Button
+            onClick={() => {
+              setIsSketchfabEmbedVisible(!isSketchfabEmbedVisible)
+              trackAction(
+                analyticsCategoryName,
+                'Click view 3D model button',
+                assetId
+              )
+            }}
+            icon={<ControlCameraIcon />}
+            color="default">
+            Toggle 3D Model
+          </Button>
+        </>
+      ) : (
+        'No Sketchfab has been embedded yet'
+      )}
+    </EditorArea>
+  )
 
   const Description = () => {
     const [isDescriptionEditorOpen, setIsDescriptionEditorOpen] = useState(
@@ -713,30 +817,25 @@ export default ({ assetId, switchEditorOpen }) => {
             className={classes.sketchfabEmbed}
           />
         )}
-        <Markdown source={temporaryDescription || description} />
-        {isDescriptionEditorOpen ? (
-          <DescriptionEditor
-            assetId={assetId}
-            description={description}
-            actionCategory={analyticsCategoryName}
-            onChange={desc => setTemporaryDescription(desc)}
-            onDone={() => {
-              setTemporaryDescription(null)
-              setIsDescriptionEditorOpen(false)
-            }}
-          />
-        ) : (
-          <EditButton
-            onClick={() => {
-              trackAction(
-                analyticsCategoryName,
-                'Click edit description button'
-              )
-              setIsDescriptionEditorOpen(true)
-            }}
-            editingName="Description"
-          />
-        )}
+        <EditorArea
+          label="Description"
+          icon={TextFormatIcon}
+          analyticsAction="Click edit description button"
+          onPencilClick={() => setIsDescriptionEditorOpen(true)}>
+          {isDescriptionEditorOpen && (
+            <DescriptionEditor
+              assetId={assetId}
+              description={description}
+              actionCategory={analyticsCategoryName}
+              onChange={desc => setTemporaryDescription(desc)}
+              onDone={() => {
+                setTemporaryDescription(null)
+                setIsDescriptionEditorOpen(false)
+              }}
+            />
+          )}
+          <Markdown source={temporaryDescription || description} />
+        </EditorArea>
       </div>
     )
   }
@@ -745,13 +844,89 @@ export default ({ assetId, switchEditorOpen }) => {
     <>
       <AssetThumbnail />
       <AssetTitle />
+      {isCategoryEditorOpen && (
+        <EditorArea label="Change Category" icon={CategoryIcon}>
+          <ChangeCategoryForm
+            assetId={assetId}
+            existingCategory={category}
+            actionCategory={analyticsCategoryName}
+            onDone={() => setIsCategoryEditorOpen(false)}
+          />
+        </EditorArea>
+      )}
+      {isSpeciesEditorOpen && (
+        <EditorArea label="Change Species" icon={PetsIcon}>
+          <ChangeSpeciesEditor
+            assetId={assetId}
+            actionCategory={analyticsCategoryName}
+            onDone={() => {
+              // todo: clearTimeout on unmount to avoid leak
+              setTimeout(() => {
+                setIsSpeciesEditorOpen(false)
+              }, formHideDelay)
+            }}
+          />
+        </EditorArea>
+      )}
+      {isAuthorEditorOpen && (
+        <EditorArea label="Change Author" icon={CopyrightIcon}>
+          <ChangeAuthorForm
+            collectionName={CollectionNames.Assets}
+            id={assetId}
+            actionCategory={analyticsCategoryName}
+          />
+        </EditorArea>
+      )}
       <div className={classes.pedestalControls}>
-        <VisitSourceButton
-          assetId={assetId}
-          sourceUrl={sourceUrl}
-          categoryName={category}
-          isNoFilesAttached={downloadUrls.length === 0}
-        />{' '}
+        <EditorArea
+          label="Source"
+          icon={LaunchIcon}
+          onPencilClick={() => setIsSourceUrlEditorOpen(!isSourceUrlEditorOpen)}
+          analyticsAction="Click toggle source URL editor">
+          {isSourceUrlEditorOpen ? (
+            <AssetSourceEditor
+              assetId={assetId}
+              sourceUrl={sourceUrl}
+              actionCategory={analyticsCategoryName}
+              onDone={() => setIsSourceUrlEditorOpen(false)}
+            />
+          ) : (
+            <VisitSourceButton
+              assetId={assetId}
+              sourceUrl={sourceUrl}
+              categoryName={category}
+              isNoFilesAttached={downloadUrls.length === 0}
+            />
+          )}
+        </EditorArea>
+        {isGumroadUrl(sourceUrl) ? (
+          <EditorArea label="Gumroad">
+            <div className={classes.syncGumroadForm}>
+              {isSyncWithGumroadFormOpen ? (
+                <SyncWithGumroadForm
+                  assetId={assetId}
+                  gumroadUrl={sourceUrl}
+                  onDone={() => {
+                    setIsSyncWithGumroadFormOpen(false)
+                  }}
+                />
+              ) : (
+                <Button
+                  onClick={() => {
+                    trackAction(
+                      analyticsCategoryName,
+                      'Click toggle sync gumroad button'
+                    )
+                    setIsSyncWithGumroadFormOpen(true)
+                  }}
+                  color="tertiary"
+                  icon={<SyncIcon />}>
+                  Open Sync With Gumroad
+                </Button>
+              )}
+            </div>
+          </EditorArea>
+        ) : null}
         <ViewSketchfabEmbedButton />
         {discordServer && (
           <div className={classes.pedestalDiscordServerInfo}>
@@ -763,25 +938,34 @@ export default ({ assetId, switchEditorOpen }) => {
     </>
   )
 
-  const AssetThumbnail = () => (
-    <div className={classes.thumbnailWrapper}>
-      <img
-        src={thumbnailUrl}
-        width={THUMBNAIL_WIDTH}
-        height={THUMBNAIL_HEIGHT}
-        alt="Thumbnail for asset"
-        className={classes.thumbnail}
-      />
-      {isOwnerOrEditor && (
-        <EditImageIcon
-          onClick={() => {
-            trackAction(analyticsCategoryName, 'Click edit thumbnail icon')
-            setIsThumbnailEditorOpen(true)
-          }}
+  const AssetThumbnail = () =>
+    isThumbnailEditorOpen ? (
+      <EditorArea label="Upload Thumbnail" icon={ImageIcon}>
+        <ThumbnailUploader
+          assetId={assetId}
+          analyticsCategory={analyticsCategoryName}
+          onDone={() => setIsThumbnailEditorOpen(false)}
         />
-      )}
-    </div>
-  )
+      </EditorArea>
+    ) : (
+      <div className={classes.thumbnailWrapper}>
+        <EditorArea noPadding>
+          <img
+            src={thumbnailUrl}
+            width={THUMBNAIL_WIDTH}
+            height={THUMBNAIL_HEIGHT}
+            alt="Thumbnail for asset"
+            className={classes.thumbnail}
+          />
+          <EditImageIcon
+            onClick={() => {
+              trackAction(analyticsCategoryName, 'Click edit thumbnail icon')
+              setIsThumbnailEditorOpen(true)
+            }}
+          />
+        </EditorArea>
+      </div>
+    )
 
   return (
     <div className={classes.root}>
@@ -811,26 +995,13 @@ export default ({ assetId, switchEditorOpen }) => {
         <meta property="og:site_name" content="VRCArena" />
       </Helmet>
 
-      {isBannerEditorOpen ? (
-        <>
-          <Heading variant="h3">Upload Banner</Heading>
-          <AssetBannerEditor
-            assetId={assetId}
-            actionCategory={analyticsCategoryName}
-            onDone={() => setIsBannerEditorOpen(false)}
-          />
-        </>
-      ) : (
-        <div className={classes.editBannerBtn}>
-          <EditButton
-            onClick={() => {
-              trackAction(analyticsCategoryName, 'Click edit banner button')
-              setIsBannerEditorOpen(true)
-            }}
-            editingName="Banner"
-          />
-        </div>
-      )}
+      <EditorArea label="Upload Banner">
+        <AssetBannerEditor
+          assetId={assetId}
+          actionCategory={analyticsCategoryName}
+          noPaper
+        />
+      </EditorArea>
 
       {isAbleToEditPedestal ? (
         isEditingPedestal ? (
@@ -851,7 +1022,8 @@ export default ({ assetId, switchEditorOpen }) => {
             onEdit={() => {
               trackAction(analyticsCategoryName, 'Click edit pedestal icon')
               setIsEditingPedestal(true)
-            }}>
+            }}
+            isEditMode>
             <PedestalChild />
           </Pedestal>
         )
@@ -862,83 +1034,6 @@ export default ({ assetId, switchEditorOpen }) => {
             <AssetTitle />
           </div>
         </div>
-      )}
-
-      {isThumbnailEditorOpen && (
-        <ScrollToMe>
-          <Heading variant="h3" className={classes.editorHeading}>
-            Edit Thumbnail
-          </Heading>
-          <ThumbnailUploader
-            assetId={assetId}
-            analyticsCategory={analyticsCategoryName}
-            onDone={() => setIsThumbnailEditorOpen(false)}
-          />
-        </ScrollToMe>
-      )}
-
-      {isSpeciesEditorOpen && (
-        <ScrollToMe>
-          <Paper>
-            <Heading variant="h3" className={classes.editorHeading}>
-              Change Species
-            </Heading>
-            <ChangeSpeciesEditor
-              assetId={assetId}
-              actionCategory={analyticsCategoryName}
-              onDone={() => {
-                // todo: clearTimeout on unmount to avoid leak
-                setTimeout(() => {
-                  setIsSpeciesEditorOpen(false)
-                }, formHideDelay)
-              }}
-            />
-          </Paper>
-        </ScrollToMe>
-      )}
-
-      {isCategoryEditorOpen && (
-        <ScrollToMe>
-          <Paper>
-            <Heading variant="h3" className={classes.editorHeading}>
-              Change Category
-            </Heading>
-            <ChangeCategoryForm
-              assetId={assetId}
-              existingCategory={category}
-              actionCategory={analyticsCategoryName}
-              onDone={() => setIsCategoryEditorOpen(false)}
-            />
-          </Paper>
-        </ScrollToMe>
-      )}
-
-      {isSourceUrlEditorOpen && (
-        <ScrollToMe>
-          <Paper>
-            <Heading variant="h3" className={classes.editorHeading}>
-              Change Source
-            </Heading>
-            <AssetSourceEditor
-              assetId={assetId}
-              sourceUrl={sourceUrl}
-              actionCategory={analyticsCategoryName}
-              onDone={() => setIsSourceUrlEditorOpen(false)}
-            />
-          </Paper>
-        </ScrollToMe>
-      )}
-
-      {isEditingSketchfabEmbed && (
-        <ScrollToMe>
-          <Heading variant="h3">Embed Sketchfab</Heading>
-          <SketchfabEmbedEditor
-            assetId={assetId}
-            sketchfabEmbedUrl={sketchfabEmbedUrl}
-            actionCategory={analyticsCategoryName}
-            onDone={() => setIsEditingSketchfabEmbed(false)}
-          />
-        </ScrollToMe>
       )}
 
       <MobilePrimaryBtn
@@ -964,183 +1059,139 @@ export default ({ assetId, switchEditorOpen }) => {
             </>
           )}
 
-          {isAttachFileFormOpen ? (
-            <>
-              <Heading variant="h3">Attach Files</Heading>
-              <AssetAttachmentUploader
-                assetId={assetId}
-                actionCategory={analyticsCategoryName}
-                onDone={() => setIsAttachFileFormOpen(false)}
-              />
-            </>
-          ) : (
-            <>
-              {downloadUrls.length ? (
-                <>
-                  <FileList assetId={id} fileUrls={downloadUrls} />
-                </>
-              ) : null}
-
-              {videoUrls.length ? (
-                <>
-                  <VideoList assetId={id} urls={videoUrls} />
-                </>
-              ) : null}
-
-              {imageUrls.length ? (
-                <>
-                  <ImageGallery
-                    urls={imageUrls}
-                    onOpen={() =>
-                      trackAction(
-                        analyticsCategoryName,
-                        'Click attached image thumbnail to open gallery'
-                      )
-                    }
-                    onMoveNext={() =>
-                      trackAction(
-                        analyticsCategoryName,
-                        'Click go next image in gallery'
-                      )
-                    }
-                    onMovePrev={() =>
-                      trackAction(
-                        analyticsCategoryName,
-                        'Click go prev image in gallery'
-                      )
-                    }
-                  />
-                </>
-              ) : null}
-
-              <br />
-              <br />
-
-              {!isAttachFileFormOpen && (
-                <EditButton
-                  onClick={() => {
-                    setIsAttachFileFormOpen(true)
-                  }}
-                  editingName="Attachments"
-                  analyticsAction="Click edit attachments button"
+          <EditorArea
+            label="Attach Files"
+            icon={AttachFileIcon}
+            onPencilClick={() => setIsAttachFileFormOpen(true)}
+            analyticsAction="Click edit attachments button">
+            {isAttachFileFormOpen ? (
+              <>
+                <AssetAttachmentUploader
+                  assetId={assetId}
+                  actionCategory={analyticsCategoryName}
+                  onDone={() => setIsAttachFileFormOpen(false)}
                 />
-              )}
-            </>
-          )}
+              </>
+            ) : (
+              <>
+                {downloadUrls.length === 0 &&
+                  videoUrls.length === 0 &&
+                  imageUrls.length === 0 &&
+                  'No attached files'}
+                {downloadUrls.length ? (
+                  <>
+                    <FileList assetId={id} fileUrls={downloadUrls} />
+                  </>
+                ) : null}
+                {videoUrls.length ? (
+                  <>
+                    <VideoList assetId={id} urls={videoUrls} />
+                  </>
+                ) : null}
+                {imageUrls.length ? (
+                  <>
+                    <ImageGallery
+                      urls={imageUrls}
+                      onOpen={() =>
+                        trackAction(
+                          analyticsCategoryName,
+                          'Click attached image thumbnail to open gallery'
+                        )
+                      }
+                      onMoveNext={() =>
+                        trackAction(
+                          analyticsCategoryName,
+                          'Click go next image in gallery'
+                        )
+                      }
+                      onMovePrev={() =>
+                        trackAction(
+                          analyticsCategoryName,
+                          'Click go prev image in gallery'
+                        )
+                      }
+                    />
+                  </>
+                ) : null}
+              </>
+            )}
+          </EditorArea>
 
           {tutorialSteps.length ? (
             <>
               <Heading variant="h2">Steps</Heading>
-              <TutorialSteps steps={tutorialSteps} />
             </>
           ) : null}
 
-          {isTutorialStepsEditorOpen ? (
-            <ScrollToMe>
-              <TutorialStepsEditor
-                assetId={assetId}
-                existingSteps={tutorialSteps}
-                onSave={() => {
-                  setIsTutorialStepsEditorOpen(false)
-                }}
-                actionCategory={analyticsCategoryName}
-              />
-            </ScrollToMe>
-          ) : isOwnerOrEditor && category === AssetCategories.tutorial ? (
-            <EditButton
-              onClick={() => {
-                trackAction(
-                  analyticsCategoryName,
-                  'Click edit tutorial steps button'
-                )
-                setIsTutorialStepsEditorOpen(true)
-              }}
-              editingName="Tutorial Steps"
-            />
-          ) : null}
+          {category === AssetCategories.tutorial && (
+            <EditorArea
+              label="Tutorial Steps"
+              analyticsAction="Click edit tutorial steps button"
+              onPencilClick={() => setIsTutorialStepsEditorOpen(true)}>
+              {isTutorialStepsEditorOpen ? (
+                <TutorialStepsEditor
+                  assetId={assetId}
+                  existingSteps={tutorialSteps}
+                  onSave={() => {
+                    setIsTutorialStepsEditorOpen(false)
+                  }}
+                  actionCategory={analyticsCategoryName}
+                />
+              ) : (
+                <TutorialSteps steps={tutorialSteps} />
+              )}
+            </EditorArea>
+          )}
 
-          {isGumroadUrl(sourceUrl) ? (
-            isSyncWithGumroadFormOpen ? (
-              <SyncWithGumroadForm
-                assetId={assetId}
-                gumroadUrl={sourceUrl}
-                onDone={() => {
-                  setIsSyncWithGumroadFormOpen(false)
-                }}
-              />
-            ) : (
-              <Button
-                onClick={() => {
-                  trackAction(
-                    analyticsCategoryName,
-                    'Click toggle sync gumroad button'
-                  )
-                  setIsSyncWithGumroadFormOpen(true)
-                }}
-                color="tertiary"
-                icon={<SyncIcon />}>
-                Sync With Gumroad
-              </Button>
-            )
-          ) : null}
-
-          {isChildrenEditorOpen ? (
-            <>
-              <Heading variant="h3" className={classes.editorHeading}>
-                Change Linked Assets
-              </Heading>
-              {/* <ChangeAssetChildrenForm
+          <EditorArea
+            label="Linked Assets"
+            icon={LinkIcon}
+            onPencilClick={() => setIsChildrenEditorOpen(true)}
+            analyticsAction="Click edit linked assets button">
+            {isChildrenEditorOpen ? (
+              <>
+                {/* <ChangeAssetChildrenForm
                 assetId={assetId}
                 assetChildren={children}
                 onDone={() => setIsChildrenEditorOpen(false)}
                 actionCategory={analyticsCategoryName}
               /> */}
-              <p>
-                Not available at this time. Please contact a staff member in our
-                Discord server or Tweet to us about it.
-              </p>
-            </>
-          ) : (
-            <>
-              <Heading variant="h2">Linked Assets</Heading>
-              <ChildrenAssets assetChildren={children} />
-              <EditButton
-                onClick={() => setIsChildrenEditorOpen(true)}
-                editingName="Linked Assets"
-                analyticsAction="Click edit linked assets button"
-              />
-            </>
-          )}
-
-          <div className={classes.tags}>
-            {!isTagEditorOpen ? (
-              <>
-                {tags
-                  ? tags.map(tagName => (
-                      <TagChip key={tagName} tagName={tagName} />
-                    ))
-                  : '(no tags)'}
-                <br />
-                <EditButton
-                  onClick={() => setIsTagEditorOpen(true)}
-                  editingName="Tags"
-                  analyticsAction="Click edit tags button"
-                />
+                <p>
+                  Not available at this time. Please contact a staff member in
+                  our Discord server or Tweet to us about it.
+                </p>
               </>
+            ) : children.length ? (
+              <ChildrenAssets assetChildren={children} />
             ) : (
-              <Paper>
-                <Heading variant="h3" className={classes.editorHeading}>
-                  Edit Tags
-                </Heading>
+              'No linked assets'
+            )}
+          </EditorArea>
+
+          <EditorArea
+            label="Tags"
+            icon={LocalOfferIcon}
+            onPencilClick={() => setIsTagEditorOpen(true)}
+            analyticsAction="Click edit tags button">
+            <div className={classes.tags}>
+              {!isTagEditorOpen ? (
+                <>
+                  {tags
+                    ? tags.map(tagName => (
+                        <TagChip key={tagName} tagName={tagName} />
+                      ))
+                    : 'No tags'}
+                </>
+              ) : (
                 <AssetTagsEditor
                   assetId={assetId}
                   tags={tags}
                   onDone={() => setIsTagEditorOpen(false)}
                   actionCategory={analyticsCategoryName}
                 />
-              </Paper>
-            )}
-          </div>
+              )}
+            </div>
+          </EditorArea>
         </div>
 
         <div className={classes.rightCol}>
@@ -1253,20 +1304,8 @@ export default ({ assetId, switchEditorOpen }) => {
                   Return To View
                 </Button>
               </Control>
-              <Control>
-                <Button
-                  onClick={() => {
-                    trackAction(
-                      analyticsCategoryName,
-                      'Click toggle source URL editor'
-                    )
-                    setIsSourceUrlEditorOpen(!isSourceUrlEditorOpen)
-                  }}
-                  color="tertiary"
-                  icon={<LaunchIcon />}>
-                  Change Source URL
-                </Button>
-              </Control>
+
+              <Heading variant="h4">Editor Actions</Heading>
               <Control>
                 <ToggleAdultForm assetId={assetId} isAdult={isAdult} />
               </Control>
@@ -1275,13 +1314,6 @@ export default ({ assetId, switchEditorOpen }) => {
               </Control>
               <Control>
                 <OwnerEditor
-                  collectionName={CollectionNames.Assets}
-                  id={assetId}
-                  actionCategory={analyticsCategoryName}
-                />
-              </Control>
-              <Control>
-                <ChangeAuthorForm
                   collectionName={CollectionNames.Assets}
                   id={assetId}
                   actionCategory={analyticsCategoryName}
@@ -1299,14 +1331,14 @@ export default ({ assetId, switchEditorOpen }) => {
                   actionCategory={analyticsCategoryName}
                 />
               </Control>
-              <Control>
+              {/* <Control>
                 <Button
                   onClick={() => setIsEditingSketchfabEmbed(true)}
                   icon={<ControlCameraIcon />}
                   color="tertiary">
                   Embed Sketchfab
                 </Button>
-              </Control>
+              </Control> */}
             </>
 
             {isAbleToEditPedestal || true ? (

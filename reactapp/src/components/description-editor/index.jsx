@@ -87,7 +87,7 @@ export default ({
           onChange(e.target.value)
         }}
         multiline
-        rows={10}
+        rows={15}
         className={classes.input}
       />
       {/* <Markdown source={newDescriptionValue} /> */}

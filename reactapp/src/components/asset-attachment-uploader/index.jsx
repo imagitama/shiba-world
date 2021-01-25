@@ -34,6 +34,10 @@ const useStyles = makeStyles({
   image: {
     maxWidth: THUMBNAIL_WIDTH,
     maxHeight: THUMBNAIL_HEIGHT
+  },
+  btns: {
+    textAlign: 'center',
+    marginTop: '1rem'
   }
 })
 
@@ -213,11 +217,11 @@ export default ({ assetId, onDone }) => {
               icon={<InsertDriveFileIcon />}>
               Attach File
             </Button>
-            <br />
-            <br />
-            <Button onClick={onSaveBtnClick} icon={<SaveIcon />}>
-              Save
-            </Button>
+            <div className={classes.btns}>
+              <Button onClick={onSaveBtnClick} icon={<SaveIcon />}>
+                Save
+              </Button>
+            </div>
           </>
         )}
       </Paper>

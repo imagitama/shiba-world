@@ -7,16 +7,20 @@ const useStyles = makeStyles({
     width: '40px',
     height: '40px',
     position: 'absolute',
-    bottom: '5px',
-    right: '5px',
+    top: '10px',
+    right: '10px',
     padding: '5px',
-    background: 'rgba(166, 114, 80, 0.3)', // todo: get from theme
+    background: 'rgba(255, 255, 255, 0.1)',
     borderRadius: '100%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
-    zIndex: 100
+    zIndex: 100,
+    transition: 'all 100ms',
+    '&:hover': {
+      backgroundColor: 'rgba(255, 255, 255, 0.4)'
+    }
   }
 })
 

@@ -20,6 +20,13 @@ import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 const useStyles = makeStyles({
   field: {
     width: '100%'
+  },
+  row: {
+    marginBottom: '0.5rem'
+  },
+  btns: {
+    textAlign: 'center',
+    marginTop: '1rem'
   }
 })
 
@@ -160,47 +167,52 @@ export default ({ assetId, gumroadUrl, onDone }) => {
   }
 
   return (
-    <Paper>
-      Title
-      <Checkbox
-        checked={whichFieldsAreEnabled[AssetFieldNames.title]}
-        onClick={() => toggleIsFieldEnabled(AssetFieldNames.title)}
-      />
-      <br />
-      <TextField
-        value={newFields[AssetFieldNames.title]}
-        onChange={e => updateField(AssetFieldNames.title, e.target.value)}
-        className={classes.field}
-      />
-      <hr />
-      Description
-      <Checkbox
-        checked={whichFieldsAreEnabled[AssetFieldNames.description]}
-        onClick={() => toggleIsFieldEnabled(AssetFieldNames.description)}
-      />
-      <br />
-      <TextField
-        value={newFields[AssetFieldNames.description]}
-        onChange={e => updateField(AssetFieldNames.title, e.target.value)}
-        multiline
-        rows={10}
-        className={classes.field}
-      />
-      <Markdown source={newFields[AssetFieldNames.description]} />
-      <hr />
-      <Checkbox
-        checked={isUsingQuotes}
-        onClick={() => {
-          updateField(
-            AssetFieldNames.description,
-            addQuotesToDescription(newFields[AssetFieldNames.description])
-          )
-          setIsUsingQuotes(!isUsingQuotes)
-        }}
-      />{' '}
-      Add quote symbols to description (recommended)
-      <hr />
-      <Button onClick={onSaveBtnClick}>Save</Button>
-    </Paper>
+    <>
+      <Paper className={classes.row}>
+        Title
+        <Checkbox
+          checked={whichFieldsAreEnabled[AssetFieldNames.title]}
+          onClick={() => toggleIsFieldEnabled(AssetFieldNames.title)}
+        />
+        <br />
+        <TextField
+          value={newFields[AssetFieldNames.title]}
+          onChange={e => updateField(AssetFieldNames.title, e.target.value)}
+          className={classes.field}
+        />
+      </Paper>
+      <Paper className={classes.row}>
+        Description
+        <Checkbox
+          checked={whichFieldsAreEnabled[AssetFieldNames.description]}
+          onClick={() => toggleIsFieldEnabled(AssetFieldNames.description)}
+        />
+        <br />
+        <TextField
+          value={newFields[AssetFieldNames.description]}
+          onChange={e => updateField(AssetFieldNames.title, e.target.value)}
+          multiline
+          rows={10}
+          className={classes.field}
+        />
+        <Markdown source={newFields[AssetFieldNames.description]} />
+      </Paper>
+      <Paper className={classes.row}>
+        <Checkbox
+          checked={isUsingQuotes}
+          onClick={() => {
+            updateField(
+              AssetFieldNames.description,
+              addQuotesToDescription(newFields[AssetFieldNames.description])
+            )
+            setIsUsingQuotes(!isUsingQuotes)
+          }}
+        />{' '}
+        Add quote symbols to description (recommended)
+      </Paper>
+      <div className={classes.btns}>
+        <Button onClick={onSaveBtnClick}>Save</Button>
+      </div>
+    </>
   )
 }

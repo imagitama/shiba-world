@@ -18,7 +18,11 @@ import { createRef } from '../../utils'
 import categoryMeta from '../../category-meta'
 
 const useStyles = makeStyles({
-  chip: { margin: '0 0.25rem 0.25rem 0' }
+  chip: { margin: '0 0.25rem 0.25rem 0' },
+  btns: {
+    textAlign: 'center',
+    marginTop: '1rem'
+  }
 })
 
 function CategoryButtons({ selectedCategory, onSelect }) {
@@ -47,6 +51,7 @@ export default ({
   const userId = useFirebaseUserId()
   const [isSaving, , , save] = useDatabaseSave(CollectionNames.Assets, assetId)
   const [newCategory, setNewCategory] = useState(existingCategory)
+  const classes = useStyles()
 
   if (!userId) {
     return 'You are not logged in'
@@ -84,7 +89,9 @@ export default ({
         selectedCategory={newCategory}
         onSelect={categoryName => setNewCategory(categoryName)}
       />
-      <Button onClick={onSaveBtnClick}>Save</Button>
+      <div className={classes.btns}>
+        <Button onClick={onSaveBtnClick}>Save</Button>
+      </div>
     </>
   )
 }

@@ -18,7 +18,11 @@ import { trackAction } from '../../analytics'
 import { createRef } from '../../utils'
 
 const useStyles = makeStyles({
-  chip: { margin: '0 0.25rem 0.25rem 0' }
+  chip: { margin: '0 0.25rem 0.25rem 0' },
+  btns: {
+    textAlign: 'center',
+    marginTop: '1rem'
+  }
 })
 
 function isSpeciesActive(species, allActiveSpeciesRefs) {
@@ -83,6 +87,7 @@ export default ({ assetId, actionCategory = '', onDone = null }) => {
     assetId
   )
   const [newSpeciesRefs, setNewSpeciesRefs] = useState(null)
+  const classes = useStyles()
 
   useEffect(() => {
     if (!result) {
@@ -156,7 +161,9 @@ export default ({ assetId, actionCategory = '', onDone = null }) => {
         activeSpeciesRefs={newSpeciesRefs}
         onClickSpeciesWithId={onClickSpeciesWithId}
       />
-      <Button onClick={onSaveBtnClick}>Save</Button>
+      <div className={classes.btns}>
+        <Button onClick={onSaveBtnClick}>Save</Button>
+      </div>
     </>
   )
 }

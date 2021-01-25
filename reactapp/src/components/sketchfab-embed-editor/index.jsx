@@ -19,6 +19,14 @@ import { trackAction } from '../../analytics'
 const useStyles = makeStyles({
   root: {
     margin: '1rem 0'
+  },
+  textInput: {
+    width: '100%',
+    marginBottom: '0.5rem'
+  },
+  btns: {
+    textAlign: 'center',
+    marginTop: '1rem'
   }
 })
 
@@ -79,17 +87,17 @@ export default ({ assetId, onDone }) => {
       </ol>
       <TextInput
         onChange={e => setTextFieldVal(e.target.value)}
-        style={{ width: '100%' }}
+        variant="filled"
+        className={classes.textInput}
       />{' '}
       <Button onClick={onApplyBtnClick} color="default">
         Apply
       </Button>
       <br />
-      <br />
       {embedUrl && <SketchfabEmbed url={embedUrl} />}
-      <br />
-      <br />
-      <Button onClick={onSaveBtnClick}>Save</Button>
+      <div className={classes.btns}>
+        <Button onClick={onSaveBtnClick}>Save</Button>
+      </div>
     </Paper>
   )
 }

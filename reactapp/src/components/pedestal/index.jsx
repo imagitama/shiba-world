@@ -39,6 +39,13 @@ const useStyles = makeStyles({
   },
   desc: {
     fontSize: '110%'
+  },
+  editorLeft: {
+    border: '3px dashed rgba(255, 255, 255, 0.5)',
+    marginRight: '0.5rem'
+  },
+  editorRight: {
+    marginLeft: '0.5rem'
   }
 })
 
@@ -73,7 +80,10 @@ export default ({
   return (
     <PedestalColumns
       leftCol={
-        <div className={classes.videoWrapper}>
+        <div
+          className={`${classes.videoWrapper} ${
+            showEditIcon ? classes.editorLeft : ''
+          }`}>
           <div className={classes.shadow} />
           <video
             ref={videoRef}
@@ -99,7 +109,11 @@ export default ({
           {showEditIcon && <EditImageIcon onClick={onEdit} />}
         </div>
       }
-      rightCol={<div>{children}</div>}
+      rightCol={
+        <div className={showEditIcon ? classes.editorRight : ''}>
+          {children}
+        </div>
+      }
     />
   )
 }

@@ -302,7 +302,7 @@ function Output({
 export default props => {
   const classes = useStyles()
 
-  if (props.children) {
+  if (props.children || props.noPaper) {
     return <Output {...props} />
   }
 

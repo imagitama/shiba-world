@@ -15,6 +15,10 @@ const useStyles = makeStyles({
   textInput: {
     width: '100%',
     margin: '1rem 0'
+  },
+  btns: {
+    textAlign: 'center',
+    marginTop: '1rem'
   }
 })
 
@@ -61,15 +65,17 @@ export default ({ assetId, sourceUrl = undefined, onDone, actionCategory }) => {
         multiline
       />
 
-      {isSaving ? (
-        'Saving...'
-      ) : isSaveSuccess ? (
-        'Success!'
-      ) : isSaveError ? (
-        'Error'
-      ) : (
-        <Button onClick={onSaveBtnClick}>Save</Button>
-      )}
+      <div className={classes.btns}>
+        {isSaving ? (
+          'Saving...'
+        ) : isSaveSuccess ? (
+          'Success!'
+        ) : isSaveError ? (
+          'Error'
+        ) : (
+          <Button onClick={onSaveBtnClick}>Save</Button>
+        )}
+      </div>
     </>
   )
 }

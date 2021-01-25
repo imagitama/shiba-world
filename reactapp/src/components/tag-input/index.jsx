@@ -10,6 +10,10 @@ const useStyles = makeStyles({
   textInput: {
     width: '100%',
     margin: '0.5rem 0'
+  },
+  btns: {
+    textAlign: 'center',
+    marginTop: '1rem'
   }
 })
 
@@ -155,7 +159,9 @@ export default ({ currentTags = [], onChange, onDone }) => {
         <TagChip key={tagName} tagName={tagName} />
       ))}
       {onDone && (
-        <Button onClick={() => onDone(cleanupTags(newTags))}>Done</Button>
+        <div className={classes.btns}>
+          <Button onClick={() => onDone(cleanupTags(newTags))}>Done</Button>
+        </div>
       )}
     </>
   )

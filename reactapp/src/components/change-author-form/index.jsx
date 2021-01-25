@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
-import CopyrightIcon from '@material-ui/icons/Copyright'
+import { makeStyles } from '@material-ui/core/styles'
 
 import TextInput from '../text-input'
 import Button from '../button'
-import Paper from '../paper'
 
 import {
   CollectionNames,
@@ -14,11 +13,19 @@ import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import useAlgoliaSearch from '../../hooks/useAlgoliaSearch'
 import { searchIndexNames } from '../../modules/app'
-
 import { handleError } from '../../error-handling'
 import { trackAction } from '../../analytics'
 import { createRef } from '../../utils'
 import { formHideDelay } from '../../config'
+
+const useStyles = makeStyles({
+  textInput: {
+    width: '100%'
+  },
+  row: {
+    marginTop: '1rem'
+  }
+})
 
 function SearchForm({ searchTerm, onSelectIdAndName }) {
   const [isSearching, isErrored, results] = useAlgoliaSearch(
@@ -130,11 +137,11 @@ export default ({ collectionName, id, actionCategory }) => {
     collectionName,
     id
   )
-  const [isEditorOpen, setIsEditorOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState(null)
   const [selectedAuthorId, setSelectedAuthorId] = useState(null)
   const [selectedAuthorName, setSelectedAuthorName] = useState(null)
   const [isCreatingAuthor, setIsCreatingAuthor] = useState(false)
+  const classes = useStyles()
 
   if (!userId) {
     return 'You are not logged in'
@@ -177,17 +184,6 @@ export default ({ collectionName, id, actionCategory }) => {
     setSearchTerm(null)
   }
 
-  if (!isEditorOpen) {
-    return (
-      <Button
-        onClick={() => setIsEditorOpen(true)}
-        color="tertiary"
-        icon={<CopyrightIcon />}>
-        Change Author
-      </Button>
-    )
-  }
-
   const onSelectIdAndName = (id, name) => {
     setSelectedAuthorId(id)
     setSelectedAuthorName(name)
@@ -198,7 +194,7 @@ export default ({ collectionName, id, actionCategory }) => {
   }
 
   return (
-    <Paper>
+    <>
       {isCreatingAuthor ? (
         <CreateForm
           actionCategory={actionCategory}
@@ -218,25 +214,31 @@ export default ({ collectionName, id, actionCategory }) => {
         </>
       ) : (
         <>
-          {searchTerm && (
-            <>
-              <SearchForm
-                searchTerm={searchTerm}
-                onSelectIdAndName={onSelectIdAndName}
-              />
-              <hr />
-            </>
-          )}
-          Search for an author name:
-          <TextInput
-            onChange={e => setSearchTerm(e.target.value)}
-            value={searchTerm}
-          />
-          <hr />
-          Can't find the author? Create a new one by clicking here:{' '}
-          <Button onClick={onClickCreateBtn}>Create</Button>
+          <div className={classes.row}>
+            {searchTerm && (
+              <>
+                <SearchForm
+                  searchTerm={searchTerm}
+                  onSelectIdAndName={onSelectIdAndName}
+                />
+              </>
+            )}
+          </div>
+
+          <div className={classes.row}>
+            Search
+            <TextInput
+              onChange={e => setSearchTerm(e.target.value)}
+              value={searchTerm}
+              variant="filled"
+              className={classes.textInput}
+            />
+            <div className={classes.row} />
+            Can't find the author?{' '}
+            <Button onClick={onClickCreateBtn}>Create Author</Button>
+          </div>
         </>
       )}
-    </Paper>
+    </>
   )
 }

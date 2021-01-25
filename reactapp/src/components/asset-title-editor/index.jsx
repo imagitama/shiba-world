@@ -11,7 +11,10 @@ import { trackAction } from '../../analytics'
 
 const useStyles = makeStyles(theme => ({
   title: {
-    color: theme.palette.primary.light
+    color: theme.palette.primary.light,
+    '&:focus': {
+      outline: 'none'
+    }
   },
   saveBtn: {
     cursor: 'pointer'
@@ -39,6 +42,14 @@ export default ({ assetId, title, onDone, actionCategory }) => {
       }
 
       trackAction(actionCategory, 'Click save title button')
+
+      if (newTitleValue === title) {
+        console.log(
+          'Cannot save the asset title: new title is the same as the original'
+        )
+        onDone()
+        return
+      }
 
       await save({
         [AssetFieldNames.title]: newTitleValue,
