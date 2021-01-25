@@ -421,7 +421,9 @@ function CreatedByMessage({ author, onEditClick }) {
             {author[AuthorFieldNames.name]}
           </Link>
         </>
-      ) : null}{' '}
+      ) : (
+        '(no author set)'
+      )}{' '}
       <EditIcon onClick={onEditClick} className={classes.editIcon} />
     </span>
   )
