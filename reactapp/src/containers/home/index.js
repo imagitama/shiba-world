@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, memo } from 'react'
+import React, { createContext, useContext, memo } from 'react'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
