@@ -35,6 +35,8 @@ import discordTileBgUrl from './assets/discord.webp'
 import patreonTileBgUrl from './assets/patreon.webp'
 import statsTileBgUrl from './assets/stats.webp'
 import twitterTileBgUrl from './assets/twitter.webp'
+import avatarsTileBgUrl from './assets/avatars.webp'
+import accessoriesTileBgUrl from './assets/accessories.webp'
 import { DISCORD_URL, TWITTER_URL } from '../../config'
 import { mediaQueryForTabletsOrBelow } from '../../media-queries'
 
@@ -95,7 +97,7 @@ const useStyles = makeStyles({
     height: '300px'
   },
   statValue: {
-    fontSize: '200%'
+    fontSize: '175%'
   },
   content: {
     minHeight: '200px'
@@ -199,7 +201,7 @@ function Tile({
             {actionLabel && (
               <Button
                 size="small"
-                color="default"
+                color="primary"
                 url={actionUrl || url}
                 onClick={() =>
                   trackAction(
@@ -216,6 +218,42 @@ function Tile({
         </Card>
       </div>
     </LazyLoad>
+  )
+}
+
+function AvatarsTile() {
+  const url = routes.viewCategoryWithVar.replace(
+    ':categoryName',
+    AssetCategories.avatar
+  )
+  return (
+    <Tile
+      name="avatars"
+      title="Browse Avatars"
+      imageUrl={avatarsTileBgUrl}
+      url={url}
+      actionLabel="Browse"
+      actionUrl={url}
+      description="Find your next avatar in our collection of over 200 avatars for VRChat."
+    />
+  )
+}
+
+function AccessoriesTile() {
+  const url = routes.viewCategoryWithVar.replace(
+    ':categoryName',
+    AssetCategories.accessory
+  )
+  return (
+    <Tile
+      name="accessories"
+      title="Browse Accessories"
+      imageUrl={accessoriesTileBgUrl}
+      url={url}
+      actionLabel="Browse"
+      actionUrl={url}
+      description="Customize your VRChat avatar with one of many accessories."
+    />
   )
 }
 
@@ -241,18 +279,16 @@ function MostRecentAvatarTile() {
   }
 
   const { id, thumbnailUrl, createdAt } = result[0]
+  const url = routes.viewAssetWithVar.replace(':assetId', id)
 
   return (
     <Tile
-      name="avatars"
-      title="Browse Avatars"
+      name="recent-avatars"
+      title="Most Recent Avatar"
       imageUrl={thumbnailUrl}
-      url={routes.viewCategoryWithVar.replace(
-        ':categoryName',
-        AssetCategories.avatar
-      )}
-      actionLabel="View This"
-      actionUrl={routes.viewAssetWithVar.replace(':assetId', id)}
+      url={url}
+      actionLabel="View Avatar"
+      actionUrl={url}
       metaText={<FormattedDate date={createdAt} />}>
       <Asset asset={result[0]} />
     </Tile>
@@ -509,10 +545,12 @@ function Tiles() {
     <homepageContext.Provider value={result}>
       <div className={classes.root}>
         <div className={classes.tiles}>
-          <MostRecentAvatarTile />
-          <MostRecentAccessoryTile />
+          <AvatarsTile />
+          <AccessoriesTile />
           <FeaturedAssetTile />
           <MostRecentNewsTile />
+          <MostRecentAvatarTile />
+          <MostRecentAccessoryTile />
           <PatreonTile />
           <DiscordTile />
           <TwitterTile />
