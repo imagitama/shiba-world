@@ -15,7 +15,7 @@ import useDatabaseQuery, {
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import { createRef } from '../../utils'
-import { quickDeleteRecord } from '../../firestore'
+import { quickDeleteRecord, quickDeleteRecords } from '../../firestore'
 import { handleError } from '../../error-handling'
 import * as routes from '../../routes'
 
@@ -205,26 +205,48 @@ export default ({ onClose, isMobile = false }) => {
     }
   }
 
-  return results.map(({ id, parent, message, createdAt, data }) => (
-    <MenuItem key={id} className={menuItemClassName}>
-      <Link
-        to={getLinkUrl(parent)}
-        onClick={() => onClickLink(id)}
-        className={classes.anchor}>
-        <div className={classes.leftCol}>
-          <div className={classes.message}>
-            <Message parent={parent} message={message} data={data} />
-          </div>
-          <div className={classes.date}>
-            <FormattedDate date={createdAt} />
-          </div>
-        </div>
-        <div
-          className={classes.rightCol}
-          onClick={event => onClearClick(event, id)}>
-          <ClearIcon />
-        </div>
-      </Link>
-    </MenuItem>
-  ))
+  const onClearAllClick = async () => {
+    try {
+      await quickDeleteRecords(CollectionNames.Notifications, [
+        [
+          NotificationsFieldNames.recipient,
+          Operators.EQUALS,
+          createRef(CollectionNames.Users, userId)
+        ]
+      ])
+    } catch (err) {
+      console.error('Failed to delete all notifications for user', err)
+      handleError(err)
+    }
+  }
+
+  return (
+    <>
+      {results.map(({ id, parent, message, createdAt, data }) => (
+        <MenuItem key={id} className={menuItemClassName}>
+          <Link
+            to={getLinkUrl(parent)}
+            onClick={() => onClickLink(id)}
+            className={classes.anchor}>
+            <div className={classes.leftCol}>
+              <div className={classes.message}>
+                <Message parent={parent} message={message} data={data} />
+              </div>
+              <div className={classes.date}>
+                <FormattedDate date={createdAt} />
+              </div>
+            </div>
+            <div
+              className={classes.rightCol}
+              onClick={event => onClearClick(event, id)}>
+              <ClearIcon />
+            </div>
+          </Link>
+        </MenuItem>
+      ))}
+      <MenuItem className={menuItemClassName} onClick={onClearAllClick}>
+        Clear All
+      </MenuItem>
+    </>
+  )
 }
