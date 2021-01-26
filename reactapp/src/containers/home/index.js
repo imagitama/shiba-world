@@ -51,7 +51,7 @@ const useStyles = makeStyles({
       color: 'inherit'
     },
     [mediaQueryForTabletsOrBelow]: {
-      width: '50%',
+      width: '100%',
       padding: '0.5rem'
     }
   },
