@@ -4,8 +4,8 @@
   "scripts": {
     "lint": "eslint .",
     "load-local-config": "firebase functions:config:get > .runtimeconfig.json",
-    "serve": "GOOGLE_APPLICATION_CREDENTIALS=credentials.json firebase emulators:start",
-    "serve:functions": "GOOGLE_APPLICATION_CREDENTIALS=credentials.json firebase emulators:start --only functions",
+    "serve": "GOOGLE_APPLICATION_CREDENTIALS=credentials.json IS_EMULATOR=true firebase emulators:start",
+    "serve:functions": "GOOGLE_APPLICATION_CREDENTIALS=credentials.json IS_EMULATOR=true firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",

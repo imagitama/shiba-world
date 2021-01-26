@@ -37,7 +37,9 @@ async function optimizeBucketImageByUrl(imageUrl) {
 
   const ffmpegOutput = await new Promise((resolve, reject) =>
     child_process.exec(
-      `ffmpeg -i "${tempDownloadFilePath}" -y "${tempUploadFilePath}"`,
+      `ffmpeg${
+        process.env.IS_EMULATOR ? '.exe' : ''
+      } -i "${tempDownloadFilePath}" -y "${tempUploadFilePath}"`,
       (err, stdout, stderr) => {
         if (err) {
           reject(err)

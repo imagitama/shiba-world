@@ -40,18 +40,20 @@ function Output({
   requiredHeight = null,
   directoryPath = '',
   filePrefix = '',
-  children = null
+  children = null,
+  preloadImageUrl = null,
+  preloadFile = null
 }) {
   const classes = useStyles()
   const [cropX, setCropX] = useState(0)
   const [cropY, setCropY] = useState(0)
   const [width, setWidth] = useState(0)
   const [height, setHeight] = useState(0)
-  const [imageSrc, setImageSrc] = useState(null)
+  const [imageSrc, setImageSrc] = useState(preloadImageUrl)
   const [isUploading, percentageDone, , , upload] = useFileUpload()
   const [uploadedUrl, setUploadedUrl] = useState(null)
   const imageRef = useRef()
-  const selectedFileRef = useRef()
+  const selectedFileRef = useRef(preloadFile)
   const [croppedImagePreviewUrl, setCroppedImagePreviewUrl] = useState('')
   const [isOptimizing, setIsOptimizing] = useState(false)
   const [isErrored, setIsErrored] = useState(false)
@@ -258,6 +260,7 @@ function Output({
           onChange={onCropChange}
           onImageLoaded={img => {
             imageRef.current = img
+            imageRef.current.crossOrigin = 'anonymous' // allow us to render cross-domain images like Gumroad
 
             // need this delay because it is needed apparently
             onImageLoadedTimeoutRef.current = setTimeout(() => {

@@ -8,7 +8,6 @@ import Button from '../button'
 import ErrorMessage from '../error-message'
 import Paper from '../paper'
 import LoadingIndicator from '../loading-indicator'
-import SuccessMessage from '../success-message'
 
 import { handleError } from '../../error-handling'
 import { AssetFieldNames, CollectionNames } from '../../hooks/useDatabaseQuery'
@@ -16,6 +15,8 @@ import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { callFunction } from '../../firebase'
 import { createRef } from '../../utils'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
+import OptimizedImageUploader from '../optimized-image-uploader'
+import { THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT } from '../../config'
 
 const useStyles = makeStyles({
   field: {
@@ -59,21 +60,48 @@ const addQuotesToDescription = desc => {
     .join('\n')
 }
 
+const isValidPreviewImageUrl = url => {
+  if (!url) {
+    return false
+  }
+  if (url.indexOf('.gif') !== -1) {
+    return false
+  }
+  return true
+}
+
+const getImageUrlAsFile = async url => {
+  const resp = await fetch(url)
+  const blob = await resp.blob()
+  const fileExt = url
+    .split('?')[0]
+    .split('/')
+    .pop()
+    .split('.')[1]
+  const filename = `my-gumroad-image.${fileExt}`
+  const file = new File([blob], filename, blob)
+  console.debug(`Got image url "${url}" as file "${filename}"`)
+  return file
+}
+
 export default ({ assetId, gumroadUrl, onDone }) => {
   const [isFetching, setIsFetching] = useState(true)
   const [isFetchError, setIsFetchError] = useState(false)
   const [newFields, setNewFields] = useState({})
   const [whichFieldsAreEnabled, setWhichFieldsAreEnabled] = useState({
     [AssetFieldNames.title]: true,
-    [AssetFieldNames.description]: true
+    [AssetFieldNames.description]: true,
+    [AssetFieldNames.thumbnailUrl]: true
   })
   const userId = useFirebaseUserId()
-  const [isSaving, isSuccess, isErrored, save] = useDatabaseSave(
+  const [isSaving, , isErrored, save] = useDatabaseSave(
     CollectionNames.Assets,
     assetId
   )
   const classes = useStyles()
   const [isUsingQuotes, setIsUsingQuotes] = useState(false)
+  const [previewImageUrl, setPreviewImageUrl] = useState('')
+  const [previewImageFile, setPreviewImageFile] = useState(null)
 
   const populateFromGumroad = async () => {
     try {
@@ -87,7 +115,7 @@ export default ({ assetId, gumroadUrl, onDone }) => {
       }
 
       const {
-        data: { name, descriptionMarkdown }
+        data: { name, descriptionMarkdown, ourPreviewUrl }
       } = await callFunction('fetchGumroadInfo', {
         code
       })
@@ -98,6 +126,12 @@ export default ({ assetId, gumroadUrl, onDone }) => {
         [AssetFieldNames.title]: name,
         [AssetFieldNames.description]: descriptionMarkdown
       })
+
+      if (isValidPreviewImageUrl(ourPreviewUrl)) {
+        const file = await getImageUrlAsFile(ourPreviewUrl)
+        setPreviewImageFile(file)
+        setPreviewImageUrl(ourPreviewUrl)
+      }
     } catch (err) {
       console.error(err)
       handleError(err)
@@ -117,6 +151,9 @@ export default ({ assetId, gumroadUrl, onDone }) => {
         lastModifiedBy: createRef(CollectionNames.Users, userId),
         lastModifiedAt: new Date()
       })
+
+      // note: on save this component is re-mounted so cannot rely on isSuccess
+      onDone()
     } catch (err) {
       console.error('Failed to save asset', err)
       handleError(err)
@@ -136,19 +173,11 @@ export default ({ assetId, gumroadUrl, onDone }) => {
     })
 
   if (isFetching) {
-    return <LoadingIndicator>Fetching from Gumroad...</LoadingIndicator>
+    return <LoadingIndicator message="Fetching from Gumroad..." />
   }
 
   if (isSaving) {
     return <LoadingIndicator>Saving...</LoadingIndicator>
-  }
-
-  if (isSuccess) {
-    return (
-      <SuccessMessage>
-        Asset has been saved <Button onClick={onDone}>Done</Button>
-      </SuccessMessage>
-    )
   }
 
   if (isErrored) {
@@ -166,8 +195,30 @@ export default ({ assetId, gumroadUrl, onDone }) => {
     )
   }
 
+  console.log('previewImageUrl', previewImageUrl)
+
   return (
     <>
+      <Paper className={classes.row}>
+        Thumbnail
+        <Checkbox
+          checked={whichFieldsAreEnabled[AssetFieldNames.thumbnailUrl]}
+          onClick={() => toggleIsFieldEnabled(AssetFieldNames.thumbnailUrl)}
+        />
+        {isValidPreviewImageUrl(previewImageUrl) ? (
+          <OptimizedImageUploader
+            preloadImageUrl={previewImageUrl}
+            preloadFile={previewImageFile}
+            requiredWidth={THUMBNAIL_WIDTH}
+            requiredHeight={THUMBNAIL_HEIGHT}
+            onUploadedUrl={url =>
+              updateField(AssetFieldNames.thumbnailUrl, url)
+            }
+          />
+        ) : (
+          'Image cannot be used as a thumbnail (eg. it is .gif)'
+        )}
+      </Paper>
       <Paper className={classes.row}>
         Title
         <Checkbox
