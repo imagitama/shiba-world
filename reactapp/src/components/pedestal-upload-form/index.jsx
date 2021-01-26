@@ -19,7 +19,9 @@ import { trackAction } from '../../analytics'
 
 const useStyles = makeStyles({
   root: {
-    marginRight: '1rem'
+    marginRight: '1rem',
+    border: '3px dashed rgba(255, 255, 255, 0.5)',
+    padding: '1rem'
   },
   heading: {
     margin: '0 0 1rem 0'
@@ -177,7 +179,7 @@ export default ({ assetId, onDone, children, onCancel, actionCategory }) => {
   return (
     <PedestalColumns
       leftCol={
-        <Paper className={classes.root}>
+        <div className={classes.root}>
           {uploadedVideoUrl && uploadedFallbackImageUrl ? (
             <>
               <Heading variant="h3" className={classes.heading}>
@@ -201,7 +203,7 @@ export default ({ assetId, onDone, children, onCancel, actionCategory }) => {
           <Button onClick={onCancel} color="default">
             Cancel
           </Button>
-        </Paper>
+        </div>
       }
       rightCol={children}
     />

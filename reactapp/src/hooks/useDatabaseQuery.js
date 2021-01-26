@@ -392,9 +392,13 @@ const mapReferences = async (
       ) {
         return [key, await getDataFromReference(value)]
       }
-      // Bad hack for the Notifications Added comment author field :)
-      if (value && typeof value === 'object' && value.author) {
-        return [key, await mapReferences(value)]
+      // Bad hack for the Notifications Added comment author / Added tag amendment field :)
+      if (
+        value &&
+        typeof value === 'object' &&
+        (value.author || value.creator)
+      ) {
+        return [key, await mapReferences(value, true, true)]
       }
       return [key, await Promise.resolve(value)]
     })

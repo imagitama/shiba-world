@@ -51,6 +51,11 @@ const useStyles = makeStyles({
 function Message({ parent, message, data }) {
   const collectionName = getCollectionNameForResult(parent)
 
+  // I screwed up the message field so temporary thing until those notifications are purged
+  if (message.indexOf('has created an amendment for your asset') !== -1) {
+    return message
+  }
+
   switch (message) {
     case 'Approved asset':
       return `Your asset "${parent[AssetFieldNames.title]}" was approved`
@@ -65,6 +70,9 @@ function Message({ parent, message, data }) {
             data && data.author ? data.author.username : 'Someone'
           } commented on your profile`
         default:
+          console.log(
+            `Unknown collection name for showing comment: ` + collectionName
+          )
           return '????'
       }
     case 'Tagged user':
@@ -82,9 +90,17 @@ function Message({ parent, message, data }) {
               : 'Someone'
           } tagged you in a comment for user ${parent[UserFieldNames.username]}`
         default:
+          console.log(
+            `Unknown collection name for tagging user: ` + collectionName
+          )
           return '????'
       }
+    case 'Amended tags':
+      return `User "${
+        data && data.creator ? data.creator[UserFieldNames.username] : 'Someone'
+      }" amended tags for your asset ${parent[AssetFieldNames.title]}`
     default:
+      console.log(`Unknown message for notification: ` + message)
       return '???'
   }
 }

@@ -640,7 +640,7 @@ export default ({ assetId, switchEditorOpen }) => {
     [AssetFieldNames.isAdult]: isAdult,
     [AssetFieldNames.isPrivate]: isPrivate,
     [AssetFieldNames.author]: author,
-    [AssetFieldNames.children]: children,
+    [AssetFieldNames.children]: children = [],
     [AssetFieldNames.ownedBy]: ownedBy,
     [AssetFieldNames.discordServer]: discordServer,
     [AssetFieldNames.tutorialSteps]: tutorialSteps = [],
@@ -843,7 +843,7 @@ export default ({ assetId, switchEditorOpen }) => {
   }
 
   const PedestalChild = () => (
-    <>
+    <div>
       <AssetThumbnail />
       <AssetTitle />
       {isCategoryEditorOpen && (
@@ -937,7 +937,7 @@ export default ({ assetId, switchEditorOpen }) => {
         )}
       </div>
       <Description />
-    </>
+    </div>
   )
 
   const AssetThumbnail = () =>

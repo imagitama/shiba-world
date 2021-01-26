@@ -38,11 +38,9 @@ module.exports = functions.firestore
       assetDoc.get(AssetFieldNames.ownedBy) ||
       assetDoc.get(AssetFieldNames.createdBy)
 
-    await storeInNotifications(
-      `User "${creatorUsername}" has created an amendment for your asset "${assetTitle}"`,
-      assetRef,
-      assetOwnerRef
-    )
+    await storeInNotifications('Amended tags', assetRef, assetOwnerRef, {
+      creator: creatorRef,
+    })
 
     await emitToDiscordEditorNotifications(
       `User "${creatorUsername}" amended asset "${assetTitle}" with new tags`,
