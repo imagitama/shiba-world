@@ -28,6 +28,7 @@ import UnapprovedAssetsMessage from './components/unapproved-assets-message'
 import BannedNotice from './components/banned-notice'
 import Banner from './components/banner'
 import PendingAssetAmendmentsMessage from './components/pending-asset-amendments-message'
+import DraftAssetsMessage from './components/draft-assets-message'
 
 import useSearchTerm from './hooks/useSearchTerm'
 
@@ -66,9 +67,6 @@ const SignUp = lazy(() => catchChunkDeaths(() => import('./containers/signup')))
 const Logout = lazy(() => catchChunkDeaths(() => import('./containers/logout')))
 const CreateAsset = lazy(() =>
   catchChunkDeaths(() => import('./containers/create-asset'))
-)
-const EditAsset = lazy(() =>
-  catchChunkDeaths(() => import('./containers/edit-asset'))
 )
 const MyAccount = lazy(() =>
   catchChunkDeaths(() => import('./containers/my-account'))
@@ -252,15 +250,9 @@ const MainContent = () => {
               'An overview of a single asset. Find out what the asset is for, how to use it and where to download it plus more.'
           }}
         />
-        <RouteWithMeta
-          exact
-          path={routes.editAssetWithVar}
-          component={EditAsset}
-          meta={{
-            title: 'Edit an asset',
-            description:
-              'Change the meta data about an asset and upload new files for it.'
-          }}
+        <Redirect
+          from={routes.oldEditAssetWithVar}
+          to={routes.editAssetWithVar}
         />
         <RouteWithMeta exact path={routes.admin} component={Admin} />
         <RouteWithMeta
@@ -375,6 +367,7 @@ export default () => {
             <Notices />
             <UnapprovedAssetsMessage />
             <PendingAssetAmendmentsMessage />
+            <DraftAssetsMessage />
             <MainContent />
           </div>
         </main>

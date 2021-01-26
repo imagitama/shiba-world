@@ -18,6 +18,8 @@ import PetsIcon from '@material-ui/icons/Pets'
 import CategoryIcon from '@material-ui/icons/Category'
 import CopyrightIcon from '@material-ui/icons/Copyright'
 import ImageIcon from '@material-ui/icons/Image'
+import PanoramaIcon from '@material-ui/icons/Panorama'
+import ReceiptIcon from '@material-ui/icons/Receipt'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -997,7 +999,17 @@ export default ({ assetId, switchEditorOpen }) => {
         <meta property="og:site_name" content="VRCArena" />
       </Helmet>
 
-      <EditorArea label="Upload Banner">
+      {isPrivate && (
+        <EditorArea label="Draft" icon={ReceiptIcon}>
+          <TogglePrivateForm
+            assetId={assetId}
+            isPrivate={isPrivate}
+            onDone={() => switchEditorOpen()}
+          />
+        </EditorArea>
+      )}
+
+      <EditorArea label="Upload Banner" icon={PanoramaIcon}>
         <AssetBannerEditor
           assetId={assetId}
           actionCategory={analyticsCategoryName}

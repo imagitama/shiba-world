@@ -18,30 +18,31 @@ const useStyles = makeStyles({
 })
 
 function isVrchatAvatarUrl(url) {
-  return url.includes('vrchat.com/home/avatar')
+  return url && url.includes('vrchat.com/home/avatar')
 }
 
 function isVrchatWorldUrl(url) {
   return (
-    url.includes('vrchat.com/home/world') ||
-    url.includes('vrchat.com/home/launch?worldId')
+    url &&
+    (url.includes('vrchat.com/home/world') ||
+      url.includes('vrchat.com/home/launch?worldId'))
   )
 }
 
 function isGumroadUrl(url) {
-  return url.includes('gumroad.com')
+  return url && url.includes('gumroad.com')
 }
 
 function isTwitterUrl(url) {
-  return url.includes('twitter.com')
+  return url && url.includes('twitter.com')
 }
 
 function isPatreonUrl(url) {
-  return url.includes('patreon.com')
+  return url && url.includes('patreon.com')
 }
 
 function isDiscordUrl(url) {
-  return url.includes('discordapp.com') || url.includes('discord.com')
+  return url && (url.includes('discordapp.com') || url.includes('discord.com'))
 }
 
 function getButtonLabel(category, sourceUrl, isNoFilesAttached) {

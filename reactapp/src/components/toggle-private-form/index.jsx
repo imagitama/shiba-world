@@ -44,8 +44,8 @@ export default ({ assetId, isPrivate, onDone }) => {
         {isSaving
           ? 'Saving...'
           : isPrivate
-          ? 'Mark as Public'
-          : 'Mark as Private'}
+          ? 'Mark as Not Draft'
+          : 'Mark as Draft'}
       </Button>
     </>
   )

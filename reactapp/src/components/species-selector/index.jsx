@@ -8,14 +8,14 @@ import Typography from '@material-ui/core/Typography'
 import useDatabaseQuery, {
   CollectionNames,
   SpeciesFieldNames
-} from '../../../../hooks/useDatabaseQuery'
-import useCategoryMeta from '../../../../hooks/useCategoryMeta'
+} from '../../hooks/useDatabaseQuery'
+import useCategoryMeta from '../../hooks/useCategoryMeta'
 
-import Button from '../../../button'
-import Heading from '../../../heading'
-import LoadingIndicator from '../../../loading-indicator'
-import ErrorMessage from '../../../error-message'
-import { isRef, fixAccessingImagesUsingToken } from '../../../../utils'
+import Button from '../button'
+import Heading from '../heading'
+import LoadingIndicator from '../loading-indicator'
+import ErrorMessage from '../error-message'
+import { isRef, fixAccessingImagesUsingToken } from '../../utils'
 
 const useStyles = makeStyles({
   doneBtn: {

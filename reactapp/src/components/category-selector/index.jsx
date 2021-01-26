@@ -4,8 +4,9 @@ import Card from '@material-ui/core/Card'
 import CardActionArea from '@material-ui/core/CardActionArea'
 import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
-import categoryMeta from '../../../../category-meta'
-import Heading from '../../../heading'
+
+import categoryMeta from '../../category-meta'
+import Heading from '../heading'
 
 const useStyles = makeStyles({
   root: {

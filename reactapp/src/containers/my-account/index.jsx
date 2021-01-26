@@ -43,6 +43,10 @@ function WelcomeMessage() {
     return <ErrorMessage>Failed to retrieve your account details</ErrorMessage>
   }
 
+  if (!user) {
+    return <NoPermissionMessage />
+  }
+
   return (
     <BodyText>
       Hi,{' '}
