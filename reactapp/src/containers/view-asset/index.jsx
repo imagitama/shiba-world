@@ -7,7 +7,7 @@ export default ({
     params: { assetId }
   }
 }) => {
-  const [isEditorOpen, setIsEditorOpen] = useState(true)
+  const [isEditorOpen, setIsEditorOpen] = useState(false)
   const switchEditorOpen = () => setIsEditorOpen(!isEditorOpen)
   return isEditorOpen ? (
     <AssetOverviewEditor
