@@ -57,6 +57,7 @@ import AssetTagsEditor from '../asset-tags-editor'
 import ToggleAdultForm from '../toggle-adult-form'
 import AssetSourceEditor from '../asset-source-editor'
 import SyncWithGumroadForm from '../sync-with-gumroad-form'
+import LinkedAssetsEditor from '../linked-assets-editor'
 
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
@@ -1163,18 +1164,12 @@ export default ({ assetId, switchEditorOpen }) => {
             onPencilClick={() => setIsChildrenEditorOpen(true)}
             analyticsAction="Click edit linked assets button">
             {isChildrenEditorOpen ? (
-              <>
-                {/* <ChangeAssetChildrenForm
+              <LinkedAssetsEditor
                 assetId={assetId}
-                assetChildren={children}
-                onDone={() => setIsChildrenEditorOpen(false)}
+                linkedAssets={children}
                 actionCategory={analyticsCategoryName}
-              /> */}
-                <p>
-                  Not available at this time. Please contact a staff member in
-                  our Discord server or Tweet to us about it.
-                </p>
-              </>
+                onDone={() => setIsChildrenEditorOpen(false)}
+              />
             ) : children.length ? (
               <ChildrenAssets assetChildren={children} />
             ) : (

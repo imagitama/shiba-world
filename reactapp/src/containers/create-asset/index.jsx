@@ -167,10 +167,14 @@ export default () => {
   return (
     <>
       <Heading variant="h1">Upload {categoryName}</Heading>
-      <Heading variant="h2">Gumroad</Heading>
+      <Heading variant="h2">Source</Heading>
       <p>
         If you are uploading an asset from Gumroad please enter the URL below or
-        leave it empty.
+        leave it empty. You can always change it later.
+      </p>
+      <p>
+        By providing a Gumroad URL you can click a button to sync the thumbnail,
+        title and description with Gumroad.
       </p>
       <strong>Gumroad URL</strong>
       <br />
