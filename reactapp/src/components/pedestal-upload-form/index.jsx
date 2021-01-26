@@ -5,7 +5,6 @@ import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { CollectionNames, AssetFieldNames } from '../../hooks/useDatabaseQuery'
 
 import FileUploader from '../file-uploader'
-import Paper from '../paper'
 import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
 import Heading from '../heading'
