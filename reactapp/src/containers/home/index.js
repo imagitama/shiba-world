@@ -3,9 +3,7 @@ import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardActionArea from '@material-ui/core/CardActionArea'
-import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
-import CardActions from '@material-ui/core/CardActions'
 import LazyLoad from 'react-lazyload'
 
 import Heading from '../../components/heading'
@@ -45,7 +43,7 @@ const useStyles = makeStyles({
   },
   tile: {
     position: 'relative',
-    width: '25%',
+    width: '33.3%',
     minHeight: '10rem',
     backgroundSize: 'cover',
     padding: '0.75rem',
@@ -64,11 +62,21 @@ const useStyles = makeStyles({
     }
   },
   card: {
-    position: 'relative'
+    position: 'relative',
+    background: '#000',
+    '&:hover $content': {
+      transform: 'translateY(50%)'
+    },
+    '&:hover $media': {
+      opacity: 1
+    }
   },
   media: {
+    opacity: 0.7,
+    transition: 'all 100ms',
     '& img': {
-      width: '100%'
+      width: '100%',
+      display: 'block'
     }
   },
   cardActions: {
@@ -83,10 +91,7 @@ const useStyles = makeStyles({
     margin: '0.5rem',
     fontSize: '75%',
     opacity: '0.5',
-    transition: 'all 200ms',
-    '&:hover': {
-      opacity: 1
-    }
+    transition: 'all 200ms'
   },
   fakeImage: {
     width: '300px',
@@ -96,7 +101,13 @@ const useStyles = makeStyles({
     fontSize: '175%'
   },
   content: {
-    minHeight: '200px'
+    width: '100%',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    padding: '1rem',
+    background: 'rgba(0, 0, 0, 0.7)',
+    transition: 'all 100ms'
   },
   desc: {
     padding: '0.25rem 0 0.5rem',
@@ -105,6 +116,10 @@ const useStyles = makeStyles({
   assetTitle: {
     fontSize: '125%',
     margin: '1rem 0 0.5rem'
+  },
+  actions: {
+    textAlign: 'right',
+    marginTop: '0.5rem'
   }
 })
 
@@ -185,33 +200,33 @@ function Tile({
                   )}
                 </div>
               )}
-              <CardContent className={classes.content}>
+              <div className={classes.content}>
                 <Typography variant="h5" component="h2">
                   {title}
                 </Typography>
                 {description && <TileDesc>{description}</TileDesc>}
                 {children}
-              </CardContent>
+                {actionLabel && (
+                  <div className={classes.actions}>
+                    <Button
+                      size="small"
+                      color="primary"
+                      url={actionUrl || url}
+                      onClick={() =>
+                        trackAction(
+                          analyticsCategoryName,
+                          'Click home tile button',
+                          name
+                        )
+                      }>
+                      {actionLabel}
+                    </Button>
+                  </div>
+                )}
+                {/* {metaText && <div className={classes.metaText}>{metaText}</div>} */}
+              </div>
             </LinkOrAnchor>
           </CardActionArea>
-          <CardActions className={classes.cardActions}>
-            {actionLabel && (
-              <Button
-                size="small"
-                color="primary"
-                url={actionUrl || url}
-                onClick={() =>
-                  trackAction(
-                    analyticsCategoryName,
-                    'Click home tile button',
-                    name
-                  )
-                }>
-                {actionLabel}
-              </Button>
-            )}
-          </CardActions>
-          {metaText && <div className={classes.metaText}>{metaText}</div>}
         </Card>
       </div>
     </LazyLoad>
