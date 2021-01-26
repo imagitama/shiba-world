@@ -84,6 +84,13 @@ function Item({
   )
 }
 
+function sortSpeciesByAlpha(
+  { singularName: singularNameA },
+  { singularName: singularNameB }
+) {
+  return singularNameA.localeCompare(singularNameB)
+}
+
 export default ({
   selectedCategory,
   onSelect,
@@ -113,6 +120,7 @@ export default ({
       <Button onClick={() => onDone()}>Skip</Button>
       <div className={classes.items}>
         {results
+          .sort(sortSpeciesByAlpha)
           .map(result => [
             result.singularName,
             {
