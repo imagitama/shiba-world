@@ -195,8 +195,6 @@ export default ({ assetId, gumroadUrl, onDone }) => {
     )
   }
 
-  console.log('previewImageUrl', previewImageUrl)
-
   return (
     <>
       <Paper className={classes.row}>
@@ -241,7 +239,9 @@ export default ({ assetId, gumroadUrl, onDone }) => {
         <br />
         <TextField
           value={newFields[AssetFieldNames.description]}
-          onChange={e => updateField(AssetFieldNames.title, e.target.value)}
+          onChange={e =>
+            updateField(AssetFieldNames.description, e.target.value)
+          }
           multiline
           rows={10}
           className={classes.field}
