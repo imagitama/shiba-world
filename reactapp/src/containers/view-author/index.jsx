@@ -120,7 +120,12 @@ export default ({
   const [, , user] = useUserRecord()
   const [isLoading, isErrored, result] = useDatabaseQuery(
     CollectionNames.Authors,
-    authorId
+    authorId,
+    undefined,
+    undefined,
+    true,
+    undefined,
+    true
   )
   const classes = useStyles()
 
