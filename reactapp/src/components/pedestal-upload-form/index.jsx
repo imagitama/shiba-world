@@ -18,7 +18,6 @@ import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import { handleError } from '../../error-handling'
 import { trackAction } from '../../analytics'
 import placeholderPedestalUrl from '../../assets/videos/placeholder-pedestal.webm'
-import fallbackPlaceholderPedestalUrl from '../../assets/videos/placeholder-pedestal-fallback.webp'
 
 const useStyles = makeStyles({
   root: {
