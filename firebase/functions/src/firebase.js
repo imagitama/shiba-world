@@ -89,6 +89,7 @@ const AssetFieldNames = {
   pedestalVideoUrl: 'pedestalVideoUrl',
   pedestalFallbackImageUrl: 'pedestalFallbackImageUrl',
   sketchfabEmbedUrl: 'sketchfabEmbedUrl',
+  slug: 'slug',
 }
 module.exports.AssetFieldNames = AssetFieldNames
 

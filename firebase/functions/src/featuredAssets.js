@@ -151,9 +151,16 @@ const pickFeaturedAsset = async () => {
       [SpecialFieldNames.activeAsset]: selectedAsset
         ? {
             // standard
-            title: selectedAssetDoc.get(AssetFieldNames.title),
-            description: selectedAssetDoc.get(AssetFieldNames.description),
-            thumbnailUrl: selectedAssetDoc.get(AssetFieldNames.thumbnailUrl),
+            [AssetFieldNames.title]: selectedAssetDoc.get(
+              AssetFieldNames.title
+            ),
+            [AssetFieldNames.description]: selectedAssetDoc.get(
+              AssetFieldNames.description
+            ),
+            [AssetFieldNames.thumbnailUrl]: selectedAssetDoc.get(
+              AssetFieldNames.thumbnailUrl
+            ),
+            [AssetFieldNames.slug]: selectedAssetDoc.get(AssetFieldNames.slug),
 
             // special
             asset: selectedAsset,

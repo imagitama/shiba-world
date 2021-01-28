@@ -39,6 +39,7 @@ const convertAssetDocToAlgoliaRecord = (docId, doc, authorName) => {
     tags: doc[AssetFieldNames.tags],
     category: doc[AssetFieldNames.category],
     authorName,
+    slug: doc[AssetFieldNames.slug],
   }
 }
 module.exports.convertAssetDocToAlgoliaRecord = convertAssetDocToAlgoliaRecord
