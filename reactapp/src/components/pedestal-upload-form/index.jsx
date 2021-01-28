@@ -68,7 +68,8 @@ function VideoUploadForm({ assetId, userId, onUploaded }) {
             <strong>Upload successful</strong>
           </p>
           <p>
-            Please ensure the first frame perfectly overlaps your video below:
+            Please ensure that it matches the rotation and speed of our amazing
+            dummy robot:
           </p>
           <div className={classes.videos}>
             <div className={classes.video}>
@@ -148,8 +149,7 @@ function ImageUploadForm({ assetId, userId, videoUrl, onUploaded }) {
             <strong>Upload successful</strong>
           </p>
           <p>
-            Please ensure that it matches the rotation and speed of our amazing
-            dummy robot:
+            Please ensure the first frame perfectly overlaps your video below:
           </p>
           <div className={classes.videos}>
             <div className={classes.video}>
@@ -174,6 +174,7 @@ function ImageUploadForm({ assetId, userId, videoUrl, onUploaded }) {
             }
             label="Show your paused video behind"
           />
+          <br />
           <br />
           <Button onClick={() => onUploaded(uploadedUrl)}>Next Step</Button>
         </>
