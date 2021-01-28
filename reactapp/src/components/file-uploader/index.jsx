@@ -23,7 +23,8 @@ export default ({
   onDownloadUrl,
   directoryPath = '',
   filePrefix = '',
-  children
+  children,
+  mimeTypes = []
 }) => {
   const uploadedFileRef = useRef()
   const [isUploading, percentageDone, , , upload] = useFileUpload()
@@ -71,6 +72,7 @@ export default ({
           type="file"
           onChange={event => onFileChange(event.target.files)}
           multiple={false}
+          accept={mimeTypes.join(',')}
         />
         {children}
       </div>
@@ -83,7 +85,10 @@ export default ({
         type="file"
         onChange={event => onFileChange(event.target.files)}
         multiple={false}
+        accept={mimeTypes.join(',')}
       />
+      <br />
+      <br />
       <Button onClick={onUploadClick}>Upload</Button>
     </>
   )

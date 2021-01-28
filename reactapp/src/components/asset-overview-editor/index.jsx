@@ -84,7 +84,6 @@ import ChildrenAssets from '../asset-overview/components/children-assets'
 import SpeciesOutput from '../asset-overview/components/species-output'
 import VideoList from '../asset-overview/components/video-list'
 
-import Pedestal from '../pedestal'
 import OwnerEditor from '../owner-editor'
 import ChangeAuthorForm from '../change-author-form'
 import DownloadAssetButton from '../download-asset-button'
@@ -101,6 +100,8 @@ import placeholderPedestalFallbackImageUrl from '../../assets/videos/placeholder
 import AssetBannerEditor from '../asset-banner-editor'
 import ChangeCategoryForm from '../change-category-form'
 import EditImageIcon from '../edit-image-icon'
+import PedestalColumns from '../pedestal-columns'
+import PedestalVideo from '../pedestal-video'
 
 const editorAreaBorderValue = '3px dashed rgba(255, 255, 255, 0.5)'
 
@@ -846,7 +847,7 @@ export default ({ assetId, switchEditorOpen }) => {
   }
 
   const PedestalChild = () => (
-    <div>
+    <div style={{ marginLeft: '1rem ' }}>
       <AssetThumbnail />
       <AssetTitle />
       {isCategoryEditorOpen && (
@@ -1018,38 +1019,41 @@ export default ({ assetId, switchEditorOpen }) => {
         />
       </EditorArea>
 
-      {isAbleToEditPedestal ? (
-        isEditingPedestal ? (
-          <PedestalUploadForm
-            assetId={assetId}
-            onDone={() => setIsEditingPedestal(false)}
-            onCancel={() => setIsEditingPedestal(false)}
-            actionCategory={analyticsCategoryName}>
+      <PedestalColumns
+        leftCol={
+          <EditorArea
+            onPencilClick={() => setIsEditingPedestal(!isEditingPedestal)}>
+            <PedestalVideo
+              videoUrl={pedestalVideoUrl || placeholderPedestalVideoUrl}
+              fallbackImageUrl={
+                pedestalFallbackImageUrl || placeholderPedestalFallbackImageUrl
+              }
+            />
+          </EditorArea>
+        }
+        rightCol={
+          isEditingPedestal ? (
+            <div style={{ padding: '1rem ' }}>
+              <Heading variant="h2">Edit Pedestal</Heading>
+              {isAbleToEditPedestal ? (
+                <PedestalUploadForm
+                  assetId={assetId}
+                  onDone={() => setIsEditingPedestal(false)}
+                  actionCategory={analyticsCategoryName}
+                />
+              ) : (
+                <>
+                  Sorry only Patreon supporters can set a pedestal. Please
+                  become a Patreon supporter going{' '}
+                  <Link to={routes.patreon}>here</Link>
+                </>
+              )}
+            </div>
+          ) : (
             <PedestalChild />
-          </PedestalUploadForm>
-        ) : (
-          <Pedestal
-            videoUrl={pedestalVideoUrl || placeholderPedestalVideoUrl}
-            fallbackImageUrl={
-              pedestalFallbackImageUrl || placeholderPedestalFallbackImageUrl
-            }
-            showEditIcon
-            onEdit={() => {
-              trackAction(analyticsCategoryName, 'Click edit pedestal icon')
-              setIsEditingPedestal(true)
-            }}
-            isEditMode>
-            <PedestalChild />
-          </Pedestal>
-        )
-      ) : (
-        <div className={classes.thumbAndTitle}>
-          <AssetThumbnail />
-          <div className={classes.titlesWrapper}>
-            <AssetTitle />
-          </div>
-        </div>
-      )}
+          )
+        }
+      />
 
       <MobilePrimaryBtn
         downloadUrls={downloadUrls}
