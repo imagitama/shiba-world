@@ -10,6 +10,7 @@ import ErrorMessage from '../error-message'
 
 export default ({
   results,
+  showAssetDetails = true,
   showControls = false,
   analyticsCategoryName = ''
 }) =>
@@ -18,7 +19,7 @@ export default ({
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Asset</TableCell>
+            {showAssetDetails && <TableCell>Asset</TableCell>}
             <TableCell>New tags</TableCell>
             <TableCell>Meta</TableCell>
             <TableCell>{showControls ? 'Controls' : 'Status'}</TableCell>
@@ -29,6 +30,7 @@ export default ({
             <AssetAmendmentResultsItem
               key={result.id}
               result={result}
+              showAssetDetails={showAssetDetails}
               showControls={showControls}
               analyticsCategoryName={analyticsCategoryName}
             />

@@ -46,6 +46,7 @@ export default ({ assetId }) => {
   return (
     <AssetAmendmentResults
       results={results}
+      showAssetDetails={false}
       showControls={true}
       analyticsCategoryName="ViewAsset"
     />

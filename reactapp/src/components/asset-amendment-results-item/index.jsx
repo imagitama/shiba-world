@@ -23,8 +23,42 @@ import FormattedDate from '../formatted-date'
 import TagChip from '../tag-chip'
 import Button from '../button'
 
+const TagsDiff = ({ originalTags, alienTags }) => {
+  const addedTags = []
+  const removedTags = []
+
+  for (const tag of alienTags) {
+    if (!originalTags.includes(tag)) {
+      addedTags.push(tag)
+    }
+  }
+
+  for (const tag of originalTags) {
+    if (!alienTags.includes(tag)) {
+      removedTags.push(tag)
+    }
+  }
+
+  return (
+    <>
+      Removed:{' '}
+      {removedTags.length
+        ? removedTags.map(tagName => (
+            <TagChip key={tagName} tagName={tagName} />
+          ))
+        : '(none)'}
+      <br />
+      Added:{' '}
+      {addedTags.length
+        ? addedTags.map(tagName => <TagChip key={tagName} tagName={tagName} />)
+        : '(none)'}
+    </>
+  )
+}
+
 export default ({
   result,
+  showAssetDetails = true,
   showControls = false,
   analyticsCategoryName = ''
 }) => {
@@ -142,17 +176,18 @@ export default ({
 
   return (
     <TableRow key={amendmentId} title={amendmentId}>
+      {showAssetDetails && (
+        <TableCell>
+          <Link to={routes.viewAssetWithVar.replace(':assetId', asset.id)}>
+            {asset[AssetFieldNames.title]}
+          </Link>
+        </TableCell>
+      )}
       <TableCell>
-        <Link to={routes.viewAssetWithVar.replace(':assetId', asset.id)}>
-          {asset[AssetFieldNames.title]}
-        </Link>
-      </TableCell>
-      <TableCell>
-        {fields[AssetFieldNames.tags]
-          ? fields[AssetFieldNames.tags].map(tagName => (
-              <TagChip key={tagName} tagName={tagName} />
-            ))
-          : '-'}
+        <TagsDiff
+          originalTags={asset[AssetFieldNames.tags]}
+          alienTags={fields[AssetFieldNames.tags]}
+        />
       </TableCell>
       <TableCell>
         <FormattedDate date={createdAt} /> by{' '}
