@@ -47,7 +47,7 @@ const useStyles = makeStyles({
   }
 })
 
-function Pedestal({ assetId, videoUrl, fallbackImageUrl }) {
+function Pedestal({ assetId, videoUrl, fallbackImageUrl, slug }) {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
   const videoRef = useRef()
   const pedestalRef = useRef()
@@ -69,7 +69,7 @@ function Pedestal({ assetId, videoUrl, fallbackImageUrl }) {
 
   return (
     <div className={classes.pedestal} ref={pedestalRef}>
-      <Link to={routes.viewAssetWithVar.replace(':assetId', assetId)}>
+      <Link to={routes.viewAssetWithVar.replace(':assetId', slug || assetId)}>
         <div className={classes.shadow} />
         <video
           ref={videoRef}
@@ -109,6 +109,7 @@ function Pedestals({ pedestals }) {
           assetId={pedestal.id}
           videoUrl={pedestal[AssetFieldNames.pedestalVideoUrl]}
           fallbackImageUrl={pedestal[AssetFieldNames.pedestalFallbackImageUrl]}
+          slug={pedestal[AssetFieldNames.slug]}
         />
       ))}
     </div>

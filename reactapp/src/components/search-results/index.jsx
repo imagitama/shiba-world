@@ -18,6 +18,7 @@ import { searchIndexNames } from '../../modules/app'
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
 import { alreadyOver18Key } from '../../config'
+import { AssetFieldNames } from '../../hooks/useDatabaseQuery'
 
 function ViewAllAuthorsBtn() {
   return (
@@ -80,6 +81,7 @@ export default () => {
             description: hit.description,
             thumbnailUrl: hit.thumbnailUrl,
             isApproved: true,
+            [AssetFieldNames.slug]: hit.slug,
             _highlightResult: hit._highlightResult
           }))}
         />

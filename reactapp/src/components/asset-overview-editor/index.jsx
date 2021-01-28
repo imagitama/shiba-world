@@ -20,6 +20,7 @@ import CopyrightIcon from '@material-ui/icons/Copyright'
 import ImageIcon from '@material-ui/icons/Image'
 import PanoramaIcon from '@material-ui/icons/Panorama'
 import ReceiptIcon from '@material-ui/icons/Receipt'
+import BugReportIcon from '@material-ui/icons/BugReport'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -58,6 +59,7 @@ import ToggleAdultForm from '../toggle-adult-form'
 import AssetSourceEditor from '../asset-source-editor'
 import SyncWithGumroadForm from '../sync-with-gumroad-form'
 import LinkedAssetsEditor from '../linked-assets-editor'
+import SlugEditor from '../slug-editor'
 
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
@@ -77,7 +79,12 @@ import {
   mediaQueryForTabletsOrBelow,
   mediaQueryForMobiles
 } from '../../media-queries'
-import { THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, formHideDelay } from '../../config'
+import {
+  THUMBNAIL_WIDTH,
+  THUMBNAIL_HEIGHT,
+  formHideDelay,
+  WEBSITE_FULL_URL
+} from '../../config'
 
 import FileList from '../asset-overview/components/file-list'
 import ChildrenAssets from '../asset-overview/components/children-assets'
@@ -370,6 +377,9 @@ const useStyles = makeStyles(() => ({
   },
   syncGumroadForm: {
     marginTop: '1rem'
+  },
+  slug: {
+    textDecoration: 'underline'
   }
 }))
 
@@ -385,8 +395,12 @@ function EditorArea({
   icon: Icon,
   onPencilClick,
   analyticsAction,
-  noPadding
+  noPadding,
+  editor: Editor = null,
+  waiting: Waiting = null
 }) {
+  const [isEditorOpen, setIsEditorOpen] = useState(false)
+
   const classes = useStyles()
   return (
     <div
@@ -396,15 +410,30 @@ function EditorArea({
           {label} {Icon && <Icon className={classes.editorAreaIcon} />}
         </div>
       )}
-      {children}
-      {onPencilClick && (
+      {Editor ? (
+        isEditorOpen ? (
+          React.createElement(Editor, {
+            toggleEditor: () => setIsEditorOpen(!isEditorOpen)
+          })
+        ) : (
+          <Waiting />
+        )
+      ) : (
+        children
+      )}
+      {(onPencilClick || Editor) && (
         <div
           className={classes.editorAreaEditIcon}
           onClick={() => {
             if (analyticsAction) {
               trackAction(analyticsCategoryName, analyticsAction)
             }
-            onPencilClick()
+
+            if (onPencilClick) {
+              onPencilClick()
+            } else if (Editor) {
+              setIsEditorOpen(!isEditorOpen)
+            }
           }}>
           <EditIcon />
         </div>
@@ -650,7 +679,8 @@ export default ({ assetId, switchEditorOpen }) => {
     [AssetFieldNames.tutorialSteps]: tutorialSteps = [],
     [AssetFieldNames.pedestalVideoUrl]: pedestalVideoUrl,
     [AssetFieldNames.pedestalFallbackImageUrl]: pedestalFallbackImageUrl,
-    [AssetFieldNames.sketchfabEmbedUrl]: sketchfabEmbedUrl
+    [AssetFieldNames.sketchfabEmbedUrl]: sketchfabEmbedUrl,
+    [AssetFieldNames.slug]: slug
   } = result
 
   if (!title) {
@@ -717,7 +747,11 @@ export default ({ assetId, switchEditorOpen }) => {
             />
           ) : (
             <>
-              <Link to={routes.viewAssetWithVar.replace(':assetId', assetId)}>
+              <Link
+                to={routes.viewAssetWithVar.replace(
+                  ':assetId',
+                  slug || assetId
+                )}>
                 {title}
               </Link>{' '}
               <EditIcon
@@ -994,7 +1028,7 @@ export default ({ assetId, switchEditorOpen }) => {
         <meta
           property="og:url"
           content={getOpenGraphUrlForRouteUrl(
-            routes.viewAssetWithVar.replace(':assetId', id)
+            routes.viewAssetWithVar.replace(':assetId', slug || id)
           )}
         />
         <meta property="og:image" content={thumbnailUrl} />
@@ -1205,6 +1239,47 @@ export default ({ assetId, switchEditorOpen }) => {
               )}
             </div>
           </EditorArea>
+
+          <EditorArea
+            label="Slug"
+            icon={BugReportIcon}
+            editor={({ toggleEditor }) =>
+              isAbleToEditPedestal ? (
+                <SlugEditor
+                  assetId={assetId}
+                  slug={slug}
+                  actionCategory={analyticsCategoryName}
+                  onDone={toggleEditor}
+                />
+              ) : (
+                <>You must be a Patreon supporter to change this</>
+              )
+            }
+            waiting={() => (
+              /* eslint-disable */
+              <>
+                <strong>What is a slug?</strong>
+                <p>
+                  A slug is the part of the URL after the first slash. Setting
+                  it to something short and unique means better access for
+                  search engines and it is more readable to humans.
+                </p>
+                <strong>Your asset slug:</strong>
+                <p>
+                  <span className={classes.slug}>
+                    {WEBSITE_FULL_URL}
+                    {slug
+                      ? routes.viewAssetWithVar.replace(':assetId', slug)
+                      : location.pathname.substr(
+                          0,
+                          location.pathname.length - 1 // prune last slash when /?edit
+                        )}
+                  </span>
+                </p>
+              </>
+              /* eslint-enable */
+            )}
+          />
         </div>
 
         <div className={classes.rightCol}>

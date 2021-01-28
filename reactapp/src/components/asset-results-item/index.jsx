@@ -14,6 +14,7 @@ import * as routes from '../../routes'
 import categoryMeta from '../../category-meta'
 import FormattedDate from '../formatted-date'
 import { mediaQueryForTabletsOrBelow } from '../../media-queries'
+import { AssetFieldNames } from '../../hooks/useDatabaseQuery'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -167,7 +168,8 @@ export default function AssetItem({
     category,
     isPinned,
     createdAt,
-    _highlightResult
+    _highlightResult,
+    [AssetFieldNames.slug]: slug
   },
   showCategory = false,
   showPinned = false
@@ -177,7 +179,7 @@ export default function AssetItem({
   return (
     <Card className={classes.root}>
       <CardActionArea>
-        <Link to={routes.viewAssetWithVar.replace(':assetId', id)}>
+        <Link to={routes.viewAssetWithVar.replace(':assetId', slug || id)}>
           <ExtraChips
             isAdult={isAdult}
             isApproved={isApproved}

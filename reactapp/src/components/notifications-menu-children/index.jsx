@@ -127,7 +127,10 @@ function getLinkUrl(parent) {
 
   switch (collectionName) {
     case CollectionNames.Assets:
-      return routes.viewAssetWithVar.replace(':assetId', parent.id)
+      return routes.viewAssetWithVar.replace(
+        ':assetId',
+        parent[AssetFieldNames.slug] || parent.id
+      )
     case CollectionNames.Users:
       return routes.viewUserWithVar.replace(':userId', parent.id)
     default:

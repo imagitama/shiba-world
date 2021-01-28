@@ -8,6 +8,7 @@ import FormattedDate from '../formatted-date'
 import Button from '../button'
 import AssetThumbnail from '../asset-thumbnail'
 import * as routes from '../../routes'
+import { AssetFieldNames } from '../../hooks/useDatabaseQuery'
 
 const useStyles = makeStyles({
   root: {
@@ -35,10 +36,18 @@ function trimDescription(description) {
 }
 
 export default ({
-  article: { id, title, description, createdBy, createdAt, thumbnailUrl }
+  article: {
+    id,
+    title,
+    description,
+    createdBy,
+    createdAt,
+    thumbnailUrl,
+    [AssetFieldNames.slug]: slug
+  }
 }) => {
   const classes = useStyles()
-  const readMoreUrl = routes.viewAssetWithVar.replace(':assetId', id)
+  const readMoreUrl = routes.viewAssetWithVar.replace(':assetId', slug || id)
   return (
     <Paper className={classes.root}>
       <AssetThumbnail url={thumbnailUrl} />

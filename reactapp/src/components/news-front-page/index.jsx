@@ -79,10 +79,18 @@ export default () => {
   return (
     <div className={classes.articles}>
       {articles.map(
-        ({ id, title, description, createdAt, createdBy, thumbnailUrl }) => (
+        ({
+          id,
+          title,
+          description,
+          createdAt,
+          createdBy,
+          thumbnailUrl,
+          [AssetFieldNames.slug]: slug
+        }) => (
           <SimpleResultsItem
             key={id}
-            url={routes.viewAssetWithVar.replace(':assetId', id)}
+            url={routes.viewAssetWithVar.replace(':assetId', slug || id)}
             title={title}
             description={getTrucatedDesc(description)}
             author={createdBy}

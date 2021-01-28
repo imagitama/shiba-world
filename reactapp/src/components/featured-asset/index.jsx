@@ -13,7 +13,8 @@ import { mediaQueryForMobiles } from '../../media-queries'
 import useDatabaseQuery, {
   CollectionNames,
   mapDates,
-  specialCollectionIds
+  specialCollectionIds,
+  AssetFieldNames
 } from '../../hooks/useDatabaseQuery'
 import { trackAction } from '../../analytics'
 import Heading from '../heading'
@@ -94,9 +95,13 @@ export default () => {
     return null
   }
 
-  const { asset, title, description, thumbnailUrl } = mapDates(
-    result.activeAsset
-  )
+  const {
+    asset,
+    title,
+    description,
+    thumbnailUrl,
+    [AssetFieldNames.slug]: slug
+  } = mapDates(result.activeAsset)
   const id = asset.id
 
   return (
@@ -107,7 +112,7 @@ export default () => {
       <Card className={classes.root}>
         <CardActionArea>
           <Link
-            to={routes.viewAssetWithVar.replace(':assetId', id)}
+            to={routes.viewAssetWithVar.replace(':assetId', slug || id)}
             onClick={() => trackAction('Home', 'Click featured asset')}
             className={classes.cols}>
             <LazyLoad width={200} height={200}>

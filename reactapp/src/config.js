@@ -2,6 +2,7 @@ import { SpeciesFieldNames } from './hooks/useDatabaseQuery'
 import otherSpeciesThumbnailUrl from './assets/images/other-species.webp'
 import otherSpeciesFallbackThumbnailUrl from './assets/images/other-species.png'
 
+export const WEBSITE_FULL_URL = 'https://www.vrcarena.com'
 export const TWITTER_URL = 'https://twitter.com/VRCArena'
 export const DISCORD_URL = 'https://discord.gg/UVs9V58'
 export const PATREON_BECOME_PATRON_URL =

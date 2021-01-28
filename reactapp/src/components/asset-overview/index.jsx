@@ -512,7 +512,8 @@ export default ({ assetId, switchEditorOpen }) => {
     [AssetFieldNames.tutorialSteps]: tutorialSteps = [],
     [AssetFieldNames.pedestalVideoUrl]: pedestalVideoUrl,
     [AssetFieldNames.pedestalFallbackImageUrl]: pedestalFallbackImageUrl,
-    [AssetFieldNames.sketchfabEmbedUrl]: sketchfabEmbedUrl
+    [AssetFieldNames.sketchfabEmbedUrl]: sketchfabEmbedUrl,
+    [AssetFieldNames.slug]: slug
   } = result
 
   if (!title) {
@@ -545,7 +546,7 @@ export default ({ assetId, switchEditorOpen }) => {
   const AssetTitle = () => (
     <div>
       <Heading variant="h1" className={classes.title}>
-        <Link to={routes.viewAssetWithVar.replace(':assetId', assetId)}>
+        <Link to={routes.viewAssetWithVar.replace(':assetId', slug || assetId)}>
           {title}
         </Link>{' '}
         <CreatedByMessage
@@ -637,7 +638,7 @@ export default ({ assetId, switchEditorOpen }) => {
         <meta
           property="og:url"
           content={getOpenGraphUrlForRouteUrl(
-            routes.viewAssetWithVar.replace(':assetId', id)
+            routes.viewAssetWithVar.replace(':assetId', slug || id)
           )}
         />
         <meta property="og:image" content={thumbnailUrl} />

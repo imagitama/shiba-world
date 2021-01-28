@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import * as THREE from 'three/build/three.module'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
+import { WEBSITE_FULL_URL } from '../../config'
 
 export default ({ url, onClick = null }) => {
   const containerRef = useRef()
@@ -98,7 +99,7 @@ export default ({ url, onClick = null }) => {
 
       // model
       var loader = new FBXLoader()
-      loader.setRequestHeader({ Origin: 'https://www.vrcarena.com' })
+      loader.setRequestHeader({ Origin: WEBSITE_FULL_URL })
       loader.load(url, function(object) {
         object.traverse(function(child) {
           if (child.isMesh) {

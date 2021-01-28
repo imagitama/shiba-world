@@ -17,7 +17,8 @@ import useDatabaseQuery, {
   CollectionNames,
   HistoryFieldNames,
   OrderDirections,
-  AuthorFieldNames
+  AuthorFieldNames,
+  AssetFieldNames
 } from '../../hooks/useDatabaseQuery'
 import * as routes from '../../routes'
 
@@ -45,7 +46,10 @@ function FormattedUserName({ message, parent, createdBy }) {
 function getUrlForRelevantData(collectionName, result) {
   switch (collectionName) {
     case CollectionNames.Assets:
-      return routes.viewAssetWithVar.replace(':assetId', result.id)
+      return routes.viewAssetWithVar.replace(
+        ':assetId',
+        result[AssetFieldNames.slug] || result.id
+      )
     case CollectionNames.Requests:
       return routes.viewRequestWithVar.replace(':requestId', result.id)
     case CollectionNames.Users:

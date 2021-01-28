@@ -84,7 +84,8 @@ export const AssetFieldNames = {
   tutorialSteps: 'tutorialSteps',
   pedestalVideoUrl: 'pedestalVideoUrl',
   pedestalFallbackImageUrl: 'pedestalFallbackImageUrl',
-  sketchfabEmbedUrl: 'sketchfabEmbedUrl'
+  sketchfabEmbedUrl: 'sketchfabEmbedUrl',
+  slug: 'slug'
 }
 
 export const AssetAmendmentFieldNames = {

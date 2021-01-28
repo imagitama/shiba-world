@@ -29,14 +29,14 @@ const useStyles = makeStyles({
 })
 
 export default ({
-  hit: { objectID: id, title, description, thumbnailUrl }
+  hit: { objectID: id, title, description, thumbnailUrl, slug }
 }) => {
   const classes = useStyles()
 
   return (
     <Card className={classes.root}>
       <CardActionArea>
-        <Link to={routes.viewAssetWithVar.replace(':assetId', id)}>
+        <Link to={routes.viewAssetWithVar.replace(':assetId', slug || id)}>
           <div className={classes.container}>
             <CardMedia
               className={classes.media}

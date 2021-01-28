@@ -202,6 +202,7 @@ export function isRef(value) {
   return value && typeof value === 'object' && value.hasOwnProperty('ref')
 }
 
+// todo: delete and move to firestore.js
 export function getDocument(collectionName, id) {
   return firebase
     .firestore()
