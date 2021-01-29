@@ -28,7 +28,6 @@
     "firebase-admin": "^8.10.0",
     "firebase-functions": "^3.6.1",
     "node-fetch": "^2.6.0",
-    "node-firestore-import-export": "^1.1.0",
     "patreon": "^0.4.1",
     "sharp": "^0.26.0",
     "turndown": "^7.0.0",

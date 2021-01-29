@@ -1,7 +1,6 @@
 const functions = require('firebase-functions')
-const { backupDatabaseToStorage, backupRunWithOptions } = require('../backups')
+const { backupDatabaseToStorage } = require('../backups')
 
-module.exports = functions
-  .runWith(backupRunWithOptions)
-  .pubsub.schedule('0 0 * * *') // daily at midnight
+module.exports = functions.pubsub
+  .schedule('0 0 * * *') // daily at midnight
   .onRun(async () => backupDatabaseToStorage())

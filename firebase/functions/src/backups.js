@@ -1,69 +1,57 @@
-const admin = require('firebase-admin')
-const { firestoreExport } = require('node-firestore-import-export')
+const firestore = require('@google-cloud/firestore')
 const config = require('./config')
-const { db } = require('./firebase')
 
 const BACKUP_BUCKET_NAME = config.global.backupBucketName
 
-module.exports.backupRunWithOptions = {
-  timeoutSeconds: 540, // default 60 sec
-  memory: '1GB',
+let client
+
+function getClient() {
+  if (!client) {
+    client = new firestore.v1.FirestoreAdminClient()
+  }
+  return client
 }
 
+/**
+ * Source: https://firebase.google.com/docs/firestore/solutions/schedule-export#create_a_cloud_function_and_a_job
+ *
+ * Note if running in emulator your service account must have these IAM permissions:
+ * Cloud Firestore: `Owner`, `Cloud Datastore Owner`, or `Cloud Datastore Import Export Admin`
+ * Storage: `Owner` or `Storage Admin`
+ *
+ * This function just starts a backup. See status here: https://console.cloud.google.com/firestore/import-export?project=shiba-world&folder=&organizationId=
+ *
+ * Read more: https://firebase.google.com/docs/firestore/manage-data/export-import#before_you_begin
+ */
 module.exports.backupDatabaseToStorage = async () => {
-  if (!BACKUP_BUCKET_NAME) {
-    throw new Error('No backup bucket name specified')
-  }
+  try {
+    const myClient = getClient()
+    const projectId = process.env.GCP_PROJECT || process.env.GCLOUD_PROJECT
 
-  const collectionRefs = await db.listCollections()
+    if (!projectId) {
+      throw new Error('No project ID found')
+    }
 
-  const backups = await Promise.all(
-    collectionRefs.map((collectionRef) =>
-      firestoreExport(collectionRef).then((backupData) => ({
-        collectionName: collectionRef.id,
-        data: backupData,
-      }))
-    )
-  )
+    const databaseName = client.databasePath(projectId, '(default)')
+    const bucket = `gs://${BACKUP_BUCKET_NAME}`
 
-  const date = new Date()
-  const dateAsString = `${date.getDate()}-${date.getMonth()}-${date
-    .getFullYear()
-    .toString()
-    .padStart(2, '0')}_${date
-    .getHours()
-    .toString()
-    .padStart(2, '0')}-${date
-    .getMinutes()
-    .toString()
-    .padStart(2, '0')}-${date.getSeconds().toString().padStart(2, '0')}`
+    if (!BACKUP_BUCKET_NAME) {
+      throw new Error('No backup bucket name specified')
+    }
 
-  const file = admin
-    .storage()
-    .bucket(BACKUP_BUCKET_NAME)
-    .file(`backups/${dateAsString}/db.json`)
+    const responses = await myClient.exportDocuments({
+      name: databaseName,
+      outputUriPrefix: bucket,
+      // Leave collectionIds empty to export all collections
+      // or set to a list of collection IDs to export,
+      // collectionIds: ['users', 'posts']
+      collectionIds: [],
+    })
 
-  // The nodejs module does not do a complete export so rebuild the structure
-  // it expects when importing
-  const dataToJsonify = {
-    __collections__: backups.reduce(
-      (obj, backupItem) =>
-        Object.assign({}, obj, {
-          [backupItem.collectionName]: backupItem.data,
-        }),
-      {}
-    ),
-  }
-
-  const json = JSON.stringify(dataToJsonify, null, '  ')
-
-  await file.save(json, {
-    metadata: {
-      contentType: 'application/json',
-    },
-  })
-
-  return {
-    collectionNames: backups.map((backupItem) => backupItem.collectionName),
+    const response = responses[0]
+    console.log(`Operation name: ${response.name}`)
+  } catch (err) {
+    console.error(err)
+    throw new Error('Backup failed')
   }
 }
