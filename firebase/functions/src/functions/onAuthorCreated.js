@@ -1,6 +1,6 @@
 const functions = require('firebase-functions')
 const { storeInHistory } = require('../history')
-const { replaceReferencesWithString, AuthorFieldNames } = require('../firebase')
+const { AuthorFieldNames } = require('../firebase')
 const { insertAuthorDocIntoIndex } = require('../algolia')
 
 module.exports = functions.firestore
@@ -11,9 +11,11 @@ module.exports = functions.firestore
     await storeInHistory(
       'Created author',
       doc.ref,
-      {
-        fields: replaceReferencesWithString(docData),
-      },
+      // commented out because error encoding field or something
+      // {
+      //   fields: replaceReferencesWithString(docData),
+      // },
+      null,
       docData[AuthorFieldNames.createdBy]
     )
 
