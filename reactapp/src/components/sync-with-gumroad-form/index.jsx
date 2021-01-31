@@ -3,6 +3,7 @@ import TextField from '@material-ui/core/TextField'
 import Markdown from 'react-markdown'
 import Checkbox from '@material-ui/core/Checkbox'
 import { makeStyles } from '@material-ui/core/styles'
+import shortid from 'shortid'
 
 import Button from '../button'
 import ErrorMessage from '../error-message'
@@ -16,7 +17,7 @@ import { callFunction } from '../../firebase'
 import { createRef } from '../../utils'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import OptimizedImageUploader from '../optimized-image-uploader'
-import { THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT } from '../../config'
+import { THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, paths } from '../../config'
 
 const useStyles = makeStyles({
   field: {
@@ -212,6 +213,8 @@ export default ({ assetId, gumroadUrl, onDone }) => {
             onUploadedUrl={url =>
               updateField(AssetFieldNames.thumbnailUrl, url)
             }
+            directoryPath={paths.assetThumbnailDir}
+            filePrefix={shortid.generate()}
           />
         ) : (
           'Image cannot be used as a thumbnail (eg. it is .gif)'
