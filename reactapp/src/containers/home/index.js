@@ -32,7 +32,10 @@ import twitterTileBgUrl from './assets/twitter.webp'
 import avatarsTileBgUrl from './assets/avatars.webp'
 import accessoriesTileBgUrl from './assets/accessories.webp'
 import { DISCORD_URL, TWITTER_URL } from '../../config'
-import { mediaQueryForTabletsOrBelow } from '../../media-queries'
+import {
+  mediaQueryForTabletsOrBelow,
+  mediaQueryForMobiles
+} from '../../media-queries'
 
 const useStyles = makeStyles({
   tiles: {
@@ -51,20 +54,29 @@ const useStyles = makeStyles({
       color: 'inherit'
     },
     [mediaQueryForTabletsOrBelow]: {
+      width: '50%',
+      padding: '0.5rem'
+    },
+    [mediaQueryForMobiles]: {
       width: '100%',
       padding: '0.5rem'
     }
   },
-  double: {
-    width: '50%',
+  pollTile: {
+    padding: '0.75rem',
+    width: '66.6%',
     [mediaQueryForTabletsOrBelow]: {
       width: '100%'
     }
   },
+  pollTileCard: {
+    padding: '1rem',
+    height: '100%'
+  },
   card: {
     position: 'relative',
     background: '#000',
-    '&:hover $content': {
+    '&:hover:not($noHover) $content': {
       transform: 'translateY(50%)'
     },
     '&:hover $media': {
@@ -156,7 +168,8 @@ function Tile({
   imageUrl,
   children,
   metaText,
-  double = false
+  double = false,
+  disableHover = false
 }) {
   const classes = useStyles()
 
@@ -179,7 +192,10 @@ function Tile({
 
   return (
     <LazyLoad>
-      <div className={`${classes.tile} ${double ? classes.double : ''}`}>
+      <div
+        className={`${classes.tile} ${double ? classes.double : ''} ${
+          disableHover ? classes.noHover : ''
+        }`}>
         <Card className={classes.card}>
           <CardActionArea
             className={classes.contentsWrapper}
@@ -489,10 +505,13 @@ function SiteStatsTile() {
 }
 
 const PollTile = memo(() => {
+  const classes = useStyles()
   return (
-    <Tile name="poll" title="Poll" double>
-      <Polls />
-    </Tile>
+    <div className={classes.pollTile}>
+      <Card className={classes.pollTileCard}>
+        <Polls />
+      </Card>
+    </div>
   )
 })
 
@@ -508,20 +527,18 @@ function Tiles() {
 
   return (
     <homepageContext.Provider value={result}>
-      <div className={classes.root}>
-        <div className={classes.tiles}>
-          <AvatarsTile />
-          <AccessoriesTile />
-          <FeaturedAssetTile />
-          <MostRecentNewsTile />
-          <MostRecentAvatarTile />
-          <MostRecentAccessoryTile />
-          <PatreonTile />
-          <DiscordTile />
-          <TwitterTile />
-          <SiteStatsTile />
-          <PollTile />
-        </div>
+      <div className={classes.tiles}>
+        <AvatarsTile />
+        <AccessoriesTile />
+        <FeaturedAssetTile />
+        <MostRecentNewsTile />
+        <MostRecentAvatarTile />
+        <MostRecentAccessoryTile />
+        <PatreonTile />
+        <DiscordTile />
+        <TwitterTile />
+        <SiteStatsTile />
+        <PollTile />
       </div>
     </homepageContext.Provider>
   )
