@@ -8,10 +8,10 @@ import Button from '../button'
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     margin: '1rem 0',
-    padding: theme.spacing(2, 2)
+    padding: '1rem 1rem 0.5rem'
   },
   withButton: {
     display: 'flex'

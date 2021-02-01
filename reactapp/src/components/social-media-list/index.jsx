@@ -31,8 +31,14 @@ export const socialMediaType = {
 }
 
 const useStyles = makeStyles({
+  items: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexWrap: 'wrap'
+  },
   item: {
-    display: 'block',
+    width: '33.3%',
+    display: 'inline-block',
     padding: '0.5rem'
   },
   notUrl: {
@@ -112,6 +118,8 @@ export default ({
     discordServerInviteUrl
   }
 }) => {
+  const classes = useStyles()
+
   const items = [
     {
       id: 'website',
@@ -195,8 +203,8 @@ export default ({
     }
   ]
   return (
-    <div>
-      {items.map((item, idx) => (
+    <div className={classes.items}>
+      {items.map(item => (
         <SocialMediaListItem
           key={item.id}
           item={item}

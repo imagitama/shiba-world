@@ -34,6 +34,7 @@ import useDatabaseQuery, {
 } from '../../hooks/useDatabaseQuery'
 import { createRef, canEditAuthor } from '../../utils'
 import { trackAction } from '../../analytics'
+import { mediaQueryForTabletsOrBelow } from '../../media-queries'
 
 function AssetsByAuthorId({ authorId }) {
   const [, , user] = useUserRecord()
@@ -94,6 +95,29 @@ const useStyles = makeStyles({
       width: 'auto',
       height: '1em'
     }
+  },
+  cols: {
+    display: 'flex',
+    flexWrap: 'wrap'
+  },
+  col: {
+    width: 'calc(50% - 0.5rem)',
+    margin: '0 0.5rem 0 0',
+    '&:last-child': {
+      margin: '0 0 0 0.5rem'
+    },
+    [mediaQueryForTabletsOrBelow]: {
+      width: '100%'
+    }
+  },
+  title: {
+    textAlign: 'center'
+  },
+  avatar: {
+    display: 'inline-block'
+  },
+  desc: {
+    textAlign: 'center'
   }
 })
 
@@ -201,70 +225,90 @@ export default ({
         />
       </Helmet>
 
-      <Avatar url={avatarUrl} username={name} />
+      <div className={classes.cols}>
+        <div className={classes.col}>
+          <div className={classes.title}>
+            <div className={classes.avatar}>
+              <Avatar url={avatarUrl} username={name} />
+            </div>
+            <Heading variant="h1">
+              <Link
+                to={routes.viewAuthorWithVar.replace(':authorId', authorId)}>
+                {name}
+              </Link>
+            </Heading>
+            <div className={classes.categories}>
+              {categories.map((categoryName, idx) => (
+                <Fragment key={categoryName}>
+                  {idx !== 0 && ', '}
+                  <Link
+                    key={categoryName}
+                    to={routes.viewCategoryWithVar.replace(
+                      ':categoryName',
+                      categoryName
+                    )}>
+                    {categoryMeta[categoryName].name}
+                  </Link>
+                </Fragment>
+              ))}
+            </div>
+          </div>
 
-      <Heading variant="h1">
-        <Link to={routes.viewAuthorWithVar.replace(':authorId', authorId)}>
-          {name}
-        </Link>
-      </Heading>
-      <div className={classes.categories}>
-        {categories.map((categoryName, idx) => (
-          <Fragment key={categoryName}>
-            {idx !== 0 && ', '}
-            <Link
-              key={categoryName}
-              to={routes.viewCategoryWithVar.replace(
-                ':categoryName',
-                categoryName
-              )}>
-              {categoryMeta[categoryName].name}
-            </Link>
-          </Fragment>
-        ))}
+          {description && (
+            <Markdown source={description} className={classes.desc} />
+          )}
+
+          <SocialMediaList
+            socialMedia={{
+              email,
+              websiteUrl,
+              gumroadUsername,
+              vrchatUsername:
+                profileResult &&
+                profileResult[ProfileFieldNames.vrchatUsername],
+              vrchatUserId:
+                profileResult && profileResult[ProfileFieldNames.vrchatUserId],
+              discordUsername:
+                discordUsername ||
+                (profileResult &&
+                  profileResult[ProfileFieldNames.discordUsername]),
+              twitterUsername:
+                twitterUsername ||
+                (profileResult &&
+                  profileResult[ProfileFieldNames.twitterUsername]),
+              telegramUsername:
+                profileResult &&
+                profileResult[ProfileFieldNames.telegramUsername],
+              youtubeChannelId:
+                profileResult &&
+                profileResult[ProfileFieldNames.youtubeChannelId],
+              twitchUsername:
+                profileResult &&
+                profileResult[ProfileFieldNames.twitchUsername],
+              patreonUsername:
+                patreonUsername ||
+                (profileResult &&
+                  profileResult[ProfileFieldNames.patreonUsername]),
+              discordServerInviteUrl: discordServerInviteUrl
+            }}
+            actionCategory={analyticsCategory}
+          />
+
+          {isOpenForCommission && (
+            <OpenForCommissionMessage info={commissionInfo} />
+          )}
+
+          {!isOpenForCommission && commissionInfo && (
+            <>
+              <Heading variant="h2">Commission Info</Heading>
+              {commissionInfo}
+            </>
+          )}
+        </div>
+        <div className={classes.col}>
+          <AssetsByAuthorId authorId={authorId} />
+        </div>
       </div>
-
-      {isOpenForCommission && (
-        <OpenForCommissionMessage info={commissionInfo} />
-      )}
-
-      {description && <Markdown source={description} />}
-
-      <SocialMediaList
-        socialMedia={{
-          email,
-          websiteUrl,
-          gumroadUsername,
-          vrchatUsername:
-            profileResult && profileResult[ProfileFieldNames.vrchatUsername],
-          vrchatUserId:
-            profileResult && profileResult[ProfileFieldNames.vrchatUserId],
-          discordUsername:
-            discordUsername ||
-            (profileResult && profileResult[ProfileFieldNames.discordUsername]),
-          twitterUsername:
-            twitterUsername ||
-            (profileResult && profileResult[ProfileFieldNames.twitterUsername]),
-          telegramUsername:
-            profileResult && profileResult[ProfileFieldNames.telegramUsername],
-          youtubeChannelId:
-            profileResult && profileResult[ProfileFieldNames.youtubeChannelId],
-          twitchUsername:
-            profileResult && profileResult[ProfileFieldNames.twitchUsername],
-          patreonUsername:
-            patreonUsername ||
-            (profileResult && profileResult[ProfileFieldNames.patreonUsername]),
-          discordServerInviteUrl: discordServerInviteUrl
-        }}
-        actionCategory={analyticsCategory}
-      />
-
-      {!isOpenForCommission && commissionInfo && (
-        <>
-          <Heading variant="h2">Commission Info</Heading>
-          {commissionInfo}
-        </>
-      )}
 
       {discordServerId && (
         <DiscordServerWidget
@@ -295,8 +339,6 @@ export default ({
           />
         </>
       )}
-      <Heading variant="h2">Assets</Heading>
-      <AssetsByAuthorId authorId={authorId} />
 
       <Heading variant="h2">Meta</Heading>
       {ownedBy && (
