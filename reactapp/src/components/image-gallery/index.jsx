@@ -61,7 +61,7 @@ export default ({
         />
       )}
       {urls.map((url, idx) => (
-        <picture>
+        <picture key={url}>
           <img
             key={url}
             src={url}

@@ -12,13 +12,12 @@ import Button from '../button'
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
 
-export default ({ assetId, onClick = null }) => {
-  // TODO: Check if they are editor! We are assuming the parent does this = not good
-
+// pass isAlreadyApproved to save on database query
+export default ({ assetId, isAlreadyApproved = null, onClick = null }) => {
   const userId = useFirebaseUserId()
   const [isLoadingAsset, isErroredLoadingAsset, asset] = useDatabaseQuery(
     CollectionNames.Assets,
-    assetId
+    isAlreadyApproved !== null ? false : assetId
   )
   const [isSaving, , isSaveError, save] = useDatabaseSave(
     CollectionNames.Assets,
@@ -33,7 +32,9 @@ export default ({ assetId, onClick = null }) => {
     return <Button disabled>Error</Button>
   }
 
-  const { [AssetFieldNames.isApproved]: isApproved } = asset
+  const isApproved = asset
+    ? asset[AssetFieldNames.isApproved]
+    : isAlreadyApproved
 
   const onBtnClick = async () => {
     try {

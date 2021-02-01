@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { Link } from 'react-router-dom'
 import Table from '@material-ui/core/Table'
 import TableHead from '@material-ui/core/TableHead'
@@ -53,10 +53,10 @@ function FieldValue({ val }) {
   }
   if (Array.isArray(val)) {
     return val.map((subVal, idx) => (
-      <>
+      <Fragment key={JSON.stringify(subVal)}>
         {idx !== 0 && ', '}
         <FieldValue val={subVal} />
-      </>
+      </Fragment>
     ))
   }
   if (val !== null && typeof val === 'object') {
@@ -64,9 +64,9 @@ function FieldValue({ val }) {
       return <span>{val.id}</span>
     } else {
       return Object.entries(val).map(([key, subVal]) => (
-        <>
+        <Fragment key={key}>
           {key}: <FieldValue val={subVal} />
-        </>
+        </Fragment>
       ))
     }
   }
@@ -115,7 +115,7 @@ function HistoryData({ data }) {
 }
 
 function ParentLabel({ parent }) {
-  const collectionName = parent.refPath.split('/')[0]
+  const collectionName = parent.parent.id
 
   if (collectionName === CollectionNames.Assets) {
     return (
@@ -141,10 +141,7 @@ export default ({ assetId = null, limit = 20 }) => {
         ]
       : undefined,
     limit,
-    [HistoryFieldNames.createdAt, OrderDirections.DESC],
-    false,
-    undefined,
-    true
+    [HistoryFieldNames.createdAt, OrderDirections.DESC]
   )
 
   if (isLoading || !results) {

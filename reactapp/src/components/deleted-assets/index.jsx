@@ -34,22 +34,15 @@ function AssetsTable({ assets }) {
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
-            <TableCell>Title</TableCell>
-            <TableCell>Created By</TableCell>
+            <TableCell>Asset</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {assets.map(({ id, title, createdBy }) => (
+          {assets.map(({ id, title }) => (
             <TableRow key={id}>
               <TableCell>
                 <Link to={routes.viewAssetWithVar.replace(':assetId', id)}>
                   {title}
-                </Link>
-              </TableCell>
-              <TableCell>
-                <Link
-                  to={routes.viewUserWithVar.replace(':userId', createdBy.id)}>
-                  {createdBy.username}
                 </Link>
               </TableCell>
             </TableRow>
@@ -64,11 +57,7 @@ export default () => {
   let [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.Assets,
     [[AssetFieldNames.isDeleted, Operators.EQUALS, true]],
-    1000,
-    undefined,
-    true,
-    undefined,
-    true
+    1000
   )
 
   if (isLoading) {

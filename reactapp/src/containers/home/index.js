@@ -181,7 +181,10 @@ function Tile({
     <LazyLoad>
       <div className={`${classes.tile} ${double ? classes.double : ''}`}>
         <Card className={classes.card}>
-          <CardActionArea className={classes.contentsWrapper} onClick={onClick}>
+          <CardActionArea
+            className={classes.contentsWrapper}
+            component="div"
+            onClick={onClick}>
             <LinkOrAnchor>
               {!double && (
                 <div className={classes.media}>
@@ -211,7 +214,7 @@ function Tile({
                     <Button
                       size="small"
                       color="primary"
-                      url={actionUrl || url}
+                      // note: no URL is provided here because entire tile is clickable and produces nest anchor warnings
                       onClick={() =>
                         trackAction(
                           analyticsCategoryName,

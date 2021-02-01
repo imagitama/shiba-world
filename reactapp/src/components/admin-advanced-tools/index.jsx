@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, Fragment } from 'react'
 
 import Button from '../button'
 import Paper from '../paper'
@@ -94,10 +94,10 @@ export default () => {
     <>
       <p>These tools are for advanced usage only.</p>
       {functions.map(func => (
-        <>
-          <FunctionCaller key={func.name} {...func} />
+        <Fragment key={func.name}>
+          <FunctionCaller {...func} />
           <br />
-        </>
+        </Fragment>
       ))}
     </>
   )

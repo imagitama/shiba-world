@@ -18,22 +18,6 @@ import useDatabaseQuery, {
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import { setBannerUrls as setBannerUrlsAction } from '../../modules/app'
-
-import LoadingIndicator from '../loading-indicator'
-import ErrorMessage from '../error-message'
-import FormattedDate from '../formatted-date'
-import CommentList from '../comment-list'
-import AddCommentForm from '../add-comment-form'
-import EndorseAssetButton from '../endorse-asset-button'
-import TagChip from '../tag-chip'
-import Heading from '../heading'
-import Button from '../button'
-import VideoPlayer from '../video-player'
-import ImageGallery from '../image-gallery'
-import AdminHistory from '../admin-history'
-import OpenForCommissionsMessage from '../open-for-commissions-message'
-import TutorialSteps from '../tutorial-steps'
-
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
 import {
@@ -52,6 +36,30 @@ import {
 } from '../../media-queries'
 import { THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT } from '../../config'
 
+import LoadingIndicator from '../loading-indicator'
+import ErrorMessage from '../error-message'
+import FormattedDate from '../formatted-date'
+import CommentList from '../comment-list'
+import AddCommentForm from '../add-comment-form'
+import EndorseAssetButton from '../endorse-asset-button'
+import TagChip from '../tag-chip'
+import Heading from '../heading'
+import Button from '../button'
+import VideoPlayer from '../video-player'
+import ImageGallery from '../image-gallery'
+import AdminHistory from '../admin-history'
+import OpenForCommissionsMessage from '../open-for-commissions-message'
+import TutorialSteps from '../tutorial-steps'
+import Pedestal from '../pedestal'
+import DownloadAssetButton from '../download-asset-button'
+import VisitSourceButton from '../visit-source-button'
+import SketchfabEmbed from '../sketchfab-embed'
+import AssetAmendments from '../asset-amendments'
+import TagAmendmentForm from '../tag-amendment-form'
+import ApproveAssetButton from '../approve-asset-button'
+import DeleteAssetButton from '../delete-asset-button'
+import PinAssetButton from '../pin-asset-button'
+
 import NotApprovedMessage from './components/not-approved-message'
 import DeletedMessage from './components/deleted-message'
 import IsPrivateMessage from './components/is-private-message'
@@ -61,13 +69,6 @@ import WorkInProgressMessage from './components/work-in-progress-message'
 import ChildrenAssets from './components/children-assets'
 import SpeciesOutput from './components/species-output'
 import VideoList from './components/video-list'
-
-import Pedestal from '../pedestal'
-import DownloadAssetButton from '../download-asset-button'
-import VisitSourceButton from '../visit-source-button'
-import SketchfabEmbed from '../sketchfab-embed'
-import AssetAmendments from '../asset-amendments'
-import TagAmendmentForm from '../tag-amendment-form'
 
 const useStyles = makeStyles({
   root: {
@@ -537,9 +538,10 @@ export default ({ assetId, switchEditorOpen }) => {
     .filter(isUrlAVideo)
     .filter(fileUrl => fileUrl !== thumbnailUrl)
 
+  const isApprover = canApproveAsset(user)
   const isOwnerOrEditor = canEditAsset(user, createdBy, ownedBy)
 
-  if (isDeleted && !canApproveAsset(user)) {
+  if (isDeleted && !isApprover) {
     return <ErrorMessage>This asset has been deleted.</ErrorMessage>
   }
 
@@ -942,6 +944,44 @@ export default ({ assetId, switchEditorOpen }) => {
                     icon={<EditIcon />}>
                     Edit Asset
                   </Button>
+                </Control>
+              </>
+            ) : null}
+
+            {isApprover ? (
+              <>
+                {' '}
+                <Heading variant="h4">Editor Actions</Heading>
+                <Control>
+                  <ApproveAssetButton assetId={assetId} />
+                </Control>
+                <Control>
+                  <DeleteAssetButton
+                    assetId={assetId}
+                    onClick={({ newValue }) =>
+                      trackAction(
+                        analyticsCategoryName,
+                        newValue === true
+                          ? 'Click delete asset button'
+                          : 'Click undelete asset button',
+                        assetId
+                      )
+                    }
+                  />
+                </Control>
+                <Control>
+                  <PinAssetButton
+                    assetId={assetId}
+                    onClick={({ newValue }) =>
+                      trackAction(
+                        analyticsCategoryName,
+                        newValue === true
+                          ? 'Click pin asset button'
+                          : 'Click unpin asset button',
+                        assetId
+                      )
+                    }
+                  />
                 </Control>
               </>
             ) : null}

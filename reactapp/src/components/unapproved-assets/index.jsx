@@ -36,38 +36,36 @@ function AssetsTable({ assets }) {
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
-            <TableCell>Title</TableCell>
-            <TableCell>Created By</TableCell>
+            <TableCell>Asset</TableCell>
             <TableCell>Controls</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {assets.map(({ id, title, createdBy }) => (
-            <TableRow key={id}>
-              <TableCell>
-                <Link to={routes.viewAssetWithVar.replace(':assetId', id)}>
-                  {title}
-                </Link>
-              </TableCell>
-              <TableCell>
-                <Link
-                  to={routes.viewUserWithVar.replace(':userId', createdBy.id)}>
-                  {createdBy.username}
-                </Link>
-              </TableCell>
-              <TableCell>
-                <ApproveAssetButton
-                  assetId={id}
-                  onClick={({ newValue }) =>
-                    trackAction(
-                      'AdminAssets',
-                      newValue === true ? 'Approved asset' : 'Unapproved asset'
-                    )
-                  }
-                />
-              </TableCell>
-            </TableRow>
-          ))}
+          {assets.map(
+            ({ id, title, [AssetFieldNames.isApproved]: isApproved }) => (
+              <TableRow key={id}>
+                <TableCell>
+                  <Link to={routes.viewAssetWithVar.replace(':assetId', id)}>
+                    {title}
+                  </Link>
+                </TableCell>
+                <TableCell>
+                  <ApproveAssetButton
+                    assetId={id}
+                    isAlreadyApproved={isApproved}
+                    onClick={({ newValue }) =>
+                      trackAction(
+                        'AdminAssets',
+                        newValue === true
+                          ? 'Approved asset'
+                          : 'Unapproved asset'
+                      )
+                    }
+                  />
+                </TableCell>
+              </TableRow>
+            )
+          )}
         </TableBody>
       </Table>
     </Paper>
@@ -77,12 +75,11 @@ function AssetsTable({ assets }) {
 export default () => {
   let [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.Assets,
-    [[AssetFieldNames.isApproved, Operators.EQUALS, false]],
-    1000,
-    undefined,
-    true,
-    undefined,
-    true
+    [
+      [AssetFieldNames.isApproved, Operators.EQUALS, false],
+      [AssetFieldNames.isPrivate, Operators.EQUALS, false]
+    ],
+    1000
   )
 
   results = results

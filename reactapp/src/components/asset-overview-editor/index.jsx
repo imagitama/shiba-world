@@ -41,9 +41,6 @@ import TagChip from '../tag-chip'
 import Heading from '../heading'
 import Button from '../button'
 import VideoPlayer from '../video-player'
-import ApproveAssetButton from '../approve-asset-button'
-import DeleteAssetButton from '../delete-asset-button'
-import PinAssetButton from '../pin-asset-button'
 import FeatureAssetButton from '../feature-asset-button'
 import ImageGallery from '../image-gallery'
 import AdminHistory from '../admin-history'
@@ -704,7 +701,6 @@ export default ({ assetId, switchEditorOpen }) => {
     .filter(isUrlAVideo)
     .filter(fileUrl => fileUrl !== thumbnailUrl)
 
-  const isApprover = canApproveAsset(user)
   const isOwnerOrEditor = canEditAsset(user, createdBy, ownedBy)
   const isAbleToEditPedestal = canEditPedestal(user, createdBy, ownedBy)
 
@@ -1423,14 +1419,6 @@ export default ({ assetId, switchEditorOpen }) => {
                   actionCategory={analyticsCategoryName}
                 />
               </Control>
-              {/* <Control>
-                <Button
-                  onClick={() => setIsEditingSketchfabEmbed(true)}
-                  icon={<ControlCameraIcon />}
-                  color="tertiary">
-                  Embed Sketchfab
-                </Button>
-              </Control> */}
             </>
 
             {isAbleToEditPedestal || true ? (
@@ -1457,44 +1445,6 @@ export default ({ assetId, switchEditorOpen }) => {
                 </Control>
               </>
             ) : null}
-            {isApprover && <Heading variant="h4">Editor Actions</Heading>}
-            {isApprover && (
-              <Control>
-                <ApproveAssetButton assetId={assetId} />
-              </Control>
-            )}
-            {isApprover && (
-              <Control>
-                <DeleteAssetButton
-                  assetId={assetId}
-                  onClick={({ newValue }) =>
-                    trackAction(
-                      analyticsCategoryName,
-                      newValue === true
-                        ? 'Click delete asset button'
-                        : 'Click undelete asset button',
-                      assetId
-                    )
-                  }
-                />
-              </Control>
-            )}
-            {isApprover && (
-              <Control>
-                <PinAssetButton
-                  assetId={assetId}
-                  onClick={({ newValue }) =>
-                    trackAction(
-                      analyticsCategoryName,
-                      newValue === true
-                        ? 'Click pin asset button'
-                        : 'Click unpin asset button',
-                      assetId
-                    )
-                  }
-                />
-              </Control>
-            )}
           </div>
         </div>
       </div>
