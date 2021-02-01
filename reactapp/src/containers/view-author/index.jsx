@@ -27,7 +27,10 @@ import useDatabaseQuery, {
   Operators,
   CollectionNames,
   AssetFieldNames,
-  AuthorFieldNames
+  AuthorFieldNames,
+  options,
+  ProfileFieldNames,
+  UserFieldNames
 } from '../../hooks/useDatabaseQuery'
 import { createRef, canEditAuthor } from '../../utils'
 import { trackAction } from '../../analytics'
@@ -121,11 +124,18 @@ export default ({
   const [isLoading, isErrored, result] = useDatabaseQuery(
     CollectionNames.Authors,
     authorId,
-    undefined,
-    undefined,
-    true,
-    undefined,
-    true
+    {
+      [options.subscribe]: true,
+      [options.populateRefs]: true,
+      [options.queryName]: 'view-author'
+    }
+  )
+  const [, , profileResult] = useDatabaseQuery(
+    CollectionNames.Profiles,
+    // only fetch if there is an owner
+    result && result[AuthorFieldNames.ownedBy]
+      ? result[AuthorFieldNames.ownedBy].id
+      : false
   )
   const classes = useStyles()
 
@@ -156,7 +166,7 @@ export default ({
     return <ErrorMessage>The author does not exist</ErrorMessage>
   }
 
-  const {
+  let {
     [AuthorFieldNames.name]: name,
     [AuthorFieldNames.description]: description,
     [AuthorFieldNames.categories]: categories = [],
@@ -166,8 +176,20 @@ export default ({
     [AuthorFieldNames.lastModifiedBy]: lastModifiedBy,
     [AuthorFieldNames.isOpenForCommission]: isOpenForCommission,
     [AuthorFieldNames.commissionInfo]: commissionInfo,
-    [AuthorFieldNames.avatarUrl]: avatarUrl
+    [AuthorFieldNames.avatarUrl]: avatarUrl,
+    [AuthorFieldNames.email]: email,
+    [AuthorFieldNames.websiteUrl]: websiteUrl,
+    [AuthorFieldNames.gumroadUsername]: gumroadUsername,
+    [AuthorFieldNames.discordUsername]: discordUsername,
+    [AuthorFieldNames.twitterUsername]: twitterUsername,
+    [AuthorFieldNames.patreonUsername]: patreonUsername,
+    [AuthorFieldNames.discordServerInviteUrl]: discordServerInviteUrl
   } = result
+
+  if (profileResult) {
+    if (!description) description = profileResult[ProfileFieldNames.bio]
+    if (!avatarUrl) avatarUrl = ownedBy[UserFieldNames.avatarUrl]
+  }
 
   return (
     <>
@@ -209,7 +231,31 @@ export default ({
       {description && <Markdown source={description} />}
 
       <SocialMediaList
-        socialMedia={result}
+        socialMedia={{
+          email,
+          websiteUrl,
+          gumroadUsername,
+          vrchatUsername:
+            profileResult && profileResult[ProfileFieldNames.vrchatUsername],
+          vrchatUserId:
+            profileResult && profileResult[ProfileFieldNames.vrchatUserId],
+          discordUsername:
+            discordUsername ||
+            (profileResult && profileResult[ProfileFieldNames.discordUsername]),
+          twitterUsername:
+            twitterUsername ||
+            (profileResult && profileResult[ProfileFieldNames.twitterUsername]),
+          telegramUsername:
+            profileResult && profileResult[ProfileFieldNames.telegramUsername],
+          youtubeChannelId:
+            profileResult && profileResult[ProfileFieldNames.youtubeChannelId],
+          twitchUsername:
+            profileResult && profileResult[ProfileFieldNames.twitchUsername],
+          patreonUsername:
+            patreonUsername ||
+            (profileResult && profileResult[ProfileFieldNames.patreonUsername]),
+          discordServerInviteUrl: discordServerInviteUrl
+        }}
         actionCategory={analyticsCategory}
       />
 

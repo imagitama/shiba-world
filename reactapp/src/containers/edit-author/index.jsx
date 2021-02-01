@@ -5,6 +5,8 @@ import Heading from '../../components/heading'
 import ErrorMessage from '../../components/error-message'
 import NoPermissionMessage from '../../components/no-permission-message'
 import LoadingIndicator from '../../components/loading-indicator'
+// import Button from '../../components/button'
+// import SyncAuthorWithOwnerForm from '../../components/sync-author-with-owner-form'
 
 import useDatabaseQuery, { CollectionNames } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
@@ -24,6 +26,7 @@ export default ({
     CollectionNames.Authors,
     authorId
   )
+  // const [isSyncWithOwnerFormOpen, setIsSyncWithOwnerFormOpen] = useState(false)
 
   if (isLoading || isLoadingAuthor) {
     return <LoadingIndicator />
@@ -40,6 +43,11 @@ export default ({
   return (
     <>
       <Heading variant="h1">{isCreating ? 'Create' : 'Edit'} Author</Heading>
+      <p>
+        You can leave some fields blank and if the author has an owner, it will
+        inherit from the owner.
+      </p>
+      {/* <Button onClick={() => setIsSyncWithOwnerFormOpen(currentVal => !currentVal)}>Open Sync With Profile</Button> */}
       <GenericEditor
         collectionName={CollectionNames.Authors}
         id={isCreating ? null : authorId}

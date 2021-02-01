@@ -2,9 +2,9 @@ import React from 'react'
 import shortid from 'shortid'
 import OptimizedImageUploader from '../../../optimized-image-uploader'
 import { fixAccessingImagesUsingToken } from '../../../../utils'
+import Button from '../../../button'
 
 export default ({
-  name,
   onChange,
   value,
   fieldProperties = {
@@ -12,18 +12,22 @@ export default ({
     height: 200,
     directoryName: 'untitled',
     prefixWithHash: true
-  },
-  setFieldsValues
+  }
 }) => {
   return (
     <>
       {value && (
-        <img
-          src={fixAccessingImagesUsingToken(value)}
-          alt="Preview"
-          width={fieldProperties.width}
-          height={fieldProperties.height}
-        />
+        <div>
+          <img
+            src={fixAccessingImagesUsingToken(value)}
+            alt="Preview"
+            width={fieldProperties.width}
+            height={fieldProperties.height}
+          />
+          <Button color="default" onClick={() => onChange(null)}>
+            Clear
+          </Button>
+        </div>
       )}
       <OptimizedImageUploader
         onUploadedUrl={url => {
