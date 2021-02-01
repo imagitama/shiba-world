@@ -2,6 +2,7 @@ import React from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 import AddIcon from '@material-ui/icons/Add'
+import LazyLoad from 'react-lazyload'
 
 import Heading from '../../components/heading'
 import RecentAssets from '../../components/recent-assets'
@@ -47,36 +48,50 @@ export default () => {
         </>
       )}
       <SpeciesBrowser />
-      <RecentAssets
-        limit={5}
-        categoryName={AssetCategories.avatar}
-        title="Recent Avatars"
-      />
-      <RecentAssets
-        limit={5}
-        categoryName={AssetCategories.article}
-        title="News"
-      />
-      <RecentAssets
-        limit={5}
-        categoryName={AssetCategories.accessory}
-        title="Recent Accessories"
-      />
-      <RecentAssets
-        limit={5}
-        categoryName={AssetCategories.animation}
-        title="Recent Animations"
-      />
-      <RecentAssets
-        limit={5}
-        categoryName={AssetCategories.tutorial}
-        title="Recent Tutorials"
-      />
-      <RecentAssets
-        limit={5}
-        categoryName={AssetCategories.world}
-        title="Recent Worlds"
-      />
+      <LazyLoad>
+        {' '}
+        <RecentAssets
+          limit={5}
+          categoryName={AssetCategories.avatar}
+          title="Recent Avatars"
+        />
+      </LazyLoad>
+
+      <LazyLoad>
+        <RecentAssets
+          limit={5}
+          categoryName={AssetCategories.article}
+          title="News"
+        />
+      </LazyLoad>
+      <LazyLoad>
+        <RecentAssets
+          limit={5}
+          categoryName={AssetCategories.accessory}
+          title="Recent Accessories"
+        />
+      </LazyLoad>
+      <LazyLoad>
+        <RecentAssets
+          limit={5}
+          categoryName={AssetCategories.animation}
+          title="Recent Animations"
+        />
+      </LazyLoad>
+      <LazyLoad>
+        <RecentAssets
+          limit={5}
+          categoryName={AssetCategories.tutorial}
+          title="Recent Tutorials"
+        />
+      </LazyLoad>
+      <LazyLoad>
+        <RecentAssets
+          limit={5}
+          categoryName={AssetCategories.world}
+          title="Recent Worlds"
+        />
+      </LazyLoad>
       <Heading variant="h2">Tags</Heading>
       <AllTagsBrowser lazyLoad />
     </>
