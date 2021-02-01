@@ -17,7 +17,8 @@ import useDatabaseQuery, {
   AssetCategories,
   CollectionNames,
   SpeciesFieldNames,
-  Operators
+  Operators,
+  options
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 
@@ -30,6 +31,7 @@ import * as routes from '../../routes'
 import LoadingIndicator from '../../components/loading-indicator'
 import { trackAction } from '../../analytics'
 import { fixAccessingImagesUsingToken } from '../../utils'
+import LazyLoad from 'react-lazyload'
 
 const useStyles = makeStyles({
   description: {
@@ -70,7 +72,10 @@ const SpeciesResult = ({ speciesIdOrSlug }) => {
     CollectionNames.Species,
     isFirebaseId
       ? speciesIdOrSlug
-      : [[SpeciesFieldNames.slug, Operators.EQUALS, speciesIdOrSlug]]
+      : [[SpeciesFieldNames.slug, Operators.EQUALS, speciesIdOrSlug]],
+    {
+      [options.queryName]: `view-species-${speciesIdOrSlug}`
+    }
   )
   const classes = useStyles()
 
@@ -172,49 +177,63 @@ const SpeciesResult = ({ speciesIdOrSlug }) => {
           </Button>
         </>
       )}
-      <RecentAssets
-        speciesId={species.id}
-        limit={999}
-        categoryName={AssetCategories.avatar}
-        showPinned
-        title="Avatars"
-      />
-      <RecentAssets
-        speciesId={species.id}
-        limit={5}
-        categoryName={AssetCategories.article}
-        title="News"
-      />
-      <RecentAssets
-        speciesId={species.id}
-        limit={5}
-        categoryName={AssetCategories.accessory}
-        title="Recent Accessories"
-      />
-      <RecentAssets
-        speciesId={species.id}
-        limit={5}
-        categoryName={AssetCategories.animation}
-        title="Recent Animations"
-      />
-      <RecentAssets
-        speciesId={species.id}
-        limit={5}
-        categoryName={AssetCategories.tutorial}
-        title="Recent Tutorials"
-      />
-      <RecentAssets
-        speciesId={species.id}
-        limit={5}
-        categoryName={AssetCategories.world}
-        title="Recent Worlds"
-      />
-      <RecentAssets
-        speciesId={species.id}
-        limit={5}
-        categoryName={AssetCategories.alteration}
-        title="Recent Alterations"
-      />
+      <LazyLoad>
+        <RecentAssets
+          speciesId={species.id}
+          limit={999}
+          categoryName={AssetCategories.avatar}
+          showPinned
+          title="Avatars"
+        />
+      </LazyLoad>
+      <LazyLoad>
+        <RecentAssets
+          speciesId={species.id}
+          limit={5}
+          categoryName={AssetCategories.article}
+          title="News"
+        />
+      </LazyLoad>
+      <LazyLoad>
+        <RecentAssets
+          speciesId={species.id}
+          limit={5}
+          categoryName={AssetCategories.accessory}
+          title="Recent Accessories"
+        />
+      </LazyLoad>
+      <LazyLoad>
+        <RecentAssets
+          speciesId={species.id}
+          limit={5}
+          categoryName={AssetCategories.animation}
+          title="Recent Animations"
+        />
+      </LazyLoad>
+      <LazyLoad>
+        <RecentAssets
+          speciesId={species.id}
+          limit={5}
+          categoryName={AssetCategories.tutorial}
+          title="Recent Tutorials"
+        />
+      </LazyLoad>
+      <LazyLoad>
+        <RecentAssets
+          speciesId={species.id}
+          limit={5}
+          categoryName={AssetCategories.world}
+          title="Recent Worlds"
+        />
+      </LazyLoad>
+      <LazyLoad>
+        <RecentAssets
+          speciesId={species.id}
+          limit={5}
+          categoryName={AssetCategories.alteration}
+          title="Recent Alterations"
+        />
+      </LazyLoad>
       <Heading variant="h2">Tags</Heading>
       <AllTagsBrowser lazyLoad />
     </>
@@ -261,33 +280,6 @@ function OtherSpecies() {
           content={species[SpeciesFieldNames.thumbnailUrl]}
         />
       </Helmet>
-      {/* <div className={classes.thumbnailWrapper}>
-        <a
-          href={species[SpeciesFieldNames.thumbnailSourceUrl]}
-          title={`Visit the source of the thumbnail for ${
-            species[SpeciesFieldNames.pluralName]
-          }`}
-          target="_blank"
-          rel="noopener noreferrer">
-          <picture>
-            <source
-              srcSet={species[SpeciesFieldNames.thumbnailUrl]}
-              type="image/webp"
-            />
-            <source
-              srcSet={species[SpeciesFieldNames.fallbackThumbnailUrl]}
-              type="image/png"
-            />
-            <img
-              src={species[SpeciesFieldNames.fallbackThumbnailUrl]}
-              alt={`Thumbnail for species ${
-                species[SpeciesFieldNames.pluralName]
-              }`}
-              className={classes.thumbnail}
-            />
-          </picture>
-        </a>
-      </div> */}
       <Heading variant="h1">
         <Link
           to={routes.viewSpeciesWithVar.replace(
@@ -302,49 +294,63 @@ function OtherSpecies() {
           {species[SpeciesFieldNames.description]}
         </Markdown>
       </Paper>
-      <RecentAssets
-        speciesId={false}
-        limit={999}
-        categoryName={AssetCategories.avatar}
-        showPinned
-        title="Avatars"
-      />
-      <RecentAssets
-        speciesId={false}
-        limit={5}
-        categoryName={AssetCategories.article}
-        title="News"
-      />
-      <RecentAssets
-        speciesId={false}
-        limit={5}
-        categoryName={AssetCategories.accessory}
-        title="Recent Accessories"
-      />
-      <RecentAssets
-        speciesId={false}
-        limit={5}
-        categoryName={AssetCategories.animation}
-        title="Recent Animations"
-      />
-      <RecentAssets
-        speciesId={false}
-        limit={5}
-        categoryName={AssetCategories.tutorial}
-        title="Recent Tutorials"
-      />
-      <RecentAssets
-        speciesId={false}
-        limit={5}
-        categoryName={AssetCategories.world}
-        title="Recent Worlds"
-      />
-      <RecentAssets
-        speciesId={false}
-        limit={5}
-        categoryName={AssetCategories.alteration}
-        title="Recent Alterations"
-      />
+      <LazyLoad>
+        <RecentAssets
+          speciesId={false}
+          limit={999}
+          categoryName={AssetCategories.avatar}
+          showPinned
+          title="Avatars"
+        />
+      </LazyLoad>
+      <LazyLoad>
+        <RecentAssets
+          speciesId={false}
+          limit={5}
+          categoryName={AssetCategories.article}
+          title="News"
+        />
+      </LazyLoad>
+      <LazyLoad>
+        <RecentAssets
+          speciesId={false}
+          limit={5}
+          categoryName={AssetCategories.accessory}
+          title="Recent Accessories"
+        />
+      </LazyLoad>
+      <LazyLoad>
+        <RecentAssets
+          speciesId={false}
+          limit={5}
+          categoryName={AssetCategories.animation}
+          title="Recent Animations"
+        />
+      </LazyLoad>
+      <LazyLoad>
+        <RecentAssets
+          speciesId={false}
+          limit={5}
+          categoryName={AssetCategories.tutorial}
+          title="Recent Tutorials"
+        />
+      </LazyLoad>
+      <LazyLoad>
+        <RecentAssets
+          speciesId={false}
+          limit={5}
+          categoryName={AssetCategories.world}
+          title="Recent Worlds"
+        />
+      </LazyLoad>
+      <LazyLoad>
+        <RecentAssets
+          speciesId={false}
+          limit={5}
+          categoryName={AssetCategories.alteration}
+          title="Recent Alterations"
+        />
+      </LazyLoad>
       <Heading variant="h2">Tags</Heading>
       <AllTagsBrowser lazyLoad />
     </>

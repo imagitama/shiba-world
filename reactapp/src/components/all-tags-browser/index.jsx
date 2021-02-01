@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 import LazyLoad from 'react-lazyload'
-import useDatabaseQuery, { CollectionNames } from '../../hooks/useDatabaseQuery'
+import useDatabaseQuery, {
+  CollectionNames,
+  options
+} from '../../hooks/useDatabaseQuery'
 import TagChip from '../tag-chip'
 import LoadingIndicator from '../loading-indicator'
 
@@ -11,7 +14,10 @@ function sortByAlpha(a, b) {
 function Tags() {
   const [isLoading, isErrored, record] = useDatabaseQuery(
     CollectionNames.Summaries,
-    'tags'
+    'tags',
+    {
+      [options.queryName]: 'all-tags-browser'
+    }
   )
 
   if (isLoading) {

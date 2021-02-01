@@ -27,7 +27,8 @@ import useDatabaseQuery, {
   AuthorFieldNames,
   AssetFieldNames,
   DiscordServerFieldNames,
-  AssetCategories
+  AssetCategories,
+  options
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import { setBannerUrls as setBannerUrlsAction } from '../../modules/app'
@@ -584,11 +585,11 @@ export default ({ assetId, switchEditorOpen }) => {
   const [isLoading, isErrored, result] = useDatabaseQuery(
     CollectionNames.Assets,
     assetId,
-    undefined,
-    undefined,
-    true,
-    undefined,
-    true
+    {
+      [options.subscribe]: true,
+      [options.populateRefs]: true,
+      [options.queryName]: 'asset-overview-editor'
+    }
   )
   const classes = useStyles()
   const [, , user] = useUserRecord()

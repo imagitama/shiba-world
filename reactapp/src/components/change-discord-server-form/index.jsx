@@ -4,7 +4,10 @@ import { ReactComponent as DiscordIcon } from '../../assets/images/icons/discord
 import TextInput from '../text-input'
 import Button from '../button'
 
-import useDatabaseQuery, { CollectionNames } from '../../hooks/useDatabaseQuery'
+import useDatabaseQuery, {
+  CollectionNames,
+  options
+} from '../../hooks/useDatabaseQuery'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
@@ -14,7 +17,11 @@ import { createRef } from '../../utils'
 
 function DiscordServerIds() {
   const [isLoading, isErrored, results] = useDatabaseQuery(
-    CollectionNames.DiscordServers
+    CollectionNames.DiscordServers,
+    undefined,
+    {
+      [options.queryName]: 'change-discord-server-form-ids'
+    }
   )
 
   if (isLoading) {
@@ -39,7 +46,9 @@ function DiscordServerIds() {
 
 export default ({ collectionName, id, actionCategory }) => {
   const userId = useFirebaseUserId()
-  const [isLoading, isError, result] = useDatabaseQuery(collectionName, id)
+  const [isLoading, isError, result] = useDatabaseQuery(collectionName, id, {
+    [options.queryName]: `change-discord-server-form`
+  })
   const [isSaving, isSuccess, isFailed, save] = useDatabaseSave(
     collectionName,
     id

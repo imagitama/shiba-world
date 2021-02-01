@@ -5,7 +5,8 @@ import useDatabaseQuery, {
   Operators,
   PollResponsesFieldNames,
   GuestUsersFieldNames,
-  UserFieldNames
+  UserFieldNames,
+  options
 } from '../../hooks/useDatabaseQuery'
 import ErrorMessage from '../error-message'
 import LoadingIndicator from '../loading-indicator'
@@ -20,7 +21,10 @@ function Responses({ pollId }) {
         Operators.EQUALS,
         createRef(CollectionNames.Polls, pollId)
       ]
-    ]
+    ],
+    {
+      [options.queryName]: 'admin-polls'
+    }
   )
 
   if (isLoading) {

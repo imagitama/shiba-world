@@ -3,7 +3,8 @@ import React from 'react'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useDatabaseQuery, {
   CollectionNames,
-  AssetFieldNames
+  AssetFieldNames,
+  options
 } from '../../hooks/useDatabaseQuery'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
@@ -17,7 +18,10 @@ export default ({ assetId, isAlreadyApproved = null, onClick = null }) => {
   const userId = useFirebaseUserId()
   const [isLoadingAsset, isErroredLoadingAsset, asset] = useDatabaseQuery(
     CollectionNames.Assets,
-    isAlreadyApproved !== null ? false : assetId
+    isAlreadyApproved !== null ? false : assetId,
+    {
+      [options.queryName]: 'approve-asset-button'
+    }
   )
   const [isSaving, , isSaveError, save] = useDatabaseSave(
     CollectionNames.Assets,

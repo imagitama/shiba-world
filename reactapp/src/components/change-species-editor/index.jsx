@@ -8,7 +8,8 @@ import useDatabaseQuery, {
   CollectionNames,
   AssetFieldNames,
   SpeciesFieldNames,
-  OrderDirections
+  OrderDirections,
+  options
 } from '../../hooks/useDatabaseQuery'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
@@ -41,8 +42,10 @@ function SpeciesButtons({ activeSpeciesRefs, onClickSpeciesWithId }) {
   const [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.Species,
     undefined,
-    undefined,
-    [SpeciesFieldNames.singularName, OrderDirections.ASC]
+    {
+      [options.orderBy]: [SpeciesFieldNames.singularName, OrderDirections.ASC],
+      [options.queryName]: 'change-species-editor-species-buttons'
+    }
   )
   const classes = useStyles()
 
@@ -76,11 +79,15 @@ const mapSpeciesToRef = speciesDocs =>
     .filter(item => item.id)
     .map(item => createRef(CollectionNames.Species, item.id))
 
+// TODO: Save one query by providing the existing species to this component
 export default ({ assetId, actionCategory = '', onDone = null }) => {
   const userId = useFirebaseUserId()
   const [isLoading, isError, result] = useDatabaseQuery(
     CollectionNames.Assets,
-    assetId
+    assetId,
+    {
+      [options.queryName]: 'change-species-editor'
+    }
   )
   const [isSaving, isSuccess, isFailed, save] = useDatabaseSave(
     CollectionNames.Assets,

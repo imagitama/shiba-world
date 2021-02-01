@@ -3,7 +3,8 @@ import React from 'react'
 import useDatabaseQuery, {
   CollectionNames,
   AssetAmendmentFieldNames,
-  Operators
+  Operators,
+  options
 } from '../../hooks/useDatabaseQuery'
 import { createRef } from '../../utils'
 
@@ -22,11 +23,11 @@ export default ({ assetId }) => {
       ],
       [AssetAmendmentFieldNames.isRejected, Operators.EQUALS, null]
     ],
-    undefined,
-    undefined,
-    true,
-    undefined,
-    true
+    {
+      [options.subscribe]: true,
+      [options.populateRefs]: true,
+      [options.queryName]: `asset-amendments-${assetId}`
+    }
   )
 
   // LOADING

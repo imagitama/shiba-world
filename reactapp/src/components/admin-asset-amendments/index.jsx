@@ -3,7 +3,8 @@ import React from 'react'
 import useDatabaseQuery, {
   CollectionNames,
   AssetAmendmentFieldNames,
-  Operators
+  Operators,
+  options
 } from '../../hooks/useDatabaseQuery'
 
 import LoadingIndicator from '../loading-indicator'
@@ -14,14 +15,12 @@ export default () => {
   const [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.AssetAmendments,
     [[AssetAmendmentFieldNames.isRejected, Operators.EQUALS, null]],
-    undefined,
-    undefined,
-    true,
-    undefined,
-    true
+    {
+      [options.subscribe]: true,
+      [options.populateRefs]: true,
+      [options.queryName]: 'admin-asset-amendments'
+    }
   )
-
-  // LOADING
 
   if (isLoading || !results) {
     return <LoadingIndicator message="Loading amendments..." />

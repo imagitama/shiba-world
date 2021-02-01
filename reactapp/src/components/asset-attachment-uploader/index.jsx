@@ -13,7 +13,8 @@ import { isUrlAnImage, isUrlAVideo, getFilenameFromUrl } from '../../utils'
 import { THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT } from '../../config'
 import useDatabaseQuery, {
   CollectionNames,
-  AssetFieldNames
+  AssetFieldNames,
+  options
 } from '../../hooks/useDatabaseQuery'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { createRef } from '../../utils'
@@ -86,7 +87,10 @@ export default ({ assetId, onDone }) => {
   const [newFileUrls, setNewFileUrls] = useState(null)
   const [isLoading, isErrored, asset] = useDatabaseQuery(
     CollectionNames.Assets,
-    assetId
+    assetId,
+    {
+      [options.queryName]: `asset-attachment-uploader-${assetId}`
+    }
   )
   const [isSaving, , isFailed, save] = useDatabaseSave(
     CollectionNames.Assets,

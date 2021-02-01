@@ -25,7 +25,8 @@ import useDatabaseQuery, {
   CollectionNames,
   AssetFieldNames,
   OrderDirections,
-  SpeciesFieldNames
+  SpeciesFieldNames,
+  options
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import useStorage, { keys as storageKeys } from '../../hooks/useStorage'
@@ -58,8 +59,12 @@ function Assets({ species, categoryName, sortByFieldName, sortByDirection }) {
   const [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.Assets,
     whereClauses.length ? whereClauses : undefined,
-    undefined,
-    [sortByFieldName, sortByDirection]
+    {
+      [options.orderBy]: [sortByFieldName, sortByDirection],
+      [options.queryName]: `view-species-category-${
+        species[SpeciesFieldNames.singularName]
+      }-${categoryName}`
+    }
   )
 
   if (isLoading) {
@@ -100,7 +105,10 @@ export default ({
     CollectionNames.Species,
     isRouteVarAFirebaseId(speciesIdOrSlug)
       ? speciesIdOrSlug
-      : [[SpeciesFieldNames.slug, Operators.EQUALS, speciesIdOrSlug]]
+      : [[SpeciesFieldNames.slug, Operators.EQUALS, speciesIdOrSlug]],
+    {
+      [options.queryName]: `view-species-category-${speciesIdOrSlug}-${categoryName}`
+    }
   )
   const category = useCategoryMeta(categoryName)
   const [assetsSortByFieldName] = useStorage(

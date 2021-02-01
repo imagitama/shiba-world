@@ -9,7 +9,8 @@ import useDatabaseQuery, {
   CollectionNames,
   CommentFieldNames,
   Operators,
-  OrderDirections
+  OrderDirections,
+  options
 } from '../../hooks/useDatabaseQuery'
 
 import { createRef } from '../../utils'
@@ -31,11 +32,13 @@ export default ({ collectionName, parentId }) => {
         createRef(collectionName, parentId)
       ]
     ],
-    100,
-    [CommentFieldNames.createdAt, OrderDirections.DESC],
-    true,
-    undefined,
-    true
+    {
+      [options.limit]: 100,
+      [options.orderBy]: [CommentFieldNames.createdAt, OrderDirections.DESC],
+      [options.subscribe]: true,
+      [options.populateRefs]: true,
+      [options.queryName]: 'comment-list'
+    }
   )
 
   if (isLoading) {

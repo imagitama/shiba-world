@@ -516,10 +516,27 @@ export function getOrderByAsString(orderBy) {
   return orderBy.join('+')
 }
 
+export const options = {
+  limit: 'limit',
+  orderBy: 'orderBy',
+  subscribe: 'subscribe',
+  startAfter: 'startAfter',
+  populateRefs: 'populateRefs',
+  queryName: 'queryName'
+}
+
+const getOptionsIfProvided = maybeOptions => {
+  if (typeof maybeOptions === 'object') {
+    return maybeOptions
+  } else {
+    return false
+  }
+}
+
 export default (
   collectionName,
   whereClauses,
-  limit,
+  limitOrOptions,
   orderBy,
   subscribe = true,
   startAfter = undefined,
@@ -530,10 +547,20 @@ export default (
   const [isErrored, setIsErrored] = useState(false)
   const unsubscribeFromSnapshotRef = useRef()
 
+  const options = getOptionsIfProvided(limitOrOptions) || {
+    limit: limitOrOptions,
+    orderBy,
+    subscribe,
+    startAfter,
+    populateRefs
+  }
+
   const whereClausesAsString = getWhereClausesAsString(whereClauses)
-  const orderByAsString = getOrderByAsString(orderBy)
-  const startAfterAsString = getStartAfterAsString(startAfter)
-  const limitAsString = getLimitAsString(limit)
+  const orderByAsString = getOrderByAsString(options.orderBy)
+  const startAfterAsString = getStartAfterAsString(options.startAfter)
+  const limitAsString = getLimitAsString(options.limit)
+
+  // const subscribe = getIfToSubscribe(subscribeOrOptions)
 
   async function doIt() {
     try {
@@ -544,7 +571,8 @@ export default (
           whereClausesAsString,
           limitAsString,
           orderByAsString,
-          startAfterAsString
+          startAfterAsString,
+          options.queryName
         )
       }
 
@@ -574,24 +602,26 @@ export default (
       } else {
       }
 
-      if (limit) {
-        queryChain = queryChain.limit(limit)
+      if (options.limit) {
+        queryChain = queryChain.limit(options.limit)
       }
 
-      if (orderBy) {
-        queryChain = queryChain.orderBy(orderBy[0], orderBy[1])
+      if (options.orderBy) {
+        queryChain = queryChain.orderBy(options.orderBy[0], options.orderBy[1])
       }
 
-      if (startAfter) {
-        queryChain = queryChain.startAfter(startAfter)
+      if (options.startAfter) {
+        queryChain = queryChain.startAfter(options.startAfter)
       }
 
       async function processResults(results) {
         if (isGettingSingleRecord) {
-          setRecordOrRecords(await formatRawDoc(results, true, populateRefs))
+          setRecordOrRecords(
+            await formatRawDoc(results, true, options.populateRefs)
+          )
         } else {
           setRecordOrRecords(
-            await formatRawDocs(results.docs, true, populateRefs)
+            await formatRawDocs(results.docs, true, options.populateRefs)
           )
         }
 
@@ -599,7 +629,7 @@ export default (
         setIsErrored(false)
       }
 
-      if (subscribe) {
+      if (options.subscribe) {
         unsubscribeFromSnapshotRef.current = queryChain.onSnapshot(
           processResults
         )

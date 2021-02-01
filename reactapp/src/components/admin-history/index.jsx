@@ -16,7 +16,8 @@ import useDatabaseQuery, {
   CollectionNames,
   HistoryFieldNames,
   OrderDirections,
-  Operators
+  Operators,
+  options
 } from '../../hooks/useDatabaseQuery'
 import * as routes from '../../routes'
 import { createRef } from '../../utils'
@@ -140,8 +141,11 @@ export default ({ assetId = null, limit = 20 }) => {
           ]
         ]
       : undefined,
-    limit,
-    [HistoryFieldNames.createdAt, OrderDirections.DESC]
+    {
+      [options.limit]: limit,
+      [options.orderBy]: [HistoryFieldNames.createdAt, OrderDirections.DESC],
+      [options.queryName]: 'admin-history'
+    }
   )
 
   if (isLoading || !results) {

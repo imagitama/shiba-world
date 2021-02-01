@@ -10,7 +10,8 @@ import useDatabaseQuery, {
   Operators,
   OrderDirections,
   AssetFieldNames,
-  UserFieldNames
+  UserFieldNames,
+  options
 } from '../../hooks/useDatabaseQuery'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
@@ -152,11 +153,16 @@ export default ({ onClose, isMobile = false }) => {
           ]
         ]
       : false, // do not query if not logged in
-    100,
-    [NotificationsFieldNames.createdAt, OrderDirections.DESC],
-    false,
-    undefined,
-    true
+    {
+      [options.limit]: 100,
+      [options.orderBy]: [
+        NotificationsFieldNames.createdAt,
+        OrderDirections.DESC
+      ],
+      [options.subscribe]: true,
+      [options.populateRefs]: true,
+      [options.queryName]: 'notifications-menu-children'
+    }
   )
 
   useEffect(() => {

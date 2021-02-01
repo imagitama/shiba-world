@@ -5,7 +5,8 @@ import TextField from '@material-ui/core/TextField'
 
 import useDatabaseQuery, {
   CollectionNames,
-  ProfileFieldNames
+  ProfileFieldNames,
+  options
 } from '../../hooks/useDatabaseQuery'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
@@ -28,7 +29,10 @@ export default ({ onSaveClick = null }) => {
   const userId = useFirebaseUserId()
   const [isLoadingProfile, isErroredLoadingProfile, profile] = useDatabaseQuery(
     CollectionNames.Profiles,
-    userId
+    userId,
+    {
+      [options.queryName]: 'bio-editor'
+    }
   )
   const [isSaving, isSuccess, isErrored, save] = useDatabaseSave(
     CollectionNames.Profiles,

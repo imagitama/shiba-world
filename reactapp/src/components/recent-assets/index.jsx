@@ -5,7 +5,8 @@ import useDatabaseQuery, {
   Operators,
   CollectionNames,
   AssetFieldNames,
-  OrderDirections
+  OrderDirections,
+  options
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 
@@ -72,11 +73,14 @@ export default ({
   const [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.Assets,
     whereClauses,
-    limit,
-    [AssetFieldNames.createdAt, OrderDirections.DESC]
+    {
+      [options.limit]: limit,
+      [options.orderBy]: [AssetFieldNames.createdAt, OrderDirections.DESC],
+      [options.queryName]: `recent-assets-${speciesId}-${categoryName}`
+    }
   )
 
-  if (isLoading) {
+  if (isLoading || !results) {
     return <LoadingIndicator />
   }
 
