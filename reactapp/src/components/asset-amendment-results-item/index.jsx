@@ -23,7 +23,7 @@ import FormattedDate from '../formatted-date'
 import TagChip from '../tag-chip'
 import Button from '../button'
 
-const TagsDiff = ({ originalTags, alienTags }) => {
+const TagsDiff = ({ originalTags = [], alienTags }) => {
   const addedTags = []
   const removedTags = []
 
