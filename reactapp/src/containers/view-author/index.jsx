@@ -157,7 +157,9 @@ export default ({
   const [, , profileResult] = useDatabaseQuery(
     CollectionNames.Profiles,
     // only fetch if there is an owner
-    result && result[AuthorFieldNames.ownedBy]
+    result &&
+      result[AuthorFieldNames.inheritFields] !== false &&
+      result[AuthorFieldNames.ownedBy]
       ? result[AuthorFieldNames.ownedBy].id
       : false
   )
@@ -207,13 +209,16 @@ export default ({
     [AuthorFieldNames.discordUsername]: discordUsername,
     [AuthorFieldNames.twitterUsername]: twitterUsername,
     [AuthorFieldNames.patreonUsername]: patreonUsername,
-    [AuthorFieldNames.discordServerInviteUrl]: discordServerInviteUrl
+    [AuthorFieldNames.discordServerInviteUrl]: discordServerInviteUrl,
+    [AuthorFieldNames.inheritFields]: inheritFields
   } = result
 
-  if (profileResult) {
+  if (inheritFields !== false && profileResult) {
     if (!description) description = profileResult[ProfileFieldNames.bio]
     if (!avatarUrl) avatarUrl = ownedBy[UserFieldNames.avatarUrl]
   }
+
+  console.log('inherit', inheritFields)
 
   return (
     <>

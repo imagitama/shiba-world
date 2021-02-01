@@ -9,6 +9,14 @@ import {
 
 export default [
   {
+    name: AuthorFieldNames.inheritFields,
+    label: 'Inherit fields',
+    type: fieldTypes.checkbox,
+    default: true,
+    hint:
+      'Automatically inherit fields from your own profile if you leave them empty (eg. Twitter username, Discord username etc.)'
+  },
+  {
     name: AuthorFieldNames.name,
     label: 'Name',
     type: fieldTypes.text,

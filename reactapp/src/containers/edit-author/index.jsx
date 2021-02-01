@@ -43,10 +43,6 @@ export default ({
   return (
     <>
       <Heading variant="h1">{isCreating ? 'Create' : 'Edit'} Author</Heading>
-      <p>
-        You can leave some fields blank and if the author has an owner, it will
-        inherit from the owner.
-      </p>
       {/* <Button onClick={() => setIsSyncWithOwnerFormOpen(currentVal => !currentVal)}>Open Sync With Profile</Button> */}
       <GenericEditor
         collectionName={CollectionNames.Authors}

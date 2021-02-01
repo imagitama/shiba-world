@@ -246,7 +246,8 @@ export const AuthorFieldNames = {
   avatarUrl: 'avatarUrl',
   // fallbackAvatarUrl: 'fallbackAvatarUrl', REMOVED
   bannerUrl: 'bannerUrl',
-  fallbackBannerUrl: 'fallbackBannerUrl'
+  fallbackBannerUrl: 'fallbackBannerUrl',
+  inheritFields: 'inheritFields'
 }
 
 export const DiscordServerFieldNames = {

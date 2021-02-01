@@ -99,7 +99,10 @@ export default ({
       fields.reduce((newFormFields, fieldConfig) => {
         return {
           ...newFormFields,
-          [fieldConfig.name]: result[fieldConfig.name] || fieldConfig.default
+          [fieldConfig.name]:
+            result[fieldConfig.name] === false
+              ? false
+              : result[fieldConfig.name] || fieldConfig.default
         }
       }, {})
     )
