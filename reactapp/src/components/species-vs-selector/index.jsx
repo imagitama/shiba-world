@@ -1,5 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
+import CheckIcon from '@material-ui/icons/Check'
 
 import useDatabaseQuery, {
   SpeciesFieldNames,
@@ -51,20 +52,52 @@ const useStyles = makeStyles({
     transition: 'all 100ms',
     transform: 'rotate(-76deg)',
     fontSize: '75%'
+  },
+  show: {
+    opacity: 1
+  },
+  selectedIcon: {
+    background: '#FFF',
+    color: '#000',
+    borderRadius: '100%',
+    padding: '0.5rem',
+    position: 'absolute',
+    top: '4px',
+    left: '25px',
+    width: '30px',
+    height: '30px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 })
 
-const Species = ({ id, title, optimizedThumbnailUrl, onClick }) => {
+const Species = ({
+  id,
+  title,
+  optimizedThumbnailUrl,
+  onClick,
+  isSelected = false,
+  alwaysShowLabels = false
+}) => {
   const classes = useStyles()
 
   return (
     <div className={classes.item} onClick={() => onClick(id)}>
-      <span className={classes.title}>{title}</span>
+      <span
+        className={`${classes.title} ${alwaysShowLabels ? classes.show : ''}`}>
+        {title}
+      </span>
       <img
         src={fixAccessingImagesUsingToken(optimizedThumbnailUrl)}
         alt={`Thumbnail for species ${title}`}
         className={classes.thumbnail}
       />
+      {isSelected && (
+        <div className={classes.selectedIcon}>
+          <CheckIcon />
+        </div>
+      )}
     </div>
   )
 }
@@ -73,7 +106,11 @@ function sortSpeciesByAlpha([speciesNameA], [speciesNameB]) {
   return speciesNameA.localeCompare(speciesNameB)
 }
 
-export default ({ onSpeciesClick = null }) => {
+export default ({
+  selectedSpeciesIds = [],
+  onSpeciesClick = null,
+  alwaysShowLabels = false
+}) => {
   const [isLoading, isError, results] = useDatabaseQuery(
     CollectionNames.Species
   )
@@ -124,6 +161,8 @@ export default ({ onSpeciesClick = null }) => {
                 optimizedThumbnailUrl={optimizedThumbnailUrl}
                 backupThumbnailUrl={backupThumbnailUrl}
                 onClick={onSpeciesClick}
+                isSelected={selectedSpeciesIds.includes(id)}
+                alwaysShowLabels={alwaysShowLabels}
               />
             )
           )}

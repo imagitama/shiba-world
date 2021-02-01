@@ -133,25 +133,20 @@ export default () => {
     return (
       <SpeciesSelector
         selectedCategory={categoryValue}
-        onSelect={(nameToAdd, idToAdd) =>
+        onSelect={idToAdd =>
           setSpeciesValue(currentVal =>
-            currentVal.concat([
-              idToAdd ? createRef(CollectionNames.Species, idToAdd) : nameToAdd
-            ])
+            currentVal.concat([createRef(CollectionNames.Species, idToAdd)])
           )
         }
-        onDeSelect={(nameToRemove, idToRemove) =>
+        onDeSelect={idToRemove =>
           setSpeciesValue(currentVal =>
             currentVal.filter(species => {
-              if (idToRemove) {
-                if (isRef(species)) {
-                  if (species.ref.id === idToRemove) {
-                    return false
-                  }
+              if (isRef(species)) {
+                if (species.ref.id === idToRemove) {
+                  return false
                 }
-                return true
               }
-              return species !== nameToRemove
+              return true
             })
           )
         }

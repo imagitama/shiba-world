@@ -1,21 +1,11 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import Card from '@material-ui/core/Card'
-import CardActionArea from '@material-ui/core/CardActionArea'
-import CardContent from '@material-ui/core/CardContent'
-import Typography from '@material-ui/core/Typography'
 
-import useDatabaseQuery, {
-  CollectionNames,
-  SpeciesFieldNames
-} from '../../hooks/useDatabaseQuery'
 import useCategoryMeta from '../../hooks/useCategoryMeta'
 
 import Button from '../button'
 import Heading from '../heading'
-import LoadingIndicator from '../loading-indicator'
-import ErrorMessage from '../error-message'
-import { isRef, fixAccessingImagesUsingToken } from '../../utils'
+import SpeciesVsSelector from '../species-vs-selector'
 
 const useStyles = makeStyles({
   doneBtn: {
@@ -53,44 +43,6 @@ const useStyles = makeStyles({
   }
 })
 
-function Item({
-  name,
-  shortDescription,
-  optimizedThumbnailUrl,
-  onClick,
-  isSelected
-}) {
-  const classes = useStyles()
-  return (
-    <div className={classes.item}>
-      <Card className={isSelected ? classes.isSelected : ''}>
-        <CardActionArea className={classes.contentsWrapper} onClick={onClick}>
-          <div className={classes.media}>
-            <img
-              src={optimizedThumbnailUrl}
-              alt={`Thumbnail for species ${name}`}
-              className={classes.thumbnail}
-            />
-          </div>
-          <CardContent className={classes.content}>
-            <Typography variant="h5" component="h2">
-              {name}
-            </Typography>
-            <Typography component="p">{shortDescription}</Typography>
-          </CardContent>
-        </CardActionArea>
-      </Card>
-    </div>
-  )
-}
-
-function sortSpeciesByAlpha(
-  { singularName: singularNameA },
-  { singularName: singularNameB }
-) {
-  return singularNameA.localeCompare(singularNameB)
-}
-
 export default ({
   selectedCategory,
   onSelect,
@@ -100,71 +52,40 @@ export default ({
 }) => {
   const classes = useStyles()
   const { nameSingular } = useCategoryMeta(selectedCategory)
-  const [isLoading, isError, results] = useDatabaseQuery(
-    CollectionNames.Species
-  )
-
-  if (isLoading) {
-    return <LoadingIndicator />
-  }
-
-  if (isError) {
-    return <ErrorMessage>Failed to load species</ErrorMessage>
-  }
 
   return (
     <>
       <Heading variant="h1">Upload {nameSingular}</Heading>
       <Heading variant="h2">Select a species</Heading>
-      <p>This is optional - you can select none and click Done.</p>
+      <p>
+        Each asset on VRCArena is categorized by their species to help people
+        find related content. Pick a species below (or click Skip if it does not
+        belong to a single species).
+      </p>
+      <p>
+        <em>
+          Can't find your species? Click Skip for now and join our Discord to
+          suggest adding it!
+        </em>
+      </p>
       <Button onClick={() => onDone()}>Skip</Button>
-      <div className={classes.items}>
-        {results
-          .sort(sortSpeciesByAlpha)
-          .map(result => [
-            result.singularName,
-            {
-              id: result.id,
-              name: result[SpeciesFieldNames.singularName],
-              shortDescription: result[SpeciesFieldNames.shortDescription],
-              optimizedThumbnailUrl: fixAccessingImagesUsingToken(
-                result[SpeciesFieldNames.thumbnailUrl]
-              ),
-              thumbnailUrl: fixAccessingImagesUsingToken(
-                result[SpeciesFieldNames.fallbackThumbnailurl]
-              )
-            }
-          ])
-
-          .map(([name, meta]) => (
-            <Item
-              key={name}
-              {...meta}
-              isSelected={
-                selectedSpeciesMulti.findIndex(selectedSpeciesItem => {
-                  if (isRef(selectedSpeciesItem)) {
-                    return meta.id && selectedSpeciesItem.ref.id === meta.id
-                  }
-                  return selectedSpeciesItem === name
-                }) !== -1
-              }
-              onClick={() => {
-                if (
-                  selectedSpeciesMulti.findIndex(selectedSpeciesItem => {
-                    if (isRef(selectedSpeciesItem)) {
-                      return meta.id && selectedSpeciesItem.ref.id === meta.id
-                    }
-                    return selectedSpeciesItem === name
-                  }) !== -1
-                ) {
-                  onDeSelect(name, meta.id)
-                } else {
-                  onSelect(name, meta.id)
-                }
-              }}
-            />
-          ))}
-      </div>
+      <SpeciesVsSelector
+        selectedSpeciesIds={selectedSpeciesMulti.map(
+          selectedSpeciesItem => selectedSpeciesItem.ref.id
+        )}
+        onSpeciesClick={speciesId => {
+          if (
+            selectedSpeciesMulti.findIndex(
+              selectedSpeciesItem => selectedSpeciesItem.ref.id === speciesId
+            ) !== -1
+          ) {
+            onDeSelect(speciesId)
+          } else {
+            onSelect(speciesId)
+          }
+        }}
+        alwaysShowLabels
+      />
       <div className={classes.doneBtn}>
         <Button size="large" onClick={() => onDone()}>
           Done
