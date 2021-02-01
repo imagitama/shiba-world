@@ -3,6 +3,7 @@ import TextField from '@material-ui/core/TextField'
 // import Markdown from 'react-markdown'
 import { makeStyles } from '@material-ui/core/styles'
 import SaveIcon from '@material-ui/icons/Save'
+import Checkbox from '@material-ui/core/Checkbox'
 
 import Paper from '../paper'
 import Button from '../button'
@@ -16,6 +17,7 @@ import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
 import { trackAction } from '../../analytics'
+import { addQuotesToDescription } from '../../utils/formatting'
 
 const useStyles = makeStyles({
   input: {
@@ -36,6 +38,7 @@ export default ({
 }) => {
   const userId = useFirebaseUserId()
   const [newDescriptionValue, setNewDescriptionValue] = useState(description)
+  const [isUsingQuotes, setIsUsingQuotes] = useState(false)
   const [isSaving, isSaveSuccess, isSaveError, save] = useDatabaseSave(
     CollectionNames.Assets,
     assetId
@@ -90,6 +93,21 @@ export default ({
         rows={15}
         className={classes.input}
       />
+      <Checkbox
+        checked={isUsingQuotes}
+        onClick={() => {
+          if (!isUsingQuotes) {
+            setNewDescriptionValue(currentVal => {
+              const quotedDesc = addQuotesToDescription(currentVal)
+              onChange(quotedDesc)
+              return quotedDesc
+            })
+          }
+          setIsUsingQuotes(!isUsingQuotes)
+        }}
+      />{' '}
+      Add quote symbols to description (use if you copy the description from a
+      third party like Gumroad)
       {/* <Markdown source={newDescriptionValue} /> */}
       <div className={classes.controls}>
         <Button onClick={onSaveBtnClick} icon={<SaveIcon />}>

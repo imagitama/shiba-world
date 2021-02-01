@@ -18,6 +18,7 @@ import { createRef } from '../../utils'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import OptimizedImageUploader from '../optimized-image-uploader'
 import { THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, paths } from '../../config'
+import { addQuotesToDescription } from '../../utils/formatting'
 
 const useStyles = makeStyles({
   field: {
@@ -52,13 +53,6 @@ const getFieldsToSave = (fields, whichFieldsAreEnabled) => {
   }
 
   return fieldsToSave
-}
-
-const addQuotesToDescription = desc => {
-  return desc
-    .split('\n')
-    .map(line => `> ${line}`)
-    .join('\n')
 }
 
 const isValidPreviewImageUrl = url => {
@@ -100,7 +94,7 @@ export default ({ assetId, gumroadUrl, onDone }) => {
     assetId
   )
   const classes = useStyles()
-  const [isUsingQuotes, setIsUsingQuotes] = useState(false)
+  const [isUsingQuotes, setIsUsingQuotes] = useState(true)
   const [previewImageUrl, setPreviewImageUrl] = useState('')
   const [previewImageFile, setPreviewImageFile] = useState(null)
 

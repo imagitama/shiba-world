@@ -918,6 +918,11 @@ export default ({ assetId, switchEditorOpen }) => {
         </EditorArea>
       )}
       <div className={classes.pedestalControls}>
+        {discordServer && (
+          <div className={classes.pedestalDiscordServerInfo}>
+            <DiscordServerInfo discordServer={discordServer} />
+          </div>
+        )}
         <EditorArea
           label="Source"
           icon={LaunchIcon}
@@ -930,13 +935,17 @@ export default ({ assetId, switchEditorOpen }) => {
               actionCategory={analyticsCategoryName}
               onDone={() => setIsSourceUrlEditorOpen(false)}
             />
+          ) : sourceUrl ? (
+            <>
+              <VisitSourceButton
+                assetId={assetId}
+                sourceUrl={sourceUrl}
+                categoryName={category}
+                isNoFilesAttached={downloadUrls.length === 0}
+              />
+            </>
           ) : (
-            <VisitSourceButton
-              assetId={assetId}
-              sourceUrl={sourceUrl}
-              categoryName={category}
-              isNoFilesAttached={downloadUrls.length === 0}
-            />
+            'You have not set a source yet!'
           )}
         </EditorArea>
         {isGumroadUrl(sourceUrl) ? (
@@ -968,11 +977,6 @@ export default ({ assetId, switchEditorOpen }) => {
           </EditorArea>
         ) : null}
         <ViewSketchfabEmbedButton />
-        {discordServer && (
-          <div className={classes.pedestalDiscordServerInfo}>
-            <DiscordServerInfo discordServer={discordServer} />
-          </div>
-        )}
       </div>
       <Description />
     </div>
