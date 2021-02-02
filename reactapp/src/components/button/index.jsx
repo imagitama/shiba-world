@@ -32,6 +32,7 @@ export default ({
   icon,
   isDisabled,
   className = '',
+  openInNewTab = true,
   ...props
 }) => {
   const classes = useStyles()
@@ -59,7 +60,11 @@ export default ({
       )
     } else {
       return (
-        <a href={url} target="_blank" rel="noopener noreferrer">
+        <a
+          href={url}
+          {...(openInNewTab
+            ? { target: '_blank', rel: 'noopener noreferrer' }
+            : {})}>
           <FinalButton />
         </a>
       )

@@ -45,8 +45,25 @@ const CollectionNames = {
   FeaturedAssetsForUsers: 'featuredAssetsForUsers',
   Tweets: 'tweets',
   AssetAmendments: 'assetAmendments',
+  UserMeta: 'userMeta',
+  DiscordMessages: 'discordMessages',
 }
 module.exports.CollectionNames = CollectionNames
+
+const UserMetaFieldNames = {
+  isPatron: 'isPatron',
+  patreonUserId: 'patreonUserId',
+  patreonRewardIds: 'patreonRewardIds',
+  // future fields
+  isAdmin: 'isAdmin',
+  isEditor: 'isEditor',
+  isBanned: 'isBanned',
+  banReason: 'banReason',
+  // meta
+  lastModifiedAt: 'lastModifiedAt',
+  lastModifiedBy: 'lastModifiedBy',
+}
+module.exports.UserMetaFieldNames = UserMetaFieldNames
 
 const AssetAmendmentFieldNames = {
   asset: 'asset',
@@ -139,8 +156,8 @@ const UserFieldNames = {
   createdAt: 'createdAt',
   isBanned: 'isBanned',
   banReason: 'banReason',
-  isPatron: 'isPatron',
-  patreonUserId: 'patreonUserId',
+  isPatron: 'isPatron', // deprecated
+  patreonUserId: 'patreonUserId', // deprecated
 }
 module.exports.UserFieldNames = UserFieldNames
 

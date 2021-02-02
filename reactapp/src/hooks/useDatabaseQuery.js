@@ -39,7 +39,24 @@ export const CollectionNames = {
   Special: 'special',
   PollTallies: 'pollTallies',
   FeaturedAssetsForUsers: 'featuredAssetsForUsers',
-  AssetAmendments: 'assetAmendments'
+  Tweets: 'tweets',
+  AssetAmendments: 'assetAmendments',
+  UserMeta: 'userMeta',
+  DiscordMessages: 'discordMessages'
+}
+
+export const UserMetaFieldNames = {
+  isPatron: 'isPatron',
+  patreonUserId: 'patreonUserId',
+  patreonRewardIds: 'patreonRewardIds',
+  // future fields
+  isAdmin: 'isAdmin',
+  isEditor: 'isEditor',
+  isBanned: 'isBanned',
+  banReason: 'banReason',
+  // meta
+  lastModifiedAt: 'lastModifiedAt',
+  lastModifiedBy: 'lastModifiedBy'
 }
 
 export const specialCollectionIds = {
