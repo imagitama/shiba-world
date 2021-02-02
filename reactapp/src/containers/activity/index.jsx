@@ -18,7 +18,8 @@ import useDatabaseQuery, {
   HistoryFieldNames,
   OrderDirections,
   AuthorFieldNames,
-  AssetFieldNames
+  AssetFieldNames,
+  UserFieldNames
 } from '../../hooks/useDatabaseQuery'
 import * as routes from '../../routes'
 
@@ -26,7 +27,9 @@ function FormattedUserName({ message, parent, createdBy }) {
   if (message === 'User signup') {
     return (
       <Link to={routes.viewUserWithVar.replace(':userId', parent.id)}>
-        {parent.username}
+        {parent[UserFieldNames.username]
+          ? parent[UserFieldNames.username]
+          : 'Someone'}
       </Link>
     )
   }
@@ -34,7 +37,9 @@ function FormattedUserName({ message, parent, createdBy }) {
   if (createdBy) {
     return (
       <Link to={routes.viewUserWithVar.replace(':userId', createdBy.id)}>
-        {createdBy.username}
+        {createdBy[UserFieldNames.username]
+          ? createdBy[UserFieldNames.username]
+          : 'Someone'}
       </Link>
     )
   }
@@ -65,11 +70,23 @@ function getLabelForRelevantData(collectionName, result) {
   switch (collectionName) {
     case CollectionNames.Assets:
     case CollectionNames.Requests:
-      return result.title
+      if (result.title) {
+        return result.title
+      } else {
+        return 'an asset'
+      }
     case CollectionNames.Authors:
-      return result[AuthorFieldNames.name]
+      if (result[AuthorFieldNames.name]) {
+        return result[AuthorFieldNames.name]
+      } else {
+        return 'an author'
+      }
     case CollectionNames.Users:
-      return result.username
+      if (result.username) {
+        return result.username
+      } else {
+        return 'a user'
+      }
     default:
       return '(unknown collection name)'
   }
@@ -183,6 +200,9 @@ function getCollectionNameForResult(result) {
   if (result.parentPath) {
     return result.parentPath
   }
+  if (result.parent) {
+    return result.parent.id
+  }
   return result.refPath.split('/')[0]
 }
 
@@ -271,8 +291,10 @@ function ResultsTable({ results }) {
             <TableRow key={id} title={id}>
               {children ? (
                 <TableCell>
-                  {createdBy ? createdBy.username : 'Someone'} performed{' '}
-                  {children.length} actions -{' '}
+                  {createdBy && createdBy[UserFieldNames.username]
+                    ? createdBy[UserFieldNames.username]
+                    : 'Someone'}{' '}
+                  performed {children.length} actions -{' '}
                   <span onClick={() => onToggleClick(id)}>Toggle</span>
                   {expandedResults[id] && <ResultsTable results={children} />}
                 </TableCell>

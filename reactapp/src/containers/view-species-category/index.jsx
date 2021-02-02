@@ -80,7 +80,7 @@ function Assets({ species, categoryName, sortByFieldName, sortByDirection }) {
     )
   }
 
-  if (!results.length) {
+  if (!results || !results.length) {
     return <NoResultsMessage />
   }
 

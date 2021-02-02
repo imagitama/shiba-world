@@ -218,8 +218,6 @@ export default ({
     if (!avatarUrl) avatarUrl = ownedBy[UserFieldNames.avatarUrl]
   }
 
-  console.log('inherit', inheritFields)
-
   return (
     <>
       <Helmet>
