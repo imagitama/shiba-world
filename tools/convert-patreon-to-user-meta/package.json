@@ -1,0 +1,14 @@
+{
+  "name": "convert-patreon-to-user-meta",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "GOOGLE_APPLICATION_CREDENTIALS=key.json node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "firebase-admin": "^9.4.2"
+  }
+}
