@@ -138,7 +138,7 @@ function AvatarAssetResults({ assets }) {
   }, {})
 
   const scrollToSpeciesId = speciesId => {
-    if (!speciesId in speciesMetaById) {
+    if (!(speciesId in speciesMetaById)) {
       throw new Error(
         `Cannot scroll to species ${speciesId}: does not exist in meta!`
       )
