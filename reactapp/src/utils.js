@@ -1,6 +1,10 @@
 import firebase from 'firebase/app'
 import 'firebase/firestore'
-import { AuthorFieldNames, UserFieldNames } from './hooks/useDatabaseQuery'
+import {
+  AuthorFieldNames,
+  UserFieldNames,
+  UserMetaFieldNames
+} from './hooks/useDatabaseQuery'
 
 export function scrollToTop(isSmooth = true) {
   return scrollTo(0, isSmooth)
@@ -60,27 +64,24 @@ export function canEditAsset(currentUser, createdBy, ownedBy) {
   return false
 }
 
-export function isUserAPatron(currentUser) {
-  if (currentUser && currentUser[UserFieldNames.isPatron]) {
-    return true
-  }
-
-  return false
-}
-
-export function canEditPedestal(currentUser, createdBy, ownedBy) {
+export function canEditPedestal(
+  currentUser,
+  createdBy,
+  ownedBy,
+  userMetaResult
+) {
   if (!canEditAsset(currentUser, createdBy, ownedBy)) {
     return false
-  }
-
-  if (currentUser[UserFieldNames.isPatron]) {
-    return true
   }
 
   if (
     currentUser[UserFieldNames.isAdmin] ||
     currentUser[UserFieldNames.isEditor]
   ) {
+    return true
+  }
+
+  if (userMetaResult && userMetaResult[UserMetaFieldNames.isPatron]) {
     return true
   }
 

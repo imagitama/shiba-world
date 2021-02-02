@@ -80,7 +80,7 @@ const storeRewardIds = async (userId, patreonUserId, rewardIds) => {
     .doc(userId)
     .set(
       {
-        [UserMetaFieldNames.isPatron]: rewardIds.length,
+        [UserMetaFieldNames.isPatron]: rewardIds.length !== 0,
         [UserMetaFieldNames.patreonUserId]: patreonUserId,
         [UserMetaFieldNames.patreonRewardIds]: rewardIds,
         [UserMetaFieldNames.lastModifiedAt]: new Date(),

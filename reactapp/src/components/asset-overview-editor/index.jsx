@@ -593,6 +593,10 @@ export default ({ assetId, switchEditorOpen }) => {
   )
   const classes = useStyles()
   const [, , user] = useUserRecord()
+  const [, , userMetaResult] = useDatabaseQuery(
+    CollectionNames.UserMeta,
+    user.id
+  )
   const [isSpeciesEditorOpen, setIsSpeciesEditorOpen] = useState(false)
   const [isAttachFileFormOpen, setIsAttachFileFormOpen] = useState(false)
   const [isTutorialStepsEditorOpen, setIsTutorialStepsEditorOpen] = useState(
@@ -703,7 +707,12 @@ export default ({ assetId, switchEditorOpen }) => {
     .filter(fileUrl => fileUrl !== thumbnailUrl)
 
   const isOwnerOrEditor = canEditAsset(user, createdBy, ownedBy)
-  const isAbleToEditPedestal = canEditPedestal(user, createdBy, ownedBy)
+  const isAbleToEditPedestal = canEditPedestal(
+    user,
+    createdBy,
+    ownedBy,
+    userMetaResult
+  )
 
   const EnableSpeciesEditorIcon = () => {
     return (

@@ -33,6 +33,15 @@ export async function quickDeleteRecords(collectionName, whereClauses) {
   return Promise.all(docs.map(doc => doc.ref.delete()))
 }
 
+export async function quickReadRecord(collectionName, id) {
+  const doc = await firestore()
+    .collection(collectionName)
+    .doc(id)
+    .get()
+
+  return doc.data()
+}
+
 export async function doesDocumentExist(collectionName, id) {
   const doc = await firestore()
     .collection(collectionName)
