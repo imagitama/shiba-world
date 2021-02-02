@@ -48,12 +48,17 @@ const rewardMetaById = {
   '4508629': {
     title: 'Pedestals',
     description:
-      'When you edit an asset you can upload a special 360 degree video of your asset to show it off. Instructions are in our Discord server under #patrons'
+      'When you edit an asset you can upload a special 360 degree video of your asset to show it off. Instructions are in our Discord server under #patrons.'
   },
   '4508436': {
     title: 'Shout-out on the site',
     description:
-      'Your name and avatar is listed on the Patreons page on this site (click More in navigation and click Patreon)'
+      'Your name and avatar is listed on the Patreons page on this site (click More in navigation and click Patreon).'
+  },
+  '5934668': {
+    title: 'Feature Asset',
+    description:
+      'When editing your assets you can click the Feature button and it will be randomly selected to be shown on the homepage.'
   }
 }
 
