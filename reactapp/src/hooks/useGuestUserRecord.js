@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { firestore } from 'firebase/app'
+import firebase from 'firebase/app'
 
 import { CollectionNames } from './useDatabaseQuery'
 import useFirebaseUserId from './useFirebaseUserId'
@@ -13,7 +13,8 @@ async function getData() {
 
     let knownGuestId = await getGuestIdFromStorage()
 
-    const guestDoc = await firestore()
+    const guestDoc = await firebase
+      .firestore()
       .collection(CollectionNames.GuestUsers)
       .doc(knownGuestId)
 

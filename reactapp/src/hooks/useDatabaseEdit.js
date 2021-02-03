@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { firestore } from 'firebase/app'
+import firebase from 'firebase/app'
 import { handleError } from '../error-handling'
 
 const secondsToDate = seconds => new Date(seconds * 1000)
@@ -34,7 +34,8 @@ export default (collectionName, documentId) => {
       setIsLoading(true)
 
       try {
-        const doc = await firestore()
+        const doc = await firebase
+          .firestore()
           .collection(collectionName)
           .doc(documentId)
           .get()

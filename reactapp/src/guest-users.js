@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie'
 import shortid from 'shortid'
-import { firestore } from 'firebase/app'
+import firebase from 'firebase/app'
 import { handleError } from './error-handling'
 import {
   CollectionNames,
@@ -52,7 +52,8 @@ async function lookupGuestIdWithIpAddress(ipAddress) {
     )
   }
 
-  const { docs } = await firestore()
+  const { docs } = await firebase
+    .firestore()
     .collection(CollectionNames.GuestUsers)
     .where(GuestUsersFieldNames.ipAddress, Operators.EQUALS, ipAddress)
     .get()
@@ -78,7 +79,8 @@ async function storeGuestIdInDatabase(guestId, ipAddress) {
     throw new Error('Cannot store guest ID in db - no IP address!')
   }
 
-  return firestore()
+  return firebase
+    .firestore()
     .collection(CollectionNames.GuestUsers)
     .doc(guestId)
     .set({

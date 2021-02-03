@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { firestore } from 'firebase/app'
+import firebase from 'firebase/app'
 
 export default (collectionName, documentId) => {
   if (!collectionName) {
@@ -13,7 +13,8 @@ export default (collectionName, documentId) => {
       return
     }
 
-    const doc = firestore()
+    const doc = firebase
+      .firestore()
       .collection(collectionName)
       .doc(documentId)
 

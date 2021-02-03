@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import SaveIcon from '@material-ui/icons/Save'
-import { firestore } from 'firebase/app'
+import firebase from 'firebase/app'
 
 import {
   AssetFieldNames,
@@ -57,7 +57,8 @@ const ERRORS = {
 const getErrorIfSlugIsTaken = async slug => {
   // this is inefficient but changing slugs is rare
   // better to store all slugs of all assets inside /special/ collection and check that
-  const { size: assetsNum } = await firestore()
+  const { size: assetsNum } = await firebase
+    .firestore()
     .collection(CollectionNames.Assets)
     .where(AssetFieldNames.slug, Operators.EQUALS, slug)
     .get()
@@ -68,7 +69,8 @@ const getErrorIfSlugIsTaken = async slug => {
 
   // this is inefficient but changing slugs is rare
   // better to store a cache of all species name in /special/ collection
-  const { docs } = await firestore()
+  const { docs } = await firebase
+    .firestore()
     .collection(CollectionNames.Species)
     .get()
 

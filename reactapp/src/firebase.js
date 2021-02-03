@@ -18,13 +18,14 @@ const firebaseConfig = {
 
 export const firebaseApp = firebase.initializeApp(firebaseConfig)
 
-if (process.env.REACT_APP_USE_FIREBASE_EMULATOR) {
-  console.log('Using firebase emulator')
+if (process.env.REACT_APP_USE_FUNCTIONS_EMULATOR) {
+  console.debug(`using functions emulator`)
   firebase.functions().useFunctionsEmulator('http://localhost:5001')
-  // firebase.firestore().settings({
-  //   host: 'localhost:8080',
-  //   ssl: false
-  // })
+}
+
+if (process.env.REACT_APP_USE_FIRESTORE_EMULATOR) {
+  console.debug(`using firestore emulator`)
+  firebase.firestore().useEmulator('localhost', 8080)
 }
 
 export const auth = firebaseApp.auth()

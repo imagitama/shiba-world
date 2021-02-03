@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import AssetOverview from '../../components/asset-overview'
 import AssetOverviewEditor from '../../components/asset-overview-editor'
 import LoadingIndicator from '../../components/loading-indicator'
-import { firestore } from 'firebase/app'
+import firebase from 'firebase/app'
 import {
   CollectionNames,
   AssetFieldNames,
@@ -38,7 +38,8 @@ export default ({
       try {
         console.debug(`Get asset ID for slug "${slug}"`)
 
-        const { docs, size } = await firestore()
+        const { docs, size } = await firebase
+          .firestore()
           .collection(CollectionNames.Assets)
           .where(AssetFieldNames.slug, Operators.EQUALS, slug)
           .get()

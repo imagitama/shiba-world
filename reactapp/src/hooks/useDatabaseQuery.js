@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { firestore } from 'firebase/app'
+import firebase from 'firebase/app'
 import { useRef } from 'react'
 import { inDevelopment } from '../environment'
 import { handleError } from '../error-handling'
@@ -406,7 +406,7 @@ const mapReferences = async (
     Object.entries(newDoc).map(async ([key, value]) => {
       if (
         value &&
-        value instanceof firestore.DocumentReference &&
+        value instanceof firebase.firestore.DocumentReference &&
         populateRefs
       ) {
         return [key, await getDataFromReference(value)]
@@ -439,7 +439,7 @@ export async function formatRawDoc(
 }
 
 function isFirebaseDoc(value) {
-  return value && value instanceof firestore.DocumentReference
+  return value && value instanceof firebase.firestore.DocumentReference
 }
 
 async function mapDocArrays(doc, fetchChildren = true) {
@@ -599,7 +599,7 @@ export default (
 
       const isGettingSingleRecord = getIsGettingSingleRecord(whereClauses)
 
-      let queryChain = firestore().collection(collectionName)
+      let queryChain = firebase.firestore().collection(collectionName)
 
       // If an ID
       if (isGettingSingleRecord) {

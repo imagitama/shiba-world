@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { firestore } from 'firebase/app'
+import firebase from 'firebase/app'
 import { Map, is } from 'immutable'
 import { CollectionNames, formatRawDoc } from './useDatabaseQuery'
 import useFirebaseUserId from './useFirebaseUserId'
@@ -79,7 +79,8 @@ export default fieldToSubscribeTo => {
           type: USER_IS_LOADING
         })
 
-        unsubscribeRef.current = firestore()
+        unsubscribeRef.current = firebase
+          .firestore()
           .collection(CollectionNames.Users)
           .doc(uid)
           .onSnapshot(async result => {

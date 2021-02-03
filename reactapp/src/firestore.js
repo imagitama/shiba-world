@@ -1,10 +1,11 @@
-import { firestore } from 'firebase/app'
+import firebase from 'firebase/app'
 import { isRef, mapRefToDoc } from './utils'
 
 // intended for simple, one-time FIRE AND FORGET delete of a record eg. notifications
 // do NOT use for anything else - use a React hook with nice UI
 export function quickDeleteRecord(collectionName, id) {
-  return firestore()
+  return firebase
+    .firestore()
     .collection(collectionName)
     .doc(id)
     .delete()
@@ -12,7 +13,7 @@ export function quickDeleteRecord(collectionName, id) {
 
 // as above - one-time FIRE AND FORGET delete of records eg. clear all notifications
 export async function quickDeleteRecords(collectionName, whereClauses) {
-  const query = firestore().collection(collectionName)
+  const query = firebase.firestore().collection(collectionName)
 
   if (!whereClauses || !whereClauses.length) {
     throw new Error('Need where clauses')
@@ -34,7 +35,8 @@ export async function quickDeleteRecords(collectionName, whereClauses) {
 }
 
 export async function quickReadRecord(collectionName, id) {
-  const doc = await firestore()
+  const doc = await firebase
+    .firestore()
     .collection(collectionName)
     .doc(id)
     .get()
@@ -43,7 +45,8 @@ export async function quickReadRecord(collectionName, id) {
 }
 
 export async function doesDocumentExist(collectionName, id) {
-  const doc = await firestore()
+  const doc = await firebase
+    .firestore()
     .collection(collectionName)
     .doc(id)
     .get()

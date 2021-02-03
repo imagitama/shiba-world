@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import TextField from '@material-ui/core/TextField'
 import { makeStyles } from '@material-ui/core/styles'
-import { firestore } from 'firebase/app'
+import firebase from 'firebase/app'
 
 import useAlgoliaSearch from '../../hooks/useAlgoliaSearch'
 import { CollectionNames, formatRawDoc } from '../../hooks/useDatabaseQuery'
@@ -89,7 +89,8 @@ function SearchForm({ searchTerm, onSelectId }) {
 }
 
 function convertDocIdToDocRef(docId) {
-  return firestore()
+  return firebase
+    .firestore()
     .collection(CollectionNames.Assets)
     .doc(docId)
 }
