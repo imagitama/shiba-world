@@ -25,11 +25,16 @@ function isUserStaff(user) {
 export default () => {
   const [, , user] = useUserRecord()
   const classes = useStyles()
-  let [, , results] = useDatabaseQuery(CollectionNames.Assets, [
-    [AssetFieldNames.isApproved, Operators.EQUALS, false],
-    [AssetFieldNames.isDeleted, Operators.EQUALS, false],
-    [AssetFieldNames.isPrivate, Operators.EQUALS, false]
-  ])
+  let [, , results] = useDatabaseQuery(
+    CollectionNames.Assets,
+    user && isUserStaff(user)
+      ? [
+          [AssetFieldNames.isApproved, Operators.EQUALS, false],
+          [AssetFieldNames.isDeleted, Operators.EQUALS, false],
+          [AssetFieldNames.isPrivate, Operators.EQUALS, false]
+        ]
+      : false
+  )
 
   if (!user || !isUserStaff(user) || !results || !results.length) {
     return null

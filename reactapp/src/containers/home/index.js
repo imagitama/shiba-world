@@ -1,4 +1,4 @@
-import React, { createContext, useContext, memo } from 'react'
+import React, { createContext, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
@@ -10,7 +10,7 @@ import Heading from '../../components/heading'
 import AllTagsBrowser from '../../components/all-tags-browser'
 import Button from '../../components/button'
 import FormattedDate from '../../components/formatted-date'
-import Polls from '../../components/polls'
+// import Polls from '../../components/polls'
 
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
@@ -31,7 +31,12 @@ import statsTileBgUrl from './assets/stats.webp'
 import twitterTileBgUrl from './assets/twitter.webp'
 import avatarsTileBgUrl from './assets/avatars.webp'
 import accessoriesTileBgUrl from './assets/accessories.webp'
-import { DISCORD_URL, TWITTER_URL } from '../../config'
+import {
+  DISCORD_URL,
+  TWITTER_URL,
+  THUMBNAIL_HEIGHT,
+  THUMBNAIL_WIDTH
+} from '../../config'
 import {
   mediaQueryForTabletsOrBelow,
   mediaQueryForMobiles
@@ -209,6 +214,8 @@ function Tile({
                       src={imageUrl}
                       alt={`Thumbnail for tile`}
                       className={classes.thumbnail}
+                      width={THUMBNAIL_WIDTH}
+                      height={THUMBNAIL_HEIGHT}
                     />
                   ) : (
                     <img
@@ -504,16 +511,16 @@ function SiteStatsTile() {
   )
 }
 
-const PollTile = memo(() => {
-  const classes = useStyles()
-  return (
-    <div className={classes.pollTile}>
-      <Card className={classes.pollTileCard}>
-        <Polls />
-      </Card>
-    </div>
-  )
-})
+// const PollTile = memo(() => {
+//   const classes = useStyles()
+//   return (
+//     <div className={classes.pollTile}>
+//       <Card className={classes.pollTileCard}>
+//         <Polls />
+//       </Card>
+//     </div>
+//   )
+// })
 
 const homepageContext = createContext(null)
 const useHomepage = () => useContext(homepageContext)
@@ -538,7 +545,6 @@ function Tiles() {
         <DiscordTile />
         <TwitterTile />
         <SiteStatsTile />
-        <PollTile />
       </div>
     </homepageContext.Provider>
   )

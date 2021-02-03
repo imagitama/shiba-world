@@ -880,44 +880,11 @@ export default ({ assetId, switchEditorOpen }) => {
 
             <div className={classes.meta}>
               <div>
-                Uploaded{' '}
-                {createdAt ? <FormattedDate date={createdAt} /> : '(unknown)'}{' '}
-                by{' '}
-                {createdBy ? (
-                  <Link
-                    to={routes.viewUserWithVar.replace(
-                      ':userId',
-                      createdBy.id
-                    )}>
-                    {createdBy.username}
-                  </Link>
-                ) : (
-                  '(unknown)'
-                )}
+                Uploaded <FormattedDate date={createdAt} />
               </div>
               {lastModifiedBy && (
                 <div>
-                  Last modified <FormattedDate date={lastModifiedAt} /> by{' '}
-                  {lastModifiedBy ? (
-                    <Link
-                      to={routes.viewUserWithVar.replace(
-                        ':userId',
-                        lastModifiedBy.id
-                      )}>
-                      {lastModifiedBy.username}
-                    </Link>
-                  ) : (
-                    '(unknown)'
-                  )}
-                </div>
-              )}
-              {ownedBy && (
-                <div>
-                  Owned by{' '}
-                  <Link
-                    to={routes.viewUserWithVar.replace(':userId', ownedBy.id)}>
-                    {ownedBy.username}
-                  </Link>
+                  Last modified <FormattedDate date={lastModifiedAt} />
                 </div>
               )}
               {isAdult && (
