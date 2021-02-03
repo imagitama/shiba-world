@@ -132,11 +132,6 @@ export default ({
   const [activeSortFieldName, setActiveSortFieldName] = useState()
   const [activeSortDirection, setActiveSortDirection] = useState()
 
-  // if a slug has finished
-  if (!speciesId && species && species.id) {
-    speciesId = species.id
-  }
-
   if (isLoading) {
     return <LoadingIndicator />
   }
@@ -146,6 +141,11 @@ export default ({
   }
 
   species = Array.isArray(species) ? species[0] : species
+
+  // if a slug has finished
+  if (!speciesId && species && species.id) {
+    speciesId = species.id
+  }
 
   if (!species) {
     return (
@@ -179,6 +179,8 @@ export default ({
       direction
     })
   }
+
+  console.log(speciesId)
 
   const desc = category.shortDescription
   return (
