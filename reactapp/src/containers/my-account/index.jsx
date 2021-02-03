@@ -18,9 +18,12 @@ import MyUploads from '../../components/my-uploads'
 import SocialMediaUsernamesEditor from '../../components/social-media-usernames-editor'
 import BioEditor from '../../components/bio-editor'
 import MyFeaturedAssets from '../../components/my-featured-assets'
+import PedestalUploadForm from '../../components/pedestal-upload-form'
+import MyAssetAmendments from '../../components/my-asset-amendments'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
+import { UserFieldNames } from '../../hooks/useDatabaseQuery'
 
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
@@ -29,8 +32,6 @@ import {
   queryForTabletsOrBelow,
   mediaQueryForTabletsOrBelow
 } from '../../media-queries'
-import PedestalUploadForm from '../../components/pedestal-upload-form'
-import MyAssetAmendments from '../../components/my-asset-amendments'
 
 function WelcomeMessage() {
   const [isLoading, isErrored, user] = useUserRecord()
@@ -98,12 +99,18 @@ const useStyles = makeStyles({
 
 export default () => {
   const userId = useFirebaseUserId()
+  const [, , user] = useUserRecord()
   const [activeTabIdx, setActiveTabIdx] = useState(getInitialTabIdx())
   const classes = useStyles()
   const isMobile = useMediaQuery({ query: queryForTabletsOrBelow })
 
-  if (!userId) {
+  if (!userId || !user) {
     return <NoPermissionMessage />
+  }
+
+  // if they just signed up
+  if (!user[UserFieldNames.username]) {
+    return null
   }
 
   return (

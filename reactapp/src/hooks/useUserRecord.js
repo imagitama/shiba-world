@@ -70,6 +70,11 @@ export default fieldToSubscribeTo => {
 
     async function main() {
       try {
+        // catch weird edge case immediately after signup
+        if (!uid) {
+          return
+        }
+
         dispatch({
           type: USER_IS_LOADING
         })
