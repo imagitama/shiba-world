@@ -14,7 +14,6 @@ import LoadingIndicator from '../../components/loading-indicator'
 import AssetResults from '../../components/asset-results'
 import ErrorMessage from '../../components/error-message'
 import Heading from '../../components/heading'
-import BodyText from '../../components/body-text'
 import SortDropdown from '../../components/sort-dropdown'
 import Button from '../../components/button'
 import AllTagsBrowser from '../../components/all-tags-browser'
@@ -31,8 +30,15 @@ import useDatabaseQuery, {
 import useUserRecord from '../../hooks/useUserRecord'
 import useStorage, { keys as storageKeys } from '../../hooks/useStorage'
 import useCategoryMeta from '../../hooks/useCategoryMeta'
+import { createRef } from '../../utils'
 
-function Assets({ species, categoryName, sortByFieldName, sortByDirection }) {
+function Assets({
+  species,
+  speciesId,
+  categoryName,
+  sortByFieldName,
+  sortByDirection
+}) {
   const [, , user] = useUserRecord()
 
   let whereClauses = [
@@ -42,7 +48,7 @@ function Assets({ species, categoryName, sortByFieldName, sortByDirection }) {
     [
       AssetFieldNames.species,
       Operators.ARRAY_CONTAINS,
-      species[SpeciesFieldNames.singularName]
+      createRef(CollectionNames.Species, speciesId)
     ],
     [AssetFieldNames.category, Operators.EQUALS, categoryName],
     [AssetFieldNames.isPrivate, Operators.EQUALS, false]
@@ -101,10 +107,14 @@ export default ({
     params: { speciesIdOrSlug, categoryName }
   }
 }) => {
+  let speciesId = isRouteVarAFirebaseId(speciesIdOrSlug)
+    ? speciesIdOrSlug
+    : null
+
   let [isLoading, isError, species] = useDatabaseQuery(
     CollectionNames.Species,
-    isRouteVarAFirebaseId(speciesIdOrSlug)
-      ? speciesIdOrSlug
+    speciesId
+      ? speciesId
       : [[SpeciesFieldNames.slug, Operators.EQUALS, speciesIdOrSlug]],
     {
       [options.queryName]: `view-species-category-${speciesIdOrSlug}-${categoryName}`
@@ -121,6 +131,11 @@ export default ({
   )
   const [activeSortFieldName, setActiveSortFieldName] = useState()
   const [activeSortDirection, setActiveSortDirection] = useState()
+
+  // if a slug has finished
+  if (!speciesId && species && species.id) {
+    speciesId = species.id
+  }
 
   if (isLoading) {
     return <LoadingIndicator />
@@ -179,9 +194,9 @@ export default ({
         <Link
           to={routes.viewSpeciesWithVar.replace(
             ':speciesIdOrSlug',
-            species[SpeciesFieldNames.singularName]
+            speciesIdOrSlug
           )}>
-          {species.name}
+          {species[SpeciesFieldNames.singularName]}
         </Link>
       </Heading>
       <Heading variant="h2">
@@ -195,7 +210,6 @@ export default ({
           {category.name}
         </Link>
       </Heading>
-      <BodyText>{desc}</BodyText>
       <SortDropdown
         options={assetOptions}
         label={getLabelForAssetSortFieldNameAndDirection(
@@ -214,6 +228,7 @@ export default ({
       />
       <Assets
         species={species}
+        speciesId={speciesId}
         categoryName={categoryName}
         sortByFieldName={activeSortFieldName || assetsSortByFieldName}
         sortByDirection={activeSortDirection || assetsSortByDirection}
