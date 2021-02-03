@@ -65,6 +65,7 @@ async function optimizeBucketImageByUrl(imageUrl) {
     destination: newFilePath,
     metadata: {
       contentType: `image/webp`,
+      cacheControl: 'public,max-age=31536000', // default cache is 3600
     },
   })
 
