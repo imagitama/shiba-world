@@ -87,6 +87,7 @@ const getImageUrlAsFile = async url => {
 const tagsSearch = {
   // compatibility
   quest: ['quest'],
+  sdk2: ['sdk2'],
   sdk3: ['SDK3'],
   // included
   blendfile_included: ['Blender file', 'Blendfile', 'Blend file'],
@@ -100,15 +101,20 @@ const tagsSearch = {
   // features
   sdk3_puppets: ['puppet'],
   dynamic_bones: ['dynamic bones'],
-  customizable_body: ['body shape'],
+  customizable_body: ['body shape', 'body slider'],
   hand_colliders: ['colliders'],
   full_body_ready: ['full body'],
-  blend_shapes: ['blend shapes', 'shapekey'],
+  blend_shapes: ['blend shapes', 'shapekey', 'body slider', 'viseme'],
+  toggle_accessories: ['Toggleable'],
   // appearance
   collar: ['collar'],
+  glasses: ['glasses'],
+  clothes: ['clothes', 'shirt', 'jeans', 'pants'],
+  hair: ['hair'],
   // animation
-  custom_gestures: ['facial expression', 'hand gesture'],
-  custom_idle_animation: ['idle animation']
+  custom_gestures: ['facial expression', 'hand gesture', 'face expression'],
+  custom_idle_animation: ['idle animation'],
+  custom_emotes: ['emote']
 }
 
 const getTagsFromDescription = desc => {
