@@ -94,7 +94,7 @@ const popularTagsByCategory = {
 }
 
 // NOTE: onChange does not cleanup tags for you (onDone does)
-export default ({ currentTags = [], onChange, onDone }) => {
+export default ({ currentTags = [], onChange, onDone, showInfo = true }) => {
   const classes = useStyles()
   const [newTags, setNewTags] = useState(currentTags)
 
@@ -104,41 +104,48 @@ export default ({ currentTags = [], onChange, onDone }) => {
     }
   }, [currentTags ? currentTags.join('+') : null])
 
-  const onClickPopularTag = tag => setNewTags(newTags.concat([tag]))
+  const onClickPopularTag = tag =>
+    setNewTags(currentVal => currentVal.concat([tag]))
+  const onClickExistingTag = tag =>
+    setNewTags(currentVal => currentVal.filter(item => item !== tag))
 
   return (
     <>
-      Use tags to help people find your asset. Rules:
-      <ul>
-        <li>
-          tag what you know from the description/source (eg. "quest" if quest
-          compatible)
-        </li>
-        <li>
-          tag what you can see in the images (eg. "hat" if it comes with a hat)
-        </li>
-        <li>do not use spaces (use underscores)</li>
-        <li>one tag per line</li>
-        <li>all lowercase</li>
-        <li>do not use the species name, author name or asset name as a tag</li>
-      </ul>
-      Popular tags:
-      <br />
-      {Object.entries(popularTagsByCategory).map(([category, tags]) => (
+      {showInfo && (
         <>
-          {category}
-          <div>
-            {tags.map(tagName => (
-              <TagChip
-                key={tagName}
-                tagName={tagName}
-                isDisabled={newTags.includes(tagName)}
-                onClick={() => onClickPopularTag(tagName)}
-              />
-            ))}
-          </div>
+          Use tags to help people find your asset. Rules:
+          <ul>
+            <li>
+              tag what you know from the description/source (eg. "quest" if
+              quest compatible)
+            </li>
+            <li>
+              tag what you can see in the images (eg. "hat" if it comes with a
+              hat)
+            </li>
+            <li>do not use spaces (use underscores)</li>
+            <li>one tag per line</li>
+            <li>all lowercase</li>
+          </ul>
+          Popular tags:
+          <br />
+          {Object.entries(popularTagsByCategory).map(([category, tags]) => (
+            <>
+              {category}
+              <div>
+                {tags.map(tagName => (
+                  <TagChip
+                    key={tagName}
+                    tagName={tagName}
+                    isDisabled={newTags.includes(tagName)}
+                    onClick={() => onClickPopularTag(tagName)}
+                  />
+                ))}
+              </div>
+            </>
+          ))}
         </>
-      ))}
+      )}
       <TextField
         variant="outlined"
         className={classes.textInput}
@@ -155,8 +162,13 @@ export default ({ currentTags = [], onChange, onDone }) => {
         rows={10}
         multiline
       />
+      Click to remove:{' '}
       {cleanupTags(newTags).map(tagName => (
-        <TagChip key={tagName} tagName={tagName} />
+        <TagChip
+          key={tagName}
+          tagName={tagName}
+          onClick={() => onClickExistingTag(tagName)}
+        />
       ))}
       {onDone && (
         <div className={classes.btns}>

@@ -5,6 +5,8 @@ import 'firebase/database'
 import 'firebase/functions'
 import * as Sentry from '@sentry/browser'
 
+import { inDevelopment } from './environment'
+
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -55,7 +57,11 @@ auth.onAuthStateChanged(user => {
   }
 })
 
-export const callFunction = (name, data) => {
+export const callFunction = (name, data, inDevResult) => {
+  if (inDevelopment() && inDevResult) {
+    return Promise.resolve(inDevResult)
+  }
+
   return firebase
     .app()
     .functions()

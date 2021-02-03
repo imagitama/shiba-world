@@ -9,6 +9,7 @@ import Button from '../button'
 import ErrorMessage from '../error-message'
 import Paper from '../paper'
 import LoadingIndicator from '../loading-indicator'
+import TagInput from '../tag-input'
 
 import { handleError } from '../../error-handling'
 import { AssetFieldNames, CollectionNames } from '../../hooks/useDatabaseQuery'
@@ -19,6 +20,7 @@ import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import OptimizedImageUploader from '../optimized-image-uploader'
 import { THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, paths } from '../../config'
 import { addQuotesToDescription } from '../../utils/formatting'
+import { cleanupTags } from '../../utils/tags'
 
 const useStyles = makeStyles({
   field: {
@@ -79,6 +81,63 @@ const getImageUrlAsFile = async url => {
   return file
 }
 
+const tagsSearch = {
+  // compatibility
+  quest: ['quest'],
+  sdk3: ['SDK3'],
+  // included
+  blendfile_included: ['Blender file', 'Blendfile', 'Blend file'],
+  unity_package: ['unitypackage', 'unity setup package'],
+  substance_painter_included: ['substance'],
+  nsfw_included: ['penis', 'vagina', 'genitals'],
+  prefabs_included: ['prefab'],
+  scene_included: ['unity scene'],
+  psd_included: ['photoshop', 'psd'],
+  uv_included: ['uv layout'],
+  // features
+  sdk3_puppets: ['puppet'],
+  dynamic_bones: ['dynamic bones'],
+  customizable_body: ['body shape'],
+  hand_colliders: ['colliders'],
+  full_body_ready: ['full body'],
+  blend_shapes: ['blend shapes', 'shapekey'],
+  // appearance
+  collar: ['collar'],
+  // animation
+  custom_gestures: ['facial expression', 'hand gesture'],
+  custom_idle_animation: ['idle animation']
+}
+
+const getTagsFromDescription = desc => {
+  const tags = []
+  const descLower = desc.toLowerCase()
+
+  for (const tagName in tagsSearch) {
+    for (const searchTerm of tagsSearch[tagName]) {
+      if (
+        descLower.includes(searchTerm.toLowerCase()) &&
+        !tags.includes(tagName)
+      ) {
+        tags.push(tagName)
+      }
+    }
+  }
+
+  return tags
+}
+
+const cleanupFields = fields => {
+  const newFields = { ...fields }
+  if (newFields[AssetFieldNames.tags]) {
+    newFields[AssetFieldNames.tags] = cleanupTags(
+      newFields[AssetFieldNames.tags]
+    )
+  }
+  return newFields
+}
+
+const defaultTags = ['gumroad', 'paid']
+
 export default ({ assetId, gumroadUrl, onDone }) => {
   const [isFetching, setIsFetching] = useState(true)
   const [isFetchError, setIsFetchError] = useState(false)
@@ -86,6 +145,7 @@ export default ({ assetId, gumroadUrl, onDone }) => {
   const [whichFieldsAreEnabled, setWhichFieldsAreEnabled] = useState({
     [AssetFieldNames.title]: true,
     [AssetFieldNames.description]: true,
+    [AssetFieldNames.tags]: true,
     [AssetFieldNames.thumbnailUrl]: true
   })
   const userId = useFirebaseUserId()
@@ -111,15 +171,34 @@ export default ({ assetId, gumroadUrl, onDone }) => {
 
       const {
         data: { name, descriptionMarkdown, ourPreviewUrl }
-      } = await callFunction('fetchGumroadInfo', {
-        code
-      })
+      } = await callFunction(
+        'fetchGumroadInfo',
+        {
+          code
+        },
+        {
+          data: {
+            name: 'My in dev Gumroad asset',
+            descriptionMarkdown: `# My asset
+
+- Photoshop file included
+- Dynamic Bones included
+- shapekeys included`,
+            ourPreviewUrl: null
+          }
+        }
+      )
 
       setIsFetching(false)
       setIsFetchError(false)
       setNewFields({
         [AssetFieldNames.title]: name,
-        [AssetFieldNames.description]: descriptionMarkdown
+        [AssetFieldNames.description]: isUsingQuotes
+          ? addQuotesToDescription(descriptionMarkdown)
+          : descriptionMarkdown,
+        [AssetFieldNames.tags]: getTagsFromDescription(
+          descriptionMarkdown
+        ).concat(defaultTags)
       })
 
       if (isValidPreviewImageUrl(ourPreviewUrl)) {
@@ -142,7 +221,7 @@ export default ({ assetId, gumroadUrl, onDone }) => {
   const onSaveBtnClick = async () => {
     try {
       await save({
-        ...getFieldsToSave(newFields, whichFieldsAreEnabled),
+        ...getFieldsToSave(cleanupFields(newFields), whichFieldsAreEnabled),
         lastModifiedBy: createRef(CollectionNames.Users, userId),
         lastModifiedAt: new Date()
       })
@@ -193,23 +272,27 @@ export default ({ assetId, gumroadUrl, onDone }) => {
   return (
     <>
       <Paper className={classes.row}>
-        Thumbnail
-        <Checkbox
-          checked={whichFieldsAreEnabled[AssetFieldNames.thumbnailUrl]}
-          onClick={() => toggleIsFieldEnabled(AssetFieldNames.thumbnailUrl)}
-        />
         {isValidPreviewImageUrl(previewImageUrl) ? (
-          <OptimizedImageUploader
-            preloadImageUrl={previewImageUrl}
-            preloadFile={previewImageFile}
-            requiredWidth={THUMBNAIL_WIDTH}
-            requiredHeight={THUMBNAIL_HEIGHT}
-            onUploadedUrl={url =>
-              updateField(AssetFieldNames.thumbnailUrl, url)
-            }
-            directoryPath={paths.assetThumbnailDir}
-            filePrefix={shortid.generate()}
-          />
+          <>
+            Thumbnail
+            <Checkbox
+              checked={whichFieldsAreEnabled[AssetFieldNames.thumbnailUrl]}
+              onClick={() => toggleIsFieldEnabled(AssetFieldNames.thumbnailUrl)}
+            />
+            {whichFieldsAreEnabled[AssetFieldNames.thumbnailUrl] && (
+              <OptimizedImageUploader
+                preloadImageUrl={previewImageUrl}
+                preloadFile={previewImageFile}
+                requiredWidth={THUMBNAIL_WIDTH}
+                requiredHeight={THUMBNAIL_HEIGHT}
+                onUploadedUrl={url =>
+                  updateField(AssetFieldNames.thumbnailUrl, url)
+                }
+                directoryPath={paths.assetThumbnailDir}
+                filePrefix={shortid.generate()}
+              />
+            )}
+          </>
         ) : (
           'Image cannot be used as a thumbnail (eg. it is .gif)'
         )}
@@ -220,12 +303,16 @@ export default ({ assetId, gumroadUrl, onDone }) => {
           checked={whichFieldsAreEnabled[AssetFieldNames.title]}
           onClick={() => toggleIsFieldEnabled(AssetFieldNames.title)}
         />
-        <br />
-        <TextField
-          value={newFields[AssetFieldNames.title]}
-          onChange={e => updateField(AssetFieldNames.title, e.target.value)}
-          className={classes.field}
-        />
+        {whichFieldsAreEnabled[AssetFieldNames.title] && (
+          <>
+            <br />
+            <TextField
+              value={newFields[AssetFieldNames.title]}
+              onChange={e => updateField(AssetFieldNames.title, e.target.value)}
+              className={classes.field}
+            />
+          </>
+        )}
       </Paper>
       <Paper className={classes.row}>
         Description
@@ -233,30 +320,54 @@ export default ({ assetId, gumroadUrl, onDone }) => {
           checked={whichFieldsAreEnabled[AssetFieldNames.description]}
           onClick={() => toggleIsFieldEnabled(AssetFieldNames.description)}
         />
-        <br />
-        <TextField
-          value={newFields[AssetFieldNames.description]}
-          onChange={e =>
-            updateField(AssetFieldNames.description, e.target.value)
-          }
-          multiline
-          rows={10}
-          className={classes.field}
-        />
-        <Markdown source={newFields[AssetFieldNames.description]} />
+        {whichFieldsAreEnabled[AssetFieldNames.description] && (
+          <>
+            <br />
+            <TextField
+              value={newFields[AssetFieldNames.description]}
+              onChange={e =>
+                updateField(AssetFieldNames.description, e.target.value)
+              }
+              multiline
+              rows={10}
+              className={classes.field}
+            />
+            <Markdown source={newFields[AssetFieldNames.description]} />
+          </>
+        )}
       </Paper>
+      {whichFieldsAreEnabled[AssetFieldNames.description] && (
+        <Paper className={classes.row}>
+          <Checkbox
+            checked={isUsingQuotes}
+            onClick={() => {
+              updateField(
+                AssetFieldNames.description,
+                addQuotesToDescription(newFields[AssetFieldNames.description])
+              )
+              setIsUsingQuotes(!isUsingQuotes)
+            }}
+          />{' '}
+          Add quote symbols to description (recommended)
+        </Paper>
+      )}
       <Paper className={classes.row}>
+        Tags
         <Checkbox
-          checked={isUsingQuotes}
-          onClick={() => {
-            updateField(
-              AssetFieldNames.description,
-              addQuotesToDescription(newFields[AssetFieldNames.description])
-            )
-            setIsUsingQuotes(!isUsingQuotes)
-          }}
-        />{' '}
-        Add quote symbols to description (recommended)
+          checked={whichFieldsAreEnabled[AssetFieldNames.tags]}
+          onClick={() => toggleIsFieldEnabled(AssetFieldNames.tags)}
+        />
+        {whichFieldsAreEnabled[AssetFieldNames.tags] && (
+          <>
+            <br />
+            Tags have been populated using the description from Gumroad:
+            <TagInput
+              currentTags={newFields[AssetFieldNames.tags]}
+              onChange={newTags => updateField(AssetFieldNames.tags, newTags)}
+              showInfo={false}
+            />
+          </>
+        )}
       </Paper>
       <div className={classes.btns}>
         <Button onClick={onSaveBtnClick}>Save</Button>
