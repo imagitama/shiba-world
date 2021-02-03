@@ -19,7 +19,10 @@ import { createRef } from '../../utils'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import OptimizedImageUploader from '../optimized-image-uploader'
 import { THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, paths } from '../../config'
-import { addQuotesToDescription } from '../../utils/formatting'
+import {
+  addQuotesToDescription,
+  removeQuotesFromDescription
+} from '../../utils/formatting'
 import { cleanupTags } from '../../utils/tags'
 
 const useStyles = makeStyles({
@@ -343,7 +346,13 @@ export default ({ assetId, gumroadUrl, onDone }) => {
             onClick={() => {
               updateField(
                 AssetFieldNames.description,
-                addQuotesToDescription(newFields[AssetFieldNames.description])
+                isUsingQuotes
+                  ? removeQuotesFromDescription(
+                      newFields[AssetFieldNames.description]
+                    )
+                  : addQuotesToDescription(
+                      newFields[AssetFieldNames.description]
+                    )
               )
               setIsUsingQuotes(!isUsingQuotes)
             }}
