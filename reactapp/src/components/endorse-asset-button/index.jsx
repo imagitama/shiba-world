@@ -7,6 +7,7 @@ import Button from '../button'
 import useDatabaseQuery, {
   CollectionNames,
   EndorsementFieldNames,
+  AssetMetaFieldNames,
   Operators
 } from '../../hooks/useDatabaseQuery'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
@@ -35,10 +36,17 @@ export default ({ assetId, onClick = null }) => {
       createRef(CollectionNames.Assets, assetId)
     ]
   ])
+  const [, , assetMeta] = useDatabaseQuery(CollectionNames.AssetMeta, assetId)
   const [isSaving, isSavingSuccess, isSavingError, save] = useDatabaseSave(
     CollectionNames.Endorsements
   )
   const classes = useStyles()
+
+  const endorsementCount = assetMeta
+    ? assetMeta[AssetMetaFieldNames.endorsementCount]
+    : endorsements
+    ? endorsements.length
+    : 0
 
   const onSaveBtnClick = async () => {
     try {
@@ -73,7 +81,7 @@ export default ({ assetId, onClick = null }) => {
   if (!userId) {
     return (
       <Button color="default" className={classes.loggedOutBtn}>
-        Log in to endorse ({endorsements.length})
+        Log in to endorse ({endorsementCount})
       </Button>
     )
   }
@@ -87,9 +95,7 @@ export default ({ assetId, onClick = null }) => {
   }
 
   if (isSavingSuccess) {
-    return (
-      <Button disabled>Successfully endorsed ({endorsements.length})</Button>
-    )
+    return <Button disabled>Successfully endorsed ({endorsementCount})</Button>
   }
 
   if (
@@ -103,14 +109,14 @@ export default ({ assetId, onClick = null }) => {
         color="default"
         className={classes.loggedOutBtn}
         icon={<CheckIcon />}>
-        Endorsed ({endorsements.length})
+        Endorsed ({endorsementCount})
       </Button>
     )
   }
 
   return (
     <Button color="default" onClick={onSaveBtnClick}>
-      Endorse ({endorsements.length})
+      Endorse ({endorsementCount})
     </Button>
   )
 }

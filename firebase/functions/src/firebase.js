@@ -47,8 +47,21 @@ const CollectionNames = {
   AssetAmendments: 'assetAmendments',
   UserMeta: 'userMeta',
   DiscordMessages: 'discordMessages',
+  AssetMeta: 'assetMeta',
 }
 module.exports.CollectionNames = CollectionNames
+
+const AssetMetaFieldNames = {
+  endorsementCount: 'endorsementCount',
+}
+module.exports.AssetMetaFieldNames = AssetMetaFieldNames
+
+const EndorsementFieldNames = {
+  asset: 'asset',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+}
+module.exports.EndorsementFieldNames = EndorsementFieldNames
 
 const UserMetaFieldNames = {
   isPatron: 'isPatron',
@@ -359,4 +372,71 @@ module.exports.retrieveAuthorNameFromAssetData = async (
     return authorDoc.get(AuthorFieldNames.name)
   }
   return Promise.resolve(defaultName)
+}
+
+/**
+ * ASSET META
+ */
+
+module.exports.syncAssetMeta = async () => {
+  const { docs: assetDocs } = await db.collection(CollectionNames.Assets).get()
+  const { docs: endorsementDocs } = await db
+    .collection(CollectionNames.Endorsements)
+    .get()
+
+  const batch = db.batch()
+
+  for (const assetDoc of assetDocs) {
+    const tally = endorsementDocs.reduce((val, endorsementDoc) => {
+      if (endorsementDoc.get(EndorsementFieldNames.asset).id === assetDoc.id) {
+        return val + 1
+      } else {
+        return val
+      }
+    }, 0)
+
+    const metaRef = db.collection(CollectionNames.AssetMeta).doc(assetDoc.id)
+
+    batch.set(
+      metaRef,
+      {
+        [AssetMetaFieldNames.endorsementCount]: tally,
+      },
+      {
+        merge: true,
+      }
+    )
+  }
+
+  await batch.commit()
+}
+
+module.exports.addEndorsementToAssetMeta = async (assetId) => {
+  console.debug(`Adding endorsement for asset ${assetId}...`)
+
+  const existingDoc = await db
+    .collection(CollectionNames.AssetMeta)
+    .doc(assetId)
+    .get()
+  let existingCount = 0
+
+  if (existingDoc.exists) {
+    existingCount = existingDoc.get(AssetMetaFieldNames.endorsementCount) || 0
+  }
+
+  console.debug(`Existing count: ${existingCount}`)
+
+  const newCount = existingCount + 1
+
+  return db
+    .collection(CollectionNames.AssetMeta)
+    .doc(assetId)
+    .set(
+      {
+        [AssetMetaFieldNames.endorsementCount]: newCount,
+      },
+      {
+        merge: true,
+      }
+    )
 }

@@ -6,3 +6,5 @@ node_modules/
 .patreonconfig.json
 .globalconfig.json
 credentials.json
+.firebaserc
+emulator-data/

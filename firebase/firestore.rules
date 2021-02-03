@@ -159,5 +159,9 @@ service cloud.firestore {
       allow update: if ((request.auth.uid == resource.id) && isNotBanned());
       allow create: if isLoggedIn() && isNotBanned();
     }
+
+    match /assetMeta/{document=**} {
+      allow read;
+    }
   }
 }

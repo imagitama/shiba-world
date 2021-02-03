@@ -40,3 +40,7 @@ if (IS_BACKUP_ENABLED) {
 
 exports.optimizeImage = require('./src/functions/optimizeImage')
 exports.getPatreonUserInfo = require('./src/functions/getPatreonUserInfo')
+
+// asset meta
+exports.addEndorsementToAssetMeta = require('./src/functions/addEndorsementToAssetMeta')
+exports.syncAssetMeta = require('./src/functions/syncAssetMeta')

@@ -42,7 +42,12 @@ export const CollectionNames = {
   Tweets: 'tweets',
   AssetAmendments: 'assetAmendments',
   UserMeta: 'userMeta',
-  DiscordMessages: 'discordMessages'
+  DiscordMessages: 'discordMessages',
+  AssetMeta: 'assetMeta'
+}
+
+export const AssetMetaFieldNames = {
+  endorsementCount: 'endorsementCount'
 }
 
 export const UserMetaFieldNames = {
