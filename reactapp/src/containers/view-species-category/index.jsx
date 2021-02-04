@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
+import { makeStyles } from '@material-ui/core/styles'
 
 import * as routes from '../../routes'
 import {
@@ -31,6 +32,13 @@ import useUserRecord from '../../hooks/useUserRecord'
 import useStorage, { keys as storageKeys } from '../../hooks/useStorage'
 import useCategoryMeta from '../../hooks/useCategoryMeta'
 import { createRef } from '../../utils'
+
+const useStyles = makeStyles({
+  viewAllInCategoryBtn: {
+    textAlign: 'center',
+    margin: '1rem 0'
+  }
+})
 
 function Assets({
   species,
@@ -102,6 +110,8 @@ function isRouteVarAFirebaseId(routeVar) {
   )
 }
 
+const analyticsCategory = 'ViewSpeciesCategory'
+
 export default ({
   match: {
     params: { speciesIdOrSlug, categoryName }
@@ -131,6 +141,7 @@ export default ({
   )
   const [activeSortFieldName, setActiveSortFieldName] = useState()
   const [activeSortDirection, setActiveSortDirection] = useState()
+  const classes = useStyles()
 
   if (isLoading) {
     return <LoadingIndicator />
@@ -172,7 +183,7 @@ export default ({
   const onNewSortFieldAndDirection = (fieldName, direction) => {
     setActiveSortFieldName(fieldName)
     setActiveSortDirection(direction)
-    trackAction('AssetsList', 'Click sort by field and direction', {
+    trackAction(analyticsCategory, 'Click sort by field and direction', {
       species: species.id,
       categoryName,
       fieldName,
@@ -217,7 +228,7 @@ export default ({
         directionKey={storageKeys.assetsSortByDirection}
         onNewSortFieldAndDirection={onNewSortFieldAndDirection}
         onOpenDropdown={() =>
-          trackAction('AssetsList', 'Open sort dropdown', {
+          trackAction(analyticsCategory, 'Open sort dropdown', {
             species: species.id,
             categoryName
           })
@@ -230,6 +241,22 @@ export default ({
         sortByFieldName={activeSortFieldName || assetsSortByFieldName}
         sortByDirection={activeSortDirection || assetsSortByDirection}
       />
+      <div className={classes.viewAllInCategoryBtn}>
+        <Button
+          url={routes.viewCategoryWithVar.replace(
+            ':categoryName',
+            categoryName
+          )}
+          onClick={() =>
+            trackAction(
+              analyticsCategory,
+              'Click view all in category',
+              categoryName
+            )
+          }>
+          View all in category "{category.name}"
+        </Button>
+      </div>
       <Heading variant="h2">Tags</Heading>
       <AllTagsBrowser lazyLoad />
     </>
