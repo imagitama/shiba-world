@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useHistory } from 'react-router'
 import TextField from '@material-ui/core/TextField'
 
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { CollectionNames, AssetFieldNames } from '../../hooks/useDatabaseQuery'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
-import LoadingIndicator from '../../components/loading-indicator'
-import SuccessMessage from '../../components/success-message'
 import ErrorMessage from '../../components/error-message'
 import Button from '../../components/button'
 import NoPermissionMessage from '../../components/no-permission-message'
 import CategorySelector from '../../components/category-selector'
 import SpeciesSelector from '../../components/species-selector'
 import Heading from '../../components/heading'
+import SyncWithGumroadForm from '../../components/sync-with-gumroad-form'
+import PageControls from '../../components/page-controls'
+import LoadingIndicator from '../../components/loading-indicator'
 
 import { scrollToTop, isRef } from '../../utils'
 import * as routes from '../../routes'
@@ -21,14 +21,12 @@ import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
 import { trackAction } from '../../analytics'
 import defaultThumbnailUrl from '../../assets/images/default-thumbnail.webp'
-import useCategoryMeta from '../../hooks/useCategoryMeta'
 
 export default () => {
   const userId = useFirebaseUserId()
-  const [isSaving, isSaveSuccess, isSaveError, save] = useDatabaseSave(
+  const [isSaving, , isSaveError, save] = useDatabaseSave(
     CollectionNames.Assets
   )
-  const { push } = useHistory()
   const redirectRef = useRef()
 
   const [
@@ -39,7 +37,10 @@ export default () => {
   const [speciesValue, setSpeciesValue] = useState([])
   const [categoryValue, setCategoryValue] = useState(null)
   const [gumroadUrl, setGumroadUrl] = useState('')
-  const { nameSingular: categoryName } = useCategoryMeta(categoryValue)
+  const [isToSyncWithGumroad, setIsToSyncWithGumroad] = useState(false)
+  const [hasFinishedSyncWithGumroad, setHasFinishedSyncWithGumroad] = useState(
+    false
+  )
 
   useEffect(() => {
     return () => clearTimeout(redirectRef.current)
@@ -73,16 +74,13 @@ export default () => {
       })
 
       setNewDocumentId(docId)
-
-      redirectRef.current = setTimeout(
-        () => push(routes.editAssetWithVar.replace(':assetId', docId)),
-        2000
-      )
     } catch (err) {
       console.error('Failed to create asset', newFields, err)
       handleError(err)
     }
   }
+
+  const onSyncWithGumroadBtnClick = () => setIsToSyncWithGumroad(true)
 
   if (!userId) {
     return <NoPermissionMessage />
@@ -94,27 +92,6 @@ export default () => {
 
   if (isSaveError) {
     return <ErrorMessage>Failed to create asset</ErrorMessage>
-  }
-
-  if (isSaveSuccess) {
-    return (
-      <SuccessMessage>
-        Created a draft for you. Redirecting to it in 2 seconds...
-        <br />
-        <br />
-        <Button
-          url={routes.viewAssetWithVar.replace(':assetId', newDocumentId)}
-          onClick={() =>
-            trackAction(
-              'CreateAsset',
-              'Click view created asset button',
-              newDocumentId
-            )
-          }>
-          Skip
-        </Button>
-      </SuccessMessage>
-    )
   }
 
   if (!categoryValue) {
@@ -153,34 +130,70 @@ export default () => {
         selectedSpeciesMulti={speciesValue}
         onDone={() => {
           setHasFinishedSelectingSpecies(true)
+          onDone()
           scrollToTop()
         }}
       />
     )
   }
 
-  return (
-    <>
-      <Heading variant="h1">Upload {categoryName}</Heading>
-      <Heading variant="h2">Source</Heading>
-      <p>
-        If you are uploading an asset from Gumroad please enter the URL below or
-        leave it empty. You can always change it later.
-      </p>
-      <p>
-        By providing a Gumroad URL you can click a button to sync the thumbnail,
-        title and description with Gumroad.
-      </p>
-      <strong>Gumroad URL</strong>
-      <br />
-      <TextField
-        onChange={e => setGumroadUrl(e.target.value)}
-        variant="filled"
-        style={{ width: '100%' }}
-      />
-      <br />
-      <br />
-      <Button onClick={() => onDone()}>Done</Button>
-    </>
-  )
+  if (newDocumentId) {
+    return (
+      <>
+        <Heading variant="h1">Draft created!</Heading>
+        <Heading variant="h2">Gumroad</Heading>
+        <p>
+          Most assets on this site are on Gumroad so we can automatically fetch
+          basic information from Gumroad itself. Enter the Gumroad URL below or
+          skip to continue:
+        </p>
+        {!isToSyncWithGumroad && (
+          <>
+            <TextField
+              onChange={e => setGumroadUrl(e.target.value)}
+              variant="filled"
+              style={{ width: '100%' }}
+            />
+            {gumroadUrl && (
+              <PageControls>
+                <Button onClick={() => onSyncWithGumroadBtnClick()}>
+                  Fetch From Gumroad
+                </Button>
+              </PageControls>
+            )}
+          </>
+        )}
+        {!hasFinishedSyncWithGumroad && isToSyncWithGumroad && (
+          <SyncWithGumroadForm
+            assetId={newDocumentId}
+            gumroadUrl={gumroadUrl}
+            onDone={() => setHasFinishedSyncWithGumroad(true)}
+          />
+        )}
+        <PageControls>
+          {hasFinishedSyncWithGumroad && (
+            <>
+              <p>Sync successful.</p>
+              <Button
+                url={routes.viewAssetWithVar.replace(
+                  ':assetId',
+                  newDocumentId
+                )}>
+                Done
+              </Button>
+            </>
+          )}{' '}
+          {!hasFinishedSyncWithGumroad && (
+            <Button
+              color="default"
+              url={routes.viewAssetWithVar.replace(':assetId', newDocumentId)}>
+              Skip
+            </Button>
+          )}
+        </PageControls>
+      </>
+    )
+  }
+
+  return null
 }

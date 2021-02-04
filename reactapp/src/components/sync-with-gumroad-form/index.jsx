@@ -24,6 +24,7 @@ import {
   removeQuotesFromDescription
 } from '../../utils/formatting'
 import { cleanupTags } from '../../utils/tags'
+import defaultThumbnailUrl from '../../assets/images/default-thumbnail.webp'
 
 const useStyles = makeStyles({
   field: {
@@ -166,6 +167,7 @@ export default ({ assetId, gumroadUrl, onDone }) => {
   const [isUsingQuotes, setIsUsingQuotes] = useState(true)
   const [previewImageUrl, setPreviewImageUrl] = useState('')
   const [previewImageFile, setPreviewImageFile] = useState(null)
+  const [showTagInfo, setShowTagInfo] = useState(false)
 
   const populateFromGumroad = async () => {
     try {
@@ -193,7 +195,7 @@ export default ({ assetId, gumroadUrl, onDone }) => {
 - Photoshop file included
 - Dynamic Bones included
 - shapekeys included`,
-            ourPreviewUrl: null
+            ourPreviewUrl: defaultThumbnailUrl
           }
         }
       )
@@ -376,10 +378,16 @@ export default ({ assetId, gumroadUrl, onDone }) => {
           <>
             <br />
             Tags have been populated using the description from Gumroad:
+            <br />
+            {!showTagInfo && (
+              <Button onClick={() => setShowTagInfo(true)} color="default">
+                Show Popular Tags
+              </Button>
+            )}
             <TagInput
               currentTags={newFields[AssetFieldNames.tags]}
               onChange={newTags => updateField(AssetFieldNames.tags, newTags)}
-              showInfo={false}
+              showInfo={showTagInfo}
             />
           </>
         )}
