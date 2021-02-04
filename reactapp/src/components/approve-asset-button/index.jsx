@@ -20,7 +20,7 @@ export default ({ assetId, isAlreadyApproved = null, onClick = null }) => {
     CollectionNames.Assets,
     isAlreadyApproved !== null ? false : assetId,
     {
-      [options.queryName]: 'approve-asset-button'
+      [options.queryName]: 'approve-asset-btn'
     }
   )
   const [isSaving, , isSaveError, save] = useDatabaseSave(

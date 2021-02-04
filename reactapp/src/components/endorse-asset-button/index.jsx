@@ -8,7 +8,8 @@ import useDatabaseQuery, {
   CollectionNames,
   EndorsementFieldNames,
   AssetMetaFieldNames,
-  Operators
+  Operators,
+  options
 } from '../../hooks/useDatabaseQuery'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
@@ -25,18 +26,28 @@ const useStyles = makeStyles({
 
 export default ({ assetId, onClick = null }) => {
   const userId = useFirebaseUserId()
+  const [, , myEndorsements] = useDatabaseQuery(
+    CollectionNames.Endorsements,
+    userId
+      ? [
+          [
+            EndorsementFieldNames.createdBy,
+            Operators.EQUALS,
+            createRef(CollectionNames.Users, userId)
+          ]
+        ]
+      : false,
+    {
+      [options.queryName]: 'get-my-endorsements'
+    }
+  )
   const [
     isFetchingEndorsements,
     isErroredFetchingEndorsements,
-    endorsements
-  ] = useDatabaseQuery(CollectionNames.Endorsements, [
-    [
-      EndorsementFieldNames.asset,
-      Operators.EQUALS,
-      createRef(CollectionNames.Assets, assetId)
-    ]
-  ])
-  const [, , assetMeta] = useDatabaseQuery(CollectionNames.AssetMeta, assetId)
+    assetMeta
+  ] = useDatabaseQuery(CollectionNames.AssetMeta, assetId, {
+    [options.queryName]: 'asset-meta-for-endorsements'
+  })
   const [isSaving, isSavingSuccess, isSavingError, save] = useDatabaseSave(
     CollectionNames.Endorsements
   )
@@ -44,8 +55,6 @@ export default ({ assetId, onClick = null }) => {
 
   const endorsementCount = assetMeta
     ? assetMeta[AssetMetaFieldNames.endorsementCount]
-    : endorsements
-    ? endorsements.length
     : 0
 
   const onSaveBtnClick = async () => {
@@ -98,12 +107,7 @@ export default ({ assetId, onClick = null }) => {
     return <Button disabled>Successfully endorsed ({endorsementCount})</Button>
   }
 
-  if (
-    endorsements.find(
-      ({ [EndorsementFieldNames.createdBy]: createdBy }) =>
-        createdBy.id === userId
-    )
-  ) {
+  if (myEndorsements && myEndorsements.length) {
     return (
       <Button
         color="default"

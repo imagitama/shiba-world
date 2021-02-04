@@ -507,6 +507,7 @@ export default ({ assetId, switchEditorOpen }) => {
     [AssetFieldNames.isDeleted]: isDeleted,
     [AssetFieldNames.isAdult]: isAdult,
     [AssetFieldNames.isPrivate]: isPrivate,
+    [AssetFieldNames.isPinned]: isPinned,
     [AssetFieldNames.author]: author,
     [AssetFieldNames.children]: children,
     [AssetFieldNames.ownedBy]: ownedBy,
@@ -921,11 +922,15 @@ export default ({ assetId, switchEditorOpen }) => {
                 {' '}
                 <Heading variant="h4">Editor Actions</Heading>
                 <Control>
-                  <ApproveAssetButton assetId={assetId} />
+                  <ApproveAssetButton
+                    assetId={assetId}
+                    isAlreadyApproved={isApproved}
+                  />
                 </Control>
                 <Control>
                   <DeleteAssetButton
                     assetId={assetId}
+                    isAlreadyDeleted={isDeleted}
                     onClick={({ newValue }) =>
                       trackAction(
                         analyticsCategoryName,
@@ -940,6 +945,7 @@ export default ({ assetId, switchEditorOpen }) => {
                 <Control>
                   <PinAssetButton
                     assetId={assetId}
+                    isAlreadyPinned={isPinned}
                     onClick={({ newValue }) =>
                       trackAction(
                         analyticsCategoryName,

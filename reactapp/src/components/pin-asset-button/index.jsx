@@ -3,7 +3,8 @@ import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import useDatabaseQuery, {
   CollectionNames,
-  AssetFieldNames
+  AssetFieldNames,
+  options
 } from '../../hooks/useDatabaseQuery'
 
 import { handleError } from '../../error-handling'
@@ -11,19 +12,24 @@ import { createRef } from '../../utils'
 
 import Button from '../button'
 
-export default ({ assetId, onClick = null }) => {
+export default ({ assetId, isAlreadyPinned = undefined, onClick = null }) => {
   // TODO: Check if they are editor! We are assuming the parent does this = not good
 
   const userId = useFirebaseUserId()
 
   const [isLoadingAsset, isErroredLoadingAsset, asset] = useDatabaseQuery(
     CollectionNames.Assets,
-    assetId
+    isAlreadyPinned !== undefined ? false : assetId,
+    {
+      [options.queryName]: 'pin-asset-btn'
+    }
   )
   const [isSaving, , isSaveErrored, save] = useDatabaseSave(
     CollectionNames.Assets,
     assetId
   )
+
+  const isPinned = asset ? asset[AssetFieldNames.isPinned] : isAlreadyPinned
 
   if (isLoadingAsset || isSaving) {
     // TODO: Remove string duplication with color prop
@@ -33,8 +39,6 @@ export default ({ assetId, onClick = null }) => {
   if (isErroredLoadingAsset || isSaveErrored) {
     return <Button disabled>Error</Button>
   }
-
-  const { [AssetFieldNames.isPinned]: isPinned } = asset
 
   const onBtnClick = async () => {
     try {

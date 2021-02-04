@@ -16,8 +16,8 @@ import {
 import FormattedDate from '../formatted-date'
 import Button from '../button'
 import Avatar from '../avatar'
-import LikeButton from '../like-button'
-import LikesTotal from '../likes-total'
+// import LikeButton from '../like-button'
+// import LikesTotal from '../likes-total'
 
 import { canEditComments } from '../../permissions'
 import * as routes from '../../routes'
@@ -157,16 +157,18 @@ export default ({
               <FormattedDate date={createdAt} />
             </div>
             <div className={classes.likeButton}>
+              {/*
+                Commented out because each like button does 2 searches: total number of likes and have I liked it? Need to rewrite to tally that stuff up! 
               <LikeButton
                 collectionName={CollectionNames.Comments}
                 parentId={id}
-              />
+              /> */}
             </div>
             <div>
-              <LikesTotal
+              {/* <LikesTotal
                 collectionName={CollectionNames.Comments}
                 parentId={id}
-              />
+              /> */}
             </div>
           </div>
         </div>

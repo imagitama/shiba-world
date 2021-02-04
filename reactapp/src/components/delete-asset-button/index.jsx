@@ -4,7 +4,8 @@ import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useUserRecord from '../../hooks/useUserRecord'
 import useDatabaseQuery, {
   CollectionNames,
-  AssetFieldNames
+  AssetFieldNames,
+  options
 } from '../../hooks/useDatabaseQuery'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
@@ -13,17 +14,22 @@ import Button from '../button'
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
 
-export default ({ assetId, onClick = null }) => {
+export default ({ assetId, isAlreadyDeleted = null, onClick = null }) => {
   const userId = useFirebaseUserId()
   const [, , user] = useUserRecord()
   const [isLoadingAsset, isErroredLoadingAsset, asset] = useDatabaseQuery(
     CollectionNames.Assets,
-    assetId
+    isAlreadyDeleted !== null ? false : assetId,
+    {
+      [options.queryName]: 'delete-asset-btn'
+    }
   )
   const [isSaving, , isErroredSavingAsset, saveAsset] = useDatabaseSave(
     CollectionNames.Assets,
     assetId
   )
+
+  const isDeleted = asset ? asset[AssetFieldNames.isDeleted] : isAlreadyDeleted
 
   if (!user || isLoadingAsset || isSaving) {
     return <Button color="default">Loading...</Button>
@@ -32,8 +38,6 @@ export default ({ assetId, onClick = null }) => {
   if (isErroredLoadingAsset || isErroredSavingAsset) {
     return <Button disabled>Error</Button>
   }
-
-  const { [AssetFieldNames.isDeleted]: isDeleted } = asset
 
   const onBtnClick = async () => {
     try {
