@@ -45,6 +45,7 @@ const useStyles = makeStyles({
 
 export default ({
   selectedCategory,
+  title = '',
   onSelect,
   onDeSelect,
   selectedSpeciesMulti,
@@ -55,7 +56,9 @@ export default ({
 
   return (
     <>
-      <Heading variant="h1">Upload {nameSingular}</Heading>
+      <Heading variant="h1">
+        Upload {title ? `"${title}"` : nameSingular}
+      </Heading>
       <Heading variant="h2">Select a species</Heading>
       <p>
         Each asset on VRCArena is categorized by their species to help people

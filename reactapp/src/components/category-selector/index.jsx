@@ -73,7 +73,7 @@ function Item({
   )
 }
 
-export default ({ onSelect }) => {
+export default ({ onSelect, title = '' }) => {
   const classes = useStyles()
   const [highlightedItemName, setHighlightedItemName] = useState(null)
 
@@ -91,7 +91,7 @@ export default ({ onSelect }) => {
 
   return (
     <>
-      <Heading variant="h1">Upload Asset</Heading>
+      <Heading variant="h1">Upload {title ? `"${title}"` : 'Asset'}</Heading>
       <Heading variant="h2">Select a category</Heading>
       <div className={classes.root}>
         {Object.entries(categoryMeta).map(([name, meta]) => (

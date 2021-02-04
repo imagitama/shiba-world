@@ -28,6 +28,10 @@ export default (indexName, keywords, filters = undefined) => {
       indexRef.current = client.initIndex(activeIndexNameRef.current)
     }
 
+    if (!keywords) {
+      return
+    }
+
     async function doIt() {
       try {
         const { hits } = await indexRef.current.search(

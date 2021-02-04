@@ -14,6 +14,7 @@ import Heading from '../../components/heading'
 import SyncWithGumroadForm from '../../components/sync-with-gumroad-form'
 import PageControls from '../../components/page-controls'
 import LoadingIndicator from '../../components/loading-indicator'
+import DuplicateAssetForm from '../../components/duplicate-asset-form'
 
 import { scrollToTop, isRef } from '../../utils'
 import * as routes from '../../routes'
@@ -21,6 +22,7 @@ import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
 import { trackAction } from '../../analytics'
 import defaultThumbnailUrl from '../../assets/images/default-thumbnail.webp'
+import useCategoryMeta from '../../hooks/useCategoryMeta'
 
 export default () => {
   const userId = useFirebaseUserId()
@@ -36,11 +38,17 @@ export default () => {
   const [newDocumentId, setNewDocumentId] = useState(null)
   const [speciesValue, setSpeciesValue] = useState([])
   const [categoryValue, setCategoryValue] = useState(null)
+  const [titleValue, setTitleValue] = useState('')
+  const [
+    hasDuplicateCheckBeenPerformed,
+    setHasDuplicateCheckBeenPerformed
+  ] = useState(false)
   const [gumroadUrl, setGumroadUrl] = useState('')
   const [isToSyncWithGumroad, setIsToSyncWithGumroad] = useState(false)
   const [hasFinishedSyncWithGumroad, setHasFinishedSyncWithGumroad] = useState(
     false
   )
+  const categoryDetails = useCategoryMeta(categoryValue)
 
   useEffect(() => {
     return () => clearTimeout(redirectRef.current)
@@ -54,7 +62,7 @@ export default () => {
 
       const [docId] = await save({
         // required files
-        [AssetFieldNames.title]: 'Untitled',
+        [AssetFieldNames.title]: titleValue,
         [AssetFieldNames.description]: '',
         [AssetFieldNames.thumbnailUrl]: defaultThumbnailUrl,
         [AssetFieldNames.fileUrls]: [],
@@ -102,7 +110,26 @@ export default () => {
           scrollToTop()
         }}
         selectedCategory={categoryValue}
+        title={titleValue}
       />
+    )
+  }
+
+  if (!hasDuplicateCheckBeenPerformed) {
+    return (
+      <>
+        <Heading variant="h1">
+          Upload {categoryDetails ? categoryDetails.nameSingular : 'Asset'}
+        </Heading>
+        <Heading variant="h2">Title</Heading>
+        <DuplicateAssetForm
+          categoryName={categoryValue}
+          onDone={newTitle => {
+            setTitleValue(newTitle)
+            setHasDuplicateCheckBeenPerformed(true)
+          }}
+        />
+      </>
     )
   }
 
@@ -110,6 +137,7 @@ export default () => {
     return (
       <SpeciesSelector
         selectedCategory={categoryValue}
+        title={titleValue}
         onSelect={idToAdd =>
           setSpeciesValue(currentVal =>
             currentVal.concat([createRef(CollectionNames.Species, idToAdd)])
@@ -140,7 +168,7 @@ export default () => {
   if (newDocumentId) {
     return (
       <>
-        <Heading variant="h1">Draft created!</Heading>
+        <Heading variant="h1">Upload "{titleValue}"</Heading>
         <Heading variant="h2">Gumroad</Heading>
         <p>
           Most assets on this site are on Gumroad so we can automatically fetch
