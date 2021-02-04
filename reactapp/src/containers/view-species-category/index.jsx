@@ -180,8 +180,6 @@ export default ({
     })
   }
 
-  console.log(speciesId)
-
   const desc = category.shortDescription
   return (
     <>

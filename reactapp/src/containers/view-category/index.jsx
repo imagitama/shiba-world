@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react'
+import React, { useState, useEffect, Fragment, useRef } from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
@@ -36,7 +36,7 @@ import useDatabaseQuery, {
 import useInfiniteDatabaseQuery from '../../hooks/useInfiniteDatabaseQuery'
 import useStorage, { keys as storageKeys } from '../../hooks/useStorage'
 import { mediaQueryForMobiles } from '../../media-queries'
-import { scrollTo, scrollToTop } from '../../utils'
+import { scrollTo, scrollToTop, scrollToElement } from '../../utils'
 import SpeciesVsSelector from '../../components/species-vs-selector'
 
 const useStyles = makeStyles({
@@ -83,6 +83,7 @@ const otherSpeciesKey = 'other-species'
 function AvatarAssetResults({ assets }) {
   const [isSpeciesSelectorOpen, setIsSpeciesSelectorOpen] = useState(false)
   const classes = useStyles()
+  const headingElementsBySpeciesIdRef = useRef({})
 
   // Because the avatars page is very long and the most popular page of the site
   // track the user's scroll so they can click on avatars and return and not have
@@ -138,16 +139,13 @@ function AvatarAssetResults({ assets }) {
   }, {})
 
   const scrollToSpeciesId = speciesId => {
-    if (!(speciesId in speciesMetaById)) {
+    if (!(speciesId in headingElementsBySpeciesIdRef.current)) {
       throw new Error(
-        `Cannot scroll to species ${speciesId}: does not exist in meta!`
+        `Cannot scroll to species ${speciesId}: does not exist in headings!`
       )
     }
 
-    /* eslint-disable-next-line */
-    location.hash = `#${
-      speciesMetaById[speciesId][SpeciesFieldNames.singularName]
-    }`
+    scrollToElement(headingElementsBySpeciesIdRef.current[speciesId])
   }
 
   return (
@@ -183,7 +181,9 @@ function AvatarAssetResults({ assets }) {
             <div className={classes.headingWrapper}>
               <Heading
                 variant="h2"
-                id={speciesMetaById[speciesId][SpeciesFieldNames.singularName]}>
+                ref={element => {
+                  headingElementsBySpeciesIdRef.current[speciesId] = element
+                }}>
                 <Link
                   to={routes.viewSpeciesWithVar.replace(
                     ':speciesIdOrSlug',
