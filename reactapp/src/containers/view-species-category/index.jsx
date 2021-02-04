@@ -204,10 +204,7 @@ export default ({
       <Heading variant="h2">
         <Link
           to={routes.viewSpeciesCategoryWithVar
-            .replace(
-              ':species[SpeciesFieldNames.singularName]',
-              species[SpeciesFieldNames.singularName]
-            )
+            .replace(':speciesIdOrSlug', speciesIdOrSlug)
             .replace(':categoryName', categoryName)}>
           {category.name}
         </Link>
