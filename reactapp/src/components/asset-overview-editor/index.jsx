@@ -595,7 +595,7 @@ export default ({ assetId, switchEditorOpen }) => {
   const [, , user] = useUserRecord()
   const [, , userMetaResult] = useDatabaseQuery(
     CollectionNames.UserMeta,
-    user.id
+    user ? user.id : false
   )
   const [isSpeciesEditorOpen, setIsSpeciesEditorOpen] = useState(false)
   const [isAttachFileFormOpen, setIsAttachFileFormOpen] = useState(false)
