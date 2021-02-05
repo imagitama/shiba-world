@@ -32,7 +32,10 @@ export default ({ code, onSuccess, onFail }) => {
           code
         })
 
-        await firebase.auth().signInWithCustomToken(token)
+        const {
+          user: loggedInUser
+        } = await firebase.auth().signInWithCustomToken(token)
+        await loggedInUser.updateEmail(user.email)
 
         setIsError(false)
         setIsLoading(false)

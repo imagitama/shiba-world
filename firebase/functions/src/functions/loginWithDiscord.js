@@ -1,10 +1,7 @@
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 const fetch = require('node-fetch')
-const path = require('path')
-const os = require('os')
-const { promises: fs } = require('fs')
-const { URLSearchParams, URL } = require('url')
+const { URLSearchParams } = require('url')
 const config = require('../config')
 
 const DISCORD_CLIENT_ID = config.discord.client_id

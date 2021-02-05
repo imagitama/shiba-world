@@ -49,6 +49,10 @@ export default ({ userId, discordUser, onDone }) => {
           [UserFieldNames.username]:
             discordUser[DiscordUserFieldNames.username],
           [UserFieldNames.avatarUrl]: optimizedImageUrl,
+          // need these otherwise permissions screw up
+          [UserFieldNames.isEditor]: false,
+          [UserFieldNames.isAdmin]: false,
+          [UserFieldNames.isBanned]: false,
           [UserFieldNames.createdBy]: createRef(CollectionNames.Users, userId),
           [UserFieldNames.createdAt]: new Date()
         })
