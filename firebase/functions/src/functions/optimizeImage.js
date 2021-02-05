@@ -9,7 +9,11 @@ module.exports = functions.https.onCall(async (data) => {
       throw new Error('Need to provide imageUrl')
     }
 
-    const optimizedImageUrl = await optimizeBucketImageByUrl(imageUrl)
+    const optimizedImageUrl = await optimizeBucketImageByUrl(
+      imageUrl,
+      data.width,
+      data.height
+    )
 
     return { message: 'Image has been optimized', optimizedImageUrl }
   } catch (err) {

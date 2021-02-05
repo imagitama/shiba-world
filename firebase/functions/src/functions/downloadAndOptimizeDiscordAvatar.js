@@ -64,7 +64,11 @@ module.exports = functions.https.onCall(async (data) => {
 
     const avatarUrl = await downloadAvatarToBucket(userId, avatarHash)
 
-    const optimizedImageUrl = await optimizeBucketImageByUrl(avatarUrl)
+    const optimizedImageUrl = await optimizeBucketImageByUrl(
+      avatarUrl,
+      300,
+      300
+    )
 
     return { message: 'Discord avatar has been optimized', optimizedImageUrl }
   } catch (err) {

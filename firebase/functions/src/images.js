@@ -4,7 +4,7 @@ const os = require('os')
 const fs = require('fs')
 const child_process = require('child_process')
 
-async function optimizeBucketImageByUrl(imageUrl) {
+async function optimizeBucketImageByUrl(imageUrl, width, height) {
   const gcs = admin.storage()
   const bucket = gcs.bucket()
 
@@ -38,7 +38,9 @@ async function optimizeBucketImageByUrl(imageUrl) {
     child_process.exec(
       `ffmpeg${
         process.env.IS_EMULATOR ? '.exe' : ''
-      } -i "${tempDownloadFilePath}" -vf scale=300:300 -y "${tempUploadFilePath}"`,
+      } -i "${tempDownloadFilePath}" ${
+        width && height ? `-vf scale=${width}:${height}` : ''
+      } -y "${tempUploadFilePath}"`,
       (err, stdout, stderr) => {
         if (err) {
           reject(err)

@@ -9,6 +9,9 @@ import ErrorMessage from '../error-message'
 import Button from '../button'
 import SyncUserWithDiscordForm from '../sync-user-with-discord-form'
 
+// when you log in this component gets completely remounted so it tries to repeat a bunch of times
+let isAlreadyAuthenticated = false
+
 export default ({ code, onSuccess, onFail }) => {
   const [isError, setIsError] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -16,7 +19,7 @@ export default ({ code, onSuccess, onFail }) => {
   const [discordUser, setDiscordUser] = useState(null)
 
   useEffect(() => {
-    if (!code) {
+    if (!code || isAlreadyAuthenticated) {
       return
     }
 
@@ -43,6 +46,8 @@ export default ({ code, onSuccess, onFail }) => {
         } catch (err) {
           console.log(err)
         }
+
+        isAlreadyAuthenticated = true
 
         setIsError(false)
         setIsLoading(false)
