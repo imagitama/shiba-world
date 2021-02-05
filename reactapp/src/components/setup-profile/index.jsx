@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import TextField from '@material-ui/core/TextField'
 import FormControl from '@material-ui/core/FormControl'
+import { useLocation } from 'react-router'
 
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { CollectionNames, UserFieldNames } from '../../hooks/useDatabaseQuery'
@@ -18,6 +19,7 @@ import BodyText from '../body-text'
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
 import { trackAction } from '../../analytics'
+import * as routes from '../../routes'
 
 const Form = () => {
   const userId = useFirebaseUserId()
@@ -27,6 +29,13 @@ const Form = () => {
     userId
   )
   const [fieldValue, setFieldValue] = useState('')
+  const location = useLocation()
+
+  console.log(location.pathname)
+
+  if (location.pathname === routes.login) {
+    return null
+  }
 
   if (!userId) {
     return null

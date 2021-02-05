@@ -4,23 +4,30 @@ import { Link } from 'react-router-dom'
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
 import useUserRecord from '../../hooks/useUserRecord'
+import useQueryParams from '../../hooks/useQueryParams'
 
 import LoginForm from '../../components/login-form'
 import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'
 import ErrorMessage from '../../components/error-message'
+import LoginWithDiscord from '../../components/login-with-discord'
 
 export default ({ history: { push } }) => {
   const [, , user] = useUserRecord()
+  const queryParams = useQueryParams()
 
-  // useEffect(() => {
-  //   if (user) {
-  //     trackAction('Login', 'User visited but already logged in')
-  //   }
-  // }, [user === null])
-
-  if (user) {
+  if (user && !queryParams.get('code')) {
     return <ErrorMessage>You are already logged in</ErrorMessage>
+  }
+
+  if (queryParams.get('code')) {
+    return (
+      <LoginWithDiscord
+        code={queryParams.get('code')}
+        onSuccess={() => push(routes.myAccount)}
+        onFail={() => push(routes.login)}
+      />
+    )
   }
 
   return (

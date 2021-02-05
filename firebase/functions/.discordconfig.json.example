@@ -1,5 +1,8 @@
 {
   "bot_token": "",
   "activity_webhook_url": "",
-  "editor_notifications_webhook_url": ""
+  "editor_notifications_webhook_url": "",
+  "client_id": "",
+  "client_secret": "",
+  "redirect_uri": ""
 }

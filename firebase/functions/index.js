@@ -44,3 +44,5 @@ exports.getPatreonUserInfo = require('./src/functions/getPatreonUserInfo')
 // asset meta
 exports.addEndorsementToAssetMeta = require('./src/functions/addEndorsementToAssetMeta')
 exports.syncAssetMeta = require('./src/functions/syncAssetMeta')
+exports.loginWithDiscord = require('./src/functions/loginWithDiscord')
+exports.downloadAndOptimizeDiscordAvatar = require('./src/functions/downloadAndOptimizeDiscordAvatar')
