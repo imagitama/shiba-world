@@ -35,7 +35,14 @@ export default ({ code, onSuccess, onFail }) => {
         const {
           user: loggedInUser
         } = await firebase.auth().signInWithCustomToken(token)
-        await loggedInUser.updateEmail(user.email)
+
+        // the user might not have an email OR the email might already be taken so just ignore errors
+        // TODO: Check against existing emails?
+        try {
+          await loggedInUser.updateEmail(user.email)
+        } catch (err) {
+          console.log(err)
+        }
 
         setIsError(false)
         setIsLoading(false)
