@@ -14,6 +14,7 @@ import ViewAsset from './containers/view-asset'
 import ViewSpecies from './containers/view-species'
 import ViewSpeciesCategory from './containers/view-species-category'
 import ViewCategory from './containers/view-category'
+import ViewAvatars from './containers/view-avatars'
 import ViewAllSpecies from './containers/view-all-species'
 import VsScreen from './containers/vs-screen'
 
@@ -38,6 +39,7 @@ import {
   mediaQueryForMobiles,
   mediaQueryForTabletsOrBelow
 } from './media-queries'
+import { AssetCategories } from './hooks/useDatabaseQuery'
 
 const catchChunkDeaths = functionToImport =>
   functionToImport().catch(err => {
@@ -291,6 +293,14 @@ const MainContent = () => {
           exact
           path={routes.viewSpeciesCategoryWithVar}
           component={ViewSpeciesCategory}
+        />
+        <Route
+          exact
+          path={routes.viewCategoryWithVar.replace(
+            ':categoryName',
+            AssetCategories.avatar
+          )}
+          component={ViewAvatars}
         />
         <Route
           exact

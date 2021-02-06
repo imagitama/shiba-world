@@ -67,7 +67,13 @@ export const UserMetaFieldNames = {
 export const specialCollectionIds = {
   featured: 'featured', // TODO: Remove
   featuredAssets: 'featuredAssets',
-  homepage: 'homepage'
+  homepage: 'homepage',
+  avatarList: 'avatarList'
+}
+
+export const AvatarListFieldNames = {
+  avatars: 'avatars',
+  lastModifiedAt: 'lastModifiedAt'
 }
 
 export const FeaturedAssetForUsersFieldNames = {

@@ -107,12 +107,14 @@ function sortSpeciesByAlpha([speciesNameA], [speciesNameB]) {
 }
 
 export default ({
+  species = null,
   selectedSpeciesIds = [],
   onSpeciesClick = null,
   alwaysShowLabels = false
 }) => {
   const [isLoading, isError, results] = useDatabaseQuery(
-    CollectionNames.Species
+    CollectionNames.Species,
+    species ? false : undefined // let the parent provide species to save a query
   )
   const classes = useStyles()
 
@@ -124,7 +126,7 @@ export default ({
     return <ErrorMessage />
   }
 
-  const allSpecies = results.map(result => [
+  const allSpecies = (species || results).map(result => [
     result.singularName,
     {
       id: result.id,

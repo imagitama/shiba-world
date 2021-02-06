@@ -46,3 +46,5 @@ exports.addEndorsementToAssetMeta = require('./src/functions/addEndorsementToAss
 exports.syncAssetMeta = require('./src/functions/syncAssetMeta')
 exports.loginWithDiscord = require('./src/functions/loginWithDiscord')
 exports.downloadAndOptimizeDiscordAvatar = require('./src/functions/downloadAndOptimizeDiscordAvatar')
+exports.syncAvatarList = require('./src/functions/syncAvatarList')
+exports.addAvatarToList = require('./src/functions/addAvatarToList')
