@@ -75,7 +75,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 function truncateTextAndAddEllipsis(text) {
-  return text.length >= 100 ? `${text.slice(0, 100)}...` : text
+  return text && text.length >= 100 ? `${text.slice(0, 100)}...` : text
 }
 
 function ExtraChips({ isAdult, isApproved, isPrivate, isPinned }) {
