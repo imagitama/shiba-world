@@ -47,7 +47,13 @@ export const CollectionNames = {
 }
 
 export const AssetMetaFieldNames = {
-  endorsementCount: 'endorsementCount'
+  // comments: 'comments',
+  authorName: 'authorName',
+  speciesNames: 'speciesNames',
+  // createdByName: 'createdByName',
+  // lastModifiedByName: 'lastModifiedByName',
+  endorsementCount: 'endorsementCount',
+  lastModifiedAt: 'lastModifiedAt'
 }
 
 export const UserMetaFieldNames = {
@@ -453,7 +459,7 @@ function isFirebaseDoc(value) {
   return value && value instanceof firebase.firestore.DocumentReference
 }
 
-async function mapDocArrays(doc, fetchChildren = true) {
+async function mapDocArrays(doc, fetchChildren = true, populateRefs = false) {
   if (!doc) {
     return doc
   }
@@ -467,7 +473,8 @@ async function mapDocArrays(doc, fetchChildren = true) {
       if (Array.isArray(value) && value.length) {
         const results = await Promise.all(
           value.map(async item => {
-            if (isFirebaseDoc(item)) {
+            if (isFirebaseDoc(item) && populateRefs) {
+              console.debug(`get ${item.path}`)
               const doc = await item.get()
               return formatRawDoc(doc, false)
             } else {
@@ -528,7 +535,9 @@ export async function formatRawDocs(
   const mappedRefs = await Promise.all(
     docsWithDates.map(doc => mapReferences(doc, fetchChildren, populateRefs))
   )
-  return Promise.all(mappedRefs.map(ref => mapDocArrays(ref, fetchChildren)))
+  return Promise.all(
+    mappedRefs.map(ref => mapDocArrays(ref, fetchChildren, populateRefs))
+  )
 }
 
 function getLimitAsString(limit) {

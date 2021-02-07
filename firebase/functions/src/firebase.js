@@ -52,7 +52,13 @@ const CollectionNames = {
 module.exports.CollectionNames = CollectionNames
 
 const AssetMetaFieldNames = {
+  // comments: 'comments',
+  authorName: 'authorName',
+  speciesNames: 'speciesNames',
+  // createdByName: 'createdByName',
+  // lastModifiedByName: 'lastModifiedByName',
   endorsementCount: 'endorsementCount',
+  lastModifiedAt: 'lastModifiedAt',
 }
 module.exports.AssetMetaFieldNames = AssetMetaFieldNames
 
@@ -156,6 +162,23 @@ const ProfileFieldNames = {
   notificationEmail: 'notificationEmail',
 }
 module.exports.ProfileFieldNames = ProfileFieldNames
+
+const SpeciesFieldNames = {
+  singularName: 'singularName',
+  pluralName: 'pluralName',
+  description: 'description',
+  shortDescription: 'shortDescription',
+  thumbnailUrl: 'thumbnailUrl',
+  fallbackThumbnailUrl: 'fallbackThumbnailUrl',
+  thumbnailSourceUrl: 'thumbnailSourceUrl',
+  isPopular: 'isPopular',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  slug: 'slug',
+}
+module.exports.SpeciesFieldNames = SpeciesFieldNames
 
 const UserFieldNames = {
   username: 'username',
@@ -379,73 +402,6 @@ module.exports.retrieveAuthorNameFromAssetData = async (
   return Promise.resolve(defaultName)
 }
 
-/**
- * ASSET META
- */
-
-module.exports.syncAssetMeta = async () => {
-  const { docs: assetDocs } = await db.collection(CollectionNames.Assets).get()
-  const { docs: endorsementDocs } = await db
-    .collection(CollectionNames.Endorsements)
-    .get()
-
-  const batch = db.batch()
-
-  for (const assetDoc of assetDocs) {
-    const tally = endorsementDocs.reduce((val, endorsementDoc) => {
-      if (endorsementDoc.get(EndorsementFieldNames.asset).id === assetDoc.id) {
-        return val + 1
-      } else {
-        return val
-      }
-    }, 0)
-
-    const metaRef = db.collection(CollectionNames.AssetMeta).doc(assetDoc.id)
-
-    batch.set(
-      metaRef,
-      {
-        [AssetMetaFieldNames.endorsementCount]: tally,
-      },
-      {
-        merge: true,
-      }
-    )
-  }
-
-  await batch.commit()
-}
-
-module.exports.addEndorsementToAssetMeta = async (assetId) => {
-  console.debug(`Adding endorsement for asset ${assetId}...`)
-
-  const existingDoc = await db
-    .collection(CollectionNames.AssetMeta)
-    .doc(assetId)
-    .get()
-  let existingCount = 0
-
-  if (existingDoc.exists) {
-    existingCount = existingDoc.get(AssetMetaFieldNames.endorsementCount) || 0
-  }
-
-  console.debug(`Existing count: ${existingCount}`)
-
-  const newCount = existingCount + 1
-
-  return db
-    .collection(CollectionNames.AssetMeta)
-    .doc(assetId)
-    .set(
-      {
-        [AssetMetaFieldNames.endorsementCount]: newCount,
-      },
-      {
-        merge: true,
-      }
-    )
-}
-
 const AvatarListFieldNames = {
   avatars: 'avatars',
   lastModifiedAt: 'lastModifiedAt',
@@ -517,4 +473,25 @@ module.exports.updateAvatarInList = async (assetId, avatarDoc) => {
       [AvatarListFieldNames.lastModifiedAt]: new Date(),
     })
   }
+}
+
+module.exports.getHasSpeciesChanged = (beforeSpeciesRefs, afterSpeciesRefs) => {
+  // note: always assuming species is populated as empty array (not null)
+
+  for (const speciesRef of beforeSpeciesRefs) {
+    // if species removed
+    if (!afterSpeciesRefs.find((item) => item.id === speciesRef.id)) {
+      console.debug(`removed species ${speciesRef.id}`)
+      return true
+    }
+  }
+  for (const speciesRef of afterSpeciesRefs) {
+    // if species added
+    if (!beforeSpeciesRefs.find((item) => item.id === speciesRef.id)) {
+      console.debug(`added species ${speciesRef.id}`)
+      return true
+    }
+  }
+
+  return false
 }

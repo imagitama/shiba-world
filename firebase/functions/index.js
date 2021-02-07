@@ -20,12 +20,8 @@ exports.onPollResponseCreated = require('./src/functions/onPollResponseCreated')
 exports.tallyPolls = require('./src/functions/tallyPolls')
 exports.onAssetAmendmentCreated = require('./src/functions/onAssetAmendmentCreated')
 exports.fetchGumroadInfo = require('./src/functions/fetchGumroadInfo')
-
-// homepage
 exports.syncHomepage = require('./src/functions/syncHomepage')
 exports.autoSyncHomepage = require('./src/functions/autoSyncHomepage')
-
-// featured assets
 exports.pickFeaturedAsset = require('./src/functions/pickFeaturedAsset')
 exports.syncFeaturedAssets = require('./src/functions/syncFeaturedAssets')
 exports.onFeaturedAssetsForUsersCreated = require('./src/functions/onFeaturedAssetsForUsersCreated')
@@ -40,11 +36,11 @@ if (IS_BACKUP_ENABLED) {
 
 exports.optimizeImage = require('./src/functions/optimizeImage')
 exports.getPatreonUserInfo = require('./src/functions/getPatreonUserInfo')
-
-// asset meta
 exports.addEndorsementToAssetMeta = require('./src/functions/addEndorsementToAssetMeta')
 exports.syncAssetMeta = require('./src/functions/syncAssetMeta')
 exports.loginWithDiscord = require('./src/functions/loginWithDiscord')
 exports.downloadAndOptimizeDiscordAvatar = require('./src/functions/downloadAndOptimizeDiscordAvatar')
 exports.syncAvatarList = require('./src/functions/syncAvatarList')
 exports.addAvatarToList = require('./src/functions/addAvatarToList')
+exports.hydrateAssetMetaOnAssetCreate = require('./src/functions/hydrateAssetMetaOnAssetCreate')
+exports.hydrateAssetMetaOnAssetUpdate = require('./src/functions/hydrateAssetMetaOnAssetUpdate')

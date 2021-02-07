@@ -131,15 +131,25 @@ function CreateForm({ onDoneWithIdAndName, actionCategory }) {
   )
 }
 
-export default ({ collectionName, id, actionCategory }) => {
+export default ({
+  collectionName,
+  id,
+  existingAuthorId,
+  existingAuthorName,
+  actionCategory
+}) => {
   const userId = useFirebaseUserId()
   const [isSaving, isSuccess, isFailed, save] = useDatabaseSave(
     collectionName,
     id
   )
   const [searchTerm, setSearchTerm] = useState(null)
-  const [selectedAuthorId, setSelectedAuthorId] = useState(null)
-  const [selectedAuthorName, setSelectedAuthorName] = useState(null)
+  const [selectedAuthorId, setSelectedAuthorId] = useState(
+    existingAuthorId || null
+  )
+  const [selectedAuthorName, setSelectedAuthorName] = useState(
+    existingAuthorName || null
+  )
   const [isCreatingAuthor, setIsCreatingAuthor] = useState(false)
   const classes = useStyles()
 
@@ -159,13 +169,16 @@ export default ({ collectionName, id, actionCategory }) => {
     return 'Error saving new author'
   }
 
-  const onSaveBtnClick = async () => {
+  const onSaveBtnClick = async (shouldDelete = false) => {
     try {
       trackAction(actionCategory, 'Click save new author button', id)
 
-      const newValue = selectedAuthorId
-        ? createRef(CollectionNames.Authors, selectedAuthorId)
-        : null
+      let newValue =
+        shouldDelete === true
+          ? null
+          : selectedAuthorId
+          ? createRef(CollectionNames.Authors, selectedAuthorId)
+          : null
 
       await save({
         [AssetFieldNames.author]: newValue,
@@ -193,6 +206,10 @@ export default ({ collectionName, id, actionCategory }) => {
     setIsCreatingAuthor(true)
   }
 
+  const onClickClearBtn = () => {
+    onSaveBtnClick(true)
+  }
+
   return (
     <>
       {isCreatingAuthor ? (
@@ -211,6 +228,13 @@ export default ({ collectionName, id, actionCategory }) => {
           <Button onClick={onCancelBtnClick} color="default">
             Cancel
           </Button>
+          <br />
+          <br />
+          {selectedAuthorId && (
+            <Button onClick={onClickClearBtn} color="default">
+              Remove Author From This Asset
+            </Button>
+          )}
         </>
       ) : (
         <>

@@ -12,10 +12,10 @@ import LazyLoad from 'react-lazyload'
 
 import useDatabaseQuery, {
   CollectionNames,
-  AuthorFieldNames,
   AssetFieldNames,
   DiscordServerFieldNames,
-  options
+  options,
+  AssetMetaFieldNames
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import { setBannerUrls as setBannerUrlsAction } from '../../modules/app'
@@ -49,7 +49,6 @@ import Button from '../button'
 import VideoPlayer from '../video-player'
 import ImageGallery from '../image-gallery'
 import AdminHistory from '../admin-history'
-import OpenForCommissionsMessage from '../open-for-commissions-message'
 import TutorialSteps from '../tutorial-steps'
 import Pedestal from '../pedestal'
 import DownloadAssetButton from '../download-asset-button'
@@ -291,16 +290,17 @@ function ReportButton({ assetId, onClick }) {
   )
 }
 
-function CreatedByMessage({ author }) {
+function CreatedByMessage({ authorRef, authorName }) {
   const classes = useStyles()
 
   return (
     <span className={classes.createdByInTitle}>
-      {author ? (
+      {authorRef ? (
         <>
           by{' '}
-          <Link to={routes.viewAuthorWithVar.replace(':authorId', author.id)}>
-            {author[AuthorFieldNames.name]}
+          <Link
+            to={routes.viewAuthorWithVar.replace(':authorId', authorRef.id)}>
+            {authorName || '???'}
           </Link>
         </>
       ) : null}
@@ -435,8 +435,17 @@ export default ({ assetId, switchEditorOpen }) => {
     assetId,
     {
       [options.subscribe]: true,
-      [options.populateRefs]: true,
+      [options.populateRefs]: false, // use asset meta!
       [options.queryName]: 'asset-overview'
+    }
+  )
+  const [isLoadingMeta, isErroredLoadingMeta, metaResult] = useDatabaseQuery(
+    CollectionNames.AssetMeta,
+    assetId,
+    {
+      [options.subscribe]: true,
+      [options.populateRefs]: false,
+      [options.queryName]: 'asset-overview-meta'
     }
   )
   const classes = useStyles()
@@ -480,11 +489,11 @@ export default ({ assetId, switchEditorOpen }) => {
     }
   }, [result ? result.title : null])
 
-  if (isLoading) {
+  if (isLoading || isLoadingMeta) {
     return <LoadingIndicator />
   }
 
-  if (isErrored || result === null) {
+  if (isErrored || isErroredLoadingMeta || result === null) {
     return <ErrorMessage>Failed to load asset</ErrorMessage>
   }
 
@@ -493,7 +502,7 @@ export default ({ assetId, switchEditorOpen }) => {
     [AssetFieldNames.title]: title,
     [AssetFieldNames.description]: description,
     [AssetFieldNames.category]: category,
-    [AssetFieldNames.species]: species,
+    [AssetFieldNames.species]: speciesRefs,
     [AssetFieldNames.createdAt]: createdAt,
     [AssetFieldNames.createdBy]: createdBy,
     [AssetFieldNames.tags]: tags,
@@ -508,7 +517,7 @@ export default ({ assetId, switchEditorOpen }) => {
     [AssetFieldNames.isAdult]: isAdult,
     [AssetFieldNames.isPrivate]: isPrivate,
     [AssetFieldNames.isPinned]: isPinned,
-    [AssetFieldNames.author]: author,
+    [AssetFieldNames.author]: authorRef,
     [AssetFieldNames.children]: children,
     [AssetFieldNames.ownedBy]: ownedBy,
     [AssetFieldNames.discordServer]: discordServer,
@@ -518,6 +527,11 @@ export default ({ assetId, switchEditorOpen }) => {
     [AssetFieldNames.sketchfabEmbedUrl]: sketchfabEmbedUrl,
     [AssetFieldNames.slug]: slug
   } = result
+
+  const {
+    [AssetMetaFieldNames.authorName]: authorName,
+    [AssetMetaFieldNames.speciesNames]: speciesNames
+  } = metaResult || {}
 
   if (!title) {
     return (
@@ -554,7 +568,8 @@ export default ({ assetId, switchEditorOpen }) => {
           {title}
         </Link>{' '}
         <CreatedByMessage
-          author={author}
+          authorRef={authorRef}
+          authorName={authorName}
           createdBy={createdBy}
           categoryName={category}
         />
@@ -562,13 +577,16 @@ export default ({ assetId, switchEditorOpen }) => {
       <div className={classes.categoryMeta}>
         {category && (
           <div>
-            {species.length ? (
+            {speciesRefs.length ? (
               <>
-                <SpeciesOutput species={species} />
+                <SpeciesOutput
+                  speciesRefs={speciesRefs}
+                  speciesNames={speciesNames}
+                />
                 {' / '}
                 <Link
                   to={routes.viewSpeciesCategoryWithVar
-                    .replace(':speciesIdOrSlug', species[0].id)
+                    .replace(':speciesIdOrSlug', speciesRefs[0].id)
                     .replace(':categoryName', category)}>
                   {getCategoryDisplayName(category)}
                 </Link>
@@ -626,8 +644,10 @@ export default ({ assetId, switchEditorOpen }) => {
       <Helmet>
         <title>
           {title} |{' '}
-          {author ? `By ${author.name}` : `Uploaded by ${createdBy.username}`} |
-          VRCArena
+          {authorRef
+            ? `By ${authorName || '???'}`
+            : `Uploaded by ${createdBy.username}`}{' '}
+          | VRCArena
         </title>
         <meta
           name="description"
@@ -692,7 +712,8 @@ export default ({ assetId, switchEditorOpen }) => {
         </div>
       )}
 
-      {author &&
+      {/* Temporary disabled until we add this data to asset meta
+       {author &&
         author[AuthorFieldNames.isOpenForCommission] &&
         author[AuthorFieldNames.showOpenForCommissionsInAssets] && (
           <OpenForCommissionsMessage
@@ -700,7 +721,7 @@ export default ({ assetId, switchEditorOpen }) => {
             authorId={author.id}
             analyticsCategory={analyticsCategoryName}
           />
-        )}
+        )} */}
 
       <MobilePrimaryBtn
         downloadUrls={downloadUrls}
@@ -855,6 +876,11 @@ export default ({ assetId, switchEditorOpen }) => {
             <Control>
               <EndorseAssetButton
                 assetId={id}
+                endorsementCount={
+                  metaResult
+                    ? metaResult[AssetMetaFieldNames.endorsementCount]
+                    : '???'
+                }
                 onClick={({ newValue }) =>
                   trackAction(
                     analyticsCategoryName,

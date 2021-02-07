@@ -7,7 +7,6 @@ import Button from '../button'
 import useDatabaseQuery, {
   CollectionNames,
   EndorsementFieldNames,
-  AssetMetaFieldNames,
   Operators,
   options
 } from '../../hooks/useDatabaseQuery'
@@ -24,7 +23,7 @@ const useStyles = makeStyles({
   }
 })
 
-export default ({ assetId, onClick = null }) => {
+export default ({ assetId, endorsementCount = '???', onClick = null }) => {
   const userId = useFirebaseUserId()
   const [, , myEndorsements] = useDatabaseQuery(
     CollectionNames.Endorsements,
@@ -41,21 +40,10 @@ export default ({ assetId, onClick = null }) => {
       [options.queryName]: 'get-my-endorsements'
     }
   )
-  const [
-    isFetchingEndorsements,
-    isErroredFetchingEndorsements,
-    assetMeta
-  ] = useDatabaseQuery(CollectionNames.AssetMeta, assetId, {
-    [options.queryName]: 'asset-meta-for-endorsements'
-  })
   const [isSaving, isSavingSuccess, isSavingError, save] = useDatabaseSave(
     CollectionNames.Endorsements
   )
   const classes = useStyles()
-
-  const endorsementCount = assetMeta
-    ? assetMeta[AssetMetaFieldNames.endorsementCount]
-    : 0
 
   const onSaveBtnClick = async () => {
     try {
@@ -82,11 +70,6 @@ export default ({ assetId, onClick = null }) => {
     }
   }
 
-  if (isFetchingEndorsements) {
-    // TODO: Remove string duplication everywhere
-    return <Button color="default">Loading...</Button>
-  }
-
   if (!userId) {
     return (
       <Button color="default" className={classes.loggedOutBtn}>
@@ -99,7 +82,7 @@ export default ({ assetId, onClick = null }) => {
     return <Button color="default">Saving...</Button>
   }
 
-  if (isErroredFetchingEndorsements || isSavingError) {
+  if (isSavingError) {
     return <Button disabled>Error</Button>
   }
 

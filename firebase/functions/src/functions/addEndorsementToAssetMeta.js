@@ -1,9 +1,6 @@
 const functions = require('firebase-functions')
-const {
-  CollectionNames,
-  EndorsementFieldNames,
-  addEndorsementToAssetMeta,
-} = require('../firebase')
+const { CollectionNames, EndorsementFieldNames } = require('../firebase')
+const { addEndorsementToAssetMeta } = require('../asset-meta')
 
 module.exports = functions.firestore
   .document(`${CollectionNames.Endorsements}/{id}`)

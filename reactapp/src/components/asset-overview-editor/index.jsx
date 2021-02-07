@@ -28,7 +28,8 @@ import useDatabaseQuery, {
   AssetFieldNames,
   DiscordServerFieldNames,
   AssetCategories,
-  options
+  options,
+  SpeciesFieldNames
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import { setBannerUrls as setBannerUrlsAction } from '../../modules/app'
@@ -785,7 +786,12 @@ export default ({ assetId, switchEditorOpen }) => {
           <div>
             {species.length ? (
               <>
-                <SpeciesOutput species={species} />
+                <SpeciesOutput
+                  speciesRefs={species}
+                  speciesNames={species.map(
+                    item => item[SpeciesFieldNames.singularName]
+                  )}
+                />
                 <EnableSpeciesEditorIcon />
                 {' / '}
                 <Link
@@ -919,6 +925,8 @@ export default ({ assetId, switchEditorOpen }) => {
           <ChangeAuthorForm
             collectionName={CollectionNames.Assets}
             id={assetId}
+            existingAuthorId={author ? author.id : null}
+            existingAuthorName={author ? author[AuthorFieldNames.name] : null}
             actionCategory={analyticsCategoryName}
           />
         </EditorArea>
