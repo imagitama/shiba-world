@@ -185,15 +185,17 @@ export default ({ assetId, onDone }) => {
 
   return (
     <>
-      {newFileUrls.map(url => (
-        <FileAttacherItem
-          key={url}
-          urlOrUrls={url}
-          onRemove={() => onFileRemoved(url)}
-          onMoveUp={() => moveFileUp(url)}
-          onMoveDown={() => moveFileDown(url)}
-        />
-      ))}
+      {newFileUrls && newFileUrls.length
+        ? newFileUrls.map(url => (
+            <FileAttacherItem
+              key={url}
+              urlOrUrls={url}
+              onRemove={() => onFileRemoved(url)}
+              onMoveUp={() => moveFileUp(url)}
+              onMoveDown={() => moveFileDown(url)}
+            />
+          ))
+        : 'No files attached yet'}
       <Paper className={classes.uploader}>
         {isAttachingImage === true ? (
           <OptimizedImageUploader
