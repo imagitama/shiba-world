@@ -79,7 +79,8 @@ export const specialCollectionIds = {
 
 export const AvatarListFieldNames = {
   avatars: 'avatars',
-  lastModifiedAt: 'lastModifiedAt'
+  lastModifiedAt: 'lastModifiedAt',
+  species: 'species'
 }
 
 export const FeaturedAssetForUsersFieldNames = {

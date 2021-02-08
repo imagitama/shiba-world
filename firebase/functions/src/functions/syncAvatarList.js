@@ -1,5 +1,5 @@
 const functions = require('firebase-functions')
-const { syncAvatarList } = require('../firebase')
+const { syncAvatarList } = require('../avatar-list')
 
 module.exports = functions.https.onRequest(async (req, res) => {
   try {

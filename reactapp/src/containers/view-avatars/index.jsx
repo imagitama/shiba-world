@@ -86,11 +86,6 @@ function Assets() {
     CollectionNames.Summaries,
     specialCollectionIds.avatarList
   )
-  const [
-    isLoadingSpecies,
-    ifErrorLoadingSpecies,
-    speciesResults
-  ] = useDatabaseQuery(CollectionNames.Species)
   const [isSpeciesSelectorOpen, setIsSpeciesSelectorOpen] = useState(false)
   const classes = useStyles()
   const headingElementsBySpeciesIdRef = useRef({})
@@ -115,15 +110,18 @@ function Assets() {
     }
   }, [])
 
-  if (isLoading || isLoadingSpecies || !speciesResults || !result) {
+  if (isLoading || !result) {
     return <LoadingIndicator />
   }
 
-  if (isErrored || ifErrorLoadingSpecies) {
+  if (isErrored) {
     return <ErrorMessage>Failed to get avatars</ErrorMessage>
   }
 
-  const { [AvatarListFieldNames.avatars]: avatars } = result
+  const {
+    [AvatarListFieldNames.avatars]: avatars,
+    [AvatarListFieldNames.species]: species = []
+  } = result
 
   const assets = avatars
     .filter(avatar => {
@@ -154,10 +152,10 @@ function Assets() {
       [SpeciesFieldNames.description]: 'Assets that do not have a species.',
       [SpeciesFieldNames.shortDescription]: 'Assets that do not have a species.'
     },
-    ...speciesResults.reduce(
-      (result, species) => ({
-        ...result,
-        [species.id]: species
+    ...species.reduce(
+      (newSpeciesObj, speciesItem) => ({
+        ...newSpeciesObj,
+        [speciesItem.id]: speciesItem
       }),
       {}
     )
@@ -183,10 +181,10 @@ function Assets() {
   }, {})
 
   const scrollToSpeciesId = speciesId => {
+    // this could happen if species has no assets in it
+    // TODO: purge from species selector if none?
     if (!(speciesId in headingElementsBySpeciesIdRef.current)) {
-      throw new Error(
-        `Cannot scroll to species ${speciesId}: does not exist in headings!`
-      )
+      return
     }
 
     scrollToElement(headingElementsBySpeciesIdRef.current[speciesId])
@@ -194,27 +192,32 @@ function Assets() {
 
   return (
     <>
-      {isSpeciesSelectorOpen && speciesResults ? (
+      {species && species.length && (
         <>
-          <Heading variant="h2">Jump To Species</Heading>
-          <SpeciesVsSelector
-            species={speciesResults}
-            onSpeciesClick={scrollToSpeciesId}
-          />
+          {isSpeciesSelectorOpen ? (
+            <>
+              <Heading variant="h2">Jump To Species</Heading>
+              <SpeciesVsSelector
+                species={species}
+                onSpeciesClick={scrollToSpeciesId}
+                alwaysShowLabels
+              />
+            </>
+          ) : (
+            <div className={classes.jumpToSpeciesBtn}>
+              <Button
+                onClick={() => {
+                  trackAction(
+                    analyticsActionCategory,
+                    'Click jump to species button'
+                  )
+                  setIsSpeciesSelectorOpen(true)
+                }}>
+                Jump To Species...
+              </Button>
+            </div>
+          )}
         </>
-      ) : (
-        <div className={classes.jumpToSpeciesBtn}>
-          <Button
-            onClick={() => {
-              trackAction(
-                analyticsActionCategory,
-                'Click jump to species button'
-              )
-              setIsSpeciesSelectorOpen(true)
-            }}>
-            Jump To Species...
-          </Button>
-        </div>
       )}
 
       {Object.entries(assetsBySpecies)

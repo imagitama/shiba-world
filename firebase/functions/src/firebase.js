@@ -311,6 +311,13 @@ const specialCollectionIds = {
 }
 module.exports.specialCollectionIds = specialCollectionIds
 
+const AvatarListFieldNames = {
+  avatars: 'avatars',
+  lastModifiedAt: 'lastModifiedAt',
+  species: 'species',
+}
+module.exports.AvatarListFieldNames = AvatarListFieldNames
+
 module.exports.isApproved = (docData) => {
   return docData[AssetFieldNames.isApproved] === true
 }
@@ -400,79 +407,6 @@ module.exports.retrieveAuthorNameFromAssetData = async (
     return authorDoc.get(AuthorFieldNames.name)
   }
   return Promise.resolve(defaultName)
-}
-
-const AvatarListFieldNames = {
-  avatars: 'avatars',
-  lastModifiedAt: 'lastModifiedAt',
-}
-
-const convertDocToAvatarListItem = (doc) => ({
-  asset: doc.ref,
-  [AssetFieldNames.title]: doc.get(AssetFieldNames.title),
-  [AssetFieldNames.description]: doc.get(AssetFieldNames.description),
-  [AssetFieldNames.thumbnailUrl]: doc.get(AssetFieldNames.thumbnailUrl),
-  [AssetFieldNames.species]: doc.get(AssetFieldNames.species),
-  [AssetFieldNames.isAdult]: doc.get(AssetFieldNames.isAdult),
-})
-
-const syncAvatarList = async () => {
-  const { docs } = await db
-    .collection(CollectionNames.Assets)
-    .where(AssetFieldNames.category, Operators.EQUALS, AssetCategories.avatar)
-    .where(AssetFieldNames.isPrivate, Operators.EQUALS, false)
-    .where(AssetFieldNames.isApproved, Operators.EQUALS, true)
-    .where(AssetFieldNames.isDeleted, Operators.EQUALS, false)
-    .get()
-
-  const avatars = docs.map(convertDocToAvatarListItem)
-
-  console.debug(`found ${avatars.length} avatars`)
-
-  const summaryDocRef = db
-    .collection(CollectionNames.Summaries)
-    .doc(specialCollectionIds.avatarList)
-
-  await summaryDocRef.set({
-    [AvatarListFieldNames.avatars]: avatars,
-    [AvatarListFieldNames.lastModifiedAt]: new Date(),
-  })
-}
-module.exports.syncAvatarList = syncAvatarList
-
-module.exports.updateAvatarInList = async (assetId, avatarDoc) => {
-  const summaryDocRef = db
-    .collection(CollectionNames.Summaries)
-    .doc(specialCollectionIds.avatarList)
-  const summaryDoc = await summaryDocRef.get()
-
-  if (!summaryDoc.exists) {
-    console.debug('avatar list summary does not exist - syncing')
-    await syncAvatarList()
-  } else {
-    const existingAvatars = summaryDoc.get(AvatarListFieldNames.avatars)
-    const foundIndex = existingAvatars.findIndex(
-      (existingAvatar) => existingAvatar.asset.id === assetId
-    )
-    let updatedAvatars = [...existingAvatars]
-
-    console.debug(`found ${existingAvatars.length} existing avatars in list`)
-
-    if (foundIndex !== -1) {
-      console.debug(`avatar already in list - updating`)
-      updatedAvatars[foundIndex] = convertDocToAvatarListItem(avatarDoc)
-    } else {
-      console.debug(`avatar NOT in list - adding`)
-      updatedAvatars = updatedAvatars.concat([
-        convertDocToAvatarListItem(avatarDoc),
-      ])
-    }
-
-    await summaryDocRef.set({
-      [AvatarListFieldNames.avatars]: updatedAvatars,
-      [AvatarListFieldNames.lastModifiedAt]: new Date(),
-    })
-  }
 }
 
 module.exports.getHasSpeciesChanged = (beforeSpeciesRefs, afterSpeciesRefs) => {
