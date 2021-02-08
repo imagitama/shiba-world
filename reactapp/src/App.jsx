@@ -22,7 +22,7 @@ import PageHeader from './components/header'
 import PageFooter from './components/footer'
 import SearchResults from './components/search-results'
 import SetupProfile from './components/setup-profile'
-import Notices from './components/notices'
+// import Notices from './components/notices'
 import ErrorBoundary from './components/error-boundary'
 import LoadingIndicator from './components/loading-indicator'
 import UnapprovedAssetsMessage from './components/unapproved-assets-message'
@@ -374,7 +374,7 @@ export default () => {
         <main className="main">
           <div className={classes.mainContainer}>
             <BannedNotice />
-            <Notices />
+            {/* Temporarily removed to avoid an unnecessary query <Notices /> */}
             <UnapprovedAssetsMessage />
             <PendingAssetAmendmentsMessage />
             <DraftAssetsMessage />
