@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import TextField from '@material-ui/core/TextField'
+import { makeStyles } from '@material-ui/core/styles'
 
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { CollectionNames, UserFieldNames } from '../../hooks/useDatabaseQuery'
@@ -13,6 +14,12 @@ import Button from '../button'
 import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
 
+const useStyles = makeStyles({
+  input: {
+    width: '50%'
+  }
+})
+
 export default ({ onSaveClick = null }) => {
   const userId = useFirebaseUserId()
   const [isLoadingUser, isErrorLoadingUser, user] = useUserRecord()
@@ -21,6 +28,7 @@ export default ({ onSaveClick = null }) => {
     userId
   )
   const [fieldValue, setFieldValue] = useState('')
+  const classes = useStyles()
 
   if (!userId || isLoadingUser) {
     return <LoadingIndicator />
@@ -68,8 +76,10 @@ export default ({ onSaveClick = null }) => {
       <TextField
         defaultValue={username}
         onChange={event => setFieldValue(event.target.value)}
-      />
-      <Button variant="contained" color="primary" onClick={onSaveBtnClick}>
+        variant="outlined"
+        className={classes.input}
+      />{' '}
+      <Button color="primary" onClick={onSaveBtnClick}>
         Change
       </Button>
       {isSaving

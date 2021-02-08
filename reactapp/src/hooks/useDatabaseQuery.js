@@ -181,7 +181,8 @@ export const ProfileFieldNames = {
   lastModifiedAt: 'lastModifiedAt',
   bio: 'bio',
   notifyOnUnapprovedAssets: 'notifyOnUnapprovedAssets',
-  notificationEmail: 'notificationEmail'
+  notificationEmail: 'notificationEmail',
+  favoriteSpecies: 'favoriteSpecies'
 }
 
 export const CommentFieldNames = {

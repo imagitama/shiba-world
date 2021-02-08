@@ -10,7 +10,10 @@ import useDatabaseQuery, {
   Operators,
   OrderDirections,
   UserFieldNames,
-  AuthorFieldNames
+  AuthorFieldNames,
+  ProfileFieldNames,
+  SpeciesFieldNames,
+  options
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 
@@ -63,6 +66,15 @@ const useStyles = makeStyles({
   },
   isBanned: {
     textDecoration: 'line-through'
+  },
+  favoriteSpecies: {
+    display: 'flex',
+    alignItems: 'center',
+    fontSize: '125%',
+    '& img': {
+      width: '100px',
+      marginRight: '1rem'
+    }
   }
 })
 
@@ -141,7 +153,10 @@ const AuthorsForUser = ({ userId }) => {
 function Profile({ userId }) {
   const [isLoadingProfile, isErroredLoadingProfile, profile] = useDatabaseQuery(
     CollectionNames.Profiles,
-    userId
+    userId,
+    {
+      [options.populateRefs]: true // for fav species
+    }
   )
   const classes = useStyles()
 
@@ -169,7 +184,8 @@ function Profile({ userId }) {
     telegramUsername,
     youtubeChannelId,
     twitchUsername,
-    patreonUsername
+    patreonUsername,
+    [ProfileFieldNames.favoriteSpecies]: favoriteSpecies
   } = profile
 
   return (
@@ -180,6 +196,23 @@ function Profile({ userId }) {
           <div className={classes.bio}>
             <Markdown source={bio} />
           </div>
+        </>
+      )}
+      {favoriteSpecies && (
+        <>
+          <Heading variant="h2">Favorite Species</Heading>
+          <Link
+            to={routes.viewSpeciesWithVar.replace(
+              ':speciesIdOrSlug',
+              favoriteSpecies.id
+            )}
+            className={classes.favoriteSpecies}>
+            <img
+              src={favoriteSpecies[SpeciesFieldNames.thumbnailUrl]}
+              alt="Favorite species icon"
+            />
+            {favoriteSpecies[SpeciesFieldNames.singularName]}
+          </Link>
         </>
       )}
       <SocialMediaList
@@ -257,6 +290,7 @@ export default ({ userId }) => {
         </Button>
       )}
       {isStaffMember(user) && <StaffMemberMessage />}
+      {}
       <Profile userId={userId} />
     </>
   )

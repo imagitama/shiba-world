@@ -21,6 +21,10 @@ import { createRef } from '../../utils'
 const useStyles = makeStyles({
   bioTextField: {
     width: '100%'
+  },
+  controls: {
+    textAlign: 'center',
+    marginTop: '0.5rem'
   }
 })
 
@@ -85,6 +89,7 @@ export default ({ onSaveClick = null }) => {
         onChange={e => setBioValue(e.target.value)}
         rows={5}
         multiline
+        variant="outlined"
         className={classes.bioTextField}
       />
       <p>
@@ -103,17 +108,19 @@ export default ({ onSaveClick = null }) => {
         : isErrored
         ? 'Failed to save. Maybe try again?'
         : null}
-      {showPreview === false && (
-        <>
-          <Button onClick={() => setShowPreview(true)} color="default">
-            Show Preview
-          </Button>{' '}
-        </>
-      )}
       {showPreview === true && <Markdown source={bioValue} />}
-      <Button onClick={onSaveBtnClick} isDisabled={isSaving}>
-        Save
-      </Button>
+      <div className={classes.controls}>
+        {showPreview === false && (
+          <>
+            <Button onClick={() => setShowPreview(true)} color="default">
+              Show Preview
+            </Button>{' '}
+          </>
+        )}
+        <Button onClick={onSaveBtnClick} isDisabled={isSaving}>
+          Save
+        </Button>
+      </div>
     </>
   )
 }

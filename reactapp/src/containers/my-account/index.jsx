@@ -20,6 +20,7 @@ import BioEditor from '../../components/bio-editor'
 import MyFeaturedAssets from '../../components/my-featured-assets'
 import PedestalUploadForm from '../../components/pedestal-upload-form'
 import MyAssetAmendments from '../../components/my-asset-amendments'
+import FavoriteSpeciesEditor from '../../components/favorite-species-editor'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
@@ -127,8 +128,8 @@ export default () => {
           className={classes.tabs}>
           <Tab label="Username" index={0} />
           <Tab label="Avatar" index={1} />
-          <Tab label="Bio" index={2} />
-          <Tab label="Profile" index={3} />
+          <Tab label="Profile" index={2} />
+          <Tab label="Settings" index={3} />
           <Tab label="Social" index={4} />
           <Tab label="Patreon" index={patreonConnectFormTabIdx} />
           <Tab label="Uploads" index={6} />
@@ -157,16 +158,21 @@ export default () => {
             />
           </TabPanel>
           <TabPanel value={activeTabIdx} index={2}>
-            <Heading variant="h2">Bio</Heading>
+            <Heading variant="h2">Profile</Heading>
+            <Heading variant="h3">Bio</Heading>
             <p>This bio is shown on your public user profile.</p>
             <BioEditor
               onSaveClick={() =>
                 trackAction(analyticsCategoryName, 'Click save bio button')
               }
             />
+            <Heading variant="h3">Favorite Species</Heading>
+            <FavoriteSpeciesEditor
+              analyticsCategoryName={analyticsCategoryName}
+            />
           </TabPanel>
           <TabPanel value={activeTabIdx} index={3}>
-            <Heading variant="h2">Profile settings</Heading>
+            <Heading variant="h2">Settings</Heading>
             <AdultContentToggle
               onClick={({ newValue }) =>
                 trackAction(
