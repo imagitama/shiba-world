@@ -18,6 +18,18 @@
     },
     "ui": {
       "enabled": true
+    },
+    "auth": {
+      "port": "9099"
+    },
+    "database": {
+      "port": null
+    },
+    "hosting": {
+      "port": null
+    },
+    "pubsub": {
+      "port": null
     }
   }
 }

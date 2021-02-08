@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import TextField from '@material-ui/core/TextField'
-import FormControl from '@material-ui/core/FormControl'
 import { useLocation } from 'react-router'
+import { makeStyles } from '@material-ui/core/styles'
 
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { CollectionNames, UserFieldNames } from '../../hooks/useDatabaseQuery'
@@ -14,12 +14,28 @@ import SuccessMessage from '../success-message'
 import LoadingIndicator from '../loading-indicator'
 import Button from '../button'
 import Heading from '../heading'
-import BodyText from '../body-text'
+import FormControls from '../form-controls'
+import FavoriteSpeciesEditor from '../favorite-species-editor'
 
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
 import { trackAction } from '../../analytics'
 import * as routes from '../../routes'
+import { mediaQueryForMobiles } from '../../media-queries'
+
+const useStyles = makeStyles({
+  root: {
+    width: '50%',
+    margin: '2rem auto',
+    textAlign: 'center',
+    [mediaQueryForMobiles]: {
+      width: '100%'
+    }
+  },
+  input: {
+    width: '100%'
+  }
+})
 
 const Form = () => {
   const userId = useFirebaseUserId()
@@ -30,8 +46,7 @@ const Form = () => {
   )
   const [fieldValue, setFieldValue] = useState('')
   const location = useLocation()
-
-  console.log(location.pathname)
+  const classes = useStyles()
 
   if (location.pathname === routes.login) {
     return null
@@ -82,18 +97,21 @@ const Form = () => {
   }
 
   return (
-    <>
+    <div className={classes.root}>
       <Heading variant="h1">Welcome to VRCArena</Heading>
-      <BodyText>Before you can continue please set up your profile:</BodyText>
-      <FormControl>
-        <TextField
-          value={fieldValue}
-          label="Username"
-          onChange={event => setFieldValue(event.target.value)}
-        />
-      </FormControl>
-      <Button onClick={onSaveBtnClick}>Save</Button>
-    </>
+      <p>Before you can start using your account you must enter a username:</p>
+      <TextField
+        value={fieldValue}
+        label="Username"
+        variant="outlined"
+        onChange={event => setFieldValue(event.target.value)}
+        className={classes.input}
+      />
+      <FavoriteSpeciesEditor saveOnSelect />
+      <FormControls>
+        <Button onClick={onSaveBtnClick}>Save</Button>
+      </FormControls>
+    </div>
   )
 }
 

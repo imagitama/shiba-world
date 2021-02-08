@@ -31,7 +31,7 @@ const useStyles = makeStyles({
   }
 })
 
-export default ({ analyticsCategoryName, onSaveClick = null }) => {
+export default ({ analyticsCategoryName, saveOnSelect = false }) => {
   const classes = useStyles()
   const userId = useFirebaseUserId()
   const [isLoadingProfile, isErroredLoadingProfile, profile] = useDatabaseQuery(
@@ -67,7 +67,7 @@ export default ({ analyticsCategoryName, onSaveClick = null }) => {
     )
   }, [profile && profile.id])
 
-  const onSaveBtnClick = async () => {
+  const onSaveBtnClick = async overrideSpeciesId => {
     try {
       trackAction(
         analyticsCategoryName,
@@ -75,9 +75,11 @@ export default ({ analyticsCategoryName, onSaveClick = null }) => {
         newFavoriteSpeciesId
       )
 
+      const speciesIdToUse = overrideSpeciesId || newFavoriteSpeciesId
+
       await save({
-        [ProfileFieldNames.favoriteSpecies]: newFavoriteSpeciesId
-          ? createRef(CollectionNames.Species, newFavoriteSpeciesId)
+        [ProfileFieldNames.favoriteSpecies]: speciesIdToUse
+          ? createRef(CollectionNames.Species, speciesIdToUse)
           : null,
         [ProfileFieldNames.lastModifiedBy]: createRef(
           CollectionNames.Users,
@@ -109,18 +111,24 @@ export default ({ analyticsCategoryName, onSaveClick = null }) => {
 
   return (
     <>
-      <p>Select your favorite species:</p>
+      <p>Select your favorite species (optional):</p>
       <Select
         className={classes.dropdown}
         value={newFavoriteSpeciesId}
         variant="outlined"
         onChange={e => {
-          setNewFavoriteSpeciesId(e.target.value)
+          const newSpeciesId = e.target.value
+          setNewFavoriteSpeciesId(newSpeciesId)
+
           trackAction(
             analyticsCategoryName,
             'Select different species',
             e.target.value
           )
+
+          if (saveOnSelect) {
+            onSaveBtnClick(newSpeciesId)
+          }
         }}>
         {species.map(speciesDoc => (
           <MenuItem key={speciesDoc.id} value={speciesDoc.id}>
@@ -128,10 +136,12 @@ export default ({ analyticsCategoryName, onSaveClick = null }) => {
           </MenuItem>
         ))}
       </Select>
-      <div className={classes.controls}>
-        <Button onClick={onSaveBtnClick}>Save</Button>
-        {isSaveSuccess ? ' Saved!' : isSaveErrored ? ' Error' : ''}
-      </div>
+      {saveOnSelect !== true && (
+        <div className={classes.controls}>
+          <Button onClick={onSaveBtnClick}>Save</Button>
+          {isSaveSuccess ? ' Saved!' : isSaveErrored ? ' Error' : ''}
+        </div>
+      )}
     </>
   )
 }

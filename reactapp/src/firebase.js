@@ -18,14 +18,28 @@ const firebaseConfig = {
 
 export const firebaseApp = firebase.initializeApp(firebaseConfig)
 
-if (process.env.REACT_APP_USE_FUNCTIONS_EMULATOR) {
+if (
+  process.env.REACT_APP_USE_EMULATORS ||
+  process.env.REACT_APP_USE_FUNCTIONS_EMULATOR
+) {
   console.debug(`using functions emulator`)
   firebase.functions().useFunctionsEmulator('http://localhost:5001')
 }
 
-if (process.env.REACT_APP_USE_FIRESTORE_EMULATOR) {
+if (
+  process.env.REACT_APP_USE_EMULATORS ||
+  process.env.REACT_APP_USE_FIRESTORE_EMULATOR
+) {
   console.debug(`using firestore emulator`)
   firebase.firestore().useEmulator('localhost', 8080)
+}
+
+if (
+  process.env.REACT_APP_USE_EMULATORS ||
+  process.env.REACT_APP_USE_AUTH_EMULATOR
+) {
+  console.debug(`using auth emulator`)
+  firebase.auth().useEmulator('http://localhost:9099')
 }
 
 export const auth = firebaseApp.auth()
