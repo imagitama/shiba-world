@@ -7,7 +7,8 @@ import useDatabaseQuery, {
   CollectionNames,
   ProfileFieldNames,
   options,
-  SpeciesFieldNames
+  SpeciesFieldNames,
+  OrderDirections
 } from '../../hooks/useDatabaseQuery'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
@@ -44,6 +45,7 @@ export default ({ analyticsCategoryName, onSaveClick = null }) => {
     CollectionNames.Species,
     undefined,
     {
+      [options.orderBy]: [SpeciesFieldNames.singularName, OrderDirections.ASC],
       [options.queryName]: 'favorite-species-editor-species'
     }
   )

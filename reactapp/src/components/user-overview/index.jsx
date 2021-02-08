@@ -31,7 +31,7 @@ import Avatar from '../avatar'
 import Pedestal from '../pedestal'
 
 import * as routes from '../../routes'
-import { createRef } from '../../utils'
+import { createRef, fixAccessingImagesUsingToken } from '../../utils'
 import { trackAction } from '../../analytics'
 import { canEditUsers } from '../../permissions'
 
@@ -68,13 +68,21 @@ const useStyles = makeStyles({
     textDecoration: 'line-through'
   },
   favoriteSpecies: {
+    marginBottom: '1rem',
     display: 'flex',
     alignItems: 'center',
     fontSize: '125%',
+    '& a': {
+      display: 'flex',
+      alignItems: 'center'
+    },
     '& img': {
       width: '100px',
       marginRight: '1rem'
     }
+  },
+  favoriteSpeciesHeading: {
+    flex: 1
   }
 })
 
@@ -199,21 +207,24 @@ function Profile({ userId }) {
         </>
       )}
       {favoriteSpecies && (
-        <>
-          <Heading variant="h2">Favorite Species</Heading>
+        <div className={classes.favoriteSpecies}>
+          <Heading variant="h2" className={classes.favoriteSpeciesHeading}>
+            Favorite Species
+          </Heading>
           <Link
             to={routes.viewSpeciesWithVar.replace(
               ':speciesIdOrSlug',
               favoriteSpecies.id
-            )}
-            className={classes.favoriteSpecies}>
+            )}>
             <img
-              src={favoriteSpecies[SpeciesFieldNames.thumbnailUrl]}
+              src={fixAccessingImagesUsingToken(
+                favoriteSpecies[SpeciesFieldNames.thumbnailUrl]
+              )}
               alt="Favorite species icon"
             />
             {favoriteSpecies[SpeciesFieldNames.singularName]}
           </Link>
-        </>
+        </div>
       )}
       <SocialMediaList
         socialMedia={{
