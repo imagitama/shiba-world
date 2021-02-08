@@ -7,6 +7,7 @@ import { isRef, getDocument } from '../utils'
 
 export const Operators = {
   EQUALS: '==',
+  NOT_EQUALS: '!=',
   GREATER_THAN: '>',
   ARRAY_CONTAINS: 'array-contains'
 }
