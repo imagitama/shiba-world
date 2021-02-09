@@ -25,7 +25,11 @@ export default () => {
   }
 
   // null if they choose to skip
-  if (profile && profile[ProfileFieldNames.favoriteSpecies] === null) {
+  if (
+    profile &&
+    (profile[ProfileFieldNames.favoriteSpecies] ||
+      profile[ProfileFieldNames.favoriteSpecies] === null)
+  ) {
     return null
   }
 
