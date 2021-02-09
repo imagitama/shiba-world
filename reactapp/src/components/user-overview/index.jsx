@@ -72,10 +72,6 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
     fontSize: '125%',
-    '& a': {
-      display: 'flex',
-      alignItems: 'center'
-    },
     '& img': {
       width: '100px',
       marginRight: '1rem'
@@ -207,7 +203,7 @@ function Profile({ userId }) {
         </>
       )}
       {favoriteSpecies && (
-        <div className={classes.favoriteSpecies}>
+        <div>
           <Heading variant="h2" className={classes.favoriteSpeciesHeading}>
             Favorite Species
           </Heading>
@@ -215,7 +211,8 @@ function Profile({ userId }) {
             to={routes.viewSpeciesWithVar.replace(
               ':speciesIdOrSlug',
               favoriteSpecies.id
-            )}>
+            )}
+            className={classes.favoriteSpecies}>
             <img
               src={fixAccessingImagesUsingToken(
                 favoriteSpecies[SpeciesFieldNames.thumbnailUrl]
