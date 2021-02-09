@@ -40,6 +40,7 @@ import {
   mediaQueryForTabletsOrBelow
 } from './media-queries'
 import { AssetCategories } from './hooks/useDatabaseQuery'
+import SetFavoriteSpeciesMessage from './components/set-favorite-species-message'
 
 const catchChunkDeaths = functionToImport =>
   functionToImport().catch(err => {
@@ -181,6 +182,7 @@ const MainContent = () => {
   return (
     <Suspense fallback={<LoadingIndicator />}>
       <SetupProfile />
+      <SetFavoriteSpeciesMessage />
       <Switch>
         <Redirect
           // deprecated category

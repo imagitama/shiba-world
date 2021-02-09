@@ -75,7 +75,9 @@ export default ({ analyticsCategoryName, saveOnSelect = false }) => {
         newFavoriteSpeciesId
       )
 
-      const speciesIdToUse = overrideSpeciesId || newFavoriteSpeciesId
+      const speciesIdToUse = overrideSpeciesId || newFavoriteSpeciesId || false
+
+      console.debug(`save fav species id ${speciesIdToUse}`)
 
       await save({
         [ProfileFieldNames.favoriteSpecies]: speciesIdToUse
@@ -138,7 +140,7 @@ export default ({ analyticsCategoryName, saveOnSelect = false }) => {
       </Select>
       {saveOnSelect !== true && (
         <div className={classes.controls}>
-          <Button onClick={onSaveBtnClick}>Save</Button>
+          <Button onClick={() => onSaveBtnClick()}>Save</Button>
           {isSaveSuccess ? ' Saved!' : isSaveErrored ? ' Error' : ''}
         </div>
       )}

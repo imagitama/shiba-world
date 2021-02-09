@@ -23,19 +23,26 @@ const useStyles = makeStyles({
     [mediaQueryForTabletsOrBelow]: {
       marginTop: '1rem'
     }
-  })
+  }),
+  noTopMargin: {
+    marginTop: '0 !important'
+  }
 })
 
-export default forwardRef(({ children, variant, className = '', id }, ref) => {
-  const classes = useStyles({ variant })
+export default forwardRef(
+  ({ children, variant, noTopMargin = false, className = '', id }, ref) => {
+    const classes = useStyles({ variant })
 
-  return (
-    <Typography
-      variant={variant}
-      className={`${classes.heading} ${className}`}
-      ref={ref}
-      id={id}>
-      {children}
-    </Typography>
-  )
-})
+    return (
+      <Typography
+        variant={variant}
+        className={`${classes.heading} ${
+          noTopMargin ? classes.noTopMargin : ''
+        } ${className}`}
+        ref={ref}
+        id={id}>
+        {children}
+      </Typography>
+    )
+  }
+)
