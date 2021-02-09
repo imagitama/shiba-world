@@ -54,6 +54,7 @@ const getOurPreviewUrl = async (sourceUrl) => {
 
   await bucket.upload(pathOnFilesystem, {
     destination: newFilePath,
+    resumable: false, // fix weird ResumableUploadError error
   })
 
   const destFile = bucket.file(newFilePath)
