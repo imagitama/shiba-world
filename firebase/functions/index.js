@@ -46,3 +46,5 @@ exports.hydrateAssetMetaOnAssetCreate = require('./src/functions/hydrateAssetMet
 exports.hydrateAssetMetaOnAssetUpdate = require('./src/functions/hydrateAssetMetaOnAssetUpdate')
 exports.hydrateAvatarListOnSpeciesCreate = require('./src/functions/hydrateAvatarListOnSpeciesCreate')
 exports.hydrateAvatarListOnSpeciesUpdate = require('./src/functions/hydrateAvatarListOnSpeciesUpdate')
+exports.hydrateViewCacheOnAssetUpdate = require('./src/functions/hydrateViewCacheOnAssetUpdate')
+exports.syncViewCache = require('./src/functions/syncViewCache')

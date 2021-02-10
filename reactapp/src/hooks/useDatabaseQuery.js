@@ -44,7 +44,12 @@ export const CollectionNames = {
   AssetAmendments: 'assetAmendments',
   UserMeta: 'userMeta',
   DiscordMessages: 'discordMessages',
-  AssetMeta: 'assetMeta'
+  AssetMeta: 'assetMeta',
+  ViewCache: 'viewCache'
+}
+
+export const ViewCacheNames = {
+  CategoryAccessory: 'CategoryAccessory'
 }
 
 export const AssetMetaFieldNames = {

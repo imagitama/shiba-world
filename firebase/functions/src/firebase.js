@@ -48,6 +48,7 @@ const CollectionNames = {
   UserMeta: 'userMeta',
   DiscordMessages: 'discordMessages',
   AssetMeta: 'assetMeta',
+  ViewCache: 'viewCache',
 }
 module.exports.CollectionNames = CollectionNames
 

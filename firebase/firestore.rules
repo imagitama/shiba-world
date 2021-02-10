@@ -160,7 +160,21 @@ service cloud.firestore {
       allow create: if isLoggedIn() && isNotBanned();
     }
 
+    match /assetAmendments/{document=**} {
+      allow read;
+      allow update: if isLoggedIn() && isNotBanned();
+      allow create: if isLoggedIn() && isNotBanned();
+    }
+    
+    match /userMeta/{document=**} {
+      allow read;
+    }
+    
     match /assetMeta/{document=**} {
+      allow read;
+    }
+    
+    match /viewCache/{document=**} {
       allow read;
     }
   }
