@@ -50,13 +50,9 @@ const useStyles = makeStyles({
     right: '-30%',
     color: '#FFF',
     textShadow: '0 0 2px #000',
-    opacity: 0,
     transition: 'all 100ms',
     transform: 'rotate(-76deg)',
     fontSize: '75%'
-  },
-  show: {
-    opacity: 1
   },
   selectedIcon: {
     background: '#FFF',
@@ -79,17 +75,13 @@ const Species = ({
   title,
   optimizedThumbnailUrl,
   onClick,
-  isSelected = false,
-  alwaysShowLabels = false
+  isSelected = false
 }) => {
   const classes = useStyles()
 
   const ChildToRender = () => (
     <>
-      <span
-        className={`${classes.title} ${alwaysShowLabels ? classes.show : ''}`}>
-        {title}
-      </span>
+      <span className={classes.title}>{title}</span>
       <img
         src={fixAccessingImagesUsingToken(optimizedThumbnailUrl)}
         alt={`Thumbnail for species ${title}`}
@@ -127,8 +119,7 @@ function sortSpeciesByAlpha([speciesNameA], [speciesNameB]) {
 export default ({
   species = null,
   selectedSpeciesIds = [],
-  onSpeciesClick = null,
-  alwaysShowLabels = false
+  onSpeciesClick = null
 }) => {
   const [isLoading, isError, results] = useDatabaseQuery(
     CollectionNames.Species,
@@ -182,7 +173,6 @@ export default ({
                 backupThumbnailUrl={backupThumbnailUrl}
                 onClick={onSpeciesClick}
                 isSelected={selectedSpeciesIds.includes(id)}
-                alwaysShowLabels={alwaysShowLabels}
               />
             )
           )}

@@ -200,7 +200,6 @@ function Assets() {
               <SpeciesVsSelector
                 species={species}
                 onSpeciesClick={scrollToSpeciesId}
-                alwaysShowLabels
               />
             </>
           ) : (

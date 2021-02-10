@@ -87,7 +87,6 @@ export default ({
             onSelect(speciesId)
           }
         }}
-        alwaysShowLabels
       />
       <div className={classes.doneBtn}>
         <Button size="large" onClick={() => onDone()}>
