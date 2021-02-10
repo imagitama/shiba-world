@@ -1,5 +1,5 @@
 const functions = require('firebase-functions')
-const { syncAllViewCaches } = require('../view-cache')
+const { syncAllViewCaches } = require('../views')
 
 module.exports = functions.https.onRequest(async (req, res) => {
   try {

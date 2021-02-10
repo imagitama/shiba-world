@@ -1,6 +1,7 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import CheckIcon from '@material-ui/icons/Check'
+import { Link } from 'react-router-dom'
 
 import useDatabaseQuery, {
   SpeciesFieldNames,
@@ -9,6 +10,7 @@ import useDatabaseQuery, {
 import LoadingIndicator from '../../components/loading-indicator'
 import ErrorMessage from '../../components/error-message'
 import { fixAccessingImagesUsingToken } from '../../utils'
+import * as routes from '../../routes'
 
 const useStyles = makeStyles({
   root: { marginTop: '0.5rem' },
@@ -82,8 +84,8 @@ const Species = ({
 }) => {
   const classes = useStyles()
 
-  return (
-    <div className={classes.item} onClick={() => onClick(id)}>
+  const ChildToRender = () => (
+    <>
       <span
         className={`${classes.title} ${alwaysShowLabels ? classes.show : ''}`}>
         {title}
@@ -98,8 +100,24 @@ const Species = ({
           <CheckIcon />
         </div>
       )}
-    </div>
+    </>
   )
+
+  if (onClick) {
+    return (
+      <div className={classes.item} onClick={() => onClick(id)}>
+        <ChildToRender />
+      </div>
+    )
+  } else {
+    return (
+      <Link
+        className={classes.item}
+        to={routes.viewSpeciesWithVar.replace(':speciesIdOrSlug', id)}>
+        <ChildToRender />
+      </Link>
+    )
+  }
 }
 
 function sortSpeciesByAlpha([speciesNameA], [speciesNameB]) {

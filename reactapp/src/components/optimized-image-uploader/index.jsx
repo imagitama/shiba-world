@@ -8,6 +8,8 @@ import useFileUpload from '../../hooks/useFileUpload'
 import BodyText from '../body-text'
 import { handleError } from '../../error-handling'
 import { callFunction } from '../../firebase'
+import defaultAvatarUrl from '../../assets/images/default-avatar.png'
+import { usingEmulator } from '../../environment'
 
 const useStyles = makeStyles({
   root: {
@@ -169,6 +171,13 @@ function Output({
       const uploadPath = `${directoryPath}/${filename}`
 
       console.debug(`Upload ${uploadPath}`)
+
+      if (usingEmulator()) {
+        console.debug('using emulator so skipping upload...')
+        setUploadedUrl(defaultAvatarUrl)
+        onUploadedUrl(defaultAvatarUrl)
+        return
+      }
 
       const uploadedUrl = await upload(fileToUpload, uploadPath)
 

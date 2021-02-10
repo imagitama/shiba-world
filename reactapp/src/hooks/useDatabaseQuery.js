@@ -49,7 +49,8 @@ export const CollectionNames = {
 }
 
 export const ViewCacheNames = {
-  CategoryAccessory: 'CategoryAccessory'
+  CategoryAccessory: 'CategoryAccessory',
+  ViewAllSpecies: 'ViewAllSpecies'
 }
 
 export const AssetMetaFieldNames = {
