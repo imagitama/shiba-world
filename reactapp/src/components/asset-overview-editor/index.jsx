@@ -1003,6 +1003,7 @@ export default ({ assetId, switchEditorOpen }) => {
           assetId={assetId}
           analyticsCategory={analyticsCategoryName}
           onDone={() => setIsThumbnailEditorOpen(false)}
+          skipDelay
         />
       </EditorArea>
     ) : (

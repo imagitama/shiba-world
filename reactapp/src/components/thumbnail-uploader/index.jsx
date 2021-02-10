@@ -14,7 +14,7 @@ import { createRef } from '../../utils'
 import { handleError } from '../../error-handling'
 import { paths, formHideDelay } from '../../config'
 
-export default ({ assetId, onDone }) => {
+export default ({ assetId, onDone, skipDelay = false }) => {
   const userId = useFirebaseUserId()
   const [isSaving, isSuccess, isErrored, save] = useDatabaseSave(
     CollectionNames.Assets,
@@ -49,7 +49,12 @@ export default ({ assetId, onDone }) => {
         [AssetFieldNames.lastModifiedAt]: new Date()
       })
 
-      timeoutRef.current = setTimeout(() => onDone(), formHideDelay)
+      if (skipDelay) {
+        onDone()
+      } else {
+        // this could not happen if we remount the whole component when avatar URL changes
+        timeoutRef.current = setTimeout(() => onDone(), formHideDelay)
+      }
     } catch (err) {
       console.error('Failed to upload thumbnail for asset', err)
       handleError(err)

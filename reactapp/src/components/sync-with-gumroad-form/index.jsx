@@ -233,6 +233,7 @@ export default ({ assetId, gumroadUrl, onDone }) => {
     try {
       await save({
         ...getFieldsToSave(cleanupFields(newFields), whichFieldsAreEnabled),
+        [AssetFieldNames.sourceUrl]: gumroadUrl, // set this here so newly created assets have it
         lastModifiedBy: createRef(CollectionNames.Users, userId),
         lastModifiedAt: new Date()
       })

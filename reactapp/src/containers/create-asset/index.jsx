@@ -68,7 +68,7 @@ export default () => {
         [AssetFieldNames.fileUrls]: [],
         [AssetFieldNames.category]: categoryValue,
         [AssetFieldNames.species]: speciesValue,
-        [AssetFieldNames.sourceUrl]: gumroadUrl || '',
+        [AssetFieldNames.sourceUrl]: '',
         ...newFields,
 
         // need this to set as draft
