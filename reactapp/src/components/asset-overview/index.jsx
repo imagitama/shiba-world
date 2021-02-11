@@ -643,11 +643,7 @@ export default ({ assetId, switchEditorOpen }) => {
     <div className={classes.root}>
       <Helmet>
         <title>
-          {title} |{' '}
-          {authorRef
-            ? `By ${authorName || '???'}`
-            : `Uploaded by ${createdBy.username}`}{' '}
-          | VRCArena
+          {title} | {authorRef ? `By ${authorName || '???'} | ` : ''}VRCArena
         </title>
         <meta
           name="description"

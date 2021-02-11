@@ -4,6 +4,7 @@ import BannerUploader from '../banner-uploader'
 import LoadingIndicator from '../loading-indicator'
 import SuccessMessage from '../success-message'
 import ErrorMessage from '../error-message'
+import Button from '../button'
 
 import { AssetFieldNames, CollectionNames } from '../../hooks/useDatabaseQuery'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
@@ -14,7 +15,7 @@ import { trackAction } from '../../analytics'
 
 export default ({ assetId, onDone, actionCategory, noPaper }) => {
   const userId = useFirebaseUserId()
-  const [isSaving, isSaveSuccess, isSaveError, save] = useDatabaseSave(
+  const [isSaving, isSaveSuccess, isSaveError, save, clear] = useDatabaseSave(
     CollectionNames.Assets,
     assetId
   )
@@ -24,7 +25,11 @@ export default ({ assetId, onDone, actionCategory, noPaper }) => {
   }
 
   if (isSaveSuccess) {
-    return <SuccessMessage>Banner saved successfully</SuccessMessage>
+    return (
+      <SuccessMessage>
+        Banner saved successfully <Button onClick={clear}>Okay</Button>
+      </SuccessMessage>
+    )
   }
 
   if (isSaveError) {
@@ -44,7 +49,9 @@ export default ({ assetId, onDone, actionCategory, noPaper }) => {
         [AssetFieldNames.lastModifiedAt]: new Date()
       })
 
-      onDone()
+      if (onDone) {
+        onDone()
+      }
     } catch (err) {
       console.error('Failed to save asset banner', err)
       handleError(err)

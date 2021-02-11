@@ -39,6 +39,12 @@ export default (collectionName, documentId = null) => {
   const [isSuccess, setIsSuccess] = useState(false)
   const [isErrored, setIsErrored] = useState(false)
 
+  const clear = () => {
+    setIsSuccess(false)
+    setIsErrored(false)
+    setIsSaving(false)
+  }
+
   const save = async fields => {
     setIsSuccess(false)
     setIsErrored(false)
@@ -71,5 +77,5 @@ export default (collectionName, documentId = null) => {
     }
   }
 
-  return [isSaving, isSuccess, isErrored, save]
+  return [isSaving, isSuccess, isErrored, save, clear]
 }
