@@ -16,7 +16,7 @@ import useDatabaseQuery, {
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import { createRef } from '../../utils'
-import { quickDeleteRecord, quickDeleteRecords } from '../../firestore'
+import { quickDeleteRecord } from '../../firestore'
 import { handleError } from '../../error-handling'
 import * as routes from '../../routes'
 
