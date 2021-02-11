@@ -29,7 +29,7 @@ function shouldDeleteAssetFromCategoryCache(doc) {
   )
 }
 
-async function hydrateCategory(categoryName, doc) {
+async function hydrate(categoryName, doc) {
   const existingCacheRef = db
     .collection(CollectionNames.ViewCache)
     .doc(`category-${categoryName}`)
@@ -70,7 +70,7 @@ async function hydrateCategory(categoryName, doc) {
     }
   )
 }
-module.exports.hydrateCategory = hydrateCategory
+module.exports.hydrate = hydrate
 
 async function syncCategoryCache(categoryName) {
   const existingCacheRef = db
