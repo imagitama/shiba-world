@@ -1,7 +1,8 @@
 import React from 'react'
 import Paper from '@material-ui/core/Paper'
 import { makeStyles } from '@material-ui/core/styles'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
+import { matchPath } from 'react-router'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import useDatabaseQuery, {
@@ -41,8 +42,19 @@ export default () => {
         ]
       : false
   )
+  const location = useLocation()
 
   if (!user || !isUserStaff(user) || !results || !results.length) {
+    return null
+  }
+
+  // hide it if viewing an asset because 9 times out of 10 they are looking at their draft
+  const match = matchPath(location.pathname, {
+    path: routes.viewAssetWithVar,
+    exact: true
+  })
+
+  if (match) {
     return null
   }
 

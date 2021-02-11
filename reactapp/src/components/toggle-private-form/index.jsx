@@ -1,5 +1,6 @@
 import React from 'react'
-import VisibilityOff from '@material-ui/icons/VisibilityOff'
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
+import PublishIcon from '@material-ui/icons/Publish'
 
 import { AssetFieldNames, CollectionNames } from '../../hooks/useDatabaseQuery'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
@@ -9,7 +10,7 @@ import { createRef } from '../../utils'
 
 import Button from '../button'
 
-export default ({ assetId, isPrivate, onDone }) => {
+export default ({ assetId, isPrivate, onDone, ...props }) => {
   const userId = useFirebaseUserId()
   const [isSaving, , , save] = useDatabaseSave(CollectionNames.Assets, assetId)
 
@@ -38,14 +39,15 @@ export default ({ assetId, isPrivate, onDone }) => {
   return (
     <>
       <Button
-        icon={<VisibilityOff />}
+        icon={isPrivate ? <PublishIcon /> : <VisibilityOffIcon />}
         color="tertiary"
-        onClick={!isSaving && onToggleClick}>
+        onClick={!isSaving && onToggleClick}
+        {...props}>
         {isSaving
           ? 'Saving...'
           : isPrivate
-          ? 'Mark as Not Draft'
-          : 'Mark as Draft'}
+          ? 'Publish Asset'
+          : 'Unpublish Asset'}
       </Button>
     </>
   )

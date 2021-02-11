@@ -19,7 +19,6 @@ import CategoryIcon from '@material-ui/icons/Category'
 import CopyrightIcon from '@material-ui/icons/Copyright'
 import ImageIcon from '@material-ui/icons/Image'
 import PanoramaIcon from '@material-ui/icons/Panorama'
-import ReceiptIcon from '@material-ui/icons/Receipt'
 import BugReportIcon from '@material-ui/icons/BugReport'
 
 import useDatabaseQuery, {
@@ -58,6 +57,7 @@ import ToggleAdultForm from '../toggle-adult-form'
 import AssetSourceEditor from '../asset-source-editor'
 import SyncWithGumroadForm from '../sync-with-gumroad-form'
 import LinkedAssetsEditor from '../linked-assets-editor'
+import Paper from '../paper'
 import SlugEditor from '../slug-editor'
 
 import * as routes from '../../routes'
@@ -379,6 +379,11 @@ const useStyles = makeStyles(() => ({
   },
   slug: {
     textDecoration: 'underline'
+  },
+  publishMessage: {
+    padding: '1rem 0',
+    textAlign: 'center',
+    margin: '2rem 0'
   }
 }))
 
@@ -1055,13 +1060,20 @@ export default ({ assetId, switchEditorOpen }) => {
       </Helmet>
 
       {isPrivate && (
-        <EditorArea label="Draft" icon={ReceiptIcon}>
+        <Paper className={classes.publishMessage}>
+          <strong>
+            Your asset will never be visible on the site until you click this
+            button:
+          </strong>
+          <br />
+          <br />
           <TogglePrivateForm
             assetId={assetId}
             isPrivate={isPrivate}
             onDone={() => switchEditorOpen()}
+            size="large"
           />
-        </EditorArea>
+        </Paper>
       )}
 
       <EditorArea label="Upload Banner" icon={PanoramaIcon}>

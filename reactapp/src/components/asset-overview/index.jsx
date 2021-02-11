@@ -804,18 +804,27 @@ export default ({ assetId, switchEditorOpen }) => {
               : '(no tags)'}
           </div>
           {canAmend && !isTagAmendmentFormVisible && (
-            <TagChip
-              icon={<EditIcon />}
-              tagName="Edit Tags"
-              onClick={() => {
-                setIsTagAmendmentFormVisible(true)
-                trackAction(
-                  analyticsCategoryName,
-                  'Click open tag amendment form button'
-                )
-              }}
-              isFilled={false}
-            />
+            <>
+              <TagChip
+                icon={<EditIcon />}
+                tagName="Suggest Tags"
+                onClick={() => {
+                  setIsTagAmendmentFormVisible(true)
+                  trackAction(
+                    analyticsCategoryName,
+                    'Click open tag amendment form button'
+                  )
+                }}
+                isFilled={false}
+              />
+              {isOwnerOrEditor && (
+                <em>
+                  <br />
+                  As the owner of this asset you should use the Edit Asset
+                  button on right instead
+                </em>
+              )}
+            </>
           )}
           {isTagAmendmentFormVisible && (
             <TagAmendmentForm
