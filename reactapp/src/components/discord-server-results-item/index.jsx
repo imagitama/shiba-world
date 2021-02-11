@@ -37,7 +37,7 @@ const useStyles = makeStyles({
   }
 })
 
-export default ({ discordServer: { id, name } }) => {
+export default ({ discordServer: { id, name, iconUrl } }) => {
   const classes = useStyles()
 
   return (
@@ -51,7 +51,7 @@ export default ({ discordServer: { id, name } }) => {
             )}>
             <CardMedia
               className={classes.media}
-              image={defaultAvatarUrl}
+              image={iconUrl || defaultAvatarUrl}
               title={`Thumbnail for ${name}`}
             />
             <CardContent className={classes.content}>
