@@ -39,9 +39,10 @@ export default () => {
       // doing a lookup per user meta is probably very bad for performance :(
       setUsers(
         await Promise.all(
-          results.map(async userMeta =>
-            quickReadRecord(CollectionNames.Users, userMeta.id)
-          )
+          results.map(async userMeta => ({
+            ...(await quickReadRecord(CollectionNames.Users, userMeta.id)),
+            id: userMeta.id
+          }))
         )
       )
     }
