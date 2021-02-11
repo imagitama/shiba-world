@@ -214,20 +214,21 @@ export default ({ onClose, isMobile = false }) => {
     }
   }
 
-  const onClearAllClick = async () => {
-    try {
-      await quickDeleteRecords(CollectionNames.Notifications, [
-        [
-          NotificationsFieldNames.recipient,
-          Operators.EQUALS,
-          createRef(CollectionNames.Users, userId)
-        ]
-      ])
-    } catch (err) {
-      console.error('Failed to delete all notifications for user', err)
-      handleError(err)
-    }
-  }
+  // Temporarily removed because the Firebase permissions are all dicky so this doesnt work
+  // const onClearAllClick = async () => {
+  //   try {
+  //     await quickDeleteRecords(CollectionNames.Notifications, [
+  //       [
+  //         NotificationsFieldNames.recipient,
+  //         Operators.EQUALS,
+  //         createRef(CollectionNames.Users, userId)
+  //       ]
+  //     ])
+  //   } catch (err) {
+  //     console.error('Failed to delete all notifications for user', err)
+  //     handleError(err)
+  //   }
+  // }
 
   return (
     <>
@@ -253,9 +254,9 @@ export default ({ onClose, isMobile = false }) => {
           </Link>
         </MenuItem>
       ))}
-      <MenuItem className={menuItemClassName} onClick={onClearAllClick}>
+      {/* <MenuItem className={menuItemClassName} onClick={onClearAllClick}>
         Clear All
-      </MenuItem>
+      </MenuItem> */}
     </>
   )
 }
