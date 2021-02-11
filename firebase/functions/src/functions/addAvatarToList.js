@@ -1,10 +1,6 @@
 const functions = require('firebase-functions')
-const {
-  isApproved,
-  updateAvatarInList,
-  AssetFieldNames,
-  AssetCategories,
-} = require('../firebase')
+const { isApproved, AssetFieldNames, AssetCategories } = require('../firebase')
+const { updateAvatarInList } = require('../avatar-list')
 
 const assetNeedsToBeSynced = (beforeDocData, afterDocData) => {
   if (afterDocData[AssetFieldNames.category] !== AssetCategories.avatar) {

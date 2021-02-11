@@ -121,9 +121,14 @@ module.exports.updateAvatarInList = async (assetId, avatarDoc) => {
       ])
     }
 
-    await summaryDocRef.set({
-      [AvatarListFieldNames.avatars]: updatedAvatars,
-      [AvatarListFieldNames.lastModifiedAt]: new Date(),
-    })
+    await summaryDocRef.set(
+      {
+        [AvatarListFieldNames.avatars]: updatedAvatars,
+        [AvatarListFieldNames.lastModifiedAt]: new Date(),
+      },
+      {
+        merge: true,
+      }
+    )
   }
 }
