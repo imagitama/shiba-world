@@ -14,13 +14,15 @@ import Heading from '../../components/heading'
 import Button from '../../components/button'
 import DiscordServerWidget from '../../components/discord-server-widget'
 import PageControls from '../../components/page-controls'
+import Paper from '../../components/paper'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import useDatabaseQuery, {
   CollectionNames,
   DiscordServerFieldNames
 } from '../../hooks/useDatabaseQuery'
-import { canEditDiscordServer } from '../../utils'
+import useDatabaseSave from '../../hooks/useDatabaseSave'
+import { canEditDiscordServer, createRef } from '../../utils'
 import { trackAction } from '../../analytics'
 import { handleError } from '../../error-handling'
 import { callFunction } from '../../firebase'
@@ -75,6 +77,10 @@ export default ({
     CollectionNames.DiscordServers,
     discordServerId
   )
+  const [, , , save] = useDatabaseSave(
+    CollectionNames.DiscordServers,
+    discordServerId
+  )
 
   if (isLoading) {
     return <LoadingIndicator />
@@ -95,7 +101,9 @@ export default ({
     [DiscordServerFieldNames.iconUrl]: iconUrl,
     [DiscordServerFieldNames.inviteUrl]: inviteUrl,
     [DiscordServerFieldNames.requiresPatreon]: requiresPatreon,
-    [DiscordServerFieldNames.patreonUrl]: patreonUrl
+    [DiscordServerFieldNames.patreonUrl]: patreonUrl,
+    [DiscordServerFieldNames.isApproved]: isApproved,
+    [DiscordServerFieldNames.isDeleted]: isDeleted
   } = result
 
   return (
@@ -107,6 +115,9 @@ export default ({
           content={`View the Discord server named ${name}`}
         />
       </Helmet>
+
+      {isApproved !== true && <Paper>This asset is unapproved</Paper>}
+      {isDeleted !== false && <Paper>This asset is deleted</Paper>}
 
       {iconUrl && <img src={iconUrl} alt={`Icon for server ${name}`} />}
 
@@ -180,6 +191,46 @@ export default ({
               )
             }>
             Edit
+          </Button>{' '}
+          <Button
+            icon={<EditIcon />}
+            onClick={async () => {
+              try {
+                await save({
+                  [DiscordServerFieldNames.isApproved]: isApproved
+                    ? false
+                    : true,
+                  [DiscordServerFieldNames.lastModifiedAt]: new Date(),
+                  [DiscordServerFieldNames.lastModifiedAt]: createRef(
+                    CollectionNames.Users,
+                    user.id
+                  )
+                })
+              } catch (err) {
+                console.error(err)
+                handleError(err)
+              }
+            }}>
+            {isApproved ? 'Unapprove' : 'Approve'}
+          </Button>{' '}
+          <Button
+            icon={<EditIcon />}
+            onClick={async () => {
+              try {
+                await save({
+                  [DiscordServerFieldNames.isDeleted]: isDeleted ? false : true,
+                  [DiscordServerFieldNames.lastModifiedAt]: new Date(),
+                  [DiscordServerFieldNames.lastModifiedAt]: createRef(
+                    CollectionNames.Users,
+                    user.id
+                  )
+                })
+              } catch (err) {
+                console.error(err)
+                handleError(err)
+              }
+            }}>
+            {isDeleted ? 'Restore' : 'Delete'}
           </Button>{' '}
           <SyncDiscordServerButton discordServerId={discordServerId} />
         </>

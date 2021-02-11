@@ -53,6 +53,22 @@ const useStyles = makeStyles({
   }
 })
 
+const getHiddenFieldsForDb = fields => {
+  const hiddenFields = fields.filter(({ type }) => type === fieldTypes.hidden)
+
+  if (!hiddenFields.length) {
+    return {}
+  }
+
+  return hiddenFields.reduce(
+    (newObj, fieldData) => ({
+      ...newObj,
+      [fieldData.name]: fieldData.default
+    }),
+    {}
+  )
+}
+
 export default ({
   collectionName,
   id = null,
@@ -128,6 +144,7 @@ export default ({
 
       const [newId] = await save({
         ...formFields,
+        ...getHiddenFieldsForDb(fields),
         ...(id
           ? {
               lastModifiedBy: createRef(CollectionNames.Users, userId),
@@ -175,8 +192,9 @@ export default ({
 
   return (
     <>
-      {fields.map(
-        ({ name, type, default: defaultValue, label, hint, ...rest }) => {
+      {fields
+        .filter(({ type }) => type !== fieldTypes.hidden)
+        .map(({ name, type, default: defaultValue, label, hint, ...rest }) => {
           const Input = getInputForFieldType(type)
 
           return (
@@ -196,8 +214,7 @@ export default ({
               {hint && <div className={classes.hint}>{hint}</div>}
             </Field>
           )
-        }
-      )}
+        })}
       <div className={classes.saveBtn}>
         <Button
           url={cancelUrl}

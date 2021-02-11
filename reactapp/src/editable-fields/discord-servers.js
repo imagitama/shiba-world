@@ -1,4 +1,5 @@
 import { DiscordServerFieldNames } from '../hooks/useDatabaseQuery'
+import { fieldTypes } from '../generic-forms'
 
 export default [
   {
@@ -52,5 +53,15 @@ export default [
     default: '',
     type: 'text',
     hint: 'The URL to the Patreon you need to be a sub for to join it'
+  },
+  {
+    name: DiscordServerFieldNames.isApproved,
+    type: fieldTypes.hidden,
+    default: false
+  },
+  {
+    name: DiscordServerFieldNames.isDeleted,
+    type: fieldTypes.hidden,
+    default: false
   }
 ]

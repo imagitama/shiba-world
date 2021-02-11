@@ -12,20 +12,22 @@ import Button from '../../components/button'
 
 import useDatabaseQuery, {
   CollectionNames,
-  AuthorFieldNames,
-  OrderDirections
+  OrderDirections,
+  DiscordServerFieldNames
 } from '../../hooks/useDatabaseQuery'
 import * as routes from '../../routes'
-import { canEditDiscordServer } from '../../utils'
+import { canCreateDiscordServer, canEditDiscordServer } from '../../permissions'
 import useUserRecord from '../../hooks/useUserRecord'
 
 function DiscordServers() {
+  const [, , user] = useUserRecord()
   const [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.DiscordServers,
     undefined,
     undefined,
-    [AuthorFieldNames.name, OrderDirections.ASC]
+    [DiscordServerFieldNames.name, OrderDirections.ASC]
   )
+  console.log(results)
 
   if (isLoading) {
     return <LoadingIndicator />
@@ -35,13 +37,44 @@ function DiscordServers() {
     return <ErrorMessage>Failed to get authors</ErrorMessage>
   }
 
-  if (!results.length) {
+  if (!results || !results.length) {
     return <NoResultsMessage />
   }
 
+  const { publicRecords, privateRecords } = results.reduce(
+    (obj, discordServer) => {
+      const isPublic =
+        discordServer[DiscordServerFieldNames.isApproved] !== false &&
+        discordServer[DiscordServerFieldNames.isDeleted] !== true
+
+      return {
+        publicRecords: isPublic
+          ? obj.publicRecords.concat([discordServer])
+          : obj.publicRecords,
+        privateRecords: !isPublic
+          ? obj.privateRecords.concat([discordServer])
+          : obj.privateRecords
+      }
+    },
+    {
+      publicRecords: [],
+      privateRecords: []
+    }
+  )
+
   return (
     <>
-      <DiscordServerResults discordServers={results} />
+      <DiscordServerResults discordServers={publicRecords} />
+      {canEditDiscordServer(user) && (
+        <>
+          <Heading variant="h2">Deleted or unapproved servers</Heading>
+          {privateRecords.length ? (
+            <DiscordServerResults discordServers={privateRecords} />
+          ) : (
+            'None'
+          )}
+        </>
+      )}
     </>
   )
 }
@@ -61,8 +94,11 @@ export default () => {
         <Link to={routes.discordServers}>Discord Servers</Link>
       </Heading>
       <BodyText>A list of Discord servers.</BodyText>
-      {canEditDiscordServer(user) && (
-        <Button url={routes.createDiscordServer}>Create</Button>
+      {canCreateDiscordServer(user) && (
+        <>
+          <br />
+          <Button url={routes.createDiscordServer}>Create</Button>
+        </>
       )}
       <DiscordServers />
     </>

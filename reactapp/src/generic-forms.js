@@ -5,5 +5,6 @@ export const fieldTypes = {
   checkbox: 'checkbox',
   date: 'date',
   ref: 'ref',
-  imageUpload: 'imageUpload'
+  imageUpload: 'imageUpload',
+  hidden: 'hidden'
 }

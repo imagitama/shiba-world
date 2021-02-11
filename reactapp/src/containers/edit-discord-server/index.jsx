@@ -5,12 +5,13 @@ import Heading from '../../components/heading'
 import ErrorMessage from '../../components/error-message'
 import NoPermissionMessage from '../../components/no-permission-message'
 import LoadingIndicator from '../../components/loading-indicator'
+import Message from '../../components/message'
 
 import { CollectionNames } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 
 import * as routes from '../../routes'
-import { canEditDiscordServer } from '../../utils'
+import { canCreateDiscordServer, canEditDiscordServer } from '../../permissions'
 
 export default ({
   match: {
@@ -27,17 +28,26 @@ export default ({
     return <ErrorMessage />
   }
 
-  if (!canEditDiscordServer(user)) {
+  const isCreating = !discordServerId
+
+  if (
+    (isCreating && !canCreateDiscordServer(user)) ||
+    (!isCreating && !canEditDiscordServer(user))
+  ) {
     return <NoPermissionMessage />
   }
-
-  const isCreating = !discordServerId
 
   return (
     <>
       <Heading variant="h1">
         {isCreating ? 'Create' : 'Edit'} Discord Server
       </Heading>
+      {isCreating && (
+        <Message>
+          Please contact a staff member on our official Discord to review your
+          Discord server and approve it
+        </Message>
+      )}
       <GenericEditor
         collectionName={CollectionNames.DiscordServers}
         id={isCreating ? null : discordServerId}

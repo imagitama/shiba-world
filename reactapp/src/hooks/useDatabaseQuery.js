@@ -305,7 +305,9 @@ export const DiscordServerFieldNames = {
   lastModifiedBy: 'lastModifiedBy',
   lastModifiedAt: 'lastModifiedAt',
   createdAt: 'createdAt',
-  createdBy: 'createdBy'
+  createdBy: 'createdBy',
+  isApproved: 'isApproved',
+  isDeleted: 'isDeleted'
 }
 
 export const LikeFieldNames = {
