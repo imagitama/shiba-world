@@ -27,7 +27,6 @@ function DiscordServers() {
     undefined,
     [DiscordServerFieldNames.name, OrderDirections.ASC]
   )
-  console.log(results)
 
   if (isLoading) {
     return <LoadingIndicator />

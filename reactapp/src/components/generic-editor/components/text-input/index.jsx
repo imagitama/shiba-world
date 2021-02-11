@@ -1,6 +1,6 @@
 import React from 'react'
-import TextField from '@material-ui/core/TextField'
+import TextInput from '../../../text-input'
 
 export default ({ onChange, value }) => (
-  <TextField onChange={e => onChange(e.target.value)} value={value} />
+  <TextInput onChange={e => onChange(e.target.value)} value={value} />
 )

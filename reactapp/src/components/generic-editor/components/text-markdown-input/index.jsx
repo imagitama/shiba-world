@@ -1,10 +1,10 @@
 import React from 'react'
-import TextField from '@material-ui/core/TextField'
+import TextInput from '../../../text-input'
 import Markdown from 'react-markdown'
 
 export default ({ onChange, value }) => (
   <>
-    <TextField
+    <TextInput
       onChange={e => onChange(e.target.value)}
       value={value}
       rows={10}
