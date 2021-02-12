@@ -29,6 +29,7 @@ export const otherSpeciesMeta = {
 }
 
 export const alreadyOver18Key = 'already-over-18'
+export const activeSearchFilterNamesKey = 'search-filters'
 
 export const paths = {
   assetThumbnailDir: 'asset-thumbnails',
@@ -36,3 +37,14 @@ export const paths = {
 }
 
 export const formHideDelay = 2000
+
+export const searchFilterNames = {
+  tags: 'tags'
+}
+
+export const searchFilters = [
+  {
+    name: searchFilterNames.tags,
+    label: 'Tags'
+  }
+]

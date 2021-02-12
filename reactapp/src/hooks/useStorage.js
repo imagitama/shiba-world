@@ -7,4 +7,10 @@ export const keys = {
   assetsSortByDirection: 'assetsSortByDirection'
 }
 
-export default useLocalStorage
+export default (key, defaultValue) => {
+  const value = useLocalStorage(key)
+  if (!value && defaultValue) {
+    return defaultValue
+  }
+  return value
+}

@@ -13,11 +13,16 @@ import NoResultsMessage from '../no-results-message'
 import Button from '../button'
 import PageControls from '../page-controls'
 import UserList from '../user-list'
+import SearchFilters from '../search-filters'
 
 import { searchIndexNames } from '../../modules/app'
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
-import { alreadyOver18Key } from '../../config'
+import {
+  alreadyOver18Key,
+  activeSearchFilterNamesKey,
+  searchFilterNames
+} from '../../config'
 import { AssetFieldNames } from '../../hooks/useDatabaseQuery'
 
 function ViewAllAuthorsBtn() {
@@ -34,24 +39,7 @@ function ViewAllAuthorsBtn() {
   )
 }
 
-export default () => {
-  const { searchTerm, searchIndexName } = useSelector(
-    ({ app: { searchTerm, searchIndexName } }) => ({
-      searchTerm,
-      searchIndexName
-    })
-  )
-  const [, , user] = useUserRecord()
-  const [isAlreadyOver18] = useStorage(alreadyOver18Key)
-
-  const [isLoading, isErrored, hits] = useAlgoliaSearch(
-    searchIndexName,
-    searchTerm,
-    (user && user.enabledAdultContent) || isAlreadyOver18
-      ? undefined
-      : 'isAdult != 1'
-  )
-
+function Results({ isLoading, isErrored, searchIndexName, hits }) {
   if (isLoading || !hits) {
     return <LoadingIndicator message="Searching..." />
   }
@@ -75,11 +63,13 @@ export default () => {
     case searchIndexNames.ASSETS:
       return (
         <AssetResults
+          showCategory
           assets={hits.map(hit => ({
             id: hit.objectID,
             title: hit.title,
             description: hit.description,
             thumbnailUrl: hit.thumbnailUrl,
+            category: hit.category,
             isApproved: true,
             [AssetFieldNames.slug]: hit.slug,
             _highlightResult: hit._highlightResult
@@ -113,4 +103,76 @@ export default () => {
     default:
       return 'Unknown search index to show results for'
   }
+}
+
+export default () => {
+  const { searchTerm, searchIndexName } = useSelector(
+    ({ app: { searchTerm, searchIndexName } }) => ({
+      searchTerm,
+      searchIndexName
+    })
+  )
+  const [, , user] = useUserRecord()
+  const [isAlreadyOver18] = useStorage(alreadyOver18Key)
+  const [activeFilterNames, setActiveFilterNames] = useStorage(
+    activeSearchFilterNamesKey
+  )
+  const isFilterByTags =
+    (activeFilterNames && activeFilterNames.includes(searchFilterNames.tags)) ||
+    !activeFilterNames
+
+  const [isLoading, isErrored, hits] = useAlgoliaSearch(
+    searchIndexName,
+    searchTerm,
+    (user && user.enabledAdultContent) || isAlreadyOver18
+      ? undefined
+      : 'isAdult != 1',
+    isFilterByTags
+  )
+
+  return (
+    <>
+      <SearchFilters
+        activeFilterNames={activeFilterNames}
+        onChangeActiveFilterNames={setActiveFilterNames}
+        numberOfResults={hits ? hits.length : '0'}
+      />
+      <Results
+        isLoading={isLoading}
+        isErrored={isErrored}
+        searchIndexName={searchIndexName}
+        hits={hits || []}
+      />
+      <PageControls>
+        <p>Can't find what you're looking for?</p>
+        {isFilterByTags ? (
+          <Button
+            onClick={() => {
+              setActiveFilterNames([])
+              trackAction(
+                'SearchResults',
+                'Click search everything instead button'
+              )
+            }}>
+            Search everything instead
+          </Button>
+        ) : (
+          <Button
+            onClick={() => {
+              setActiveFilterNames([searchFilterNames.tags])
+              trackAction(
+                'SearchResults',
+                'Click search by tags instead button'
+              )
+            }}>
+            Search by tags instead
+          </Button>
+        )}
+        <p>
+          Or you can join our Discord and request an avatar in the #feedback
+          channel
+        </p>
+      </PageControls>
+    </>
+  )
 }

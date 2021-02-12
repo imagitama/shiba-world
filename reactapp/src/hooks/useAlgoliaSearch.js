@@ -4,13 +4,36 @@ import { handleError } from '../error-handling'
 
 let client
 
-export default (indexName, keywords, filters = undefined) => {
+// source: https://stackoverflow.com/a/65642284/1215393
+const splitStringByMultiple = (str, splitters) =>
+  splitters.reduce((old, c) => old.map(v => v.split(c)).flat(), [str])
+
+const getTagsFilter = keywords => {
+  const tagsToSearch = splitStringByMultiple(keywords, [' ', ',']).map(tag =>
+    tag.trim().toLowerCase()
+  )
+  //return `tags:"${tagsToSearch.join(' ')}"`
+  return `(${tagsToSearch
+    .concat([keywords])
+    .map(tag => `tags:"${tag}"`)
+    .join(' OR ')})`
+}
+
+export default (
+  indexName,
+  keywords,
+  filters = undefined,
+  filterByTags = false
+) => {
   const [results, setResults] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isErrored, setIsErrored] = useState(false)
   const timerRef = useRef()
   const indexRef = useRef()
   const activeIndexNameRef = useRef()
+
+  const filtersStr =
+    typeof filters === 'string' ? filters : filters.join(' AND ')
 
   useEffect(() => {
     if (!client) {
@@ -28,20 +51,35 @@ export default (indexName, keywords, filters = undefined) => {
       indexRef.current = client.initIndex(activeIndexNameRef.current)
     }
 
-    if (!keywords) {
-      return
-    }
-
     async function doIt() {
       try {
-        const { hits } = await indexRef.current.search(
-          keywords,
-          filters
-            ? {
-                filters
-              }
-            : {}
+        console.debug(
+          `search "${indexName}" with "${keywords}" filter "${filtersStr}"`
         )
+
+        let hits = []
+
+        if (filterByTags) {
+          const tagsFilter = getTagsFilter(keywords)
+
+          console.debug(`filtering by tags: ${tagsFilter}`)
+
+          await indexRef.current.browseObjects({
+            query: '',
+            filters: filtersStr
+              ? `${filtersStr} AND ${tagsFilter}`
+              : tagsFilter,
+            batch: batch => {
+              hits = hits.concat(batch)
+            }
+          })
+        } else {
+          const result = await indexRef.current.search(keywords, {
+            filters: filtersStr,
+            hitsPerPage: 100
+          })
+          hits = result.hits
+        }
 
         const hitsWithId = hits.map(hit => ({
           ...hit,
@@ -54,7 +92,7 @@ export default (indexName, keywords, filters = undefined) => {
       } catch (err) {
         console.error(
           'Failed to search with algolia',
-          { keywords, filters },
+          { keywords, filtersStr },
           err
         )
         setIsLoading(false)
@@ -71,7 +109,7 @@ export default (indexName, keywords, filters = undefined) => {
     }
 
     timerRef.current = setTimeout(() => doIt(), 500)
-  }, [indexName, keywords, filters])
+  }, [indexName, keywords, filtersStr, filterByTags])
 
   return [isLoading, isErrored, results]
 }

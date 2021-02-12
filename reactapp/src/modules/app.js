@@ -39,7 +39,7 @@ function getInitialSearchIndexName() {
 function getInitialSearchTerm() {
   if (isSearchRoute()) {
     const chunks = window.location.pathname.split('/')
-    const foundSearchIndexLabel = chunks[3]
+    const foundSearchIndexLabel = decodeURIComponent(chunks[3])
     return foundSearchIndexLabel
   }
 
