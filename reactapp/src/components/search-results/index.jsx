@@ -119,8 +119,7 @@ export default () => {
     activeSearchFilterNamesKey
   )
   const isFilterByTags =
-    (activeFilterNames && activeFilterNames.includes(searchFilterNames.tags)) ||
-    !activeFilterNames
+    activeFilterNames && activeFilterNames.includes(searchFilterNames.tags)
 
   const [isLoading, isErrored, hits] = useAlgoliaSearch(
     searchIndexName,

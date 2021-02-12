@@ -13,10 +13,7 @@ const getTagsFilter = keywords => {
     tag.trim().toLowerCase()
   )
   //return `tags:"${tagsToSearch.join(' ')}"`
-  return `(${tagsToSearch
-    .concat([keywords])
-    .map(tag => `tags:"${tag}"`)
-    .join(' OR ')})`
+  return `(${tagsToSearch.map(tag => `tags:"${tag}"`).join(' AND ')})`
 }
 
 export default (
