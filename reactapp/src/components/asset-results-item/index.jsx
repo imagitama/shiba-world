@@ -16,6 +16,8 @@ import FormattedDate from '../formatted-date'
 import { mediaQueryForTabletsOrBelow } from '../../media-queries'
 import { AssetFieldNames } from '../../hooks/useDatabaseQuery'
 
+const chipMargin = '0.25rem'
+
 const useStyles = makeStyles(theme => ({
   root: {
     width: '200px',
@@ -43,7 +45,7 @@ const useStyles = makeStyles(theme => ({
     left: 0
   },
   categoryChipWithMargin: {
-    margin: '0.5rem',
+    margin: chipMargin,
     '&:hover': {
       cursor: 'pointer'
     }
@@ -54,7 +56,7 @@ const useStyles = makeStyles(theme => ({
     right: 0
   },
   extraChip: {
-    margin: '0.5rem',
+    margin: chipMargin,
     '&:hover': {
       cursor: 'pointer'
     }
@@ -71,6 +73,15 @@ const useStyles = makeStyles(theme => ({
   },
   chipLabel: {
     padding: 0
+  },
+  costChipWrapper: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    padding: chipMargin
+  },
+  costChip: {
+    background: '#333333' // todo: grab from theme?
   }
 }))
 
@@ -106,6 +117,23 @@ const CategoryChip = ({ categoryName }) => {
       <Chip
         label={categoryMeta[categoryName].nameSingular}
         className={classes.categoryChipWithMargin}
+      />
+    </div>
+  )
+}
+
+const CostChip = ({ isFree, isPaid }) => {
+  const classes = useStyles()
+
+  if (!isFree && !isPaid) {
+    return null
+  }
+
+  return (
+    <div className={classes.costChipWrapper}>
+      <Chip
+        label={isFree ? 'Free' : isPaid ? '$' : ''}
+        className={classes.costChip}
       />
     </div>
   )
@@ -156,6 +184,11 @@ function HighlightResult({ _highlightResult }) {
   ))
 }
 
+const getIsFree = tags =>
+  tags && (tags.includes('free') || tags.includes('free model'))
+const getIsPaid = tags =>
+  tags && (tags.includes('paid') || tags.includes('paid model'))
+
 export default function AssetItem({
   asset: {
     id,
@@ -168,11 +201,13 @@ export default function AssetItem({
     category,
     isPinned,
     createdAt,
+    tags,
     _highlightResult,
     [AssetFieldNames.slug]: slug
   },
   showCategory = false,
-  showPinned = false
+  showPinned = false,
+  showCost = false
 }) {
   const classes = useStyles()
 
@@ -187,6 +222,9 @@ export default function AssetItem({
             isPinned={showPinned && isPinned}
           />
           {showCategory && <CategoryChip categoryName={category} />}
+          {showCost && (
+            <CostChip isFree={getIsFree(tags)} isPaid={getIsPaid(tags)} />
+          )}
           <LazyLoad width={200} height={200}>
             <CardMedia
               className={classes.media}

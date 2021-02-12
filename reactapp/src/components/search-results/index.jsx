@@ -64,13 +64,14 @@ function Results({ isLoading, isErrored, searchIndexName, hits }) {
       return (
         <AssetResults
           showCategory
+          showCost
           assets={hits.map(hit => ({
             id: hit.objectID,
             title: hit.title,
             description: hit.description,
             thumbnailUrl: hit.thumbnailUrl,
             category: hit.category,
-            isApproved: true,
+            tags: hit.tags,
             [AssetFieldNames.slug]: hit.slug,
             _highlightResult: hit._highlightResult
           }))}

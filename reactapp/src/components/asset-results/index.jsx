@@ -6,7 +6,12 @@ const useStyles = makeStyles({
   root: { marginTop: '0.5rem', display: 'flex', flexWrap: 'wrap' }
 })
 
-export default ({ assets, showCategory = false, showPinned = false }) => {
+export default ({
+  assets,
+  showCategory = false,
+  showPinned = false,
+  showCost = false
+}) => {
   const classes = useStyles()
   let allAssets
 
@@ -40,6 +45,7 @@ export default ({ assets, showCategory = false, showPinned = false }) => {
           asset={asset}
           showCategory={showCategory}
           showPinned={showPinned}
+          showCost={showCost}
         />
       ))}
     </div>
