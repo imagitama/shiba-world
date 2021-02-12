@@ -163,7 +163,7 @@ export default function AssetItem({
     description,
     thumbnailUrl,
     isAdult,
-    isApproved,
+    isApproved = true, // handle cases when we cache the data and assume this is true
     isPrivate,
     category,
     isPinned,
