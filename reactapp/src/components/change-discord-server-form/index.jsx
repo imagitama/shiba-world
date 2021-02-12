@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { ReactComponent as DiscordIcon } from '../../assets/images/icons/discord.svg'
 
-import TextInput from '../text-input'
 import Button from '../button'
+import Paper from '../paper'
 
 import useDatabaseQuery, {
   CollectionNames,
-  options
+  options,
+  DiscordServerFieldNames
 } from '../../hooks/useDatabaseQuery'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
@@ -15,7 +16,7 @@ import { handleError } from '../../error-handling'
 import { trackAction } from '../../analytics'
 import { createRef } from '../../utils'
 
-function DiscordServerIds() {
+function DiscordServerIds({ onClickWithIdAndName }) {
   const [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.DiscordServers,
     undefined,
@@ -33,14 +34,20 @@ function DiscordServerIds() {
   }
 
   return (
-    <span>
+    <>
+      Select a Discord server:
+      <br />
+      <br />
       {results.map(result => (
         <span key={result.id}>
-          {result.name} - {result.id}
-          <br />
+          <Button
+            color="default"
+            onClick={() => onClickWithIdAndName(result.id, result.name)}>
+            {result[DiscordServerFieldNames.name]}
+          </Button>{' '}
         </span>
       ))}
-    </span>
+    </>
   )
 }
 
@@ -55,6 +62,7 @@ export default ({ collectionName, id, actionCategory }) => {
   )
   const [isEditorOpen, setIsEditorOpen] = useState(false)
   const [discordServerIdValue, setDiscordServerIdValue] = useState(null)
+  const [discordServerName, setDiscordServerName] = useState(null)
 
   useEffect(() => {
     if (!result) {
@@ -113,6 +121,11 @@ export default ({ collectionName, id, actionCategory }) => {
     }
   }
 
+  const onClickWithIdAndName = (id, name) => {
+    setDiscordServerIdValue(id)
+    setDiscordServerName(name)
+  }
+
   if (!isEditorOpen) {
     return (
       <Button
@@ -125,14 +138,19 @@ export default ({ collectionName, id, actionCategory }) => {
   }
 
   return (
-    <>
-      <DiscordServerIds />
-      Enter a new Discord server ID:
-      <TextInput
-        onChange={e => setDiscordServerIdValue(e.target.value)}
-        value={discordServerIdValue}
-      />
+    <Paper>
+      {discordServerName && (
+        <>
+          You have selected: {discordServerName}
+          <br />
+          <br />
+        </>
+      )}
+
+      <DiscordServerIds onClickWithIdAndName={onClickWithIdAndName} />
+      <br />
+      <br />
       <Button onClick={onSaveBtnClick}>Save</Button>
-    </>
+    </Paper>
   )
 }

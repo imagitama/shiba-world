@@ -15,7 +15,8 @@ import useDatabaseQuery, {
   AssetFieldNames,
   DiscordServerFieldNames,
   options,
-  AssetMetaFieldNames
+  AssetMetaFieldNames,
+  mapDates
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import { setBannerUrls as setBannerUrlsAction } from '../../modules/app'
@@ -518,9 +519,7 @@ export default ({ assetId, switchEditorOpen }) => {
     [AssetFieldNames.isPrivate]: isPrivate,
     [AssetFieldNames.isPinned]: isPinned,
     [AssetFieldNames.author]: authorRef,
-    [AssetFieldNames.children]: children,
     [AssetFieldNames.ownedBy]: ownedBy,
-    [AssetFieldNames.discordServer]: discordServer,
     [AssetFieldNames.tutorialSteps]: tutorialSteps = [],
     [AssetFieldNames.pedestalVideoUrl]: pedestalVideoUrl,
     [AssetFieldNames.pedestalFallbackImageUrl]: pedestalFallbackImageUrl,
@@ -530,7 +529,9 @@ export default ({ assetId, switchEditorOpen }) => {
 
   const {
     [AssetMetaFieldNames.authorName]: authorName,
-    [AssetMetaFieldNames.speciesNames]: speciesNames
+    [AssetMetaFieldNames.speciesNames]: speciesNames,
+    [AssetMetaFieldNames.linkedAssets]: linkedAssets,
+    [AssetMetaFieldNames.discordServer]: discordServer
   } = metaResult || {}
 
   if (!title) {
@@ -787,10 +788,10 @@ export default ({ assetId, switchEditorOpen }) => {
             </>
           ) : null}
 
-          {children && children.length ? (
+          {linkedAssets && linkedAssets.length ? (
             <>
               <Heading variant="h2">Linked Assets</Heading>
-              <ChildrenAssets assetChildren={children} />
+              <ChildrenAssets assetChildren={linkedAssets.map(mapDates)} />
             </>
           ) : null}
 

@@ -58,6 +58,8 @@ const AssetMetaFieldNames = {
   speciesNames: 'speciesNames',
   // createdByName: 'createdByName',
   // lastModifiedByName: 'lastModifiedByName',
+  linkedAssets: 'linkedAssets',
+  discordServer: 'discordServer',
   endorsementCount: 'endorsementCount',
   lastModifiedAt: 'lastModifiedAt',
 }
@@ -410,20 +412,32 @@ module.exports.retrieveAuthorNameFromAssetData = async (
   return Promise.resolve(defaultName)
 }
 
-module.exports.getHasSpeciesChanged = (beforeSpeciesRefs, afterSpeciesRefs) => {
+module.exports.getHasArrayOfReferencesChanged = (beforeItems, afterItems) => {
   // note: always assuming species is populated as empty array (not null)
 
-  for (const speciesRef of beforeSpeciesRefs) {
-    // if species removed
-    if (!afterSpeciesRefs.find((item) => item.id === speciesRef.id)) {
-      console.debug(`removed species ${speciesRef.id}`)
+  if (!beforeItems && afterItems) {
+    return true
+  }
+
+  if (beforeItems && !afterItems) {
+    return true
+  }
+
+  if (beforeItems.length !== afterItems.length) {
+    return true
+  }
+
+  for (const beforeItem of beforeItems) {
+    // if removed
+    if (!afterItems.find((item) => item.id === beforeItem.id)) {
+      console.debug(`removed item ${beforeItem.id}`)
       return true
     }
   }
-  for (const speciesRef of afterSpeciesRefs) {
-    // if species added
-    if (!beforeSpeciesRefs.find((item) => item.id === speciesRef.id)) {
-      console.debug(`added species ${speciesRef.id}`)
+  for (const afterItem of afterItems) {
+    // if added
+    if (!beforeItems.find((item) => item.id === afterItem.id)) {
+      console.debug(`added item ${afterItem.id}`)
       return true
     }
   }

@@ -4,7 +4,8 @@ const {
   AssetFieldNames,
   AssetMetaFieldNames,
   AuthorFieldNames,
-  getHasSpeciesChanged,
+  DiscordServerFieldNames,
+  getHasArrayOfReferencesChanged,
   SpeciesFieldNames,
   EndorsementFieldNames,
 } = require('./firebase')
@@ -61,12 +62,46 @@ const getFieldNamesThatChanged = (beforeData, afterData) => {
 
   // species add/remove
   if (
-    getHasSpeciesChanged(
+    getHasArrayOfReferencesChanged(
       beforeData[AssetFieldNames.species],
       afterData[AssetFieldNames.species]
     )
   ) {
     fieldNames.push(AssetFieldNames.species)
+  }
+
+  // linked asset changed
+  if (
+    getHasArrayOfReferencesChanged(
+      beforeData[AssetFieldNames.children],
+      afterData[AssetFieldNames.children]
+    )
+  ) {
+    fieldNames.push(AssetFieldNames.children)
+  }
+
+  // add or remove discord server
+  if (
+    beforeData[AssetFieldNames.discordServer] &&
+    !afterData[AssetFieldNames.discordServer]
+  ) {
+    fieldNames.push(AssetFieldNames.discordServer)
+  }
+  if (
+    !beforeData[AssetFieldNames.discordServer] &&
+    afterData[AssetFieldNames.discordServer]
+  ) {
+    fieldNames.push(AssetFieldNames.discordServer)
+  }
+
+  // change discord server
+  if (
+    beforeData[AssetFieldNames.discordServer] &&
+    afterData[AssetFieldNames.discordServer] &&
+    beforeData[AssetFieldNames.discordServer].id !==
+      afterData[AssetFieldNames.discordServer].id
+  ) {
+    fieldNames.push(AssetFieldNames.discordServer)
   }
 
   return fieldNames
@@ -84,6 +119,37 @@ const getSpeciesNamesFromRefs = async (speciesRefs) => {
       return speciesDoc.get(SpeciesFieldNames.singularName)
     })
   )
+}
+
+const convertLinkedAssetToItem = (doc) => ({
+  id: doc.id,
+  ref: doc.ref,
+  [AssetFieldNames.title]: doc.get(AssetFieldNames.title),
+  [AssetFieldNames.description]: doc.get(AssetFieldNames.description),
+  [AssetFieldNames.thumbnailUrl]: doc.get(AssetFieldNames.thumbnailUrl),
+  [AssetFieldNames.species]: doc.get(AssetFieldNames.species),
+  [AssetFieldNames.isAdult]: doc.get(AssetFieldNames.isAdult),
+})
+
+const getLinkedAssets = async (assetRefs) => {
+  return Promise.all(
+    assetRefs.map(async (assetRef) => {
+      const assetDoc = await assetRef.get()
+      return convertLinkedAssetToItem(assetDoc)
+    })
+  )
+}
+
+const getDiscordServerFromRef = async (ref) => {
+  const doc = await ref.get()
+  return {
+    id: ref.id,
+    ref: ref,
+    [DiscordServerFieldNames.name]: doc.get(DiscordServerFieldNames.name),
+    [DiscordServerFieldNames.inviteUrl]: doc.get(
+      DiscordServerFieldNames.inviteUrl
+    ),
+  }
 }
 
 const getUpdatedFieldsForFieldNames = async (fieldNames, docData) => {
@@ -125,6 +191,34 @@ const getUpdatedFieldsForFieldNames = async (fieldNames, docData) => {
         fields[AssetMetaFieldNames.speciesNames] = speciesNames
         break
       }
+      case AssetFieldNames.children: {
+        let linkedAssets
+
+        if (!docData[AssetFieldNames.children]) {
+          linkedAssets = []
+        } else {
+          linkedAssets = await getLinkedAssets(
+            docData[AssetFieldNames.children]
+          )
+        }
+
+        fields[AssetMetaFieldNames.linkedAssets] = linkedAssets
+        break
+      }
+      case AssetFieldNames.discordServer: {
+        let discordServer
+
+        if (!docData[AssetFieldNames.discordServer]) {
+          discordServer = null
+        } else {
+          discordServer = await getDiscordServerFromRef(
+            docData[AssetFieldNames.discordServer]
+          )
+        }
+
+        fields[AssetMetaFieldNames.discordServer] = discordServer
+        break
+      }
       default:
         throw new Error(`Have not configured field ${fieldName} for hydration!`)
     }
@@ -147,6 +241,10 @@ async function hydrateAsset(beforeDoc, afterDoc) {
   const fields = await getUpdatedFieldsForFieldNames(
     fieldNamesThatChanged,
     afterDoc.data()
+  )
+
+  console.debug(
+    `hydrating asset with ${fieldNamesThatChanged.length} fields...`
   )
 
   return saveAsset(beforeDoc.id, fields)
@@ -182,6 +280,18 @@ module.exports.syncAllAssetMeta = async () => {
         [AssetMetaFieldNames.speciesNames]: await getSpeciesNamesFromRefs(
           assetDoc.get(AssetFieldNames.species)
         ),
+        [AssetMetaFieldNames.linkedAssets]: assetDoc.get(
+          AssetFieldNames.children
+        )
+          ? await getLinkedAssets(assetDoc.get(AssetFieldNames.children))
+          : [],
+        [AssetMetaFieldNames.discordServer]: assetDoc.get(
+          AssetFieldNames.discordServer
+        )
+          ? await getDiscordServerFromRef(
+              assetDoc.get(AssetFieldNames.discordServer)
+            )
+          : null,
         [AssetMetaFieldNames.lastModifiedAt]: new Date(),
       },
       {

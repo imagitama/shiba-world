@@ -59,6 +59,8 @@ export const AssetMetaFieldNames = {
   speciesNames: 'speciesNames',
   // createdByName: 'createdByName',
   // lastModifiedByName: 'lastModifiedByName',
+  linkedAssets: 'linkedAssets',
+  discordServer: 'discordServer',
   endorsementCount: 'endorsementCount',
   lastModifiedAt: 'lastModifiedAt'
 }

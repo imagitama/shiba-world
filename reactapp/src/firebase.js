@@ -31,7 +31,7 @@ if (
   process.env.REACT_APP_USE_FIRESTORE_EMULATOR
 ) {
   console.debug(`using firestore emulator`)
-  firebase.firestore().useEmulator('localhost', 8080)
+  firebase.firestore().useEmulator('localhost', 8081)
 }
 
 if (
