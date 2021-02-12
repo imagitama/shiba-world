@@ -33,7 +33,7 @@ const getFieldNamesThatChanged = (beforeData, afterData) => {
 
   // if we are creating the asset
   if (!beforeData) {
-    return [AssetFieldNames.author, AssetFieldNames.species]
+    return [AssetFieldNames.author, AssetFieldNames.species, AssetFieldNames.children, AssetFieldNames.discordServer]
   }
 
   // add or remove author
