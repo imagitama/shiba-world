@@ -33,7 +33,7 @@ export default (
   const activeIndexNameRef = useRef()
 
   const filtersStr =
-    typeof filters === 'string' ? filters : filters.join(' AND ')
+    typeof filters === 'string' ? filters : filters ? filters.join(' AND ') : ''
 
   useEffect(() => {
     if (!client) {
