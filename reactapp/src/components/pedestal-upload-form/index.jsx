@@ -234,6 +234,30 @@ export default ({ assetId, onDone, actionCategory }) => {
       handleError(err)
     }
   }
+
+  const onClearBtnClick = async () => {
+    try {
+      trackAction(actionCategory, 'Click clear pedestal button', assetId)
+
+      await save({
+        [AssetFieldNames.pedestalVideoUrl]: '',
+        [AssetFieldNames.pedestalFallbackImageUrl]: '',
+        [AssetFieldNames.lastModifiedAt]: new Date(),
+        [AssetFieldNames.lastModifiedBy]: createRef(
+          CollectionNames.Users,
+          userId
+        )
+      })
+
+      if (onDone) {
+        onDone()
+      }
+    } catch (err) {
+      console.error(err)
+      handleError(err)
+    }
+  }
+
   if (isSaving) {
     return (
       <LoadingIndicator
@@ -270,6 +294,11 @@ export default ({ assetId, onDone, actionCategory }) => {
           onUploaded={url => setUploadedVideoUrl(url)}
         />
       )}
+      <br />
+      <br />
+      <Button color="default" onClick={onClearBtnClick}>
+        Clear Pedestal
+      </Button>
     </div>
   )
 }

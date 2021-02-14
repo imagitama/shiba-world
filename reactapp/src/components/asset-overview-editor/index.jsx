@@ -108,6 +108,7 @@ import ChangeCategoryForm from '../change-category-form'
 import EditImageIcon from '../edit-image-icon'
 import PedestalColumns from '../pedestal-columns'
 import PedestalVideo from '../pedestal-video'
+import NoPermissionMessage from '../no-permission-message'
 
 const editorAreaBorderValue = '3px dashed rgba(255, 255, 255, 0.5)'
 
@@ -730,6 +731,10 @@ export default ({ assetId, switchEditorOpen }) => {
         className={classes.editIcon}
       />
     )
+  }
+
+  if (!isOwnerOrEditor) {
+    return <NoPermissionMessage />
   }
 
   if (isDeleted && !canApproveAsset(user)) {
