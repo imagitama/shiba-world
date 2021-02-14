@@ -30,6 +30,7 @@ const useStyles = makeStyles(theme => ({
   },
   media: {
     position: 'relative', // nsfw chip
+    zIndex: -1,
     height: '200px',
     [mediaQueryForTabletsOrBelow]: {
       height: '160px'
@@ -89,6 +90,9 @@ const useStyles = makeStyles(theme => ({
     bottom: 0,
     right: 0,
     margin: '0.25rem'
+  },
+  actionArea: {
+    zIndex: 1
   }
 }))
 
@@ -220,7 +224,7 @@ export default function AssetItem({
 
   return (
     <Card className={classes.root}>
-      <CardActionArea>
+      <CardActionArea className={classes.actionArea}>
         <Link to={routes.viewAssetWithVar.replace(':assetId', slug || id)}>
           <ExtraChips
             isApproved={isApproved}
