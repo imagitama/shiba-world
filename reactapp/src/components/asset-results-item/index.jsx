@@ -29,6 +29,7 @@ const useStyles = makeStyles(theme => ({
     }
   },
   media: {
+    position: 'relative', // nsfw chip
     height: '200px',
     [mediaQueryForTabletsOrBelow]: {
       height: '160px'
@@ -82,6 +83,12 @@ const useStyles = makeStyles(theme => ({
   },
   costChip: {
     background: '#333333' // todo: grab from theme?
+  },
+  nsfwChip: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    margin: '0.25rem'
   }
 }))
 
@@ -89,11 +96,10 @@ function truncateTextAndAddEllipsis(text) {
   return text && text.length >= 100 ? `${text.slice(0, 100)}...` : text
 }
 
-function ExtraChips({ isAdult, isApproved, isPrivate, isPinned }) {
+function ExtraChips({ isApproved, isPrivate, isPinned }) {
   const classes = useStyles()
   return (
     <div className={classes.extraChips}>
-      {isAdult && <Chip label="NSFW" className={classes.extraChip} />}
       {!isApproved && <Chip label="Unapproved" className={classes.extraChip} />}
       {isPrivate && <Chip label="Private" className={classes.extraChip} />}
       {isPinned && (
@@ -207,7 +213,8 @@ export default function AssetItem({
   },
   showCategory = false,
   showPinned = false,
-  showCost = true
+  showCost = true,
+  showIsNsfw = true
 }) {
   const classes = useStyles()
 
@@ -216,7 +223,6 @@ export default function AssetItem({
       <CardActionArea>
         <Link to={routes.viewAssetWithVar.replace(':assetId', slug || id)}>
           <ExtraChips
-            isAdult={isAdult}
             isApproved={isApproved}
             isPrivate={isPrivate}
             isPinned={showPinned && isPinned}
@@ -229,8 +235,11 @@ export default function AssetItem({
             <CardMedia
               className={classes.media}
               image={thumbnailUrl}
-              title={`Thumbnail for ${title}`}
-            />
+              title={`Thumbnail for ${title}`}>
+              {isAdult && showIsNsfw && (
+                <Chip label="NSFW" className={classes.nsfwChip} />
+              )}
+            </CardMedia>
           </LazyLoad>
           <CardContent>
             <Typography variant="h5" component="h2">

@@ -49,7 +49,7 @@ function Assets() {
     return <NoResultsMessage />
   }
 
-  return <AssetResults assets={results} showPinned />
+  return <AssetResults assets={results} showPinned showIsNsfw={false} />
 }
 
 const useStyles = makeStyles({

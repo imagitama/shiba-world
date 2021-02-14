@@ -10,7 +10,8 @@ export default ({
   assets,
   showCategory = false,
   showPinned = false,
-  showCost = true
+  showCost = true,
+  showIsNsfw = true
 }) => {
   const classes = useStyles()
   let allAssets
@@ -46,6 +47,7 @@ export default ({
           showCategory={showCategory}
           showPinned={showPinned}
           showCost={showCost}
+          showIsNsfw={showIsNsfw}
         />
       ))}
     </div>
