@@ -10,7 +10,7 @@ export default ({
   assets,
   showCategory = false,
   showPinned = false,
-  showCost = false
+  showCost = true
 }) => {
   const classes = useStyles()
   let allAssets

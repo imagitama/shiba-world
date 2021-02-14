@@ -207,7 +207,7 @@ export default function AssetItem({
   },
   showCategory = false,
   showPinned = false,
-  showCost = false
+  showCost = true
 }) {
   const classes = useStyles()
 
