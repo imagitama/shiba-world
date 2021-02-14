@@ -8,9 +8,9 @@ export const keys = {
 }
 
 export default (key, defaultValue) => {
-  const value = useLocalStorage(key)
+  const [value] = useLocalStorage(key)
   if (!value && defaultValue) {
-    return defaultValue
+    return [defaultValue]
   }
-  return value
+  return [value]
 }
