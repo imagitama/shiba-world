@@ -1,8 +1,13 @@
 const functions = require('firebase-functions')
-const { isApproved, AssetFieldNames, AssetCategories } = require('../firebase')
+const {
+  isApproved,
+  AssetFieldNames,
+  AssetCategories,
+  getHasArrayOfStringsChanged,
+} = require('../firebase')
 const { updateAvatarInList } = require('../avatar-list')
 
-const assetNeedsToBeSynced = (beforeDocData, afterDocData) => {
+const getDoesAssetNeedToBeSynced = (beforeDocData, afterDocData) => {
   if (afterDocData[AssetFieldNames.category] !== AssetCategories.avatar) {
     return false
   }
@@ -45,6 +50,16 @@ const assetNeedsToBeSynced = (beforeDocData, afterDocData) => {
       return true
     }
   }
+
+  if (
+    getHasArrayOfStringsChanged(
+      beforeDocData[AssetFieldNames.tags],
+      afterDocData[AssetFieldNames.tags]
+    )
+  ) {
+    return true
+  }
+
   return false
 }
 
@@ -54,9 +69,9 @@ module.exports = functions.firestore
     const beforeDocData = beforeDoc.data()
     const afterDocData = afterDoc.data()
 
-    if (isApproved(beforeDocData, afterDocData)) {
+    if (isApproved(afterDocData)) {
       console.debug('asset is approved')
-      if (assetNeedsToBeSynced(beforeDocData, afterDocData)) {
+      if (getDoesAssetNeedToBeSynced(beforeDocData, afterDocData)) {
         console.debug('avatar needs to be synced')
         return updateAvatarInList(afterDoc.id, afterDoc)
       } else {

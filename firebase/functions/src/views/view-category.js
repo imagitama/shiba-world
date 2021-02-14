@@ -19,6 +19,7 @@ const convertAssetDocIntoCategoryItem = (doc) => ({
   [AssetFieldNames.thumbnailUrl]: doc.get(AssetFieldNames.thumbnailUrl),
   [AssetFieldNames.isAdult]: doc.get(AssetFieldNames.isAdult), // for NSFW toggle
   [AssetFieldNames.createdAt]: doc.get(AssetFieldNames.createdAt), // for sorting
+  [AssetFieldNames.tags]: doc.get(AssetFieldNames.tags), // for paid/free chip
 })
 
 function shouldDeleteAssetFromCategoryCache(doc) {

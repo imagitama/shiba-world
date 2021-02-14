@@ -415,6 +415,10 @@ module.exports.retrieveAuthorNameFromAssetData = async (
 module.exports.getHasArrayOfReferencesChanged = (beforeItems, afterItems) => {
   // note: always assuming species is populated as empty array (not null)
 
+  if (!beforeItems && !afterItems) {
+    return false
+  }
+
   if (!beforeItems && afterItems) {
     return true
   }
@@ -438,6 +442,33 @@ module.exports.getHasArrayOfReferencesChanged = (beforeItems, afterItems) => {
     // if added
     if (!beforeItems.find((item) => item.id === afterItem.id)) {
       console.debug(`added item ${afterItem.id}`)
+      return true
+    }
+  }
+
+  return false
+}
+
+module.exports.getHasArrayOfStringsChanged = (beforeItems, afterItems) => {
+  if (!beforeItems && !afterItems) {
+    return false
+  }
+
+  if ((!beforeItems && afterItems) || (beforeItems && !afterItems)) {
+    return true
+  }
+
+  if (beforeItems.length !== afterItems.length) {
+    return true
+  }
+
+  for (const [beforeItem, index] of beforeItems.entries()) {
+    if (afterItems[index] !== beforeItem) {
+      return true
+    }
+  }
+  for (const [afterItem, index] of afterItems.entries()) {
+    if (afterItems[index] !== afterItem) {
       return true
     }
   }
