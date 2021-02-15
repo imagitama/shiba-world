@@ -37,10 +37,7 @@ import {
   THUMBNAIL_HEIGHT,
   THUMBNAIL_WIDTH
 } from '../../config'
-import {
-  mediaQueryForTabletsOrBelow,
-  mediaQueryForMobiles
-} from '../../media-queries'
+import { mediaQueryForTabletsOrBelow } from '../../media-queries'
 
 const useStyles = makeStyles({
   tiles: {
@@ -62,7 +59,7 @@ const useStyles = makeStyles({
       width: '50%',
       padding: '0.5rem'
     },
-    [mediaQueryForMobiles]: {
+    '@media (max-width: 480px)': {
       width: '100%',
       padding: '0.5rem'
     }
@@ -93,6 +90,7 @@ const useStyles = makeStyles({
     transition: 'all 100ms',
     '& img': {
       width: '100%',
+      height: 'auto',
       display: 'block'
     }
   },
