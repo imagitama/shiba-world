@@ -60,13 +60,13 @@ import TagAmendmentForm from '../tag-amendment-form'
 import ApproveAssetButton from '../approve-asset-button'
 import DeleteAssetButton from '../delete-asset-button'
 import PinAssetButton from '../pin-asset-button'
+import Message, { types } from '../message'
 
 import NotApprovedMessage from './components/not-approved-message'
 import DeletedMessage from './components/deleted-message'
 import IsPrivateMessage from './components/is-private-message'
 import FileList from './components/file-list'
 import ReportMessage from './components/report-message'
-import WorkInProgressMessage from './components/work-in-progress-message'
 import ChildrenAssets from './components/children-assets'
 import SpeciesOutput from './components/species-output'
 import VideoList from './components/video-list'
@@ -669,7 +669,18 @@ export default ({ assetId, switchEditorOpen }) => {
       {isApproved === false && <NotApprovedMessage />}
       {isDeleted === true && <DeletedMessage />}
       {isPrivate === true && <IsPrivateMessage />}
-      {tags && tags.includes('wip') && <WorkInProgressMessage />}
+      {tags && tags.includes('wip') && (
+        <Message type={types.WARNING}>
+          This asset is marked as a work in progress. It is incomplete and may
+          not be available at this time.
+        </Message>
+      )}
+      {tags && tags.includes('not_vrchat_compatible') && (
+        <Message type={types.WARNING}>
+          This asset is marked as not VRChat compatible. It might require
+          additional steps to make it work in VRChat.
+        </Message>
+      )}
 
       {pedestalVideoUrl ? (
         <Pedestal
