@@ -4,7 +4,8 @@ export const keys = {
   hiddenNotices: 'hiddenNotices',
   darkModeEnabled: 'darkModeEnabled',
   assetsSortByFieldName: 'assetsSortByFieldName',
-  assetsSortByDirection: 'assetsSortByDirection'
+  assetsSortByDirection: 'assetsSortByDirection',
+  hiddenSpecialEventNames: 'hiddenSpecialEventNames'
 }
 
 export default (key, defaultValue) => {

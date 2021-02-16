@@ -31,7 +31,6 @@ import Banner from './components/banner'
 import PendingAssetAmendmentsMessage from './components/pending-asset-amendments-message'
 import DraftAssetsMessage from './components/draft-assets-message'
 import Fireworks from './components/fireworks'
-import Message from './components/message'
 
 import useSearchTerm from './hooks/useSearchTerm'
 
@@ -377,11 +376,16 @@ export default () => {
         <PageHeader />
         <main className="main">
           <div className={classes.mainContainer}>
-            <Message>
-              <span style={{ fontSize: '200%' }}>
-                We just reached 1000 signed up users!
-              </span>
-            </Message>
+            {new Date() < new Date('21 Feb 2021') && (
+              <Fireworks
+                eventName="1000users"
+                message={
+                  <span style={{ fontSize: '200%' }}>
+                    We just reached 1000 signed up users!
+                  </span>
+                }
+              />
+            )}
             <BannedNotice />
             {/* Temporarily removed to avoid an unnecessary query <Notices /> */}
             <UnapprovedAssetsMessage />
@@ -391,7 +395,6 @@ export default () => {
           </div>
         </main>
         <PageFooter />
-        {new Date().getDay() >= 2 && <Fireworks />}
       </ThemeProvider>
     </ErrorBoundary>
   )
