@@ -1,5 +1,6 @@
 import React from 'react'
 import useStorage, { keys } from '../../hooks/useStorage'
+import { trackAction } from '../../analytics'
 import Message from '../message'
 import Button from '../button'
 import './fireworks.css'
@@ -14,8 +15,10 @@ export default ({ eventName = '', message = '' }) => {
     return null
   }
 
-  const onBtnClick = () =>
+  const onBtnClick = () => {
     setHiddenSpecialEventNames(hiddenSpecialEventNames.concat([eventName]))
+    trackAction('Global', 'Click hide fireworks button', eventName)
+  }
 
   return (
     <>
