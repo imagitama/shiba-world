@@ -23,11 +23,13 @@ export default ({ eventName = '', message = '' }) => {
   return (
     <>
       {message && (
-        <Message>
-          {message}
-          <br />
-          <br />
-          <Button onClick={onBtnClick}>OK please hide these fireworks</Button>
+        <Message style={{ width: '100%' }}>
+          <span style={{ width: '100%' }}>
+            {message}
+            <br />
+            <br />
+            <Button onClick={onBtnClick}>OK please hide these fireworks</Button>
+          </span>
         </Message>
       )}
       <div className="fireworks">

@@ -43,21 +43,26 @@ function Icon({ type }) {
   }
 }
 
-export default ({ children, type = types.INFO, style = styles.DEFAULT }) => {
+export default ({
+  children,
+  type = types.INFO,
+  style = styles.DEFAULT,
+  ...restOfProps
+}) => {
   const classes = useStyles()
 
   if (style === styles.BG) {
     return (
       <div className={classes.root}>
         <Icon type={type} />
-        <span>{children}</span>
+        {children}
       </div>
     )
   } else {
     return (
-      <Paper className={classes.root}>
+      <Paper className={classes.root} {...restOfProps}>
         <Icon type={type} />
-        <span>{children}</span>
+        {children}
       </Paper>
     )
   }
