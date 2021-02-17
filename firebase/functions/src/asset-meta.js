@@ -154,6 +154,12 @@ const getDiscordServerFromRef = async (ref) => {
     [DiscordServerFieldNames.inviteUrl]: doc.get(
       DiscordServerFieldNames.inviteUrl
     ),
+    [DiscordServerFieldNames.requiresPatreon]: doc.get(
+      DiscordServerFieldNames.requiresPatreon
+    ),
+    [DiscordServerFieldNames.patreonUrl]: doc.get(
+      DiscordServerFieldNames.patreonUrl
+    ),
   }
 }
 
