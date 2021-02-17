@@ -50,3 +50,4 @@ exports.hydrateViewCacheOnAssetUpdate = require('./src/functions/hydrateViewCach
 exports.syncViewCache = require('./src/functions/syncViewCache')
 exports.hydrateViewCacheOnSpeciesCreate = require('./src/functions/hydrateViewCacheOnSpeciesCreate')
 exports.hydrateViewCacheOnSpeciesUpdate = require('./src/functions/hydrateViewCacheOnSpeciesUpdate')
+exports.repickFeaturedAsset = require('./src/functions/repickFeaturedAsset')
