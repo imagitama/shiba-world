@@ -161,6 +161,12 @@ const pickFeaturedAsset = async () => {
               AssetFieldNames.thumbnailUrl
             ),
             [AssetFieldNames.slug]: selectedAssetDoc.get(AssetFieldNames.slug),
+            [AssetFieldNames.pedestalVideoUrl]: selectedAssetDoc.get(
+              AssetFieldNames.pedestalVideoUrl
+            ),
+            [AssetFieldNames.pedestalFallbackImageUrl]: selectedAssetDoc.get(
+              AssetFieldNames.pedestalFallbackImageUrl
+            ),
 
             // special
             asset: selectedAsset,

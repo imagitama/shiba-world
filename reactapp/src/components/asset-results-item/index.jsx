@@ -28,13 +28,23 @@ const useStyles = makeStyles(theme => ({
       margin: '0.25rem'
     }
   },
+  landscape: {
+    width: '100%',
+    '& $media': {
+      width: '200px'
+    }
+  },
+  landscapeLink: {
+    display: 'flex'
+  },
   media: {
     position: 'relative', // nsfw chip
     zIndex: -1,
     height: '200px',
     [mediaQueryForTabletsOrBelow]: {
       height: '160px'
-    }
+    },
+    flexShrink: 0
   },
   actions: {
     position: 'absolute',
@@ -218,14 +228,17 @@ export default function AssetItem({
   showCategory = false,
   showPinned = false,
   showCost = true,
-  showIsNsfw = true
+  showIsNsfw = true,
+  isLandscape = false
 }) {
   const classes = useStyles()
 
   return (
-    <Card className={classes.root}>
+    <Card className={`${classes.root} ${isLandscape ? classes.landscape : ''}`}>
       <CardActionArea className={classes.actionArea}>
-        <Link to={routes.viewAssetWithVar.replace(':assetId', slug || id)}>
+        <Link
+          to={routes.viewAssetWithVar.replace(':assetId', slug || id)}
+          className={isLandscape ? classes.landscapeLink : ''}>
           <ExtraChips
             isApproved={isApproved}
             isPrivate={isPrivate}

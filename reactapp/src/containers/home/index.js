@@ -1,13 +1,15 @@
 import React, { createContext, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
-import Card from '@material-ui/core/Card'
-import CardActionArea from '@material-ui/core/CardActionArea'
-import Typography from '@material-ui/core/Typography'
 import LazyLoad from 'react-lazyload'
+import { useMediaQuery } from 'react-responsive'
+import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 
-import Button from '../../components/button'
 import FormattedDate from '../../components/formatted-date'
+// import Polls from '../../components/polls'
+import LoadingIndicator from '../../components/loading-indicator'
+import AssetResultItem from '../../components/asset-results-item'
+import Heading from '../../components/heading'
 
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
@@ -16,27 +18,26 @@ import useDatabaseQuery, {
   CollectionNames,
   specialCollectionIds,
   AssetCategories,
-  AssetFieldNames,
   mapDates
 } from '../../hooks/useDatabaseQuery'
 import { isAbsoluteUrl } from '../../utils'
 
-import placeholderUrl from './assets/placeholder.webp'
 import discordTileBgUrl from './assets/discord.webp'
 import patreonTileBgUrl from './assets/patreon.webp'
 import statsTileBgUrl from './assets/stats.webp'
 import twitterTileBgUrl from './assets/twitter.webp'
 import avatarsTileBgUrl from './assets/avatars.webp'
 import accessoriesTileBgUrl from './assets/accessories.webp'
+import { DISCORD_URL, TWITTER_URL } from '../../config'
 import {
-  DISCORD_URL,
-  TWITTER_URL,
-  THUMBNAIL_HEIGHT,
-  THUMBNAIL_WIDTH
-} from '../../config'
-import { mediaQueryForTabletsOrBelow } from '../../media-queries'
+  mediaQueryForTabletsOrBelow,
+  queryForMobiles,
+  mediaQueryForMobiles
+} from '../../media-queries'
 
-const useStyles = makeStyles({
+import FeaturedAsset from './components/featured-asset'
+
+const useStyles = makeStyles(theme => ({
   tiles: {
     margin: '0 auto',
     maxWidth: '1000px',
@@ -44,22 +45,40 @@ const useStyles = makeStyles({
     flexWrap: 'wrap'
   },
   tile: {
+    display: 'flex',
     position: 'relative',
-    width: '33.3%',
-    minHeight: '10rem',
-    backgroundSize: 'cover',
-    padding: '0.75rem',
-    '& a': {
-      color: 'inherit'
-    },
-    [mediaQueryForTabletsOrBelow]: {
-      width: '50%',
-      padding: '0.5rem'
+    width: '100%',
+    background: 'rgba(0,0,0,0.1)',
+    marginBottom: '1rem',
+    [mediaQueryForMobiles]: {
+      flexWrap: 'wrap',
+      marginBottom: '2rem'
+    }
+  },
+  tileHeader: {
+    marginTop: 0
+  },
+  tileImage: {
+    width: 'auto',
+    height: '200px',
+    '& img': {
+      height: '100%'
     },
     '@media (max-width: 480px)': {
       width: '100%',
-      padding: '0.5rem'
+      textAlign: 'center'
     }
+  },
+  tileCallToAction: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    padding: '0.75rem',
+    display: 'flex',
+    alignItems: 'center'
+  },
+  tileContents: {
+    padding: '1rem 1rem 4rem'
   },
   pollTile: {
     padding: '0.75rem',
@@ -132,30 +151,31 @@ const useStyles = makeStyles({
   actions: {
     textAlign: 'right',
     marginTop: '0.5rem'
+  },
+  cols: {
+    display: 'flex',
+    flexWrap: 'wrap'
+  },
+  col: {
+    width: '50%',
+    '&:nth-child(0)': {
+      paddingRight: '0.5rem'
+    },
+    '&:nth-child(1)': {
+      paddingLeft: '0.5rem'
+    },
+    [mediaQueryForTabletsOrBelow]: {
+      width: '100%',
+      padding: '0.5rem'
+    }
   }
-})
+}))
 
 const analyticsCategoryName = 'Home'
 
-function TileDesc({ children }) {
-  const classes = useStyles()
-  return <div className={classes.desc}>{children}</div>
-}
-
 function Asset({ asset }) {
-  const classes = useStyles()
-  return (
-    <div>
-      <div className={classes.assetTitle}>{asset[AssetFieldNames.title]}</div>
-      <div>
-        {asset.authorName
-          ? `by ${asset.authorName}`
-          : asset.createdByName
-          ? `uploaded by ${asset.createdByName}`
-          : null}
-      </div>
-    </div>
-  )
+  const isMobile = useMediaQuery({ query: queryForMobiles })
+  return <AssetResultItem asset={mapDates(asset)} isLandscape={!isMobile} />
 }
 
 function Tile({
@@ -177,102 +197,86 @@ function Tile({
     trackAction(analyticsCategoryName, 'Click home tile', name)
   }
 
-  const LinkOrAnchor = ({ children }) =>
-    isAbsoluteUrl(url) ? (
-      <a href={url} onClick={onClick}>
+  const LinkOrAnchor = ({ children, ...props }) => {
+    const urlToUse = url || actionUrl
+    return isAbsoluteUrl(urlToUse) ? (
+      <a href={urlToUse} onClick={onClick} {...props}>
         {children}
       </a>
-    ) : url ? (
-      <Link to={url} onClick={onClick}>
+    ) : urlToUse ? (
+      <Link to={urlToUse} onClick={onClick} {...props}>
         {children}
       </Link>
     ) : (
       <>{children}</>
     )
+  }
 
   return (
     <LazyLoad>
-      <div
-        className={`${classes.tile} ${double ? classes.double : ''} ${
-          disableHover ? classes.noHover : ''
-        }`}>
-        <Card className={classes.card}>
-          <CardActionArea
-            className={classes.contentsWrapper}
-            component="div"
-            onClick={onClick}>
-            <LinkOrAnchor>
-              {!double && (
-                <div className={classes.media}>
-                  {imageUrl ? (
-                    <img
-                      src={imageUrl}
-                      alt={`Thumbnail for tile`}
-                      className={classes.thumbnail}
-                      width={THUMBNAIL_WIDTH}
-                      height={THUMBNAIL_HEIGHT}
-                    />
-                  ) : (
-                    <img
-                      alt="Placeholder"
-                      src={placeholderUrl}
-                      className={classes.thumbnail}
-                    />
-                  )}
-                </div>
-              )}
-              <div className={classes.content}>
-                <Typography variant="h5" component="h2">
-                  {title}
-                </Typography>
-                {description && <TileDesc>{description}</TileDesc>}
-                {children}
-                {actionLabel && (
-                  <div className={classes.actions}>
-                    <Button
-                      size="small"
-                      color="primary"
-                      // note: no URL is provided here because entire tile is clickable and produces nest anchor warnings
-                      onClick={() =>
-                        trackAction(
-                          analyticsCategoryName,
-                          'Click home tile button',
-                          name
-                        )
-                      }>
-                      {actionLabel}
-                    </Button>
-                  </div>
-                )}
-                {/* {metaText && <div className={classes.metaText}>{metaText}</div>} */}
-              </div>
+      <section className={classes.tile}>
+        <div className={classes.tileImage}>
+          <LinkOrAnchor>
+            <img src={imageUrl} alt="Tile thumbnail" />
+          </LinkOrAnchor>
+        </div>
+        <div className={classes.tileContents}>
+          <Heading variant="h2" className={classes.tileHeader}>
+            <LinkOrAnchor>{title}</LinkOrAnchor>
+          </Heading>
+          {description}
+          {children}
+          {url || actionUrl ? (
+            <LinkOrAnchor className={classes.tileCallToAction}>
+              {actionLabel || 'Learn More'} <ChevronRightIcon />
             </LinkOrAnchor>
-          </CardActionArea>
-        </Card>
-      </div>
+          ) : null}
+        </div>
+      </section>
     </LazyLoad>
   )
 }
 
 function AvatarsTile() {
+  const result = useHomepage()
+
   const url = routes.viewCategoryWithVar.replace(
     ':categoryName',
     AssetCategories.avatar
   )
+
+  const {
+    assets: { mostRecentAvatar }
+  } = result || { assets: {} }
+
   return (
     <Tile
       name="avatars"
       title="Browse Avatars"
       imageUrl={avatarsTileBgUrl}
       url={url}
-      actionLabel="Browse"
+      actionLabel="Browse All Avatars"
       actionUrl={url}
-      description="Find your next avatar in our collection of over 200 avatars for VRChat."
-    />
+      description="Find your next avatar in our collection of over 200 avatars for VRChat.">
+      {!mostRecentAvatar ? (
+        <LoadingIndicator />
+      ) : (
+        <>
+          <Heading variant="h3">Most Recent Avatar</Heading>
+          <Asset asset={mostRecentAvatar} />
+        </>
+      )}
+    </Tile>
   )
 }
 
 function AccessoriesTile() {
+  const result = useHomepage()
+
+  const {
+    assets: { mostRecentAccessory }
+  } = result || { assets: {} }
+
   const url = routes.viewCategoryWithVar.replace(
     ':categoryName',
     AssetCategories.accessory
@@ -283,93 +287,17 @@ function AccessoriesTile() {
       title="Browse Accessories"
       imageUrl={accessoriesTileBgUrl}
       url={url}
-      actionLabel="Browse"
+      actionLabel="Browse All Accessories"
       actionUrl={url}
-      description="Customize your VRChat avatar with one of many accessories."
-    />
-  )
-}
-
-function MostRecentAvatarTile() {
-  const result = useHomepage()
-
-  const {
-    assets: { mostRecentAvatar }
-  } = result || { assets: {} }
-
-  if (!mostRecentAvatar) {
-    return <LoadingTile />
-  }
-
-  const { id, thumbnailUrl, createdAt } = mapDates(mostRecentAvatar)
-  const url = routes.viewAssetWithVar.replace(':assetId', id)
-
-  return (
-    <Tile
-      name="recent-avatars"
-      title="Most Recent Avatar"
-      imageUrl={thumbnailUrl}
-      url={url}
-      actionLabel="View Avatar"
-      actionUrl={url}
-      metaText={<FormattedDate date={createdAt} />}>
-      <Asset asset={mostRecentAvatar} />
-    </Tile>
-  )
-}
-
-function MostRecentAccessoryTile() {
-  const result = useHomepage()
-
-  const {
-    assets: { mostRecentAccessory }
-  } = result || { assets: {} }
-
-  if (!mostRecentAccessory) {
-    return <LoadingTile />
-  }
-
-  const { id, thumbnailUrl, createdAt } = mapDates(mostRecentAccessory)
-  const url = routes.viewAssetWithVar.replace(':assetId', id)
-
-  return (
-    <Tile
-      name="accessories"
-      title="Most Recent Accessory"
-      imageUrl={thumbnailUrl}
-      url={url}
-      actionLabel="View This"
-      actionUrl={url}
-      metaText={<FormattedDate date={createdAt} />}>
-      <Asset asset={mostRecentAccessory} />
-    </Tile>
-  )
-}
-
-function FeaturedAssetTile() {
-  const [, , result] = useDatabaseQuery(
-    CollectionNames.Special,
-    specialCollectionIds.featuredAssets
-  )
-
-  if (!result || !result.activeAsset) {
-    return <LoadingTile />
-  }
-
-  const { thumbnailUrl } = result.activeAsset
-  const id = result.activeAsset.asset.id
-
-  return (
-    <Tile
-      name="featured-asset"
-      title="Featured asset"
-      imageUrl={thumbnailUrl}
-      url={routes.viewAssetWithVar.replace(':assetId', id)}
-      actionLabel="View Asset"
-      actionUrl={routes.viewAssetWithVar.replace(':assetId', id)}
-      // metaText={<FormattedDate date={createdAt} />}
-    >
-      <Asset asset={result.activeAsset} />
+      description="Customize your VRChat avatar with one of many accessories.">
+      {!mostRecentAccessory ? (
+        <LoadingIndicator />
+      ) : (
+        <>
+          <Heading variant="h3">Most Recent Accessory</Heading>
+          <Asset asset={mostRecentAccessory} />
+        </>
+      )}
     </Tile>
   )
 }
@@ -529,17 +457,21 @@ function Tiles() {
 
   return (
     <homepageContext.Provider value={result}>
-      <div className={classes.tiles}>
-        <AvatarsTile />
-        <AccessoriesTile />
-        <FeaturedAssetTile />
-        <MostRecentNewsTile />
-        <MostRecentAvatarTile />
-        <MostRecentAccessoryTile />
-        <PatreonTile />
-        <DiscordTile />
-        <TwitterTile />
-        <SiteStatsTile />
+      <div className={classes.cols}>
+        <div className={classes.col}>
+          <FeaturedAsset />
+        </div>
+        <div className={classes.col}>
+          <div className={classes.tiles}>
+            <AvatarsTile />
+            <AccessoriesTile />
+            <MostRecentNewsTile />
+            <PatreonTile />
+            <DiscordTile />
+            <TwitterTile />
+            <SiteStatsTile />
+          </div>
+        </div>
       </div>
     </homepageContext.Provider>
   )

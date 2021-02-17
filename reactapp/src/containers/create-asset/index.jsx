@@ -77,6 +77,7 @@ export default () => {
         // need to initialize these so our queries work later
         [AssetFieldNames.isApproved]: false,
         [AssetFieldNames.isDeleted]: false,
+        [AssetFieldNames.isAdult]: false,
         [AssetFieldNames.createdBy]: createRef(CollectionNames.Users, userId),
         [AssetFieldNames.createdAt]: new Date()
       })

@@ -14,3 +14,10 @@ export const removeQuotesFromDescription = desc => {
     })
     .join('\n')
 }
+
+export function trimDescription(description) {
+  if (description.length >= 200) {
+    return `${description.substr(0, 200)}...`
+  }
+  return description
+}
