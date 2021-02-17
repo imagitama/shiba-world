@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import TagChip from '../tag-chip'
 import Button from '../button'
-import { cleanupTags } from '../../utils/tags'
+import { cleanupTags, popularTagsByCategory } from '../../utils/tags'
 
 const useStyles = makeStyles({
   textInput: {
@@ -24,73 +24,6 @@ const mergeInNewTags = (currentTags, newTags) => {
   const mergedTags = currentTags.concat(newTags)
 
   return mergedTags.filter((tag, idx) => mergedTags.indexOf(tag) === idx)
-}
-
-const popularTagsByCategory = {
-  Cost: ['paid', 'free', 'patreon_only', 'gumroad'],
-  Compatibility: [
-    'wip',
-    'quest',
-    'quest_only',
-    'pc_only',
-    'low_poly',
-    'sdk2',
-    'sdk3',
-    'good_vrchat_performance'
-  ],
-  Features: [
-    'sdk3_puppets',
-    'full_body_ready',
-    'rigged',
-    'dynamic_bones',
-    'hand_colliders',
-    'nsfw_included',
-    'blend_shapes',
-    'scene_included',
-    'blendfile_included',
-    'unity_package',
-    'prefabs_included',
-    'toggle_accessories',
-    'customizable_body'
-  ],
-
-  Textures: [
-    'uv_included',
-    'psd_included',
-    'original_texture_included',
-    'substance_painter_included',
-    'high_resolution_textures',
-    'xsfur_shader',
-    'poiyomi_shader',
-    'multiple_textures',
-    'custom_shaders',
-    'multiple_eye_colors'
-  ],
-
-  Appearance: [
-    'plantigrade',
-    'digigrade',
-    'cartoony',
-    'very_realistic',
-    'beans'
-  ],
-
-  Clothing: ['collar', 'clothes'],
-
-  Animation: [
-    'custom_animations',
-    'custom_idle_animation',
-    'custom_emotes',
-    'custom_gestures'
-  ],
-
-  Other: [
-    'remodel',
-    'depends_on_shiba',
-    'discord_server_support',
-    'neosvr_compatible',
-    'chilloutvr_compatible'
-  ]
 }
 
 // NOTE: onChange does not cleanup tags for you (onDone does)

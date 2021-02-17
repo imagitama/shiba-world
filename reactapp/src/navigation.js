@@ -107,6 +107,11 @@ export default [
         label: 'Patreon'
       },
       {
+        id: 'tags',
+        url: routes.tags,
+        label: 'Tags'
+      },
+      {
         id: 'adult',
         url: routes.nsfw,
         label: 'NSFW Content',

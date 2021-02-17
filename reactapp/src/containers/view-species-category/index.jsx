@@ -17,7 +17,6 @@ import ErrorMessage from '../../components/error-message'
 import Heading from '../../components/heading'
 import SortDropdown from '../../components/sort-dropdown'
 import Button from '../../components/button'
-import AllTagsBrowser from '../../components/all-tags-browser'
 import NoResultsMessage from '../../components/no-results-message'
 
 import useDatabaseQuery, {
@@ -257,8 +256,6 @@ export default ({
           View all in category "{category.name}"
         </Button>
       </div>
-      <Heading variant="h2">Tags</Heading>
-      <AllTagsBrowser lazyLoad />
     </>
   )
 }

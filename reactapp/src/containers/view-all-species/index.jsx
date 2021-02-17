@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom'
 import AddIcon from '@material-ui/icons/Add'
 
 import Heading from '../../components/heading'
-import AllTagsBrowser from '../../components/all-tags-browser'
 import Paper from '../../components/paper'
 import Button from '../../components/button'
 import SpeciesVsSelector from '../../components/species-vs-selector'
@@ -82,8 +81,6 @@ export default () => {
         </>
       )}
       <Species />
-      <Heading variant="h2">Tags</Heading>
-      <AllTagsBrowser lazyLoad />
     </>
   )
 }

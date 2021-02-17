@@ -17,7 +17,7 @@ export const viewSpeciesCategoryWithVar =
   '/species/:speciesIdOrSlug/:categoryName'
 export const viewCategoryWithVar = '/category/:categoryName'
 export const news = '/news'
-export const tagsWithVar = '/tags/:tagName'
+export const viewTagWithVar = '/tags/:tagName'
 export const searchWithVarOld = '/search/:searchTerm'
 export const searchWithVar = '/search/:indexName/:searchTerm'
 export const viewUserWithVar = '/users/:userId'
@@ -45,6 +45,7 @@ export const patreon = '/patreon'
 export const resetPassword = '/reset-password'
 export const pedestals = '/pedestals'
 export const vsScreen = '/vs-screen'
+export const tags = '/tags'
 
 // Outdated routes
 export const browseAssets = '/browse'

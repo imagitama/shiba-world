@@ -86,6 +86,9 @@ const ErrorContainer = lazy(() =>
   catchChunkDeaths(() => import('./containers/error'))
 )
 const News = lazy(() => catchChunkDeaths(() => import('./containers/news')))
+const ViewTag = lazy(() =>
+  catchChunkDeaths(() => import('./containers/view-tag'))
+)
 const Tags = lazy(() => catchChunkDeaths(() => import('./containers/tags')))
 const Search = lazy(() => catchChunkDeaths(() => import('./containers/search')))
 const ViewUser = lazy(() =>
@@ -311,7 +314,7 @@ const MainContent = () => {
           component={ViewCategory}
         />
         <Route exact path={routes.news} component={News} />
-        <Route exact path={routes.tagsWithVar} component={Tags} />
+        <Route exact path={routes.viewTagWithVar} component={ViewTag} />
         <Route exact path={routes.searchWithVar} component={Search} />
         <Redirect
           from={routes.searchWithVarOld}
@@ -356,6 +359,7 @@ const MainContent = () => {
         <Route exact path={routes.resetPassword} component={ResetPassword} />
         <Route exact path={routes.pedestals} component={Pedestals} />
         <Route exact path={routes.vsScreen} component={VsScreen} />
+        <Route exact path={routes.tags} component={Tags} />
         <Route
           component={() => (
             <ErrorContainer code={404} message="Page not found" />

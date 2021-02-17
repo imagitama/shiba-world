@@ -33,7 +33,7 @@ export default ({
     return <ChipToRender />
   } else {
     return (
-      <Link to={routes.tagsWithVar.replace(':tagName', tagName)}>
+      <Link to={routes.viewTagWithVar.replace(':tagName', tagName)}>
         <ChipToRender />
       </Link>
     )

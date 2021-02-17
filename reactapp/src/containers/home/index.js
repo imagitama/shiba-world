@@ -6,11 +6,8 @@ import CardActionArea from '@material-ui/core/CardActionArea'
 import Typography from '@material-ui/core/Typography'
 import LazyLoad from 'react-lazyload'
 
-import Heading from '../../components/heading'
-import AllTagsBrowser from '../../components/all-tags-browser'
 import Button from '../../components/button'
 import FormattedDate from '../../components/formatted-date'
-// import Polls from '../../components/polls'
 
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
@@ -558,8 +555,6 @@ export default () => {
   return (
     <>
       <Tiles />
-      <Heading variant="h2">Tags</Heading>
-      <AllTagsBrowser lazyLoad />
     </>
   )
 }

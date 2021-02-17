@@ -10,7 +10,6 @@ import Heading from '../../components/heading'
 import RecentAssets from '../../components/recent-assets'
 import ErrorMessage from '../../components/error-message'
 import Button from '../../components/button'
-import AllTagsBrowser from '../../components/all-tags-browser'
 import Paper from '../../components/paper'
 
 import useDatabaseQuery, {
@@ -234,8 +233,6 @@ const SpeciesResult = ({ speciesIdOrSlug }) => {
           title="Recent Alterations"
         />
       </LazyLoad>
-      <Heading variant="h2">Tags</Heading>
-      <AllTagsBrowser lazyLoad />
     </>
   )
 }
@@ -351,8 +348,6 @@ function OtherSpecies() {
           title="Recent Alterations"
         />
       </LazyLoad>
-      <Heading variant="h2">Tags</Heading>
-      <AllTagsBrowser lazyLoad />
     </>
   )
 }
