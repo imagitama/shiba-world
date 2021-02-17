@@ -11,6 +11,7 @@ export function scrollToTop(isSmooth = true) {
 }
 
 export function scrollTo(x, isSmooth = true) {
+  console.debug('scrollTo', x)
   window.scrollTo({
     top: x,
     left: 0,

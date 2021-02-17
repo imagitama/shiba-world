@@ -89,14 +89,23 @@ function Assets() {
   const [isSpeciesSelectorOpen, setIsSpeciesSelectorOpen] = useState(false)
   const classes = useStyles()
   const headingElementsBySpeciesIdRef = useRef({})
+  const autoScrollTimeoutRef = useRef()
 
   // Because the avatars page is very long and the most popular page of the site
   // track the user's scroll so they can click on avatars and return and not have
   // to scroll again
   useEffect(() => {
+    if (!result) {
+      return
+    }
+
     if (avatarsScrollPosition) {
-      scrollTo(avatarsScrollPosition)
-      avatarsScrollPosition = null
+      // it takes so long to render the avatar list that we need to compensate with a delay
+      // todo: do not render all items and instead lazy load them?
+      autoScrollTimeoutRef.current = setTimeout(() => {
+        scrollTo(avatarsScrollPosition, false)
+        avatarsScrollPosition = null
+      }, 100)
     }
 
     const onScroll = () => {
@@ -106,9 +115,10 @@ function Assets() {
     window.addEventListener('scroll', onScroll)
 
     return () => {
+      clearTimeout(autoScrollTimeoutRef.current)
       window.removeEventListener('scroll', onScroll)
     }
-  }, [])
+  }, [result !== null])
 
   if (isLoading || !result) {
     return <LoadingIndicator />
