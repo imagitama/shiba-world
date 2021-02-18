@@ -23,7 +23,11 @@ const useStyles = makeStyles({
     padding: '1rem 0'
   },
   thumbnail: {
-    animation: '20s $spinThumbnail infinite linear'
+    animation: '20s $spinThumbnail infinite linear',
+    transition: 'all 100ms',
+    '&:hover': {
+      animation: 'none'
+    }
   },
   controls: {
     textAlign: 'center',
@@ -71,20 +75,24 @@ export default () => {
   return (
     <div className={classes.featuredAsset}>
       <div>
-        {pedestalVideoUrl ? (
-          <PedestalVideo
-            videoUrl={pedestalVideoUrl}
-            fallbackImageUrl={pedestalFallbackImageUrl}
-          />
-        ) : (
-          <div className={classes.thumbnailWrapper}>
-            <img
-              src={thumbnailUrl}
-              className={classes.thumbnail}
-              alt="Pedestal fallback"
+        <Link
+          to={viewUrl}
+          onClick={() => trackAction('Home', 'Click featured asset thumbnail')}>
+          {pedestalVideoUrl ? (
+            <PedestalVideo
+              videoUrl={pedestalVideoUrl}
+              fallbackImageUrl={pedestalFallbackImageUrl}
             />
-          </div>
-        )}
+          ) : (
+            <div className={classes.thumbnailWrapper}>
+              <img
+                src={thumbnailUrl}
+                className={classes.thumbnail}
+                alt="Pedestal fallback"
+              />
+            </div>
+          )}
+        </Link>
       </div>
       <div>
         <Heading variant="h1" className={classes.heading}>
