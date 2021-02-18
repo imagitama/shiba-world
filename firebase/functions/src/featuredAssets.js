@@ -150,33 +150,34 @@ const pickFeaturedAsset = async () => {
       [SpecialFieldNames.alreadyFeaturedAssets]: updatedAlreadyFeaturedAssets,
       [SpecialFieldNames.activeAsset]: selectedAsset
         ? {
+            // NOTE: fallback to null otherwise it will be omitted from merge
+
             // standard
-            [AssetFieldNames.title]: selectedAssetDoc.get(
-              AssetFieldNames.title
-            ),
-            [AssetFieldNames.description]: selectedAssetDoc.get(
-              AssetFieldNames.description
-            ),
-            [AssetFieldNames.thumbnailUrl]: selectedAssetDoc.get(
-              AssetFieldNames.thumbnailUrl
-            ),
-            [AssetFieldNames.slug]: selectedAssetDoc.get(AssetFieldNames.slug),
-            [AssetFieldNames.pedestalVideoUrl]: selectedAssetDoc.get(
-              AssetFieldNames.pedestalVideoUrl
-            ),
-            [AssetFieldNames.pedestalFallbackImageUrl]: selectedAssetDoc.get(
-              AssetFieldNames.pedestalFallbackImageUrl
-            ),
+            [AssetFieldNames.title]:
+              selectedAssetDoc.get(AssetFieldNames.title) || null,
+            [AssetFieldNames.description]:
+              selectedAssetDoc.get(AssetFieldNames.description) || null,
+            [AssetFieldNames.thumbnailUrl]:
+              selectedAssetDoc.get(AssetFieldNames.thumbnailUrl) || null,
+            [AssetFieldNames.slug]:
+              selectedAssetDoc.get(AssetFieldNames.slug) || null,
+            [AssetFieldNames.pedestalVideoUrl]:
+              selectedAssetDoc.get(AssetFieldNames.pedestalVideoUrl) || null,
+            [AssetFieldNames.pedestalFallbackImageUrl]:
+              selectedAssetDoc.get(AssetFieldNames.pedestalFallbackImageUrl) ||
+              null,
 
             // special
             asset: selectedAsset,
-            authorName: await getAuthorName(
-              selectedAssetDoc.get(AssetFieldNames.author)
-            ),
-            createdByName: await getCreatedByName(
-              selectedAssetDoc.get(AssetFieldNames.author),
-              selectedAssetDoc.get(AssetFieldNames.createdBy)
-            ),
+            authorName:
+              (await getAuthorName(
+                selectedAssetDoc.get(AssetFieldNames.author)
+              )) || null,
+            createdByName:
+              (await getCreatedByName(
+                selectedAssetDoc.get(AssetFieldNames.author),
+                selectedAssetDoc.get(AssetFieldNames.createdBy)
+              )) || null,
           }
         : null,
     },
