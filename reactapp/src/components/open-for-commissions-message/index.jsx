@@ -1,5 +1,5 @@
 import React from 'react'
-import Markdown from 'react-markdown'
+import Markdown from '../markdown'
 import Paper from '@material-ui/core/Paper'
 import { makeStyles } from '@material-ui/core/styles'
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'

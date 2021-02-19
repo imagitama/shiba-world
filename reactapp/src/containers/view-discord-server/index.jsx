@@ -3,11 +3,11 @@ import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 import EditIcon from '@material-ui/icons/Edit'
 import LaunchIcon from '@material-ui/icons/Launch'
-import Markdown from 'react-markdown'
 import SyncIcon from '@material-ui/icons/Sync'
 
 import * as routes from '../../routes'
 
+import Markdown from '../../components/markdown'
 import ErrorMessage from '../../components/error-message'
 import LoadingIndicator from '../../components/loading-indicator'
 import Heading from '../../components/heading'

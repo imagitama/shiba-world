@@ -1,11 +1,11 @@
 import React from 'react'
 import { Helmet } from 'react-helmet'
-import Markdown from 'react-markdown'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import EditIcon from '@material-ui/icons/Edit'
 import LaunchIcon from '@material-ui/icons/Launch'
 
+import Markdown from '../../components/markdown'
 import Heading from '../../components/heading'
 import RecentAssets from '../../components/recent-assets'
 import ErrorMessage from '../../components/error-message'

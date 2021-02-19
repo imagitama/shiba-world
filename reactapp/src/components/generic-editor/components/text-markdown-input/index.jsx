@@ -1,6 +1,6 @@
 import React from 'react'
 import TextInput from '../../../text-input'
-import Markdown from 'react-markdown'
+import Markdown from '../../../markdown'
 
 export default ({ onChange, value }) => (
   <>

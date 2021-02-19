@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import TextField from '@material-ui/core/TextField'
-import Markdown from 'react-markdown'
+import Markdown from '../markdown'
 import Checkbox from '@material-ui/core/Checkbox'
 import { makeStyles } from '@material-ui/core/styles'
 import shortid from 'shortid'

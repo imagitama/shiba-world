@@ -2,7 +2,7 @@ import React from 'react'
 import Paper from '@material-ui/core/Paper'
 import { makeStyles } from '@material-ui/core/styles'
 import { Link } from 'react-router-dom'
-import Markdown from 'react-markdown'
+import Markdown from '../markdown'
 
 import Heading from '../heading'
 import Button from '../button'

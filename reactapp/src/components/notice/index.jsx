@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import { writeStorage } from '@rehooks/local-storage'
 import CloseIcon from '@material-ui/icons/Close'
-import Markdown from 'react-markdown'
+import Markdown from '../markdown'
 
 import useStorage, { keys } from '../../hooks/useStorage'
 import { UserFieldNames } from '../../hooks/useDatabaseQuery'

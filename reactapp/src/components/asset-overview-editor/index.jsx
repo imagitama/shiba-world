@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import Markdown from 'react-markdown'
+import Markdown from '../markdown'
 import { makeStyles } from '@material-ui/core/styles'
 import { Helmet } from 'react-helmet'
 import EditIcon from '@material-ui/icons/Edit'

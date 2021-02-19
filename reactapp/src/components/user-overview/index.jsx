@@ -2,7 +2,7 @@ import React from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
-import Markdown from 'react-markdown'
+import Markdown from '../markdown'
 
 import useDatabaseQuery, {
   CollectionNames,
