@@ -151,6 +151,9 @@ const ResetPassword = lazy(() =>
 const Pedestals = lazy(() =>
   catchChunkDeaths(() => import('./containers/pedestals'))
 )
+const MemoryGame = lazy(() =>
+  catchChunkDeaths(() => import('./containers/memory'))
+)
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
   return (
@@ -360,6 +363,7 @@ const MainContent = () => {
         <Route exact path={routes.pedestals} component={Pedestals} />
         <Route exact path={routes.vsScreen} component={VsScreen} />
         <Route exact path={routes.tags} component={Tags} />
+        <Route exact path={routes.memoryGame} component={MemoryGame} />
         <Route
           component={() => (
             <ErrorContainer code={404} message="Page not found" />

@@ -46,6 +46,7 @@ export const resetPassword = '/reset-password'
 export const pedestals = '/pedestals'
 export const vsScreen = '/vs-screen'
 export const tags = '/tags'
+export const memoryGame = '/memory'
 
 // Outdated routes
 export const browseAssets = '/browse'
