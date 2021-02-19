@@ -6,7 +6,7 @@ import Button from '../../components/button'
 import Heading from '../../components/heading'
 
 const useStyles = makeStyles({
-  root: { marginTop: '0.5rem' },
+  root: { marginTop: '0.5rem', userSelect: 'none', userDrag: 'none' },
   items: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -20,7 +20,11 @@ const useStyles = makeStyles({
     // clipPath: 'polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%)',
     transition: 'all 1s',
     '& img': {
-      height: '100%'
+      height: '100%',
+      userSelect: 'none',
+      userDrag: 'none',
+      pointerEvents: 'none',
+      transition: 'all 100ms'
     },
     transformStyle: 'preserve-3d',
     transform: 'rotateY(0deg)'
@@ -60,7 +64,8 @@ const useStyles = makeStyles({
     borderRadius: '0.5rem',
     overflow: 'hidden',
     display: 'flex',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    background: '#000'
   },
   title: {
     width: '100%',
@@ -75,8 +80,10 @@ const useStyles = makeStyles({
     fontSize: '150%'
   },
   scored: {
-    opacity: '0.1',
-    transform: 'rotateY(180deg)'
+    transform: 'rotateY(180deg)',
+    '& $inner img': {
+      opacity: '0.2'
+    }
   },
   revealed: {
     transform: 'rotateY(180deg)'
@@ -110,6 +117,7 @@ const Species = ({
             src={fixAccessingImagesUsingToken(optimizedThumbnailUrl)}
             alt={`Thumbnail for species ${title}`}
             className={classes.thumbnail}
+            draggable="false"
           />
         </div>
       </div>
@@ -137,6 +145,8 @@ function shuffle(array) {
 
   return array
 }
+
+const delay = 1000
 
 export default () => {
   const classes = useStyles()
@@ -193,7 +203,6 @@ export default () => {
     setSpeciesIdsThatAreRevealed([])
 
     tallyRef.current = 0
-    clearTimeout(hideRevealedCardsTimeoutRef.current)
 
     resetSpeciesToRender()
   }
@@ -224,7 +233,9 @@ export default () => {
         newVal.length === 2 &&
         newVal[0].split('_')[0] === newVal[1].split('_')[0]
       ) {
-        scoreSpeciesIds(newVal)
+        hideRevealedCardsTimeoutRef.current = setTimeout(() => {
+          scoreSpeciesIds(newVal)
+        }, delay)
       }
 
       return newVal
@@ -232,35 +243,46 @@ export default () => {
   }
 
   const onSpeciesClick = id => {
+    if (hideRevealedCardsTimeoutRef.current) {
+      return
+    }
+
     // ignore scored cards
     if (speciesIdsThatAreScored.includes(id)) {
       console.log('cannot do anything with card - already scored', id)
       return false
     }
 
-    // reveal the card
-    if (!speciesIdsThatAreRevealed.includes(id)) {
-      // if we have selected 2 cards already
-      // just chill
+    if (speciesIdsThatAreRevealed.includes(id)) {
+      console.log('already revealed')
+      return
+    } else {
+      console.log('species is not revealed yet...', id)
+
+      if (speciesIdsThatAreRevealed.length === 0) {
+        revealSpeciesId(id)
+        return
+      }
+
       if (speciesIdsThatAreRevealed.length === 1) {
         if (!hideRevealedCardsTimeoutRef.current) {
           console.log('hiding cards after a few sec...')
           hideRevealedCardsTimeoutRef.current = setTimeout(() => {
-            setSpeciesIdsThatAreRevealed([])
+            console.log('hide')
             hideRevealedCardsTimeoutRef.current = null
             tallyRef.current++
-          }, 1000)
+            setSpeciesIdsThatAreRevealed([])
+          }, delay)
         }
 
         revealSpeciesId(id)
         return
-      } else if (speciesIdsThatAreRevealed.length === 0) {
-        revealSpeciesId(id)
-        return
       }
-    }
 
-    console.log('cannot reveal card - already revealed 2 cards! Just chill')
+      console.log('bad length', speciesIdsThatAreRevealed.length)
+
+      console.log('cannot reveal card - already revealed 2 cards! Just chill')
+    }
   }
 
   return (
