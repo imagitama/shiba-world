@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 // import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
 // import CheckBoxIcon from '@material-ui/icons/CheckBox'
 import { makeStyles } from '@material-ui/core/styles'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import Switch from '@material-ui/core/Switch'
 
 import categoryMeta from '../../category-meta'
 import {
@@ -62,8 +64,23 @@ const useStyles = makeStyles({
     cursor: 'pointer'
   },
   jumpToSpeciesBtn: {
+    position: 'absolute',
+    top: 0,
+    right: 0
+  },
+  noResultsMsg: {
+    fontStyle: 'italic',
     textAlign: 'center',
-    paddingTop: '0.5rem'
+    padding: '1rem',
+    opacity: '0.75'
+  },
+  filters: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    paddingLeft: '0.5rem'
+  },
+  filter: {
+    marginRight: '0.5rem'
   }
 })
 
@@ -79,6 +96,77 @@ function getDescriptionByCategoryName(categoryName) {
 
 let avatarsScrollPosition
 const otherSpeciesKey = 'other-species'
+const avatarsFiltersStorageKey = 'avatar-filters'
+
+const allFilters = [
+  {
+    label: 'Quest compatible',
+    tag: 'quest'
+  },
+  {
+    label: 'Full-body ready',
+    tag: 'full_body_ready'
+  },
+  {
+    label: 'Built with SDK3',
+    tag: 'sdk3'
+  },
+  // {
+  //   label: 'Built with SDK2',
+  //   tag: 'sdk2'
+  // },
+  {
+    label: 'Includes Blend file',
+    tag: 'blendfile_included'
+  }
+]
+
+function Filter({ label, isEnabled, onClick }) {
+  const classes = useStyles()
+  return (
+    <div className={classes.filter}>
+      <FormControlLabel
+        control={<Switch size="small" checked={isEnabled} onChange={onClick} />}
+        label={label}
+      />
+    </div>
+  )
+}
+
+function Filters() {
+  const classes = useStyles()
+  const [activeFilters, storeActiveFilters] = useStorage(
+    avatarsFiltersStorageKey,
+    []
+  )
+
+  return (
+    <>
+      <Heading variant="h2">Filters</Heading>
+      <div className={classes.filters}>
+        {allFilters.map(({ label, tag }) => (
+          <Filter
+            key={tag}
+            label={label}
+            isEnabled={activeFilters.includes(tag)}
+            onClick={() => {
+              const isActive = activeFilters.includes(tag)
+              const newActiveFilters = isActive
+                ? activeFilters.filter(item => item !== tag)
+                : activeFilters.concat([tag])
+              storeActiveFilters(newActiveFilters)
+              trackAction(
+                analyticsActionCategory,
+                isActive ? 'Disable tag filter' : 'Enable tag filter',
+                tag
+              )
+            }}
+          />
+        ))}
+      </div>
+    </>
+  )
+}
 
 function Assets() {
   const [, , user] = useUserRecord()
@@ -90,6 +178,7 @@ function Assets() {
   const classes = useStyles()
   const headingElementsBySpeciesIdRef = useRef({})
   const autoScrollTimeoutRef = useRef()
+  const [activeFilters] = useStorage(avatarsFiltersStorageKey, [])
 
   // Because the avatars page is very long and the most popular page of the site
   // track the user's scroll so they can click on avatars and return and not have
@@ -200,6 +289,15 @@ function Assets() {
     scrollToElement(headingElementsBySpeciesIdRef.current[speciesId])
   }
 
+  const filterActiveFilters = asset => {
+    for (const activeFilterTag of activeFilters) {
+      if (!asset[AssetFieldNames.tags].includes(activeFilterTag)) {
+        return false
+      }
+    }
+    return true
+  }
+
   return (
     <>
       {species && species.length && (
@@ -229,48 +327,62 @@ function Assets() {
         </>
       )}
 
+      <Filters />
+
       {Object.entries(assetsBySpecies)
         .sort(([idA], [idB]) =>
           speciesMetaById[idA][SpeciesFieldNames.singularName].localeCompare(
             speciesMetaById[idB][SpeciesFieldNames.singularName]
           )
         )
-        .map(([speciesId, assetsForSpecies]) => (
-          <Fragment key={speciesId}>
-            <div className={classes.headingWrapper}>
-              <Heading
-                variant="h2"
-                ref={element => {
-                  headingElementsBySpeciesIdRef.current[speciesId] = element
-                }}>
-                <Link
-                  to={routes.viewSpeciesWithVar.replace(
-                    ':speciesIdOrSlug',
-                    speciesId
-                  )}>
-                  {speciesMetaById[speciesId][SpeciesFieldNames.singularName]}
-                </Link>
-              </Heading>
-              <span
-                className={classes.scrollToTopBtn}
-                onClick={() => {
-                  trackAction(
-                    analyticsActionCategory,
-                    'Click species scroll to top',
-                    speciesId
-                  )
-                  scrollToTop()
-                }}>
-                Top
-              </span>
-            </div>
-            <BodyText>
-              {speciesMetaById[speciesId][SpeciesFieldNames.shortDescription]}
-            </BodyText>
+        .map(([speciesId, assetsForSpecies]) => {
+          const assetsToRender = activeFilters.length
+            ? assetsForSpecies.filter(filterActiveFilters)
+            : assetsForSpecies
 
-            <AssetResults assets={assetsForSpecies} showPinned />
-          </Fragment>
-        ))}
+          return (
+            <Fragment key={speciesId}>
+              <div className={classes.headingWrapper}>
+                <Heading
+                  variant="h2"
+                  ref={element => {
+                    headingElementsBySpeciesIdRef.current[speciesId] = element
+                  }}>
+                  <Link
+                    to={routes.viewSpeciesWithVar.replace(
+                      ':speciesIdOrSlug',
+                      speciesId
+                    )}>
+                    {speciesMetaById[speciesId][SpeciesFieldNames.singularName]}
+                  </Link>
+                </Heading>
+                <span
+                  className={classes.scrollToTopBtn}
+                  onClick={() => {
+                    trackAction(
+                      analyticsActionCategory,
+                      'Click species scroll to top',
+                      speciesId
+                    )
+                    scrollToTop()
+                  }}>
+                  Top
+                </span>
+              </div>
+              <BodyText>
+                {speciesMetaById[speciesId][SpeciesFieldNames.shortDescription]}
+              </BodyText>
+
+              {assetsToRender.length ? (
+                <AssetResults assets={assetsToRender} showPinned />
+              ) : (
+                <div className={classes.noResultsMsg}>
+                  No assets matching your filter
+                </div>
+              )}
+            </Fragment>
+          )
+        })}
     </>
   )
 }
@@ -319,7 +431,6 @@ export default () => {
         <Heading variant="h1">
           {getDisplayNameByCategoryName(categoryName)}
         </Heading>
-        <BodyText>{getDescriptionByCategoryName(categoryName)}</BodyText>
 
         {/* <Button
           className={classes.groupAvatarsBySpeciesBtn}
