@@ -227,6 +227,15 @@ export default () => {
 
   const onClickGiveUp = () => {
     setTotalNumberOfGiveUps(currentVal => currentVal + 1)
+
+    setGuessesByAvatarId(currentVal => ({
+      ...currentVal,
+      [selectedAvatar.asset.id]:
+        selectedAvatar.asset.id in currentVal
+          ? currentVal[selectedAvatar.asset.id].concat([''])
+          : ['']
+    }))
+
     selectNewAvatar()
   }
 
