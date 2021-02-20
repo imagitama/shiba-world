@@ -47,6 +47,7 @@ export const pedestals = '/pedestals'
 export const vsScreen = '/vs-screen'
 export const tags = '/tags'
 export const memoryGame = '/memory'
+export const guessTheAvatar = '/guess-the-avatar'
 
 // Outdated routes
 export const browseAssets = '/browse'

@@ -154,6 +154,9 @@ const Pedestals = lazy(() =>
 const MemoryGame = lazy(() =>
   catchChunkDeaths(() => import('./containers/memory'))
 )
+const GuessTheAvatarGame = lazy(() =>
+  catchChunkDeaths(() => import('./containers/guess-the-avatar'))
+)
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
   return (
@@ -364,6 +367,11 @@ const MainContent = () => {
         <Route exact path={routes.vsScreen} component={VsScreen} />
         <Route exact path={routes.tags} component={Tags} />
         <Route exact path={routes.memoryGame} component={MemoryGame} />
+        <Route
+          exact
+          path={routes.guessTheAvatar}
+          component={GuessTheAvatarGame}
+        />
         <Route
           component={() => (
             <ErrorContainer code={404} message="Page not found" />
