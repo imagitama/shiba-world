@@ -8,6 +8,7 @@ import useDatabaseQuery, {
 import { fixAccessingImagesUsingToken } from '../../utils'
 import Button from '../../components/button'
 import Heading from '../../components/heading'
+import Fireworks from '../../components/fireworks'
 
 const useStyles = makeStyles({
   root: { marginTop: '0.5rem', userSelect: 'none', userDrag: 'none' },
@@ -285,7 +286,7 @@ export default () => {
           {' '}
           <p>
             If any of the words match any in asset title (case doesn't matter)
-            it works:
+            it works. Press Esc to clear. Press Enter to guess.
           </p>
           <div style={{ textAlign: 'center' }}>
             <img src={selectedAvatar[AssetFieldNames.thumbnailUrl]} />
@@ -315,6 +316,7 @@ export default () => {
             <br />
             {isCorrect === true ? (
               <>
+                <Fireworks />
                 You are correct! Automatically going to next avatar in 4
                 seconds...{' '}
                 <Button onClick={() => selectNewAvatar()}>Pick New One</Button>
