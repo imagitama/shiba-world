@@ -45,7 +45,9 @@ export const CollectionNames = {
   UserMeta: 'userMeta',
   DiscordMessages: 'discordMessages',
   AssetMeta: 'assetMeta',
-  ViewCache: 'viewCache'
+  ViewCache: 'viewCache',
+  Products: 'products',
+  Transactions: 'transactions'
 }
 
 export const ViewCacheNames = {
@@ -349,6 +351,29 @@ export const HomepageSiteStatsFieldNames = {
 
 export const HomepagePatreonFieldNames = {
   numConnectedToPatreon: 'numConnectedToPatreon'
+}
+
+export const ProductFieldNames = {
+  asset: 'asset',
+  priceUsd: 'priceUsd',
+  isSaleable: 'isSaleable',
+  isApproved: 'isApproved',
+  isDeleted: 'isDeleted',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy'
+}
+
+export const TransactionFieldNames = {
+  customer: 'customer',
+  product: 'product',
+  priceUsd: 'priceUsd',
+  status: 'status',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy'
 }
 
 export function getWhereClausesAsString(whereClauses) {

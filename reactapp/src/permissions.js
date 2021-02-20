@@ -27,3 +27,10 @@ export function canEditDiscordServer(user) {
   }
   return user[UserFieldNames.isAdmin] || user[UserFieldNames.isEditor]
 }
+
+export function canEditProduct(user) {
+  if (!user) {
+    return false
+  }
+  return user[UserFieldNames.isAdmin] || user[UserFieldNames.isEditor]
+}

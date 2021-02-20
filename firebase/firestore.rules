@@ -177,5 +177,17 @@ service cloud.firestore {
     match /viewCache/{document=**} {
       allow read;
     }
+
+    match /products/{document=**} {
+      allow read;
+      allow update;
+      allow create;
+    }
+    
+    match /transactions/{document=**} {
+      allow read;
+      allow update;
+      allow create;
+    }
   }
 }

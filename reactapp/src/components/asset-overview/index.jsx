@@ -856,16 +856,15 @@ export default ({ assetId, switchEditorOpen }) => {
 
         <div className={classes.rightCol}>
           <div className={classes.controls}>
-            {sourceUrl && !pedestalVideoUrl && (
-              <Control>
-                <VisitSourceButton
-                  assetId={assetId}
-                  sourceUrl={sourceUrl}
-                  categoryName={category}
-                  isNoFilesAttached={downloadUrls.length === 0}
-                />
-              </Control>
-            )}
+            <Control>
+              <Button
+                url={routes.viewProductWithVar.replace(
+                  ':productId',
+                  'k3uWYopXg6Dz0umuYldN'
+                )}>
+                Purchase
+              </Button>
+            </Control>
             {downloadUrls.length ? (
               <Control>
                 <DownloadAssetButton

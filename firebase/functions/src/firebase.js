@@ -49,6 +49,8 @@ const CollectionNames = {
   DiscordMessages: 'discordMessages',
   AssetMeta: 'assetMeta',
   ViewCache: 'viewCache',
+  Products: 'products',
+  Transactions: 'transactions',
 }
 module.exports.CollectionNames = CollectionNames
 
@@ -320,6 +322,33 @@ const AvatarListFieldNames = {
   species: 'species',
 }
 module.exports.AvatarListFieldNames = AvatarListFieldNames
+
+const ProductFieldNames = {
+  asset: 'asset',
+  priceUsd: 'priceUsd',
+  isSaleable: 'isSaleable',
+  isApproved: 'isApproved',
+  isDeleted: 'isDeleted',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+}
+module.exports.ProductFieldNames = ProductFieldNames
+
+const TransactionFieldNames = {
+  customer: 'customer',
+  product: 'product',
+  priceUsd: 'priceUsd',
+  status: 'status',
+  braintreeTransactionId: 'braintreeTransactionId',
+  braintreeTransactionData: 'braintreeTransactionData',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+}
+module.exports.TransactionFieldNames = TransactionFieldNames
 
 module.exports.isApproved = (docData) => {
   return docData[AssetFieldNames.isApproved] === true

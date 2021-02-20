@@ -23,6 +23,7 @@ import TextInput from './components/text-input'
 import TextMarkdownInput from './components/text-markdown-input'
 import MultichoiceInput from './components/multichoice-input'
 import ImageUploadInput from './components/image-upload-input'
+import SearchableInput from './components/searchable-input'
 
 function getInputForFieldType(type) {
   switch (type) {
@@ -36,6 +37,8 @@ function getInputForFieldType(type) {
       return MultichoiceInput
     case fieldTypes.imageUpload:
       return ImageUploadInput
+    case fieldTypes.searchable:
+      return SearchableInput
     default:
       throw new Error(`Invalid field type "${type}"`)
   }
