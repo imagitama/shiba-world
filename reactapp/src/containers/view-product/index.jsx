@@ -55,13 +55,7 @@ export default ({
       <Heading variant="h2">
         <Price price={priceUsd} />
       </Heading>
-      <AssetResultsItem
-        asset={{
-          ...mapDates(asset),
-          thumbnailUrl:
-            'https://firebasestorage.googleapis.com/v0/b/shiba-world.appspot.com/o/asset-thumbnails%2FQ7QzEH1Fy___photo_2020-09-18_19-49-29.webp?alt=media&token=c2e961f4-3ed8-43b9-b727-dccc94af680d'
-        }}
-      />
+      <AssetResultsItem asset={mapDates(asset)} />
       <div style={{ textAlign: 'center', padding: '1rem 0' }}>
         <Button
           url={routes.createTransactionWithVar.replace(':productId', productId)}

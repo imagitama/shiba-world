@@ -65,8 +65,8 @@ export default ({
     return <LoadingIndicator message="Getting product for transaction..." />
   }
 
-  if (isGettingToken) {
-    return <LoadingIndicator message="Getting token..." />
+  if (isGettingToken || !token) {
+    return <LoadingIndicator />
   }
 
   if (isCreatingTransaction) {
@@ -92,10 +92,6 @@ export default ({
 
   if (isError) {
     return <ErrorMessage>Failed to get product for transaction</ErrorMessage>
-  }
-
-  if (!token) {
-    return 'Need token'
   }
 
   if (!product) {

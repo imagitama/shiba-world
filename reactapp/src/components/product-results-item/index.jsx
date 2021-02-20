@@ -59,9 +59,6 @@ export default ({
     }
   }
 
-  asset.thumbnailUrl =
-    'https://firebasestorage.googleapis.com/v0/b/shiba-world.appspot.com/o/asset-thumbnails%2FQ7QzEH1Fy___photo_2020-09-18_19-49-29.webp?alt=media&token=c2e961f4-3ed8-43b9-b727-dccc94af680d'
-
   return (
     <Card className={classes.root}>
       <CardActionArea className={classes.actionArea}>

@@ -9,19 +9,17 @@ import useDatabaseQuery, {
   CollectionNames,
   TransactionFieldNames,
   Operators,
-  options
+  options,
+  OrderDirections
 } from '../../hooks/useDatabaseQuery'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import LoadingIndicator from '../../components/loading-indicator'
 import ErrorMessage from '../../components/error-message'
 import NoResultsMessage from '../../components/no-results-message'
 import FormattedDate from '../../components/formatted-date'
+import Price from '../../components/price'
 import * as routes from '../../routes'
 import { createRef } from '../../utils'
-
-function Price({ price, currency = 'usd' }) {
-  return `$${price.toFixed(2)}`
-}
 
 function Transactions({ transactions }) {
   return (
@@ -101,7 +99,8 @@ export default () => {
       ]
     ],
     {
-      [options.populateRefs]: true
+      [options.populateRefs]: true,
+      [options.orderBy]: [TransactionFieldNames.createdAt, OrderDirections.DESC]
     }
   )
 
