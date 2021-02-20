@@ -287,6 +287,7 @@ export default () => {
 
   return (
     <div className={classes.root}>
+      #{totalGamesPlayedRef.current}
       <div className={classes.items}>
         {speciesToRender.map(
           ({ id, nameSingular, thumbnailUrl, isBrother = false }) => {
