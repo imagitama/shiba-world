@@ -145,7 +145,7 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
-const delay = 4000
+const delay = 2000
 
 export default () => {
   const classes = useStyles()
@@ -225,7 +225,7 @@ export default () => {
     setIsCorrect(isCorrect)
   }
 
-  const onClickGiveUp = () => {
+  const giveUp = () => {
     setTotalNumberOfGiveUps(currentVal => currentVal + 1)
 
     setGuessesByAvatarId(currentVal => ({
@@ -295,7 +295,8 @@ export default () => {
           {' '}
           <p>
             If any of the words match any in asset title (case doesn't matter)
-            it works. Press Esc to clear. Press Enter to guess.
+            it works. Press Esc to clear guess (or if you typed something press
+            Esc to skip). Press Enter to guess.
           </p>
           <div style={{ textAlign: 'center' }}>
             <img src={selectedAvatar[AssetFieldNames.thumbnailUrl]} />
@@ -310,7 +311,11 @@ export default () => {
                   onClickGuess()
                 }
                 if (e.keyCode === 27) {
-                  clearGuess()
+                  if (guess === '') {
+                    giveUp()
+                  } else {
+                    clearGuess()
+                  }
                 }
               }}
               value={guess}
@@ -318,7 +323,7 @@ export default () => {
             <br />
             <br />
             <Button onClick={onClickGuess}>Am I right?</Button>{' '}
-            <Button onClick={onClickGiveUp} color="default">
+            <Button onClick={giveUp} color="default">
               I give up!
             </Button>
             <br />
@@ -326,7 +331,7 @@ export default () => {
             {isCorrect === true ? (
               <>
                 <Fireworks />
-                You are correct! Automatically going to next avatar in 4
+                You are correct! Automatically going to next avatar in 2
                 seconds...{' '}
                 <Button onClick={() => selectNewAvatar()}>Pick New One</Button>
               </>
