@@ -45,7 +45,7 @@ async function hydrate(categoryName, doc) {
 
   if (shouldDeleteAssetFromCategoryCache(doc)) {
     console.debug('should be deleted - deleting...')
-    newItems = newItems.filter((item) => item.id === doc.id)
+    newItems = newItems.filter((item) => item.asset.id !== doc.id)
   } else {
     const foundIndex = existingItems.findIndex(
       (item) => item.asset.id === doc.id
