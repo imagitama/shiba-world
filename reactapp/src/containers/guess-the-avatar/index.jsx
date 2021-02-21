@@ -5,7 +5,6 @@ import useDatabaseQuery, {
   CollectionNames,
   AssetFieldNames
 } from '../../hooks/useDatabaseQuery'
-import { fixAccessingImagesUsingToken } from '../../utils'
 import Button from '../../components/button'
 import Heading from '../../components/heading'
 import Fireworks from '../../components/fireworks'
@@ -94,27 +93,6 @@ const useStyles = makeStyles({
     transform: 'rotateY(180deg)'
   }
 })
-
-// https://stackoverflow.com/a/2450976/1215393
-function shuffle(array) {
-  var currentIndex = array.length,
-    temporaryValue,
-    randomIndex
-
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex)
-    currentIndex -= 1
-
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex]
-    array[currentIndex] = array[randomIndex]
-    array[randomIndex] = temporaryValue
-  }
-
-  return array
-}
 
 const getIsCorrectGuess = (guess, assetTitle) => {
   if (assetTitle === guess) {
@@ -277,7 +255,11 @@ export default () => {
               )
               return (
                 <li key={avatarId}>
-                  <img src={asset[AssetFieldNames.thumbnailUrl]} width={100} />
+                  <img
+                    src={asset[AssetFieldNames.thumbnailUrl]}
+                    width={100}
+                    alt="Thumbnail for item"
+                  />
                   <br />
                   {asset[AssetFieldNames.title]}
                   <ul>
@@ -299,7 +281,10 @@ export default () => {
             Esc to skip). Press Enter to guess.
           </p>
           <div style={{ textAlign: 'center' }}>
-            <img src={selectedAvatar[AssetFieldNames.thumbnailUrl]} />
+            <img
+              src={selectedAvatar[AssetFieldNames.thumbnailUrl]}
+              alt="Thumbnail"
+            />
             <br />
             <br />
             <TextField

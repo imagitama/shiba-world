@@ -15,10 +15,21 @@ import Heading from '../../components/heading'
 import Button from '../../components/button'
 import AssetThumbnail from '../../components/asset-thumbnail'
 import * as routes from '../../routes'
+import { ReactComponent as VRChatIcon } from '../../assets/images/icons/vrchat.svg'
+import { trackAction } from '../../analytics'
 
 const useStyles = makeStyles({
+  root: {
+    textAlign: 'center'
+  },
   thumbnail: {
-    marginTop: '1rem'
+    margin: '2rem 0 3rem'
+  },
+  vrchatIcon: {
+    fontSize: '200%',
+    display: 'flex',
+    height: 0,
+    alignItems: 'center'
   }
 })
 
@@ -36,6 +47,8 @@ const getUrlSearchParams = () =>
 const getAvatarAssetId = () => {
   return getUrlSearchParams().get('avatarId')
 }
+
+const analyticsCategory = 'LaunchWorld'
 
 export default ({
   match: {
@@ -56,6 +69,8 @@ export default ({
   const unloadBannerOnUnmountRef = useRef(true)
   const [secondsRemaining, setSecondsRemaining] = useState(secondsUntilLaunch)
   const classes = useStyles()
+  const launchTimeoutRef = useRef()
+  const countdownIntervalRef = useRef()
 
   useEffect(() => {
     if (!result || !result[AssetFieldNames.bannerUrl]) {
@@ -77,22 +92,27 @@ export default ({
       return
     }
 
-    setTimeout(() => {
+    launchTimeoutRef.current = setTimeout(() => {
       window.location.href = getLaunchUrlFromSourceUrl(
         result[AssetFieldNames.sourceUrl]
       )
     }, secondsUntilLaunch * 1000)
 
-    const timerId = setInterval(() => {
+    countdownIntervalRef.current = setInterval(() => {
       setSecondsRemaining(currentVal => {
         if (currentVal > 0) {
           return currentVal - 1
         } else {
-          clearInterval(timerId)
+          clearInterval(countdownIntervalRef.current)
           return 0
         }
       })
     }, 1000)
+
+    return () => {
+      clearTimeout(launchTimeoutRef.current)
+      clearInterval(countdownIntervalRef.current)
+    }
   }, [result ? result.title : null])
 
   if (isLoading) {
@@ -106,7 +126,7 @@ export default ({
   const originalAvatarAssetId = getAvatarAssetId()
 
   return (
-    <div style={{ textAlign: 'center' }}>
+    <div className={classes.root}>
       <Heading variant="h1">
         Launch world "{result[AssetFieldNames.title]}"
       </Heading>
@@ -114,6 +134,7 @@ export default ({
         url={result[AssetFieldNames.thumbnailUrl]}
         className={classes.thumbnail}
         spin
+        pauseOnHover={false}
       />
       <Heading variant="h2">
         {secondsRemaining > 0
@@ -122,15 +143,42 @@ export default ({
       </Heading>
       <>
         <Button
-          url={getLaunchUrlFromSourceUrl(result[AssetFieldNames.sourceUrl])}>
+          url={getLaunchUrlFromSourceUrl(result[AssetFieldNames.sourceUrl])}
+          onClick={() =>
+            trackAction(analyticsCategory, 'Click go now button', assetId)
+          }
+          icon={
+            <span className={classes.vrchatIcon}>
+              <VRChatIcon />
+            </span>
+          }>
           Go Now
         </Button>{' '}
+        {originalAvatarAssetId && (
+          <Button
+            color="default"
+            url={routes.viewAssetWithVar.replace(':assetId', assetId)}
+            onClick={() =>
+              trackAction(analyticsCategory, 'Click view world button', assetId)
+            }>
+            View World
+          </Button>
+        )}{' '}
         <Button
           color="default"
           url={routes.viewAssetWithVar.replace(
             ':assetId',
             originalAvatarAssetId || assetId
-          )}>
+          )}
+          onClick={() =>
+            trackAction(
+              analyticsCategory,
+              originalAvatarAssetId
+                ? 'Click back to avatar button'
+                : 'Click back to world button',
+              originalAvatarAssetId || assetId
+            )
+          }>
           {originalAvatarAssetId ? 'Back to Avatar' : 'Back to World'}
         </Button>
       </>

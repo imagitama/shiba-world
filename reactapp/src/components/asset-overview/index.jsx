@@ -7,7 +7,6 @@ import EditIcon from '@material-ui/icons/Edit'
 import ReportIcon from '@material-ui/icons/Report'
 import LoyaltyIcon from '@material-ui/icons/Loyalty'
 import ControlCameraIcon from '@material-ui/icons/ControlCamera'
-import AddToPhotosIcon from '@material-ui/icons/AddToPhotos'
 import { useDispatch } from 'react-redux'
 import LazyLoad from 'react-lazyload'
 
@@ -38,6 +37,7 @@ import {
   mediaQueryForMobiles
 } from '../../media-queries'
 import { THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT } from '../../config'
+import { ReactComponent as VRChatIcon } from '../../assets/images/icons/vrchat.svg'
 
 import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
@@ -262,6 +262,12 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'center',
     cursor: 'pointer'
+  },
+  vrchatIcon: {
+    fontSize: '200%',
+    display: 'flex',
+    height: 0,
+    alignItems: 'center'
   }
 })
 
@@ -432,13 +438,25 @@ const pickNonFallbackUrl = urlOrUrls => {
 }
 
 function ClonableWorldButton({ assetId, clonableWorld }) {
+  const classes = useStyles()
   return (
     <Button
       url={`${routes.launchWorldWithVar.replace(
         ':assetId',
         clonableWorld.id
       )}?avatarId=${assetId}`}
-      icon={<AddToPhotosIcon />}>
+      onClick={() =>
+        trackAction(
+          analyticsCategoryName,
+          'Click clone in VRChat button',
+          assetId
+        )
+      }
+      icon={
+        <span className={classes.vrchatIcon}>
+          <VRChatIcon />
+        </span>
+      }>
       Clone in VRChat
     </Button>
   )

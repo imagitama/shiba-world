@@ -9,7 +9,6 @@ import { handleError } from '../../error-handling'
 import { trackAction } from '../../analytics'
 import { createRef } from '../../utils'
 
-import AssetResultsItem from '../asset-results-item'
 import SearchForIdForm from '../search-for-id-form'
 
 const analyticsCategoryName = 'ViewAssetEditor'

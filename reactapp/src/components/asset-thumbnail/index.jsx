@@ -9,7 +9,9 @@ const useStyles = makeStyles({
   },
   spin: {
     animation: '20s $spinThumbnail infinite linear',
-    transition: 'all 100ms',
+    transition: 'all 100ms'
+  },
+  pauseOnHover: {
     '&:hover': {
       animation: 'none'
     }
@@ -24,7 +26,7 @@ const useStyles = makeStyles({
   }
 })
 
-export default ({ url, className = '', spin = false }) => {
+export default ({ url, className = '', spin = false, pauseOnHover = true }) => {
   const classes = useStyles()
   return (
     <div className={classes.root}>
@@ -33,7 +35,9 @@ export default ({ url, className = '', spin = false }) => {
         width={THUMBNAIL_WIDTH}
         height={THUMBNAIL_HEIGHT}
         alt="Thumbnail for asset"
-        className={`${className} ${spin ? classes.spin : ''}`}
+        className={`${className} ${spin ? classes.spin : ''} ${
+          pauseOnHover ? classes.pauseOnHover : ''
+        }`}
       />
     </div>
   )
