@@ -20,6 +20,7 @@ import CopyrightIcon from '@material-ui/icons/Copyright'
 import ImageIcon from '@material-ui/icons/Image'
 import PanoramaIcon from '@material-ui/icons/Panorama'
 import BugReportIcon from '@material-ui/icons/BugReport'
+import AddToPhotosIcon from '@material-ui/icons/AddToPhotos'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -59,6 +60,7 @@ import SyncWithGumroadForm from '../sync-with-gumroad-form'
 import LinkedAssetsEditor from '../linked-assets-editor'
 import Paper from '../paper'
 import SlugEditor from '../slug-editor'
+import ClonableWorldEditor from '../clonable-world-editor'
 
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
@@ -622,6 +624,9 @@ export default ({ assetId, switchEditorOpen }) => {
     false
   )
   const [isAuthorEditorOpen, setIsAuthorEditorOpen] = useState(false)
+  const [isClonableWorldEditorOpen, setIsClonableWorldEditorOpen] = useState(
+    false
+  )
   const hideChangeSpeciesTimeoutRef = useRef()
 
   const dispatch = useDispatch()
@@ -689,7 +694,8 @@ export default ({ assetId, switchEditorOpen }) => {
     [AssetFieldNames.pedestalVideoUrl]: pedestalVideoUrl,
     [AssetFieldNames.pedestalFallbackImageUrl]: pedestalFallbackImageUrl,
     [AssetFieldNames.sketchfabEmbedUrl]: sketchfabEmbedUrl,
-    [AssetFieldNames.slug]: slug
+    [AssetFieldNames.slug]: slug,
+    [AssetFieldNames.clonableWorld]: clonableWorld
   } = result
 
   if (!title) {
@@ -970,6 +976,22 @@ export default ({ assetId, switchEditorOpen }) => {
             </>
           ) : (
             'You have not set a source yet!'
+          )}
+        </EditorArea>
+        <EditorArea
+          label="Clonable World"
+          icon={AddToPhotosIcon}
+          onPencilClick={() => setIsClonableWorldEditorOpen(true)}>
+          {isClonableWorldEditorOpen ? (
+            <ClonableWorldEditor
+              assetId={assetId}
+              clonableWorld={clonableWorld}
+              onDone={() => {
+                setIsClonableWorldEditorOpen(false)
+              }}
+            />
+          ) : (
+            <Button>Clone in World</Button>
           )}
         </EditorArea>
         {isGumroadUrl(sourceUrl) ? (

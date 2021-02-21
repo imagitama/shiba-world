@@ -129,7 +129,8 @@ export const AssetFieldNames = {
   pedestalVideoUrl: 'pedestalVideoUrl',
   pedestalFallbackImageUrl: 'pedestalFallbackImageUrl',
   sketchfabEmbedUrl: 'sketchfabEmbedUrl',
-  slug: 'slug'
+  slug: 'slug',
+  clonableWorld: 'clonableWorld'
 }
 
 export const AssetAmendmentFieldNames = {

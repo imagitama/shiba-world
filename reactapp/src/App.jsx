@@ -157,6 +157,9 @@ const MemoryGame = lazy(() =>
 const GuessTheAvatarGame = lazy(() =>
   catchChunkDeaths(() => import('./containers/guess-the-avatar'))
 )
+const LaunchWorld = lazy(() =>
+  catchChunkDeaths(() => import('./containers/launch-world'))
+)
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
   return (
@@ -263,6 +266,11 @@ const MainContent = () => {
             description:
               'An overview of a single asset. Find out what the asset is for, how to use it and where to download it plus more.'
           }}
+        />
+        <RouteWithMeta
+          exact
+          path={routes.launchWorldWithVar}
+          component={LaunchWorld}
         />
         <Redirect
           from={routes.oldEditAssetWithVar}

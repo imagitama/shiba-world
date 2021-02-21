@@ -48,6 +48,7 @@ export const vsScreen = '/vs-screen'
 export const tags = '/tags'
 export const memoryGame = '/memory'
 export const guessTheAvatar = '/guess-the-avatar'
+export const launchWorldWithVar = '/assets/:assetId/launch'
 
 // Outdated routes
 export const browseAssets = '/browse'

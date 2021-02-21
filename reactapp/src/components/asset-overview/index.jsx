@@ -7,6 +7,7 @@ import EditIcon from '@material-ui/icons/Edit'
 import ReportIcon from '@material-ui/icons/Report'
 import LoyaltyIcon from '@material-ui/icons/Loyalty'
 import ControlCameraIcon from '@material-ui/icons/ControlCamera'
+import AddToPhotosIcon from '@material-ui/icons/AddToPhotos'
 import { useDispatch } from 'react-redux'
 import LazyLoad from 'react-lazyload'
 
@@ -430,6 +431,19 @@ const pickNonFallbackUrl = urlOrUrls => {
   return urlOrUrls.url
 }
 
+function ClonableWorldButton({ assetId, clonableWorld }) {
+  return (
+    <Button
+      url={`${routes.launchWorldWithVar.replace(
+        ':assetId',
+        clonableWorld.id
+      )}?avatarId=${assetId}`}
+      icon={<AddToPhotosIcon />}>
+      Clone in VRChat
+    </Button>
+  )
+}
+
 export default ({ assetId, switchEditorOpen }) => {
   const [isLoading, isErrored, result] = useDatabaseQuery(
     CollectionNames.Assets,
@@ -524,7 +538,8 @@ export default ({ assetId, switchEditorOpen }) => {
     [AssetFieldNames.pedestalVideoUrl]: pedestalVideoUrl,
     [AssetFieldNames.pedestalFallbackImageUrl]: pedestalFallbackImageUrl,
     [AssetFieldNames.sketchfabEmbedUrl]: sketchfabEmbedUrl,
-    [AssetFieldNames.slug]: slug
+    [AssetFieldNames.slug]: slug,
+    [AssetFieldNames.clonableWorld]: clonableWorld
   } = result
 
   const {
@@ -863,6 +878,14 @@ export default ({ assetId, switchEditorOpen }) => {
                   sourceUrl={sourceUrl}
                   categoryName={category}
                   isNoFilesAttached={downloadUrls.length === 0}
+                />
+              </Control>
+            )}
+            {clonableWorld && (
+              <Control>
+                <ClonableWorldButton
+                  assetId={assetId}
+                  clonableWorld={clonableWorld}
                 />
               </Control>
             )}
