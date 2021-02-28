@@ -23,7 +23,7 @@ if (
   process.env.REACT_APP_USE_FUNCTIONS_EMULATOR
 ) {
   console.debug(`using functions emulator`)
-  firebase.functions().useFunctionsEmulator('http://localhost:5001')
+  firebase.functions().useFunctionsEmulator('http://localhost:5000')
 }
 
 if (
@@ -31,7 +31,7 @@ if (
   process.env.REACT_APP_USE_FIRESTORE_EMULATOR
 ) {
   console.debug(`using firestore emulator`)
-  firebase.firestore().useEmulator('localhost', 8081)
+  firebase.firestore().useEmulator('localhost', 8080)
 }
 
 if (

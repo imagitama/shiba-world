@@ -1,44 +1,44 @@
 import React from 'react'
+
 import useDatabaseQuery, {
   CollectionNames,
   TransactionFieldNames,
+  Operators,
   options,
   OrderDirections
 } from '../../hooks/useDatabaseQuery'
-import useUserRecord from '../../hooks/useUserRecord'
+import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import LoadingIndicator from '../../components/loading-indicator'
 import ErrorMessage from '../../components/error-message'
 import NoResultsMessage from '../../components/no-results-message'
-import NoPermissionMessage from '../../components/no-permission-message'
 import TransactionsList from '../../components/transactions-list'
 
-import { canEditProduct } from '../../permissions'
+import { createRef } from '../../utils'
 
 export default () => {
-  const [, , user] = useUserRecord()
-
-  const isAllowedToView = canEditProduct(user)
-
+  const userId = useFirebaseUserId()
   const [isLoading, isError, results] = useDatabaseQuery(
     CollectionNames.Transactions,
-    isAllowedToView ? undefined : false,
+    [
+      [
+        TransactionFieldNames.customer,
+        Operators.EQUALS,
+        createRef(CollectionNames.Users, userId)
+      ]
+    ],
     {
       [options.populateRefs]: true,
       [options.orderBy]: [TransactionFieldNames.createdAt, OrderDirections.DESC]
     }
   )
 
-  if (!isAllowedToView) {
-    return <NoPermissionMessage />
-  }
-
   if (isLoading) {
-    return <LoadingIndicator message="Loading transactions..." />
+    return <LoadingIndicator message="Loading your transactions..." />
   }
 
   if (isError) {
-    return <ErrorMessage>Failed to load transactions</ErrorMessage>
+    return <ErrorMessage>Failed to load your transactions</ErrorMessage>
   }
 
   if (!results) {

@@ -118,6 +118,12 @@ export default [
         requiresAdultContentEnabled: true
       },
       {
+        id: 'products',
+        url: routes.viewProducts,
+        label: 'Products',
+        requiresAdmin: true
+      },
+      {
         id: 'admin',
         label: 'Admin',
         url: routes.admin,

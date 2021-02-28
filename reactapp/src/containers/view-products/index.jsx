@@ -15,7 +15,7 @@ export default () => {
     { [options.populateRefs]: true }
   )
 
-  if (isLoading) {
+  if (isLoading || !results) {
     return <LoadingIndicator message="Loading products..." />
   }
 
@@ -23,8 +23,8 @@ export default () => {
     return <ErrorMessage>Failed to load products</ErrorMessage>
   }
 
-  if (!results || !results.length) {
-    return <NoResultsMessage />
+  if (!results.length) {
+    return <NoResultsMessage>No products found</NoResultsMessage>
   }
 
   return <ProductResults products={results} />

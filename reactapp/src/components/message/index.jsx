@@ -8,9 +8,11 @@ const useStyles = makeStyles(() => ({
   root: {
     margin: '1rem 0',
     padding: '1rem',
-    textAlign: 'center',
     display: 'flex',
     alignItems: 'center'
+  },
+  text: {
+    width: '100%'
   },
   icon: {
     marginRight: '1rem',
@@ -62,14 +64,14 @@ export default ({
     return (
       <div className={classes.root}>
         <Icon type={type} />
-        <span>{children}</span>
+        <span className={classes.text}>{children}</span>
       </div>
     )
   } else {
     return (
       <Paper className={classes.root} {...restOfProps}>
         <Icon type={type} />
-        <span>{children}</span>
+        <span className={classes.text}>{children}</span>
       </Paper>
     )
   }

@@ -355,6 +355,8 @@ export const HomepagePatreonFieldNames = {
 
 export const ProductFieldNames = {
   asset: 'asset',
+  title: 'title',
+  description: 'description',
   priceUsd: 'priceUsd',
   isSaleable: 'isSaleable',
   isApproved: 'isApproved',

@@ -28,6 +28,18 @@ export default [
     hint: 'Other currencies are not available at this time.'
   },
   {
+    name: ProductFieldNames.title,
+    type: fieldTypes.text,
+    label: 'Title',
+    hint: 'An alternative title. Leave blank to inherit from the asset.'
+  },
+  {
+    name: ProductFieldNames.description,
+    type: fieldTypes.textMarkdown,
+    label: 'Description',
+    hint: 'Any notes specifically about purchasing the product.'
+  },
+  {
     name: ProductFieldNames.isApproved,
     type: fieldTypes.hidden,
     default: true

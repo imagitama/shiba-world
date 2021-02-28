@@ -1,9 +1,9 @@
 const getSymbolForCurrency = currency => {
   switch (currency) {
-    case 'usd':
-      return '$'
+    // case 'usd':
+    //   return 'US$'
     default:
-      return '$'
+      return 'US $'
   }
 }
 

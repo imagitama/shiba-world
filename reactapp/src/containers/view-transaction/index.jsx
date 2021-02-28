@@ -11,33 +11,27 @@ import useDatabaseQuery, {
   options,
   TransactionFieldNames
 } from '../../hooks/useDatabaseQuery'
+// import useUserRecord from '../../hooks/useUserRecord'
+
 import LoadingIndicator from '../../components/loading-indicator'
 import ErrorMessage from '../../components/error-message'
 import Message from '../../components/message'
 import ProductResultsItem from '../../components/product-results-item'
 import Heading from '../../components/heading'
 import Price from '../../components/price'
-import * as routes from '../../routes'
-import { callFunction } from '../../firebase'
+import Button from '../../components/button'
+import Status from '../../components/transaction-status'
 import SuccessMessage from '../../components/success-message'
 import FormattedDate from '../../components/formatted-date'
+// import NoPermissionMessage from '../../components/no-permission-message'
 
-const BraintreeStatus = {
-  AuthorizationExpired: 'authorizationexpired',
-  Authorized: 'authorized',
-  Authorizing: 'authorizing',
-  SettlementPending: 'settlementpending',
-  SettlementDeclined: 'settlementdeclined',
-  Failed: 'failed',
-  GatewayRejected: 'gatewayrejected',
-  ProcessorDeclined: 'processordeclined',
-  Settled: 'settled',
-  Settling: 'settling',
-  SubmittedForSettlement: 'submittedforsettlement',
-  Voided: 'voided'
-}
+import * as routes from '../../routes'
+import { callFunction } from '../../firebase'
+import { BraintreeStatus } from '../../braintree'
+import { DISCORD_URL, EMAIL } from '../../config'
+// import { canViewTransaction } from '../../permissions'
 
-function StatusMessage({ status }) {
+function StatusMessage({ status, onClickLearnMore }) {
   switch (status) {
     case BraintreeStatus.Failed:
     case BraintreeStatus.Voided:
@@ -47,8 +41,39 @@ function StatusMessage({ status }) {
     case BraintreeStatus.Settled:
     case BraintreeStatus.Settling:
       return <SuccessMessage>Transaction complete</SuccessMessage>
+    case BraintreeStatus.ProcessorDeclined:
+      return (
+        <ErrorMessage>
+          Payment processor declined
+          <br />
+          <br />
+          <Button onClick={onClickLearnMore}>Learn More</Button>
+        </ErrorMessage>
+      )
     default:
       return <Message>State: {status}</Message>
+  }
+}
+
+function ExplanationMessage({ status, onDoneClick }) {
+  switch (status) {
+    case BraintreeStatus.ProcessorDeclined:
+      return (
+        <Message>
+          <strong>Why is my payment process declined?</strong>
+          <br />
+          It could be one of these reasons:
+          <ul>
+            <li>Incorrect credit card number or expiration date</li>
+            <li>Insufficient funds</li>
+            <li>The bank declined based on location</li>
+            <li>The bank's fraud rules blocked the transaction</li>
+          </ul>
+          <Button onClick={onDoneClick}>I understand</Button>
+        </Message>
+      )
+    default:
+      return <Message>Unknown</Message>
   }
 }
 
@@ -81,19 +106,14 @@ function TransactionHistory({ history }) {
   )
 }
 
-function Status({ status }) {
-  return status
-    .toLowerCase()
-    .split('_')
-    .map(s => s.charAt(0).toUpperCase() + s.substring(1))
-    .join(' ')
-}
-
 export default ({
   match: {
     params: { transactionId }
   }
 }) => {
+  // const [, , user] = useUserRecord()
+  // const hasPermission = canViewTransaction(user)
+
   const [isLoading, isError, transaction] = useDatabaseQuery(
     CollectionNames.Transactions,
     transactionId,
@@ -102,7 +122,7 @@ export default ({
       [options.subscribe]: true
     }
   )
-
+  const [isExplanationVisible, setIsExplanationVisible] = useState(false)
   const [asset, setAsset] = useState(null)
 
   const hydrate = async () => {
@@ -133,7 +153,6 @@ export default ({
     }
 
     async function main() {
-      console.log(transaction)
       const assetDoc = await transaction.product.asset.get()
       setAsset(assetDoc.data())
     }
@@ -154,6 +173,10 @@ export default ({
     transaction !== null &&
       transaction[TransactionFieldNames.braintreeTransactionId]
   ])
+
+  // if (!hasPermission) {
+  //   return <NoPermissionMessage />
+  // }
 
   if (isLoading) {
     return <LoadingIndicator message="Loading transaction..." />
@@ -184,7 +207,18 @@ export default ({
     <div>
       <Heading variant="h1">View Transaction #{transactionId}</Heading>
       <Link to={routes.viewTransactions}>Back to all transactions</Link>
-      <StatusMessage status={status} />
+      <StatusMessage
+        status={status}
+        onClickLearnMore={() =>
+          setIsExplanationVisible(currentVal => !currentVal)
+        }
+      />
+      {isExplanationVisible && (
+        <ExplanationMessage
+          status={status}
+          onDoneClick={() => setIsExplanationVisible(currentVal => !currentVal)}
+        />
+      )}
       <Heading variant="h2">Details</Heading>
       <Table>
         <TableBody>
@@ -194,12 +228,22 @@ export default ({
               <Price price={braintreeTransactionData.amount} />
             </TableCell>
           </TableRow>
-          <TableRow>
-            <TableCell>Credit Card Number</TableCell>
-            <TableCell>
-              {braintreeTransactionData.creditCard.maskedNumber}
-            </TableCell>
-          </TableRow>
+          {braintreeTransactionData.creditCard.last4 && (
+            <TableRow>
+              <TableCell>Credit Card Number</TableCell>
+              <TableCell>
+                {braintreeTransactionData.creditCard.maskedNumber}
+              </TableCell>
+            </TableRow>
+          )}
+          {braintreeTransactionData.paypal.payerEmail && (
+            <TableRow>
+              <TableCell>PayPal Email</TableCell>
+              <TableCell>
+                {braintreeTransactionData.paypal.payerEmail}
+              </TableCell>
+            </TableRow>
+          )}
           <TableRow>
             <TableCell>Last Updated At</TableCell>
             <TableCell>
@@ -217,6 +261,12 @@ export default ({
           asset
         }}
       />
+      <Heading variant="h2">Support</Heading>
+      <Message>
+        Please join our <a href={DISCORD_URL}>Discord server</a> or email{' '}
+        {EMAIL} for any problems with your transaction (please quote your
+        transaction ID).
+      </Message>
       <Heading variant="h2">History</Heading>
       <TransactionHistory history={braintreeTransactionData.statusHistory} />
     </div>

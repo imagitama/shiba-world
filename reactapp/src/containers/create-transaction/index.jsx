@@ -1,10 +1,13 @@
 import React, { useRef, useState, useEffect } from 'react'
 import DropIn from 'braintree-web-drop-in-react'
+import { makeStyles } from '@material-ui/core/styles'
 
 import useDatabaseQuery, {
   CollectionNames,
   options,
-  mapDates
+  // mapDates,
+  ProductFieldNames,
+  AssetFieldNames
 } from '../../hooks/useDatabaseQuery'
 
 import LoadingIndicator from '../../components/loading-indicator'
@@ -12,10 +15,22 @@ import ErrorMessage from '../../components/error-message'
 import SuccessMessage from '../../components/success-message'
 import Heading from '../../components/heading'
 import Button from '../../components/button'
-import ProductResultsItem from '../../components/product-results-item'
+import Price from '../../components/price'
+import Message from '../../components/message'
 
 import * as routes from '../../routes'
 import { callFunction } from '../../firebase'
+import { Link } from 'react-router-dom'
+
+const useStyles = makeStyles({
+  braintreeClient: {
+    backgroundColor: '#FFF',
+    padding: '1rem',
+    marginTop: '2rem'
+  },
+  priceHeading: { margin: 0 },
+  buyButtonWrapper: { textAlign: 'center', padding: '1rem 0 ' }
+})
 
 export default ({
   match: {
@@ -33,6 +48,7 @@ export default ({
   const [transactionId, setTransactionId] = useState(null)
   const [lastError, setLastError] = useState(null)
   const instanceRef = useRef()
+  const classes = useStyles()
 
   const getToken = async () => {
     try {
@@ -66,7 +82,7 @@ export default ({
   }
 
   if (isGettingToken || !token) {
-    return <LoadingIndicator />
+    return <LoadingIndicator message="Setting up transaction..." />
   }
 
   if (isCreatingTransaction) {
@@ -116,7 +132,11 @@ export default ({
     )
   }
 
-  const { priceUsd } = product
+  const {
+    [ProductFieldNames.priceUsd]: priceUsd,
+    [ProductFieldNames.asset]: asset,
+    [ProductFieldNames.title]: title
+  } = product
 
   const onBuyClick = async () => {
     try {
@@ -151,26 +171,56 @@ export default ({
 
   return (
     <div>
-      <Heading variant="h1">Create Transaction</Heading>
-      <ProductResultsItem product={mapDates(product)} />
+      <Heading variant="h1">
+        Purchase "{title || asset[AssetFieldNames.title]}"
+      </Heading>
+      <Heading variant="h2" className={classes.priceHeading}>
+        <Price price={priceUsd} />
+      </Heading>
       {token ? (
         <>
-          <DropIn
-            options={{ authorization: token }}
-            onInstance={instance => {
-              console.log(instance)
-              instanceRef.current = instance
-            }}
-            onError={err => {
-              console.error(err)
-              setLastError(err)
-            }}
-          />
-          <div style={{ textAlign: 'center', padding: '1rem 0 ' }}>
-            <Button onClick={onBuyClick} size="large">
-              Buy
-            </Button>
+          <div className={classes.braintreeClient}>
+            <DropIn
+              options={{
+                authorization: token,
+                paypal: {
+                  flow: 'checkout',
+                  amount: priceUsd,
+                  currency: 'USD'
+                }
+              }}
+              onInstance={instance => {
+                instanceRef.current = instance
+              }}
+              onError={err => {
+                console.error(err)
+                setLastError(err)
+              }}
+            />
+            <div className={classes.buyButtonWrapper}>
+              <Button onClick={onBuyClick} size="large">
+                Buy
+              </Button>
+            </div>
           </div>
+          <br />
+          <Message>
+            All payments are securely processed by{' '}
+            <a
+              href="https://www.braintreepayments.com/au"
+              rel="noopener noreferrer">
+              Braintree
+            </a>{' '}
+            - a very popular payment processor owned by{' '}
+            <a href="https://paypal.com/" rel="noopener noreferrer">
+              PayPal
+            </a>
+            .
+          </Message>
+          <Message>
+            How we store your payment information is explained in our{' '}
+            <Link to={routes.privacyPolicy}>privacy policy</Link>.
+          </Message>
         </>
       ) : (
         <LoadingIndicator />
