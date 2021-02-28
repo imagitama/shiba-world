@@ -211,6 +211,29 @@ export default () => (
         with the laws of WA and you irrevocably submit to the exclusive
         jurisdiction of the courts in that State or location.
       </p>
+      <p>
+        <strong>Purchasing, transactions and online orders</strong>
+      </p>
+      <p>
+        When you make a purchase or attempt to make a purchase through the Site,
+        we collect certain information from you, including your name, billing
+        address, shipping address, payment information (including credit card
+        numbers or PayPal information), email address and phone number.
+      </p>
+      <p>
+        We use the Order Information that we collect generally to fulfil any
+        orders placed through the Site (including processing your payment
+        information, arranging for shipping, and providing you with invoices
+        and/or order confirmations).
+      </p>
+      <p>
+        When you place an order through the Site, we will maintain your Order
+        Information for our records unless and until you ask us to delete this
+        information.
+      </p>
+      <p>
+        <em>End of Privacy Policy</em>
+      </p>
     </Container>
   </>
 )

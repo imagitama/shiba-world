@@ -34,8 +34,6 @@ export default () => {
     }
 
     async function main() {
-      console.log(results)
-
       // doing a lookup per user meta is probably very bad for performance :(
       setUsers(
         await Promise.all(

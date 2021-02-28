@@ -21,6 +21,7 @@ import MyFeaturedAssets from '../../components/my-featured-assets'
 import PedestalUploadForm from '../../components/pedestal-upload-form'
 import MyAssetAmendments from '../../components/my-asset-amendments'
 import FavoriteSpeciesEditor from '../../components/favorite-species-editor'
+import MyTransactions from '../../components/my-transactions'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
@@ -134,6 +135,7 @@ export default () => {
           <Tab label="Patreon" index={patreonConnectFormTabIdx} />
           <Tab label="Uploads" index={6} />
           <Tab label="Amendments" index={7} />
+          <Tab label="Transactions" index={8} />
         </Tabs>
         <div className={classes.tabPanels}>
           <TabPanel value={activeTabIdx} index={0}>
@@ -209,6 +211,10 @@ export default () => {
           <TabPanel value={activeTabIdx} index={7}>
             <Heading variant="h2">Amendments</Heading>
             <MyAssetAmendments />
+          </TabPanel>
+          <TabPanel value={activeTabIdx} index={8}>
+            <Heading variant="h2">Transactions</Heading>
+            <MyTransactions />
           </TabPanel>
         </div>
       </div>

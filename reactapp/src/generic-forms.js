@@ -6,5 +6,6 @@ export const fieldTypes = {
   date: 'date',
   ref: 'ref',
   imageUpload: 'imageUpload',
-  hidden: 'hidden'
+  hidden: 'hidden',
+  searchable: 'searchable' // uses algolia search with records with "id" property
 }

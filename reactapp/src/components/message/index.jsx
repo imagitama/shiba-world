@@ -2,14 +2,17 @@ import React from 'react'
 import Paper from '@material-ui/core/Paper'
 import WarningIcon from '@material-ui/icons/Warning'
 import { makeStyles } from '@material-ui/core/styles'
+import CheckIcon from '@material-ui/icons/Check'
 
 const useStyles = makeStyles(() => ({
   root: {
     margin: '1rem 0',
     padding: '1rem',
-    textAlign: 'center',
     display: 'flex',
     alignItems: 'center'
+  },
+  text: {
+    width: '100%'
   },
   icon: {
     marginRight: '1rem',
@@ -38,6 +41,12 @@ function Icon({ type }) {
           <WarningIcon />
         </div>
       )
+    case types.SUCCESS:
+      return (
+        <div className={classes.icon}>
+          <CheckIcon />
+        </div>
+      )
     default:
       return null
   }
@@ -55,14 +64,14 @@ export default ({
     return (
       <div className={classes.root}>
         <Icon type={type} />
-        {children}
+        <span className={classes.text}>{children}</span>
       </div>
     )
   } else {
     return (
       <Paper className={classes.root} {...restOfProps}>
         <Icon type={type} />
-        {children}
+        <span className={classes.text}>{children}</span>
       </Paper>
     )
   }

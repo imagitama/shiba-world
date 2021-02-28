@@ -49,6 +49,12 @@ export const tags = '/tags'
 export const memoryGame = '/memory'
 export const guessTheAvatar = '/guess-the-avatar'
 export const launchWorldWithVar = '/assets/:assetId/launch'
+export const viewProducts = '/products'
+export const viewProductWithVar = '/products/:productId'
+export const editProductWithVar = '/products/:productId/edit'
+export const viewTransactions = '/transactions'
+export const viewTransactionWithVar = '/transactions/:transactionId'
+export const createTransactionWithVar = '/transactions/create/:productId'
 
 // Outdated routes
 export const browseAssets = '/browse'

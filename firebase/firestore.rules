@@ -35,6 +35,10 @@ service cloud.firestore {
     function validateAssetUpdate() {
       return isEditor() || request.resource.data.isApproved == resource.data.isApproved;
     }
+
+    function isCustomerOfTransaction() {
+      return request.auth.uid == get(resource.data.customer).id;
+    }
     
     match /assets/{document=**} {
       allow read;
@@ -107,7 +111,7 @@ service cloud.firestore {
     }
     
     match /notifications/{document=**} {
-    	allow read;
+    	allow read: if isRecipient();
       allow delete: if isRecipient();
     }
     
@@ -176,6 +180,17 @@ service cloud.firestore {
     
     match /viewCache/{document=**} {
       allow read;
+    }
+
+    match /products/{document=**} {
+      allow read;
+      allow update: if isAdmin();
+      allow create: if isAdmin();
+    }
+    
+    match /transactions/{document=**} {
+      allow read: if isCustomerOfTransaction() || isAdmin();
+      allow create: if isLoggedIn() && isNotBanned();
     }
   }
 }

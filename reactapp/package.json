@@ -25,6 +25,7 @@
     "@rehooks/local-storage": "^2.4.0",
     "@sentry/browser": "^5.5.0",
     "algoliasearch": "^4.2.0",
+    "braintree-web-drop-in-react": "^1.2.1",
     "connected-react-router": "^6.8.0",
     "firebase": "^8.2.5",
     "immutable": "^4.0.0-rc.12",

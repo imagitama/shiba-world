@@ -16,6 +16,7 @@ import useDatabaseQuery, {
   DiscordServerFieldNames,
   options,
   AssetMetaFieldNames,
+  ProductFieldNames,
   mapDates
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
@@ -62,6 +63,7 @@ import ApproveAssetButton from '../approve-asset-button'
 import DeleteAssetButton from '../delete-asset-button'
 import PinAssetButton from '../pin-asset-button'
 import Message, { types } from '../message'
+import Price from '../price'
 
 import NotApprovedMessage from './components/not-approved-message'
 import DeletedMessage from './components/deleted-message'
@@ -564,7 +566,8 @@ export default ({ assetId, switchEditorOpen }) => {
     [AssetMetaFieldNames.authorName]: authorName,
     [AssetMetaFieldNames.speciesNames]: speciesNames,
     [AssetMetaFieldNames.linkedAssets]: linkedAssets,
-    [AssetMetaFieldNames.discordServer]: discordServer
+    [AssetMetaFieldNames.discordServer]: discordServer,
+    [AssetMetaFieldNames.product]: product
   } = metaResult || {}
 
   if (!title) {
@@ -905,6 +908,17 @@ export default ({ assetId, switchEditorOpen }) => {
                   assetId={assetId}
                   clonableWorld={clonableWorld}
                 />
+              </Control>
+            )}
+            {product && (
+              <Control>
+                <Button
+                  url={routes.viewProductWithVar.replace(
+                    ':productId',
+                    product.id
+                  )}>
+                  Buy (<Price price={product[ProductFieldNames.priceUsd]} />)
+                </Button>
               </Control>
             )}
             {downloadUrls.length ? (

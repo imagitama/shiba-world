@@ -160,6 +160,24 @@ const GuessTheAvatarGame = lazy(() =>
 const LaunchWorld = lazy(() =>
   catchChunkDeaths(() => import('./containers/launch-world'))
 )
+const ViewProducts = lazy(() =>
+  catchChunkDeaths(() => import('./containers/view-products'))
+)
+const EditProduct = lazy(() =>
+  catchChunkDeaths(() => import('./containers/edit-product'))
+)
+const ViewProduct = lazy(() =>
+  catchChunkDeaths(() => import('./containers/view-product'))
+)
+const ViewTransactions = lazy(() =>
+  catchChunkDeaths(() => import('./containers/view-transactions'))
+)
+const ViewTransaction = lazy(() =>
+  catchChunkDeaths(() => import('./containers/view-transaction'))
+)
+const CreateTransaction = lazy(() =>
+  catchChunkDeaths(() => import('./containers/create-transaction'))
+)
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
   return (
@@ -375,6 +393,24 @@ const MainContent = () => {
         <Route exact path={routes.vsScreen} component={VsScreen} />
         <Route exact path={routes.tags} component={Tags} />
         <Route exact path={routes.memoryGame} component={MemoryGame} />
+        <Route exact path={routes.viewProducts} component={ViewProducts} />
+        <Route exact path={routes.editProductWithVar} component={EditProduct} />
+        <Route exact path={routes.viewProductWithVar} component={ViewProduct} />
+        <Route
+          exact
+          path={routes.viewTransactions}
+          component={ViewTransactions}
+        />
+        <Route
+          exact
+          path={routes.viewTransactionWithVar}
+          component={ViewTransaction}
+        />
+        <Route
+          exact
+          path={routes.createTransactionWithVar}
+          component={CreateTransaction}
+        />
         <Route
           exact
           path={routes.guessTheAvatar}

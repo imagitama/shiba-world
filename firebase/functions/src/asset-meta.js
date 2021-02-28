@@ -3,11 +3,13 @@ const {
   CollectionNames,
   AssetFieldNames,
   AssetMetaFieldNames,
+  ProductFieldNames,
   AuthorFieldNames,
   DiscordServerFieldNames,
   getHasArrayOfReferencesChanged,
   SpeciesFieldNames,
   EndorsementFieldNames,
+  Operators,
 } = require('./firebase')
 
 async function saveAsset(id, fields) {
@@ -262,6 +264,22 @@ async function hydrateAsset(beforeDoc, afterDoc) {
 }
 module.exports.hydrateAsset = hydrateAsset
 
+async function getProductForAssetRef(assetRef) {
+  const { docs } = await db
+    .collection(CollectionNames.Products)
+    .where(ProductFieldNames.asset, Operators.EQUALS, assetRef)
+    .get()
+
+  if (docs.length === 1) {
+    return {
+      id: docs[0].id,
+      [ProductFieldNames.priceUsd]: docs[0].get(ProductFieldNames.priceUsd),
+    }
+  }
+
+  return null
+}
+
 module.exports.syncAllAssetMeta = async () => {
   const { docs: assetDocs } = await db.collection(CollectionNames.Assets).get()
   const { docs: endorsementDocs } = await db
@@ -303,6 +321,9 @@ module.exports.syncAllAssetMeta = async () => {
               assetDoc.get(AssetFieldNames.discordServer)
             )
           : null,
+        [AssetMetaFieldNames.product]: await getProductForAssetRef(
+          assetDoc.ref
+        ),
         [AssetMetaFieldNames.lastModifiedAt]: new Date(),
       },
       {

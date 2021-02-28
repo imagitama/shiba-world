@@ -1,4 +1,4 @@
-import { UserFieldNames } from './hooks/useDatabaseQuery'
+import { UserFieldNames, TransactionFieldNames } from './hooks/useDatabaseQuery'
 
 export function canEditUsers(user) {
   if (!user) {
@@ -26,4 +26,27 @@ export function canEditDiscordServer(user) {
     return false
   }
   return user[UserFieldNames.isAdmin] || user[UserFieldNames.isEditor]
+}
+
+export function canEditProduct(user) {
+  if (!user) {
+    return false
+  }
+  return user[UserFieldNames.isAdmin]
+}
+
+export function canViewTransaction(user, transaction) {
+  if (!user) {
+    return false
+  }
+  if (user[UserFieldNames.isAdmin]) {
+    return true
+  }
+  if (
+    transaction &&
+    user.id === transaction[TransactionFieldNames.customer].id
+  ) {
+    return true
+  }
+  return false
 }
