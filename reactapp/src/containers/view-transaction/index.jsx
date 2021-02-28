@@ -5,6 +5,7 @@ import TableHead from '@material-ui/core/TableHead'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableRow from '@material-ui/core/TableRow'
+import { Helmet } from 'react-helmet'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -29,6 +30,7 @@ import * as routes from '../../routes'
 import { callFunction } from '../../firebase'
 import { BraintreeStatus } from '../../braintree'
 import { DISCORD_URL, EMAIL } from '../../config'
+import { getOpenGraphUrlForRouteUrl } from '../../utils'
 // import { canViewTransaction } from '../../permissions'
 
 function StatusMessage({ status, onClickLearnMore }) {
@@ -205,6 +207,32 @@ export default ({
 
   return (
     <div>
+      <Helmet>
+        <title>View transaction #{transactionId} | VRCArena</title>
+        <meta
+          name="description"
+          content={`View the transaction #${transactionId}.`}
+        />
+        <meta
+          property="og:title"
+          content={`View transaction #${transactionId}`}
+        />
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:description"
+          content={`View the transaction #${transactionId}.`}
+        />
+        <meta
+          property="og:url"
+          content={getOpenGraphUrlForRouteUrl(
+            routes.viewTransactionWithVar.replace(
+              ':transactionId',
+              transactionId
+            )
+          )}
+        />
+        <meta property="og:site_name" content="VRCArena" />
+      </Helmet>
       <Heading variant="h1">View Transaction #{transactionId}</Heading>
       <Link to={routes.viewTransactions}>Back to all transactions</Link>
       <StatusMessage

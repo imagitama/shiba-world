@@ -1,6 +1,7 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import LazyLoad from 'react-lazyload'
+import { Helmet } from 'react-helmet'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -9,7 +10,8 @@ import useDatabaseQuery, {
   ProductFieldNames,
   TransactionFieldNames,
   Operators,
-  OrderDirections
+  OrderDirections,
+  AssetFieldNames
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 
@@ -24,7 +26,7 @@ import TransactionsList from '../../components/transactions-list'
 
 import * as routes from '../../routes'
 import { canEditProduct } from '../../permissions'
-import { createRef } from '../../utils'
+import { createRef, getOpenGraphUrlForRouteUrl } from '../../utils'
 
 const useStyles = makeStyles({
   root: {
@@ -104,12 +106,15 @@ export default ({
 
   const {
     asset,
+    [ProductFieldNames.title]: title,
     [ProductFieldNames.description]: description,
     priceUsd,
     isSaleable,
     isDeleted,
     isApproved
   } = product
+
+  const actualTitle = title || asset[AssetFieldNames.title]
 
   if (!isApproved) {
     return <ErrorMessage>Not approved yet</ErrorMessage>
@@ -127,6 +132,23 @@ export default ({
 
   return (
     <div className={classes.root}>
+      <Helmet>
+        <title>{`${actualTitle} | View product | VRCArena`}</title>
+        <meta name="description" content={`View the product ${actualTitle}`} />
+        <meta property="og:title" content={actualTitle} />
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:description"
+          content={`View the title {actualTitle}`}
+        />
+        <meta
+          property="og:url"
+          content={getOpenGraphUrlForRouteUrl(
+            routes.viewProductWithVar.replace(':productId', productId)
+          )}
+        />
+        <meta property="og:site_name" content="VRCArena" />
+      </Helmet>
       <div className={classes.cols}>
         <div className={classes.col}>
           <div className={classes.asset}>

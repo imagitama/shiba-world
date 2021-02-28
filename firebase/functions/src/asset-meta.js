@@ -271,10 +271,7 @@ async function getProductForAssetRef(assetRef) {
     .get()
 
   if (docs.length === 1) {
-    return {
-      id: docs[0].id,
-      [ProductFieldNames.priceUsd]: docs[0].get(ProductFieldNames.priceUsd),
-    }
+    return mapProductDocToMeta(docs[0])
   }
 
   return null
@@ -358,6 +355,32 @@ module.exports.addEndorsementToAssetMeta = async (assetId) => {
     .set(
       {
         [AssetMetaFieldNames.endorsementCount]: newCount,
+        [AssetMetaFieldNames.lastModifiedAt]: new Date(),
+      },
+      {
+        merge: true,
+      }
+    )
+}
+
+const mapProductDocToMeta = (productDoc) => ({
+  id: productDoc.id,
+  [ProductFieldNames.priceUsd]: productDoc.get(ProductFieldNames.priceUsd),
+})
+
+module.exports.hydrateAssetWithProductDoc = (productDoc) => {
+  if (!productDoc.get(ProductFieldNames.asset)) {
+    throw new Error(
+      `Cannot hydrate asset meta without an asset! Product ${productDoc.id}`
+    )
+  }
+
+  return db
+    .collection(CollectionNames.AssetMeta)
+    .doc(productDoc.get(ProductFieldNames.asset).id)
+    .set(
+      {
+        [AssetMetaFieldNames.product]: mapProductDocToMeta(productDoc),
         [AssetMetaFieldNames.lastModifiedAt]: new Date(),
       },
       {
