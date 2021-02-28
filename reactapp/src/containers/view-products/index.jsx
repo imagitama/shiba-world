@@ -1,14 +1,33 @@
 import React from 'react'
+import { makeStyles } from '@material-ui/core/styles'
+
 import useDatabaseQuery, {
   CollectionNames,
   options
 } from '../../hooks/useDatabaseQuery'
+import useUserRecord from '../../hooks/useUserRecord'
+
 import LoadingIndicator from '../../components/loading-indicator'
 import ErrorMessage from '../../components/error-message'
 import NoResultsMessage from '../../components/no-results-message'
 import ProductResults from '../../components/product-results'
+import Button from '../../components/button'
 
-export default () => {
+import * as routes from '../../routes'
+import { canEditProduct } from '../../permissions'
+
+const useStyles = makeStyles({
+  root: {
+    position: 'relative'
+  },
+  controls: {
+    position: 'absolute',
+    top: 0,
+    right: 0
+  }
+})
+
+const Products = () => {
   const [isLoading, isError, results] = useDatabaseQuery(
     CollectionNames.Products,
     undefined,
@@ -28,4 +47,22 @@ export default () => {
   }
 
   return <ProductResults products={results} />
+}
+
+export default () => {
+  const [, , user] = useUserRecord()
+  const classes = useStyles()
+
+  const hasPermissionToEdit = canEditProduct(user)
+
+  return (
+    <div className={classes.root}>
+      {hasPermissionToEdit && (
+        <div className={classes.controls}>
+          <Button url={routes.createProduct}>Create</Button>
+        </div>
+      )}
+      <Products />
+    </div>
+  )
 }

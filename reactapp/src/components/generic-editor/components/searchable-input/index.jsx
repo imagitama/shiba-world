@@ -83,7 +83,7 @@ export default ({ name, onChange, value, fieldProperties }) => {
       )}
       {(isFormVisible || !value) && (
         <SearchForIdForm
-          preselectedId={value.id}
+          preselectedId={value ? value.id : null}
           indexName={fieldProperties.indexName}
           fieldAsLabel={fieldProperties.fieldAsLabel}
           onDone={id => {

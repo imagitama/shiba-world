@@ -394,6 +394,7 @@ const MainContent = () => {
         <Route exact path={routes.tags} component={Tags} />
         <Route exact path={routes.memoryGame} component={MemoryGame} />
         <Route exact path={routes.viewProducts} component={ViewProducts} />
+        <Route exact path={routes.createProduct} component={EditProduct} />
         <Route exact path={routes.editProductWithVar} component={EditProduct} />
         <Route exact path={routes.viewProductWithVar} component={ViewProduct} />
         <Route

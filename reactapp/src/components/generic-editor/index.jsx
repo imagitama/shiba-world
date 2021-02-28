@@ -72,6 +72,20 @@ const getHiddenFieldsForDb = fields => {
   )
 }
 
+const validateFields = (newFields, fieldDefinitions) => {
+  for (const fieldDef of fieldDefinitions) {
+    console.log('validating field', fieldDef)
+    if (fieldDef.isRequired) {
+      console.log('it is required')
+      if (!newFields[fieldDef.name]) {
+        console.log('it is not provided!!!', newFields)
+        return false
+      }
+    }
+  }
+  return true
+}
+
 export default ({
   collectionName,
   id = null,
@@ -108,6 +122,7 @@ export default ({
   )
   const classes = useStyles()
   const [createdDocId, setCreatedDocId] = useState(null)
+  const [isInvalid, setIsInvalid] = useState(false)
 
   useEffect(() => {
     if (!result) {
@@ -127,23 +142,32 @@ export default ({
     )
   }, [result === null])
 
-  const onFieldChange = (name, newVal) =>
+  const onFieldChange = (name, newVal) => {
     setFormFields({
       ...formFields,
       [name]: newVal
     })
+    setIsInvalid(false)
+  }
 
-  const onFieldsChange = updates =>
+  const onFieldsChange = updates => {
     setFormFields({
       ...formFields,
       ...updates
     })
+    setIsInvalid(false)
+  }
 
   const onSaveBtnClick = async () => {
     try {
       trackAction(analyticsCategory, saveBtnAction, id)
 
       scrollToTop()
+
+      if (!validateFields(formFields, fields)) {
+        setIsInvalid(true)
+        return
+      }
 
       const [newId] = await save({
         ...formFields,
@@ -195,6 +219,13 @@ export default ({
 
   return (
     <>
+      {isInvalid && (
+        <ErrorMessage>
+          One or more fields are invalid. Ensure the required fields have a
+          value.
+        </ErrorMessage>
+      )}
+
       {fields
         .filter(({ type }) => type !== fieldTypes.hidden)
         .map(({ name, type, default: defaultValue, label, hint, ...rest }) => {
