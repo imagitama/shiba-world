@@ -228,22 +228,25 @@ export default ({
               <Price price={braintreeTransactionData.amount} />
             </TableCell>
           </TableRow>
-          {braintreeTransactionData.creditCard.last4 && (
-            <TableRow>
-              <TableCell>Credit Card Number</TableCell>
-              <TableCell>
-                {braintreeTransactionData.creditCard.maskedNumber}
-              </TableCell>
-            </TableRow>
-          )}
-          {braintreeTransactionData.paypal.payerEmail && (
-            <TableRow>
-              <TableCell>PayPal Email</TableCell>
-              <TableCell>
-                {braintreeTransactionData.paypal.payerEmail}
-              </TableCell>
-            </TableRow>
-          )}
+          {braintreeTransactionData.creditCard &&
+            braintreeTransactionData.creditCard.last4 && (
+              <TableRow>
+                <TableCell>Credit Card Number</TableCell>
+                <TableCell>
+                  {braintreeTransactionData.creditCard.maskedNumber}
+                </TableCell>
+              </TableRow>
+            )}
+          {braintreeTransactionData &&
+            braintreeTransactionData.paypal &&
+            braintreeTransactionData.paypal.payerEmail && (
+              <TableRow>
+                <TableCell>PayPal Email</TableCell>
+                <TableCell>
+                  {braintreeTransactionData.paypal.payerEmail}
+                </TableCell>
+              </TableRow>
+            )}
           <TableRow>
             <TableCell>Last Updated At</TableCell>
             <TableCell>
