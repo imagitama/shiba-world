@@ -51,11 +51,7 @@ function SearchForm({ searchTerm, onSelectIdWithDetails }) {
     return 'Errored'
   }
 
-  if (!results) {
-    return null
-  }
-
-  if (!results.length) {
+  if (!results || !results.length) {
     return 'No results!'
   }
 
@@ -78,7 +74,12 @@ const convertLinkedAssetsForDoc = linkedAssets =>
     createRef(CollectionNames.Assets, linkedAsset.id)
   )
 
-export default ({ assetId, linkedAssets = [], actionCategory, onDone }) => {
+export default ({
+  assetId,
+  linkedAssets = [],
+  actionCategory,
+  onDone = null
+}) => {
   const userId = useFirebaseUserId()
   const [isSaving, isSuccess, isFailed, save] = useDatabaseSave(
     CollectionNames.Assets,
@@ -114,7 +115,9 @@ export default ({ assetId, linkedAssets = [], actionCategory, onDone }) => {
         lastModifiedBy: createRef(CollectionNames.Users, userId)
       })
 
-      onDone()
+      if (onDone) {
+        onDone()
+      }
     } catch (err) {
       console.error(err)
       handleError(err)

@@ -4,7 +4,6 @@ import Markdown from '../markdown'
 import { makeStyles } from '@material-ui/core/styles'
 import { Helmet } from 'react-helmet'
 import EditIcon from '@material-ui/icons/Edit'
-import ReportIcon from '@material-ui/icons/Report'
 import LoyaltyIcon from '@material-ui/icons/Loyalty'
 import ControlCameraIcon from '@material-ui/icons/ControlCamera'
 import { useDispatch } from 'react-redux'
@@ -17,7 +16,8 @@ import useDatabaseQuery, {
   options,
   AssetMetaFieldNames,
   ProductFieldNames,
-  mapDates
+  mapDates,
+  AssetCategories
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import { setBannerUrls as setBannerUrlsAction } from '../../modules/app'
@@ -64,6 +64,8 @@ import DeleteAssetButton from '../delete-asset-button'
 import PinAssetButton from '../pin-asset-button'
 import Message, { types } from '../message'
 import Price from '../price'
+import ContentOverview from '../content-overview'
+import ReportButton from '../report-button'
 
 import NotApprovedMessage from './components/not-approved-message'
 import DeletedMessage from './components/deleted-message'
@@ -277,27 +279,6 @@ const analyticsCategoryName = 'ViewAsset'
 
 function getCategoryDisplayName(category) {
   return `${category.substr(0, 1).toUpperCase()}${category.substr(1)}`
-}
-
-function ReportButton({ assetId, onClick }) {
-  const classes = useStyles()
-
-  const onBtnClick = () => {
-    onClick()
-    trackAction(analyticsCategoryName, 'Click report button', {
-      assetId
-    })
-  }
-
-  return (
-    <Button
-      className={classes.controlBtn}
-      color="default"
-      icon={<ReportIcon />}
-      onClick={onBtnClick}>
-      Report
-    </Button>
-  )
 }
 
 function CreatedByMessage({ authorRef, authorName }) {
@@ -570,12 +551,6 @@ export default ({ assetId, switchEditorOpen }) => {
     [AssetMetaFieldNames.product]: product
   } = metaResult || {}
 
-  if (!title) {
-    return (
-      <ErrorMessage>Asset does not exist. Maybe it was deleted?</ErrorMessage>
-    )
-  }
-
   const downloadUrls = fileUrls
     .map(pickNonFallbackUrl)
     .filter(isUrlNotAnImageOrVideo)
@@ -596,6 +571,17 @@ export default ({ assetId, switchEditorOpen }) => {
 
   if (isDeleted && !isApprover) {
     return <ErrorMessage>This asset has been deleted.</ErrorMessage>
+  }
+
+  if (category === AssetCategories.content) {
+    return (
+      <ContentOverview
+        asset={result}
+        assetMeta={metaResult}
+        analyticsCategoryName={analyticsCategoryName}
+        switchEditorOpen={switchEditorOpen}
+      />
+    )
   }
 
   const AssetTitle = () => (
@@ -942,6 +928,7 @@ export default ({ assetId, switchEditorOpen }) => {
             <Control>
               <ReportButton
                 assetId={id}
+                analyticsCategoryName={analyticsCategoryName}
                 onClick={() => setIsReportMessageOpen(true)}
               />
             </Control>

@@ -1,8 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react'
 import TextField from '@material-ui/core/TextField'
+import { useHistory } from 'react-router'
 
 import useDatabaseSave from '../../hooks/useDatabaseSave'
-import { CollectionNames, AssetFieldNames } from '../../hooks/useDatabaseQuery'
+import {
+  CollectionNames,
+  AssetFieldNames,
+  AssetCategories
+} from '../../hooks/useDatabaseQuery'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import ErrorMessage from '../../components/error-message'
@@ -23,6 +28,7 @@ import { createRef } from '../../utils'
 import { trackAction } from '../../analytics'
 import defaultThumbnailUrl from '../../assets/images/default-thumbnail.webp'
 import useCategoryMeta from '../../hooks/useCategoryMeta'
+import ContentOverviewEditor from '../../components/content-overview-editor'
 
 export default () => {
   const userId = useFirebaseUserId()
@@ -49,6 +55,7 @@ export default () => {
     false
   )
   const categoryDetails = useCategoryMeta(categoryValue)
+  const { push } = useHistory()
 
   useEffect(() => {
     return () => clearTimeout(redirectRef.current)
@@ -109,6 +116,13 @@ export default () => {
         onSelect={newCategory => {
           setCategoryValue(newCategory)
           scrollToTop()
+
+          if (newCategory === AssetCategories.content) {
+            setHasDuplicateCheckBeenPerformed(true)
+            onDone({
+              [AssetFieldNames.isPrivate]: false // for content we upload the content immediately so get it out the door quickly
+            })
+          }
         }}
         selectedCategory={categoryValue}
         title={titleValue}
@@ -167,6 +181,21 @@ export default () => {
   }
 
   if (newDocumentId) {
+    if (categoryValue === AssetCategories.content) {
+      return (
+        <>
+          <ContentOverviewEditor
+            asset={{
+              id: newDocumentId
+            }}
+            onDone={() =>
+              push(routes.viewAssetWithVar.replace(':assetId', newDocumentId))
+            }
+          />
+        </>
+      )
+    }
+
     return (
       <>
         <Heading variant="h1">Upload "{titleValue}"</Heading>

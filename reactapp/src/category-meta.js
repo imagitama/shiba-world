@@ -8,8 +8,16 @@ import tutorialOptimizedImageUrl from './assets/images/categories/optimized/tuto
 import worldOptimizedImageUrl from './assets/images/categories/optimized/world.webp'
 import toolOptimizedImageUrl from './assets/images/categories/optimized/tool.webp'
 import alterationOptimizedImageUrl from './assets/images/categories/optimized/alteration.webp'
+import contentOptimizedImageUrl from './assets/images/categories/optimized/content.webp'
 
 export default {
+  [AssetCategories.content]: {
+    name: 'Content',
+    nameSingular: 'Content',
+    shortDescription:
+      'Screenshots, videos, tweets or ANYTHING to do with another asset.',
+    optimizedImageUrl: contentOptimizedImageUrl
+  },
   [AssetCategories.accessory]: {
     name: 'Accessories',
     nameSingular: 'Accessory',

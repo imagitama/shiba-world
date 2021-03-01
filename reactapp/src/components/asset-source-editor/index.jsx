@@ -22,7 +22,13 @@ const useStyles = makeStyles({
   }
 })
 
-export default ({ assetId, sourceUrl = undefined, onDone, actionCategory }) => {
+export default ({
+  assetId,
+  sourceUrl = undefined,
+  onDone = null,
+  actionCategory,
+  hint = null
+}) => {
   const userId = useFirebaseUserId()
   const [newSourceUrl, setNewSourceUrl] = useState(sourceUrl)
   const [isSaving, isSaveSuccess, isSaveError, save] = useDatabaseSave(
@@ -44,7 +50,9 @@ export default ({ assetId, sourceUrl = undefined, onDone, actionCategory }) => {
         [AssetFieldNames.lastModifiedAt]: new Date()
       })
 
-      onDone()
+      if (onDone) {
+        onDone()
+      }
     } catch (err) {
       console.error('Failed to save asset source URL', err)
       handleError(err)
@@ -54,14 +62,15 @@ export default ({ assetId, sourceUrl = undefined, onDone, actionCategory }) => {
   return (
     <>
       <p>
-        Enter the URL of the source of the asset. eg. the Gumroad URL, VRChat
-        world URL, Tweet URL
+        {hint ||
+          'Enter the URL of the source of the asset. eg. the Gumroad URL, VRChat world URL, Tweet URL'}
       </p>
 
       <TextField
         className={classes.textInput}
         value={newSourceUrl}
         onChange={e => setNewSourceUrl(e.target.value)}
+        variant="outlined"
         multiline
       />
 

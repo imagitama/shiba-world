@@ -46,7 +46,7 @@ function AssetsTable({ assets }) {
               <TableRow key={id}>
                 <TableCell>
                   <Link to={routes.viewAssetWithVar.replace(':assetId', id)}>
-                    {title}
+                    {title || '(untitled)'}
                   </Link>
                 </TableCell>
                 <TableCell>

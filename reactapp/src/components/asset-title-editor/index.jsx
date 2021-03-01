@@ -8,6 +8,7 @@ import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
 import { trackAction } from '../../analytics'
+import TextInput from '../text-input'
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -21,7 +22,13 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default ({ assetId, title, onDone, actionCategory }) => {
+export default ({
+  assetId,
+  title,
+  onDone,
+  actionCategory,
+  showSimpleInput = false
+}) => {
   const userId = useFirebaseUserId()
   const [newTitleValue, setNewTitleValue] = useState(title)
   const [isSaving, isSaveSuccess, isSaveError, save] = useDatabaseSave(
@@ -32,15 +39,13 @@ export default ({ assetId, title, onDone, actionCategory }) => {
   const titleRef = useRef()
 
   useEffect(() => {
-    titleRef.current.focus()
+    if (titleRef.current) {
+      titleRef.current.focus()
+    }
   }, [])
 
   const onSaveBtnClick = async () => {
     try {
-      if (!newTitleValue) {
-        return
-      }
-
       trackAction(actionCategory, 'Click save title button')
 
       if (newTitleValue === title) {
@@ -69,13 +74,20 @@ export default ({ assetId, title, onDone, actionCategory }) => {
 
   return (
     <>
-      <span
-        ref={titleRef}
-        contentEditable={!isSaving}
-        onKeyUp={e => setNewTitleValue(e.target.innerText)}
-        className={classes.title}>
-        {title}
-      </span>{' '}
+      {showSimpleInput ? (
+        <TextInput
+          value={newTitleValue}
+          onChange={e => setNewTitleValue(e.target.value)}
+        />
+      ) : (
+        <span
+          ref={titleRef}
+          contentEditable={!isSaving}
+          onKeyUp={e => setNewTitleValue(e.target.innerText)}
+          className={classes.title}>
+          {title}
+        </span>
+      )}{' '}
       {isSaving ? (
         'Saving...'
       ) : isSaveSuccess ? (

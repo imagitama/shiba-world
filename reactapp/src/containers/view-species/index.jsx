@@ -180,6 +180,15 @@ const SpeciesResult = ({ speciesIdOrSlug }) => {
         <RecentAssets
           speciesId={species.id}
           limit={999}
+          categoryName={AssetCategories.content}
+          showPinned
+          title="Content"
+        />
+      </LazyLoad>
+      <LazyLoad>
+        <RecentAssets
+          speciesId={species.id}
+          limit={999}
           categoryName={AssetCategories.avatar}
           showPinned
           title="Avatars"

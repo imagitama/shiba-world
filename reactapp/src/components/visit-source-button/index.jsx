@@ -74,7 +74,7 @@ function getButtonLabel(category, sourceUrl, isNoFilesAttached) {
     return 'Go to Discord source'
   }
 
-  return 'Download from Source'
+  return 'Visit Source'
 }
 
 export default ({

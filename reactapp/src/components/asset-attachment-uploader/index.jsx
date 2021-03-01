@@ -42,13 +42,19 @@ const useStyles = makeStyles({
   }
 })
 
-const FileAttacherItem = ({ urlOrUrls, onRemove, onMoveUp, onMoveDown }) => {
+const FileAttacherItem = ({
+  urlOrUrls,
+  onRemove,
+  onMoveUp,
+  onMoveDown,
+  showMoveUpAndDownBtns = true
+}) => {
   const classes = useStyles()
 
   const url = urlOrUrls
 
   return (
-    <Paper className={classes.item}>
+    <div className={classes.item}>
       {isUrlAnImage(url) && (
         <img
           src={url}
@@ -62,16 +68,23 @@ const FileAttacherItem = ({ urlOrUrls, onRemove, onMoveUp, onMoveDown }) => {
         {getFilenameFromUrl(url)}
       </a>
       <br />
-      <Button color="default" onClick={onMoveUp} icon={<ArrowUpwardIcon />}>
-        Move Up
-      </Button>{' '}
-      <Button color="default" onClick={onMoveDown} icon={<ArrowDownwardIcon />}>
-        Move Down
-      </Button>{' '}
+      {showMoveUpAndDownBtns && (
+        <>
+          <Button color="default" onClick={onMoveUp} icon={<ArrowUpwardIcon />}>
+            Move Up
+          </Button>{' '}
+          <Button
+            color="default"
+            onClick={onMoveDown}
+            icon={<ArrowDownwardIcon />}>
+            Move Down
+          </Button>
+        </>
+      )}{' '}
       <Button color="default" onClick={onRemove} icon={<DeleteIcon />}>
         Remove
       </Button>
-    </Paper>
+    </div>
   )
 }
 
@@ -81,7 +94,12 @@ function moveItemInArray(from, to, array) {
   return newArray
 }
 
-export default ({ assetId, onDone }) => {
+export default ({
+  assetId,
+  onDone = null,
+  limit = null,
+  onlyImage = false
+}) => {
   const userId = useFirebaseUserId()
   const [isAttachingImage, setIsAttachingImage] = useState(null)
   const [newFileUrls, setNewFileUrls] = useState(null)
@@ -176,7 +194,9 @@ export default ({ assetId, onDone }) => {
         )
       })
 
-      onDone()
+      if (onDone) {
+        onDone()
+      }
     } catch (err) {
       console.error(err)
       handleError(err)
@@ -184,53 +204,62 @@ export default ({ assetId, onDone }) => {
   }
 
   return (
-    <>
-      {newFileUrls && newFileUrls.length
-        ? newFileUrls.map(url => (
-            <FileAttacherItem
-              key={url}
-              urlOrUrls={url}
-              onRemove={() => onFileRemoved(url)}
-              onMoveUp={() => moveFileUp(url)}
-              onMoveDown={() => moveFileDown(url)}
-            />
-          ))
-        : 'No files attached yet'}
-      <Paper className={classes.uploader}>
-        {isAttachingImage === true ? (
-          <OptimizedImageUploader
-            directoryPath="asset-uploads"
-            filePrefix={shortid.generate()}
-            onUploadedUrl={onFileAttached}
+    <Paper className={classes.uploader}>
+      {newFileUrls && newFileUrls.length ? (
+        newFileUrls.map(url => (
+          <FileAttacherItem
+            key={url}
+            urlOrUrls={url}
+            onRemove={() => onFileRemoved(url)}
+            onMoveUp={() => moveFileUp(url)}
+            onMoveDown={() => moveFileDown(url)}
+            showMoveUpAndDownBtns={newFileUrls && newFileUrls.length > 1}
           />
-        ) : isAttachingImage === false ? (
-          <FileUploader
-            directoryPath="asset-uploads"
-            filePrefix={shortid.generate()}
-            onDownloadUrl={onFileAttached}
-          />
-        ) : (
-          <>
+        ))
+      ) : (
+        <p>No files attached yet</p>
+      )}
+
+      {isAttachingImage === true ? (
+        <OptimizedImageUploader
+          directoryPath="asset-uploads"
+          filePrefix={shortid.generate()}
+          onUploadedUrl={onFileAttached}
+        />
+      ) : isAttachingImage === false ? (
+        <FileUploader
+          directoryPath="asset-uploads"
+          filePrefix={shortid.generate()}
+          onDownloadUrl={onFileAttached}
+        />
+      ) : (
+        <>
+          {!limit || (limit && newFileUrls && newFileUrls.length < limit) ? (
             <Button
               onClick={() => setIsAttachingImage(true)}
               color="default"
               icon={<ImageIcon />}>
               Attach Image
-            </Button>{' '}
+            </Button>
+          ) : null}{' '}
+          {onlyImage !== true && (
             <Button
               onClick={() => setIsAttachingImage(false)}
               color="default"
               icon={<InsertDriveFileIcon />}>
               Attach File
             </Button>
-            <div className={classes.btns}>
-              <Button onClick={onSaveBtnClick} icon={<SaveIcon />}>
-                Save
-              </Button>
-            </div>
-          </>
-        )}
-      </Paper>
-    </>
+          )}
+          <div className={classes.btns}>
+            <p>
+              <strong>Please remember to click the save button below</strong>
+            </p>
+            <Button onClick={onSaveBtnClick} icon={<SaveIcon />}>
+              Save
+            </Button>
+          </div>
+        </>
+      )}
+    </Paper>
   )
 }

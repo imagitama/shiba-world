@@ -163,7 +163,8 @@ export const AssetCategories = {
   article: 'article',
   world: 'world',
   tool: 'tool',
-  alteration: 'alteration'
+  alteration: 'alteration',
+  content: 'content'
 }
 
 export const UserFieldNames = {

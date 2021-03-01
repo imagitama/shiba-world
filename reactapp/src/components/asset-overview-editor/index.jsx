@@ -61,6 +61,7 @@ import LinkedAssetsEditor from '../linked-assets-editor'
 import Paper from '../paper'
 import SlugEditor from '../slug-editor'
 import ClonableWorldEditor from '../clonable-world-editor'
+import ContentOverviewEditor from '../content-overview-editor'
 
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
@@ -698,9 +699,13 @@ export default ({ assetId, switchEditorOpen }) => {
     [AssetFieldNames.clonableWorld]: clonableWorld
   } = result
 
-  if (!title) {
+  if (category === AssetCategories.content) {
     return (
-      <ErrorMessage>Asset does not exist. Maybe it was deleted?</ErrorMessage>
+      <ContentOverviewEditor
+        asset={result}
+        analyticsCategoryName={analyticsCategoryName}
+        switchEditorOpen={switchEditorOpen}
+      />
     )
   }
 

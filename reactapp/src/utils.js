@@ -171,9 +171,21 @@ export function isUrlAFbx(url) {
   return validUrl.includes('.fbx')
 }
 
+export function isUrlAYoutubeVideo(url) {
+  const validUrl = getValidUrl(url)
+  return validUrl.includes('youtu.be') || validUrl.includes('youtube.com')
+}
+
 export function isUrlNotAnImageOrVideo(url) {
   const validUrl = getValidUrl(url)
   return !isUrlAnImage(validUrl) && !isUrlAVideo(validUrl)
+}
+
+export function isUrlATweet(url) {
+  const validUrl = getValidUrl(url)
+  return /^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/.test(
+    validUrl
+  )
 }
 
 export function getFilenameFromUrl(url) {

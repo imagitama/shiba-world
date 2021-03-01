@@ -14,7 +14,13 @@ import { createRef } from '../../utils'
 import { handleError } from '../../error-handling'
 import { paths, formHideDelay } from '../../config'
 
-export default ({ assetId, onDone, skipDelay = false }) => {
+export default ({
+  assetId,
+  onDone,
+  skipDelay = false,
+  preloadImageUrl = null,
+  preloadFile = null
+}) => {
   const userId = useFirebaseUserId()
   const [isSaving, isSuccess, isErrored, save] = useDatabaseSave(
     CollectionNames.Assets,
@@ -68,6 +74,8 @@ export default ({ assetId, onDone, skipDelay = false }) => {
       onUploadedUrl={onUploaded}
       requiredWidth={300}
       requiredHeight={300}
+      preloadFile={preloadFile}
+      preloadImageUrl={preloadImageUrl}
     />
   )
 }
