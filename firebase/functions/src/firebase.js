@@ -398,7 +398,8 @@ module.exports.replaceReferencesWithString = (object) => {
       newObject[key] = val.map((item) => {
         if (isFirebaseReference(item)) {
           return firebaseReferenceToRef(item)
-        } else if (typeof item === 'object') {
+          // always null chuck
+        } else if (item && typeof item === 'object') {
           // eslint-disable-next-line
           if (item.hasOwnProperty('_seconds')) {
             return secondsToDate(item._seconds)
@@ -411,7 +412,8 @@ module.exports.replaceReferencesWithString = (object) => {
       continue
     }
 
-    if (typeof val === 'object') {
+    // always null check
+    if (val && typeof val === 'object') {
       // eslint-disable-next-line
       if (val.hasOwnProperty('_seconds')) {
         newObject[key] = secondsToDate(val._seconds)
