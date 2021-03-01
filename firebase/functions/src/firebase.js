@@ -64,6 +64,7 @@ const AssetMetaFieldNames = {
   endorsementCount: 'endorsementCount',
   lastModifiedAt: 'lastModifiedAt',
   product: 'product',
+  contentAssets: 'contentAssets',
 }
 module.exports.AssetMetaFieldNames = AssetMetaFieldNames
 
@@ -143,6 +144,7 @@ const AssetCategories = {
   world: 'world',
   tool: 'tool',
   alteration: 'alteration',
+  content: 'content',
 }
 module.exports.AssetCategories = AssetCategories
 

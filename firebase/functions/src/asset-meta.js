@@ -388,3 +388,60 @@ module.exports.hydrateAssetWithProductDoc = (productDoc) => {
       }
     )
 }
+
+module.exports.hydrateAssetOnContentChange = async (beforeDoc, afterDoc) => {
+  const linkedAssets = afterDoc.get(AssetFieldNames.children) || []
+
+  console.debug(
+    `content asset is linked to ${linkedAssets.length} older siblings`
+  )
+
+  for (const linkedAssetRef of linkedAssets) {
+    const metaRef = db
+      .collection(CollectionNames.AssetMeta)
+      .doc(linkedAssetRef.id)
+    const metaDoc = await metaRef.get()
+
+    const existingContentAssets =
+      metaDoc.get(AssetMetaFieldNames.contentAssets) || []
+    let newContentAssets = [...existingContentAssets]
+
+    console.debug(
+      `older sibling ${linkedAssetRef.id} has ${existingContentAssets.length} existing content assets`
+    )
+
+    const contentAsset = convertLinkedAssetToItem(afterDoc)
+
+    if (existingContentAssets.find((item) => item.id === afterDoc.id)) {
+      console.debug('we found ourselves so we are updating...')
+
+      // update
+      newContentAssets = newContentAssets.map((item) =>
+        item.id === afterDoc.id ? contentAsset : item
+      )
+    } else {
+      console.debug('we did not find ourselves so we are adding...')
+
+      // add
+      newContentAssets = newContentAssets.concat([contentAsset])
+
+      // TODO: check if was in before but not in after - purge
+    }
+
+    console.debug(
+      `job complete. now there are ${newContentAssets.length} content assets for this older sibling`
+    )
+
+    await metaRef.set(
+      {
+        [AssetMetaFieldNames.contentAssets]: newContentAssets,
+        [AssetMetaFieldNames.lastModifiedAt]: new Date(),
+      },
+      {
+        merge: true,
+      }
+    )
+  }
+
+  console.debug(`updated all older siblings`)
+}

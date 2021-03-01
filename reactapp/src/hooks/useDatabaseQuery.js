@@ -65,7 +65,8 @@ export const AssetMetaFieldNames = {
   discordServer: 'discordServer',
   endorsementCount: 'endorsementCount',
   lastModifiedAt: 'lastModifiedAt',
-  product: 'product'
+  product: 'product',
+  contentAssets: 'contentAssets'
 }
 
 export const UserMetaFieldNames = {
@@ -133,7 +134,8 @@ export const AssetFieldNames = {
   pedestalFallbackImageUrl: 'pedestalFallbackImageUrl',
   sketchfabEmbedUrl: 'sketchfabEmbedUrl',
   slug: 'slug',
-  clonableWorld: 'clonableWorld'
+  clonableWorld: 'clonableWorld',
+  showContentAssets: 'showContentAssets'
 }
 
 export const AssetAmendmentFieldNames = {

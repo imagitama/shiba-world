@@ -548,7 +548,8 @@ export default ({ assetId, switchEditorOpen }) => {
     [AssetMetaFieldNames.speciesNames]: speciesNames,
     [AssetMetaFieldNames.linkedAssets]: linkedAssets,
     [AssetMetaFieldNames.discordServer]: discordServer,
-    [AssetMetaFieldNames.product]: product
+    [AssetMetaFieldNames.product]: product,
+    [AssetMetaFieldNames.contentAssets]: contentAssets
   } = metaResult || {}
 
   const downloadUrls = fileUrls
@@ -825,6 +826,13 @@ export default ({ assetId, switchEditorOpen }) => {
             <>
               <Heading variant="h2">Linked Assets</Heading>
               <ChildrenAssets assetChildren={linkedAssets.map(mapDates)} />
+            </>
+          ) : null}
+
+          {contentAssets && contentAssets.length ? (
+            <>
+              <Heading variant="h2">Content</Heading>
+              <ChildrenAssets assetChildren={contentAssets.map(mapDates)} />
             </>
           ) : null}
 
