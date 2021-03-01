@@ -128,11 +128,21 @@ const Section = ({ children }) => {
   return <div className={classes.section}>{children}</div>
 }
 
+const getYouTubeVideoMetaDataForUrl = async url => {
+  const resp = await fetch(
+    `https://www.youtube.com/oembed?format=json&url=${url}`
+  )
+  if (!resp.ok) {
+    throw new Error(`Response not OK! Status ${resp.status} ${resp.statusText}`)
+  }
+  return resp.json()
+}
+
 // source: https://stackoverflow.com/a/66405602/1215393
-const getVideoIdFromYouTubeUrl = url =>
-  url.match(
-    /(?:https?:\/\/)?(?:www\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\/?\?v=|\/embed\/|\/)([^\s&]+)/
-  )[1]
+// const getVideoIdFromYouTubeUrl = url =>
+//   url.match(
+//     /(?:https?:\/\/)?(?:www\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\/?\?v=|\/embed\/|\/)([^\s&]+)/
+//   )[1]
 
 export default ({
   asset: {
@@ -165,8 +175,8 @@ export default ({
       selectedContentType === ContentTypes.OTHER &&
       isUrlAYoutubeVideo(sourceUrl)
     ) {
-      const videoId = getVideoIdFromYouTubeUrl(sourceUrl)
-      url = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+      const response = await getYouTubeVideoMetaDataForUrl(sourceUrl)
+      url = response.thumbnail_url
     }
 
     if (fileUrls.length && isUrlAnImage(fileUrls[0])) {
