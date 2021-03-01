@@ -18,7 +18,8 @@ import {
   isUrlAYoutubeVideo,
   isUrlATweet,
   getDescriptionForHtmlMeta,
-  getOpenGraphUrlForRouteUrl
+  getOpenGraphUrlForRouteUrl,
+  canApproveAsset
 } from '../../utils'
 import { trackAction } from '../../analytics'
 import * as routes from '../../routes'
@@ -34,6 +35,9 @@ import VideoPlayer from '../video-player'
 import CommentList from '../comment-list'
 import AddCommentForm from '../add-comment-form'
 import ChildrenAssets from '../asset-overview/components/children-assets'
+import ApproveAssetButton from '../approve-asset-button'
+import DeleteAssetButton from '../delete-asset-button'
+import PinAssetButton from '../pin-asset-button'
 import Tweet from '../tweet'
 
 const useStyles = makeStyles({
@@ -117,7 +121,10 @@ export default ({
     [AssetFieldNames.createdBy]: createdBy,
     [AssetFieldNames.ownedBy]: ownedBy,
     [AssetFieldNames.thumbnailUrl]: thumbnailUrl,
-    [AssetFieldNames.author]: authorRef
+    [AssetFieldNames.author]: authorRef,
+    [AssetFieldNames.isDeleted]: isDeleted,
+    [AssetFieldNames.isApproved]: isApproved,
+    [AssetFieldNames.isPinned]: isPinned
   },
   assetMeta: {
     [AssetMetaFieldNames.authorName]: authorName,
@@ -134,6 +141,8 @@ export default ({
   const [isReportMessageOpen, setIsReportMessageOpen] = useState(false)
 
   const isOwnerOrEditor = canEditAsset(user, createdBy, ownedBy)
+
+  const isApprover = canApproveAsset(user)
 
   return (
     <div>
@@ -221,6 +230,46 @@ export default ({
           />
         </Control>
       </div>
+      {isApprover ? (
+        <div className={classes.controls}>
+          <Control>
+            <ApproveAssetButton
+              assetId={assetId}
+              isAlreadyApproved={isApproved}
+            />
+          </Control>
+          <Control>
+            <DeleteAssetButton
+              assetId={assetId}
+              isAlreadyDeleted={isDeleted}
+              onClick={({ newValue }) =>
+                trackAction(
+                  analyticsCategoryName,
+                  newValue === true
+                    ? 'Click delete asset button'
+                    : 'Click undelete asset button',
+                  assetId
+                )
+              }
+            />
+          </Control>
+          <Control>
+            <PinAssetButton
+              assetId={assetId}
+              isAlreadyPinned={isPinned}
+              onClick={({ newValue }) =>
+                trackAction(
+                  analyticsCategoryName,
+                  newValue === true
+                    ? 'Click pin asset button'
+                    : 'Click unpin asset button',
+                  assetId
+                )
+              }
+            />
+          </Control>
+        </div>
+      ) : null}
       {linkedAssets.length ? (
         <>
           <Heading variant="h2">Related Assets</Heading>
