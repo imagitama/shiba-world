@@ -31,7 +31,7 @@ function getKindAsReadable(kind) {
     case 'E':
       return '->'
     case 'A':
-      return 'Array'
+      return 'ArrayChanged'
     default:
       return '???'
   }
@@ -80,11 +80,19 @@ function FieldValue({ val }) {
   return <span>{val}</span>
 }
 
-function MessageForItem({ kind, path, lhs, rhs }) {
+function MessageForItem({ kind, path, lhs, rhs, item }) {
   return (
     <span>
-      {path.join('.')} <FieldValue val={lhs} /> {getKindAsReadable(kind)}{' '}
-      <FieldValue val={rhs} />
+      {path ? path.join('.') : ''} <FieldValue val={lhs} />{' '}
+      {getKindAsReadable(kind)} <FieldValue val={rhs} />
+      {item && (
+        <MessageForItem
+          kind={item.kind}
+          path={item.path}
+          lhs={item.lhs}
+          rhs={item.rhs}
+        />
+      )}
     </span>
   )
 }
@@ -93,9 +101,15 @@ function HistoryData({ data }) {
   if (data.diff) {
     return (
       <ul>
-        {data.diff.map(({ kind, path, lhs, rhs }) => (
+        {data.diff.map(({ kind, path, lhs, rhs, item }) => (
           <li key={`${kind}.${path}`}>
-            <MessageForItem kind={kind} path={path} lhs={lhs} rhs={rhs} />
+            <MessageForItem
+              kind={kind}
+              path={path}
+              lhs={lhs}
+              rhs={rhs}
+              item={item}
+            />
           </li>
         ))}
       </ul>
@@ -126,7 +140,15 @@ function ParentLabel({ parent }) {
     )
   }
 
-  return parent.refPath
+  if (parent.refPath) {
+    return parent.refPath
+  }
+
+  if (parent.id) {
+    return parent.id
+  }
+
+  return '(parent)'
 }
 
 export default ({ assetId = null, limit = 20 }) => {

@@ -4,7 +4,6 @@ const { secondsToDate } = require('./utils')
 admin.initializeApp()
 const db = admin.firestore()
 db.settings({ ignoreUndefinedProperties: true })
-
 module.exports.db = db
 
 const Operators = {
@@ -378,44 +377,54 @@ module.exports.hasAssetJustBeenApproved = (beforeDocData, afterDocData) => {
   )
 }
 
+const isFirebaseReference = (thing) =>
+  thing instanceof admin.firestore.DocumentReference
+const firebaseReferenceToRef = (reference) => ({
+  ref: {
+    id: reference.id,
+    collection: reference.parent.id,
+  },
+})
+
 module.exports.replaceReferencesWithString = (object) => {
   const newObject = {}
 
   for (const key in object) {
-    const val = object[key]
+    let val = object[key]
 
-    // null, undefined, false, true, strings
-    if (!val || typeof val === 'string' || val === true) {
-      newObject[key] = val
-      // array
-    } else if (Array.isArray(val)) {
-      newObject[key] = val.map(module.exports.replaceReferencesWithString)
+    if (Array.isArray(val)) {
+      newObject[key] = val.map((item) => {
+        if (isFirebaseReference(item)) {
+          return firebaseReferenceToRef(item)
+        } else if (typeof item === 'object') {
+          // eslint-disable-next-line
+          if (item.hasOwnProperty('_seconds')) {
+            return secondsToDate(item._seconds)
+          } else {
+            return module.exports.replaceReferencesWithString(item)
+          }
+        }
+        return item
+      })
+      continue
+    }
 
-      // complex thing
-    } else if (typeof val === 'object') {
-      // if firebase reference
-      if (val.id) {
-        newObject[key] = module.exports.replaceReferencesWithString(val)
+    if (typeof val === 'object') {
+      // eslint-disable-next-line
+      if (val.hasOwnProperty('_seconds')) {
+        newObject[key] = secondsToDate(val._seconds)
+        continue
+      }
 
-        // if special firebase date object
-        /* eslint-disable-next-line */
-      } else if (val.hasOwnProperty('_seconds')) {
-        const newVal = secondsToDate(val._seconds)
-        newObject[key] = newVal.toString()
-
-        // if date
-      } else if (val instanceof Date) {
-        newObject[key] = val
-
-        // if plain object
-      } else if (val.constructor === Object) {
-        newObject[key] = module.exports.replaceReferencesWithString(val)
-
-        // anything else
-      } else {
-        // dont care
+      // if a Firebase reference
+      if (isFirebaseReference(val)) {
+        // trust the frontend can parse this
+        newObject[key] = firebaseReferenceToRef(val)
+        continue
       }
     }
+
+    newObject[key] = val
   }
 
   return newObject
