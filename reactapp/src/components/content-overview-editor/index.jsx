@@ -272,8 +272,8 @@ export default ({
           Title
         </Heading>
         <p>
-          Enter a title below or leave blank (remember to click the tick to
-          save).
+          Type out the title of the image/video/etc. At some point we will
+          automatically fetch this for you (work in progress).
         </p>
         <AssetTitleEditor assetId={id} title={title} showSimpleInput />
       </Section>
@@ -290,8 +290,8 @@ export default ({
           Related Assets
         </Heading>
         <p>
-          Link existing assets to your content and (eventually) your content
-          will be shown on the asset page!
+          Link your content to an asset and it will be shown when people look at
+          it.
         </p>
         <LinkedAssetsEditor
           assetId={assetId}
