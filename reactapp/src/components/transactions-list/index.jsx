@@ -16,7 +16,11 @@ import {
   UserFieldNames
 } from '../../hooks/useDatabaseQuery'
 
-function TransactionItem({ transaction, forProduct = false }) {
+function TransactionItem({
+  transaction,
+  forProduct = false,
+  isSimple = false
+}) {
   const [asset, setAsset] = useState(null)
 
   useEffect(() => {
@@ -61,32 +65,26 @@ function TransactionItem({ transaction, forProduct = false }) {
           </Link>
         </TableCell>
       )}
-      {forProduct && (
-        <TableCell>
-          <Link
-            to={routes.viewUserWithVar.replace(
-              ':userId',
-              transaction[TransactionFieldNames.customer].id
-            )}>
-            {
-              transaction[TransactionFieldNames.customer][
-                UserFieldNames.username
-              ]
-            }
-          </Link>
-        </TableCell>
-      )}
+      <TableCell>
+        <Link
+          to={routes.viewUserWithVar.replace(
+            ':userId',
+            transaction[TransactionFieldNames.customer].id
+          )}>
+          {transaction[TransactionFieldNames.customer][UserFieldNames.username]}
+        </Link>
+      </TableCell>
       <TableCell>
         <Price price={transaction.priceUsd} />
       </TableCell>
       <TableCell>
-        <Status status={transaction.status} simple={forProduct} />
+        <Status status={transaction.status} simple={forProduct || isSimple} />
       </TableCell>
     </TableRow>
   )
 }
 
-export default ({ transactions, forProduct = false }) => {
+export default ({ transactions, forProduct = false, isSimple = false }) => {
   return (
     <Table>
       <TableHead>
@@ -94,7 +92,7 @@ export default ({ transactions, forProduct = false }) => {
           <TableCell>Date</TableCell>
           {forProduct !== true && <TableCell />}
           {forProduct !== true && <TableCell>Product</TableCell>}
-          {forProduct === true && <TableCell>Customer</TableCell>}
+          <TableCell>Customer</TableCell>
           <TableCell>Price (USD)</TableCell>
           <TableCell>Status</TableCell>
         </TableRow>
@@ -105,6 +103,7 @@ export default ({ transactions, forProduct = false }) => {
             key={transaction.id}
             transaction={transaction}
             forProduct={forProduct}
+            isSimple={isSimple}
           />
         ))}
       </TableBody>

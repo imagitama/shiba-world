@@ -17,6 +17,9 @@ const useStyles = makeStyles(() => ({
   icon: {
     marginRight: '1rem',
     display: 'flex'
+  },
+  middleAlign: {
+    textAlign: 'center'
   }
 }))
 
@@ -59,19 +62,22 @@ export default ({
   ...restOfProps
 }) => {
   const classes = useStyles()
+  const textClasses = `${classes.text} ${
+    type === types.WARNING || type === types.SUCCESS ? classes.middleAlign : ''
+  }`
 
   if (style === styles.BG) {
     return (
       <div className={classes.root}>
         <Icon type={type} />
-        <span className={classes.text}>{children}</span>
+        <span className={textClasses}>{children}</span>
       </div>
     )
   } else {
     return (
       <Paper className={classes.root} {...restOfProps}>
         <Icon type={type} />
-        <span className={classes.text}>{children}</span>
+        <span className={textClasses}>{children}</span>
       </Paper>
     )
   }

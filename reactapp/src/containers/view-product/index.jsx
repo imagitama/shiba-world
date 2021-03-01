@@ -17,6 +17,7 @@ import useUserRecord from '../../hooks/useUserRecord'
 
 import LoadingIndicator from '../../components/loading-indicator'
 import ErrorMessage from '../../components/error-message'
+import NoResultsMessage from '../../components/no-results-message'
 import AssetResultsItem from '../../components/asset-results-item'
 import Heading from '../../components/heading'
 import Button from '../../components/button'
@@ -78,6 +79,10 @@ function TransactionsForProduct({ productId }) {
 
   if (isError) {
     return <ErrorMessage>Failed to load transactions</ErrorMessage>
+  }
+
+  if (!results.length) {
+    return <NoResultsMessage />
   }
 
   return <TransactionsList transactions={results} forProduct />

@@ -49,5 +49,5 @@ export default () => {
     return <NoResultsMessage />
   }
 
-  return <TransactionsList transactions={results} />
+  return <TransactionsList transactions={results} isSimple />
 }

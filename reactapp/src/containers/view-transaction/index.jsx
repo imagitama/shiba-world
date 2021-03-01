@@ -10,8 +10,10 @@ import { Helmet } from 'react-helmet'
 import useDatabaseQuery, {
   CollectionNames,
   options,
-  TransactionFieldNames
+  TransactionFieldNames,
+  UserFieldNames
 } from '../../hooks/useDatabaseQuery'
+import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 // import useUserRecord from '../../hooks/useUserRecord'
 
 import LoadingIndicator from '../../components/loading-indicator'
@@ -115,6 +117,7 @@ export default ({
 }) => {
   // const [, , user] = useUserRecord()
   // const hasPermission = canViewTransaction(user)
+  const userId = useFirebaseUserId()
 
   const [isLoading, isError, transaction] = useDatabaseQuery(
     CollectionNames.Transactions,
@@ -196,7 +199,8 @@ export default ({
     product,
     status,
     braintreeTransactionId,
-    braintreeTransactionData
+    braintreeTransactionData,
+    [TransactionFieldNames.customer]: customer
   } = transaction
 
   if (!braintreeTransactionId) {
@@ -204,6 +208,8 @@ export default ({
       <LoadingIndicator message="Waiting for transaction to be processed..." />
     )
   }
+
+  const isCustomer = userId === customer.id
 
   return (
     <div>
@@ -256,6 +262,17 @@ export default ({
               <Price price={braintreeTransactionData.amount} />
             </TableCell>
           </TableRow>
+          {!isCustomer && (
+            <TableRow>
+              <TableCell>Customer</TableCell>
+              <TableCell>
+                <Link
+                  to={routes.viewUserWithVar.replace(':userId', customer.id)}>
+                  {customer[UserFieldNames.username]}
+                </Link>
+              </TableCell>
+            </TableRow>
+          )}
           {braintreeTransactionData.creditCard &&
             braintreeTransactionData.creditCard.last4 && (
               <TableRow>
