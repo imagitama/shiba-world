@@ -221,6 +221,20 @@ export default ({
       </Section>
       <Section>
         <Heading variant="h2" className={classes.heading}>
+          {selectedContentType === ContentTypes.IMAGE ? 'Source' : 'URL'}
+        </Heading>
+        <AssetSourceEditor
+          assetId={id}
+          sourceUrl={sourceUrl}
+          hint={
+            selectedContentType === ContentTypes.IMAGE
+              ? 'Where did you find the image or video? Link to the tweet or blog post or whatever.'
+              : 'The URL of the content. YouTube videos and tweets will be embedded.'
+          }
+        />
+      </Section>
+      <Section>
+        <Heading variant="h2" className={classes.heading}>
           Species
         </Heading>
         <ChangeSpeciesEditor assetId={id} />
@@ -263,20 +277,6 @@ export default ({
         </p>
         <AssetTitleEditor assetId={id} title={title} showSimpleInput />
       </Section>
-      <Section>
-        <Heading variant="h2" className={classes.heading}>
-          {selectedContentType === ContentTypes.IMAGE ? 'Source' : 'URL'}
-        </Heading>
-        <AssetSourceEditor
-          assetId={id}
-          sourceUrl={sourceUrl}
-          hint={
-            selectedContentType === ContentTypes.IMAGE
-              ? 'Where did you find the image or video? Link to the tweet or blog post or whatever.'
-              : 'The URL of the content. YouTube videos and tweets will be embedded.'
-          }
-        />
-      </Section>
       {selectedContentType === ContentTypes.IMAGE && (
         <Section>
           <Heading variant="h2" className={classes.heading}>
@@ -299,12 +299,13 @@ export default ({
           linkedAssets={linkedAssets}
         />
       </Section>
-      {onDone ||
-        (switchEditorOpen && (
-          <PageControls>
-            <Button onClick={onDone || switchEditorOpen}>Done</Button>
-          </PageControls>
-        ))}
+      {(onDone || switchEditorOpen) && (
+        <PageControls>
+          <Button onClick={onDone || switchEditorOpen} size="large">
+            Finish Editing
+          </Button>
+        </PageControls>
+      )}
     </>
   )
 }

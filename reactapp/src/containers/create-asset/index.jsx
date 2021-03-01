@@ -90,6 +90,8 @@ export default () => {
       })
 
       setNewDocumentId(docId)
+
+      return docId
     } catch (err) {
       console.error('Failed to create asset', newFields, err)
       handleError(err)
@@ -113,21 +115,43 @@ export default () => {
   if (!categoryValue) {
     return (
       <CategorySelector
-        onSelect={newCategory => {
-          setCategoryValue(newCategory)
-          scrollToTop()
-
+        onSelect={async newCategory => {
           if (newCategory === AssetCategories.content) {
-            setHasDuplicateCheckBeenPerformed(true)
-            onDone({
+            const docId = await onDone({
+              [AssetFieldNames.category]: AssetCategories.content,
               [AssetFieldNames.isPrivate]: false // for content we upload the content immediately so get it out the door quickly
             })
+            push(routes.editAssetWithVar.replace(':assetId', docId))
+          } else {
+            setCategoryValue(newCategory)
+            scrollToTop()
           }
         }}
         selectedCategory={categoryValue}
         title={titleValue}
       />
     )
+  }
+
+  // navigate away
+  if (categoryValue === AssetCategories.content) {
+    return <LoadingIndicator />
+    // if (!newDocumentId) {
+    //   return <LoadingIndicator />
+    // }
+
+    // return (
+    //   <>
+    //     <ContentOverviewEditor
+    //       asset={{
+    //         id: newDocumentId
+    //       }}
+    //       onDone={() =>
+
+    //       }
+    //     />
+    //   </>
+    // )
   }
 
   if (!hasDuplicateCheckBeenPerformed) {
@@ -181,21 +205,6 @@ export default () => {
   }
 
   if (newDocumentId) {
-    if (categoryValue === AssetCategories.content) {
-      return (
-        <>
-          <ContentOverviewEditor
-            asset={{
-              id: newDocumentId
-            }}
-            onDone={() =>
-              push(routes.viewAssetWithVar.replace(':assetId', newDocumentId))
-            }
-          />
-        </>
-      )
-    }
-
     return (
       <>
         <Heading variant="h1">Upload "{titleValue}"</Heading>
