@@ -47,6 +47,7 @@ export function getLabelForMenuItem(Label) {
 export default [
   ...Object.entries(categoriesMeta)
     .filter(([name]) => name !== AssetCategories.article)
+    .filter(([name]) => name !== AssetCategories.content)
     .map(([name, meta]) => ({
       id: `category-${name}`,
       label: meta.name,
