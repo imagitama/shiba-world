@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import EditIcon from '@material-ui/icons/Edit'
-import YouTubePlayer from 'react-player/youtube'
 import LazyLoad from 'react-lazyload'
 import { Helmet } from 'react-helmet'
 
@@ -13,10 +12,6 @@ import {
 import useUserRecord from '../../hooks/useUserRecord'
 import {
   canEditAsset,
-  isUrlAnImage,
-  isUrlAVideo,
-  isUrlAYoutubeVideo,
-  isUrlATweet,
   getDescriptionForHtmlMeta,
   getOpenGraphUrlForRouteUrl,
   canApproveAsset
@@ -31,14 +26,14 @@ import ReportButton from '../report-button'
 import EndorseAssetButton from '../endorse-asset-button'
 import ReportMessage from '../asset-overview/components/report-message'
 import VisitSourceButton from '../visit-source-button'
-import VideoPlayer from '../video-player'
 import CommentList from '../comment-list'
 import AddCommentForm from '../add-comment-form'
 import ChildrenAssets from '../asset-overview/components/children-assets'
 import ApproveAssetButton from '../approve-asset-button'
 import DeleteAssetButton from '../delete-asset-button'
 import PinAssetButton from '../pin-asset-button'
-import Tweet from '../tweet'
+import AssetThumbnail from '../asset-thumbnail'
+import AssetContentOutput from '../asset-content-output'
 
 const useStyles = makeStyles({
   contentWrapper: {
@@ -58,57 +53,23 @@ const useStyles = makeStyles({
     padding: '0.25rem'
   },
   meta: {
-    textAlign: 'center'
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  thumbnail: {
+    width: '100px',
+    height: '100px',
+    marginRight: '1rem'
+  },
+  title: {
+    margin: 0
   }
 })
-
-const getImageUrlFromUrls = fileUrls => fileUrls.find(url => isUrlAnImage(url))
-
-const getVideoUrlFromUrls = fileUrls => fileUrls.find(url => isUrlAVideo(url))
 
 const Control = ({ children }) => {
   const classes = useStyles()
   return <div className={classes.control}>{children}</div>
-}
-
-const ContentOutput = ({
-  assetId,
-  fileUrls,
-  sourceUrl,
-  analyticsCategoryName
-}) => {
-  const attachedImageUrl = getImageUrlFromUrls(fileUrls)
-
-  if (attachedImageUrl) {
-    return <img src={attachedImageUrl} alt="Content" />
-  }
-
-  const attachedVideoUrl = getVideoUrlFromUrls(fileUrls)
-
-  if (attachedVideoUrl) {
-    return <VideoPlayer url={attachedVideoUrl} />
-  }
-
-  if (isUrlAYoutubeVideo(sourceUrl)) {
-    return (
-      <YouTubePlayer
-        url={sourceUrl}
-        onPlay={() =>
-          trackAction(
-            analyticsCategoryName,
-            'Click play youtube video for asset',
-            assetId
-          )
-        }
-      />
-    )
-  }
-
-  if (isUrlATweet(sourceUrl)) {
-    return <Tweet url={sourceUrl} />
-  }
-
-  return 'No image/video or URL provided'
 }
 
 export default ({
@@ -172,11 +133,24 @@ export default ({
       </Helmet>
       {isReportMessageOpen && <ReportMessage assetId={id} />}
       <div className={classes.meta}>
-        {title && <Heading variant="h1">{title}</Heading>}
-        {authorName && <Heading variant="h2">By {authorName}</Heading>}
+        <div>
+          <AssetThumbnail url={thumbnailUrl} className={classes.thumbnail} />
+        </div>
+        <div>
+          {title && (
+            <Heading variant="h1" className={classes.title}>
+              {title}
+            </Heading>
+          )}
+          {/* {authorName && (
+            <Heading variant="h2" className={classes.title}>
+              By {authorName}
+            </Heading>
+          )} */}
+        </div>
       </div>
       <div className={classes.contentWrapper}>
-        <ContentOutput
+        <AssetContentOutput
           assetId={id}
           fileUrls={fileUrls}
           sourceUrl={sourceUrl}

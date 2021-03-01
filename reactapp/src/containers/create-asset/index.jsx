@@ -28,7 +28,6 @@ import { createRef } from '../../utils'
 import { trackAction } from '../../analytics'
 import defaultThumbnailUrl from '../../assets/images/default-thumbnail.webp'
 import useCategoryMeta from '../../hooks/useCategoryMeta'
-import ContentOverviewEditor from '../../components/content-overview-editor'
 
 export default () => {
   const userId = useFirebaseUserId()

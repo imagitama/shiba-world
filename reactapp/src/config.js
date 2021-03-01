@@ -48,3 +48,9 @@ export const searchFilters = [
     label: 'Tags'
   }
 ]
+
+export const ContentTypes = {
+  IMAGE: 'IMAGE',
+  YOUTUBE_VIDEO: 'YOUTUBE_VIDEO',
+  TWEET: 'TWEET'
+}

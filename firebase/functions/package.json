@@ -18,7 +18,8 @@
     "load-patreon-config": "firebase functions:config:set patreon=\"$(cat .patreonconfig.json)\"",
     "load-braintree-config": "firebase functions:config:set braintree=\"$(cat .braintreeconfig.json)\"",
     "load-global-config": "firebase functions:config:set global=\"$(cat .globalconfig.json)\"",
-    "load-config": "npm run load-braintree-config && npm run load-algolia-config && npm run load-twitter-config && npm run load-discord-config && npm run load-patreon-config && npm run load-global-config"
+    "load-googleapi-config": "firebase functions:config:set googleapi=\"$(cat .googleapiconfig.json)\"",
+    "load-config": "npm run load-googleapi-config && npm run load-braintree-config && npm run load-algolia-config && npm run load-twitter-config && npm run load-discord-config && npm run load-patreon-config && npm run load-global-config"
   },
   "engines": {
     "node": "10"

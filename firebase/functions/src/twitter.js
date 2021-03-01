@@ -1,6 +1,7 @@
 const Twit = require('twit')
 const config = require('./config')
 const { db, CollectionNames } = require('./firebase')
+const { downloadImageUrl } = require('./apis')
 
 const IS_TWITTER_ENABLED = config.global.isTwitterEnabled !== 'false'
 const TWITTER_CONSUMER_KEY = config.twitter.consumer_key
@@ -49,4 +50,37 @@ module.exports.updateTweetRecordInDatabase = (recordId, tweetId) => {
     tweetId,
     tweetedAt: new Date(),
   })
+}
+
+const isValidImage = (url) => url.includes('jpg') || url.includes('png')
+
+module.exports.getTweetById = async (id, downloadAttachedImage = false) => {
+  const { data: tweet } = await getTwitterClient().get(`statuses/show/${id}`, {
+    include_entities: true,
+  })
+  let imageUrl
+
+  // https://developer.twitter.com/en/docs/twitter-api/v1/tweets/post-and-engage/api-reference/get-statuses-show-id
+  if (
+    downloadAttachedImage &&
+    tweet.entities &&
+    tweet.entities.media &&
+    tweet.entities.media.length
+  ) {
+    const firstMedia = tweet.entities.media[0]
+    const firstMediaUrl = firstMedia.media_url_https
+
+    if (firstMediaUrl && isValidImage(firstMediaUrl)) {
+      imageUrl = await downloadImageUrl(firstMediaUrl, 'tweet-images')
+    }
+  }
+
+  if (imageUrl) {
+    return {
+      ...tweet,
+      imageUrl,
+    }
+  }
+
+  return tweet
 }

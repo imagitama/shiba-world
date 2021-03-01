@@ -1,321 +1,495 @@
-import React, { useState, Fragment } from 'react'
+import React, { useState, useEffect } from 'react'
+import shortid from 'shortid'
 import { makeStyles } from '@material-ui/core/styles'
+import SaveIcon from '@material-ui/icons/Save'
 
-import { AssetFieldNames, CollectionNames } from '../../hooks/useDatabaseQuery'
-import {
-  isUrlAnImage,
-  isUrlAVideo,
-  createRef,
-  isUrlAYoutubeVideo,
-  isUrlATweet
-} from '../../utils'
+import { callFunction } from '../../firebase'
 import { handleError } from '../../error-handling'
+import {
+  ContentTypes,
+  paths,
+  THUMBNAIL_WIDTH,
+  THUMBNAIL_HEIGHT
+} from '../../config'
 import { getImageUrlAsFile } from '../../utils/files'
+import { trackAction } from '../../analytics'
+import {
+  scrollToTop,
+  isUrlAYoutubeVideo,
+  isUrlATweet,
+  createRef
+} from '../../utils'
 
-import Heading from '../heading'
-import AssetAttachmentUploader from '../asset-attachment-uploader'
-import AssetTitleEditor from '../asset-title-editor'
-import PageControls from '../page-controls'
-import Button from '../button'
-import AssetSourceEditor from '../asset-source-editor'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
+import { AssetFieldNames, CollectionNames } from '../../hooks/useDatabaseQuery'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
-import ChangeSpeciesEditor from '../change-species-editor'
-import ThumbnailUploader from '../thumbnail-uploader'
+
 import AssetThumbnail from '../asset-thumbnail'
-import LinkedAssetsEditor from '../linked-assets-editor'
-import ChildrenAssets from '../asset-overview/components/children-assets'
-import defaultTwitterThumbnailUrl from '../../assets/images/default-twitter-thumbnail.webp'
+import TextInput from '../text-input'
+import Button from '../button'
+import LoadingIndicator from '../loading-indicator'
+import ErrorMessage from '../error-message'
+import OptimizedImageUploader from '../optimized-image-uploader'
+import Heading from '../heading'
+import FormControls from '../form-controls'
+import AssetAttachmentUploader from '../asset-attachment-uploader'
+import AssetContentOutput from '../asset-content-output'
 
-const ContentTypes = {
-  IMAGE: 'IMAGE',
-  OTHER: 'OTHER'
-}
+import ContentTypeSelector from './components/content-type-selector'
 
-const contentTypeLabels = {
-  IMAGE: 'Image/Video',
-  OTHER: 'URL'
-}
+// source: https://stackoverflow.com/a/66405602/1215393
+const getVideoIdFromYouTubeUrl = url =>
+  url.match(
+    /(?:https?:\/\/)?(?:www\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\/?\?v=|\/embed\/|\/)([^\s&]+)/
+  )[1]
 
 const useStyles = makeStyles({
-  section: {
-    padding: '1rem',
-    background: 'rgba(0,0,0,0.1)',
-    marginBottom: '0.5rem'
-  },
-  heading: {
-    margin: '0 0 0.5rem 0'
-  }
+  input: { width: '100%' }
 })
 
-function Attachments({ assetId, selectedContentType, onDone }) {
-  switch (ContentTypes[selectedContentType]) {
-    case ContentTypes.IMAGE:
-      return (
-        <AssetAttachmentUploader
-          assetId={assetId}
-          onDone={onDone}
-          onlyImage
-          limit={1}
-        />
+function YouTubeVideoForm({ onFieldsPopulated, onCancel }) {
+  const [youTubeVideoUrl, setYouTubeVideoUrl] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
+  const classes = useStyles()
+
+  const onClickDone = async () => {
+    try {
+      if (!youTubeVideoUrl) {
+        return
+      }
+
+      setIsLoading(true)
+      setIsError(false)
+
+      const videoId = getVideoIdFromYouTubeUrl(youTubeVideoUrl)
+
+      // https://developers.google.com/youtube/v3/docs/videos#snippet
+      const { data: result } = await callFunction('getYouTubeVideoMeta', {
+        videoId
+      })
+
+      onFieldsPopulated(
+        {
+          [AssetFieldNames.title]: result.title,
+          [AssetFieldNames.description]: result.description,
+          [AssetFieldNames.sourceUrl]: youTubeVideoUrl
+        },
+        result.downloadedThumbnailUrl
       )
-    default:
-      return null
+
+      // setIsLoading(false)
+      // setIsError(false)
+    } catch (err) {
+      console.error(err)
+      handleError(err)
+      setIsLoading(false)
+      setIsError(true)
+    }
   }
+
+  if (isLoading) {
+    return <LoadingIndicator message="Fetching video details..." />
+  }
+
+  if (isError) {
+    return (
+      <ErrorMessage>
+        Failed to fetch the video details.
+        <br />
+        <br />
+        <Button onClick={onClickDone} color="default">
+          Try Again
+        </Button>{' '}
+        <Button
+          onClick={() =>
+            onFieldsPopulated({
+              [AssetFieldNames.sourceUrl]: youTubeVideoUrl
+            })
+          }>
+          Skip
+        </Button>
+      </ErrorMessage>
+    )
+  }
+
+  return (
+    <>
+      <Heading variant="h2">YouTube Video</Heading>
+      <p>Enter the YouTube video URL below:</p>
+      <TextInput
+        className={classes.input}
+        value={youTubeVideoUrl}
+        onChange={e => setYouTubeVideoUrl(e.target.value)}
+      />
+      <FormControls>
+        <Button onClick={onClickDone}>Continue</Button>{' '}
+        <Button onClick={() => onCancel()} color="default">
+          Cancel
+        </Button>
+      </FormControls>
+    </>
+  )
 }
 
-function SelectContentType({ assetId, selectedContentType, onSelected }) {
+const getTweetIdFromUrl = url => url.split('/').pop()
+
+function TweetForm({ onFieldsPopulated, onCancel }) {
+  const [tweetUrl, setTweetUrl] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
+  const classes = useStyles()
+
+  const onClickDone = async () => {
+    try {
+      if (!tweetUrl) {
+        return
+      }
+
+      setIsLoading(true)
+      setIsError(false)
+
+      const tweetId = getTweetIdFromUrl(tweetUrl)
+
+      // https://developer.twitter.com/en/docs/twitter-api/v1/tweets/post-and-engage/api-reference/get-statuses-show-id
+      const { data: result } = await callFunction('getTweetMeta', {
+        tweetId
+      })
+
+      onFieldsPopulated(
+        {
+          [AssetFieldNames.title]: `Tweet by @${result.user.screen_name}`,
+          [AssetFieldNames.description]: result.text,
+          [AssetFieldNames.sourceUrl]: tweetUrl
+        },
+        result.imageUrl
+      )
+
+      // setIsLoading(false)
+      // setIsError(false)
+    } catch (err) {
+      console.error(err)
+      handleError(err)
+      setIsLoading(false)
+      setIsError(true)
+    }
+  }
+
+  if (isLoading) {
+    return <LoadingIndicator message="Fetching tweet details..." />
+  }
+
+  if (isError) {
+    return (
+      <ErrorMessage>
+        Failed to fetch the tweet details.
+        <br />
+        <br />
+        <Button onClick={onClickDone} color="default">
+          Try Again
+        </Button>{' '}
+        <Button
+          onClick={() =>
+            onFieldsPopulated({
+              [AssetFieldNames.sourceUrl]: tweetUrl
+            })
+          }>
+          Skip
+        </Button>
+      </ErrorMessage>
+    )
+  }
+
+  return (
+    <>
+      <Heading variant="h2">Tweet</Heading>
+      <p>Enter the tweet URL below:</p>
+      <TextInput
+        className={classes.input}
+        value={tweetUrl}
+        onChange={e => setTweetUrl(e.target.value)}
+      />
+      <FormControls>
+        <Button onClick={onClickDone}>Continue</Button>{' '}
+        <Button onClick={() => onCancel()} color="default">
+          Cancel
+        </Button>
+      </FormControls>
+    </>
+  )
+}
+
+function ImageForm({ assetId, onDone, onCancel }) {
+  return (
+    <>
+      <Heading variant="h2">Image</Heading>
+      <p>Upload an image below:</p>
+      <AssetAttachmentUploader
+        assetId={assetId}
+        onDone={onDone}
+        onlyImage
+        limit={1}
+      />
+      <FormControls>
+        <Button onClick={() => onCancel()} color="default">
+          Cancel
+        </Button>
+      </FormControls>
+    </>
+  )
+}
+
+function StandardForm({
+  assetId,
+  fields,
+  preloadFile,
+  preloadImageUrl,
+  onDone,
+  onRestart
+}) {
   const userId = useFirebaseUserId()
-  const [isSaving, , isErrorSaving, save] = useDatabaseSave(
+  const [assetFields, setAssetFields] = useState(fields)
+  const [isSaving, , isError, save] = useDatabaseSave(
     CollectionNames.Assets,
     assetId
   )
+  const classes = useStyles()
+  const [isInvalid, setIsInvalid] = useState(false)
 
-  if (isSaving) {
-    return 'Saving...'
-  }
-
-  if (isErrorSaving) {
-    return 'Failed to change content type - try again later'
-  }
-
-  const onClickContentType = async newContentType => {
-    onSelected(newContentType)
-
-    if (newContentType !== ContentTypes.OTHER) {
-      return
-    }
-
+  const onDoneClick = async () => {
     try {
+      trackAction('EditAsset', 'Click save button')
+
+      if (!assetFields[AssetFieldNames.thumbnailUrl]) {
+        setIsInvalid(true)
+        return
+      }
+
+      scrollToTop()
+
       await save({
-        [AssetFieldNames.fileUrls]: [],
+        ...assetFields,
         [AssetFieldNames.lastModifiedAt]: new Date(),
         [AssetFieldNames.lastModifiedBy]: createRef(
           CollectionNames.Users,
           userId
         )
       })
+
+      onDone()
     } catch (err) {
-      console.error(err)
+      console.error('Failed to save asset', assetFields, err)
       handleError(err)
     }
   }
 
+  const onFieldChange = (name, val) =>
+    setAssetFields({ ...assetFields, [name]: val })
+
+  if (isSaving) {
+    return <LoadingIndicator message="Saving asset..." />
+  }
+
+  if (isError) {
+    return <ErrorMessage>Failed to save asset</ErrorMessage>
+  }
+
   return (
     <>
-      {Object.keys(ContentTypes).map(contentType => (
-        <Fragment key={contentType}>
-          <Button
-            color={contentType === selectedContentType ? 'primary' : 'default'}
-            onClick={() => onClickContentType(contentType)}>
-            {contentTypeLabels[contentType]}
-          </Button>{' '}
-        </Fragment>
-      ))}
+      <Heading variant="h2">Edit Content</Heading>
+
+      {isInvalid && <ErrorMessage>Please provide a thumbnail</ErrorMessage>}
+
+      <AssetContentOutput
+        assetId={assetId}
+        fileUrls={fields[AssetFieldNames.fileUrls] || []}
+        sourceUrl={fields[AssetFieldNames.sourceUrl]}
+      />
+      <br />
+      <br />
+
+      <Button onClick={onRestart}>
+        Click here to enter a URL or upload an image again
+      </Button>
+      <br />
+      <p>
+        <strong>Title</strong>
+      </p>
+      <TextInput
+        value={assetFields[AssetFieldNames.title]}
+        onChange={e => onFieldChange(AssetFieldNames.title, e.target.value)}
+        className={classes.input}
+      />
+      <p>
+        <strong>Description</strong> (Markdown supported)
+      </p>
+      <TextInput
+        multiline
+        rows={5}
+        value={assetFields[AssetFieldNames.description]}
+        onChange={e =>
+          onFieldChange(AssetFieldNames.description, e.target.value)
+        }
+        className={classes.input}
+      />
+      <p>
+        <strong>Thumbnail</strong>
+      </p>
+      {assetFields[AssetFieldNames.thumbnailUrl] && (
+        <AssetThumbnail url={assetFields[AssetFieldNames.thumbnailUrl]} />
+      )}
+      <OptimizedImageUploader
+        directoryPath={paths.assetThumbnailDir}
+        filePrefix={shortid.generate()}
+        onUploadedUrl={url => onFieldChange(AssetFieldNames.thumbnailUrl, url)}
+        requiredWidth={THUMBNAIL_WIDTH}
+        requiredHeight={THUMBNAIL_HEIGHT}
+        preloadFile={preloadFile}
+        preloadImageUrl={preloadImageUrl}
+      />
+      <p>
+        <strong>Source URL</strong>
+      </p>
+      <TextInput
+        value={assetFields[AssetFieldNames.sourceUrl]}
+        onChange={e => onFieldChange(AssetFieldNames.sourceUrl, e.target.value)}
+        className={classes.input}
+      />
+      <FormControls>
+        <Button onClick={() => onDoneClick()} icon={<SaveIcon />}>
+          Save
+        </Button>
+      </FormControls>
     </>
   )
 }
 
-const getSelectedContentTypeFromFileUrls = fileUrls => {
-  if (fileUrls.find(url => isUrlAnImage(url) || isUrlAVideo(url))) {
+const getSelectedContentTypeFromAsset = (fileUrls, sourceUrl) => {
+  if (fileUrls.length === 1) {
     return ContentTypes.IMAGE
   }
-  return ContentTypes.OTHER
-}
 
-const Section = ({ children }) => {
-  const classes = useStyles()
-  return <div className={classes.section}>{children}</div>
-}
-
-const getYouTubeVideoMetaDataForUrl = async url => {
-  const resp = await fetch(
-    `https://www.youtube.com/oembed?format=json&url=${url}`
-  )
-  if (!resp.ok) {
-    throw new Error(`Response not OK! Status ${resp.status} ${resp.statusText}`)
+  if (isUrlAYoutubeVideo(sourceUrl)) {
+    return ContentTypes.YOUTUBE_VIDEO
   }
-  return resp.json()
-}
 
-// source: https://stackoverflow.com/a/66405602/1215393
-// const getVideoIdFromYouTubeUrl = url =>
-//   url.match(
-//     /(?:https?:\/\/)?(?:www\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\/?\?v=|\/embed\/|\/)([^\s&]+)/
-//   )[1]
+  if (isUrlATweet(sourceUrl)) {
+    return ContentTypes.TWEET
+  }
+
+  return null
+}
 
 export default ({
   asset: {
     id,
     [AssetFieldNames.title]: title,
+    [AssetFieldNames.description]: description,
     [AssetFieldNames.fileUrls]: fileUrls = [],
     [AssetFieldNames.sourceUrl]: sourceUrl,
     [AssetFieldNames.thumbnailUrl]: thumbnailUrl,
     [AssetFieldNames.children]: linkedAssets = []
   },
-  switchEditorOpen,
-  analyticsCategoryName,
-  onDone
+  switchEditorOpen
 }) => {
   const assetId = id
-  const [selectedContentType, setSelectedContentType] = useState(
-    getSelectedContentTypeFromFileUrls(fileUrls)
-  )
-  const [isThumbnailUploaderVisible, setIsThumbnailUploaderVisible] = useState(
-    false
-  )
-  const [thumbnailPreloadedUrl, setThumbnailPreloadedUrl] = useState(null)
-  const [thumbnailPreloadFile, setThumbnailPreloadFile] = useState(null)
-  const classes = useStyles()
+  const [selectedContentType, setSelectedContentType] = useState(null)
+  const [newFields, setNewFields] = useState({
+    [AssetFieldNames.title]: title,
+    [AssetFieldNames.description]: description,
+    [AssetFieldNames.fileUrls]: fileUrls,
+    [AssetFieldNames.sourceUrl]: sourceUrl,
+    [AssetFieldNames.thumbnailUrl]: thumbnailUrl,
+    [AssetFieldNames.children]: linkedAssets
+  })
+  const [preloadFile, setPreloadFile] = useState(null)
+  const [preloadImageUrl, setPreloadImageUrl] = useState(null)
+  const [showStandardForm, setShowStandardForm] = useState(null)
 
-  const onClickGenerateThumbnail = async () => {
-    let url
+  useEffect(() => {
+    // when we save attached files we need it to propogate down to our components
+    setNewFields({
+      ...newFields,
+      [AssetFieldNames.fileUrls]: fileUrls
+    })
+  }, [fileUrls.join(',')])
 
-    if (
-      selectedContentType === ContentTypes.OTHER &&
-      isUrlAYoutubeVideo(sourceUrl)
-    ) {
-      const response = await getYouTubeVideoMetaDataForUrl(sourceUrl)
-      url = response.thumbnail_url
-    }
-
-    if (fileUrls.length && isUrlAnImage(fileUrls[0])) {
-      url = fileUrls[0]
-    }
-
-    if (isUrlATweet(sourceUrl)) {
-      url = defaultTwitterThumbnailUrl
-    }
-
-    if (!url) {
-      throw new Error('Cannot generate a thumbnail without a valid url!')
-    }
-
-    const file = await getImageUrlAsFile(url, 'my-thumbnail')
-    setThumbnailPreloadFile(file)
-    setThumbnailPreloadedUrl(url)
+  if (
+    showStandardForm === true ||
+    (getSelectedContentTypeFromAsset(
+      newFields[AssetFieldNames.fileUrls] || [],
+      newFields[AssetFieldNames.sourceUrl]
+    ) &&
+      selectedContentType !== ContentTypes.NONE)
+  ) {
+    return (
+      <StandardForm
+        assetId={assetId}
+        fields={newFields}
+        preloadFile={preloadFile}
+        preloadImageUrl={preloadImageUrl}
+        onDone={() => switchEditorOpen()}
+        onRestart={() => {
+          setNewFields({})
+          setSelectedContentType(null)
+          setShowStandardForm(null)
+        }}
+      />
+    )
   }
 
-  const getCanGenerateThumbnail = () => {
-    if (
-      selectedContentType === ContentTypes.OTHER &&
-      isUrlAYoutubeVideo(sourceUrl)
-    ) {
-      return true
-    }
-    if (fileUrls.length && isUrlAnImage(fileUrls[0])) {
-      return true
-    }
-    if (isUrlATweet(sourceUrl)) {
-      return true
-    }
-    return false
+  if (!selectedContentType) {
+    return (
+      <>
+        <Heading variant="h2">Upload Content</Heading>
+        <ContentTypeSelector onSelect={setSelectedContentType} />
+      </>
+    )
   }
 
-  return (
-    <>
-      <Heading variant="h1">Edit Content</Heading>
-      <Section>
-        <Heading variant="h2" className={classes.heading}>
-          Change Type
-        </Heading>
-        <p>
-          Warning: By changing the type you will need to re-upload any
-          attachments.
-        </p>
-        <SelectContentType
-          assetId={id}
-          selectedContentType={selectedContentType}
-          onSelected={setSelectedContentType}
-        />
-      </Section>
-      <Section>
-        <Heading variant="h2" className={classes.heading}>
-          {selectedContentType === ContentTypes.IMAGE ? 'Source' : 'URL'}
-        </Heading>
-        <AssetSourceEditor
-          assetId={id}
-          sourceUrl={sourceUrl}
-          hint={
-            selectedContentType === ContentTypes.IMAGE
-              ? 'Where did you find the image or video? Link to the tweet or blog post or whatever.'
-              : 'The URL of the content. YouTube videos and tweets will be embedded.'
+  if (selectedContentType === ContentTypes.YOUTUBE_VIDEO) {
+    return (
+      <YouTubeVideoForm
+        onFieldsPopulated={async (fields, imageUrl) => {
+          if (imageUrl) {
+            const file = await getImageUrlAsFile(imageUrl)
+            setPreloadFile(file)
           }
-        />
-      </Section>
-      <Section>
-        <Heading variant="h2" className={classes.heading}>
-          Species
-        </Heading>
-        <ChangeSpeciesEditor assetId={id} />
-      </Section>
-      <Section>
-        <Heading variant="h2" className={classes.heading}>
-          Thumbnail
-        </Heading>
-        <AssetThumbnail url={thumbnailUrl} />
-        {getCanGenerateThumbnail() && (
-          <Button onClick={onClickGenerateThumbnail}>Generate Thumbnail</Button>
-        )}{' '}
-        <Button
-          onClick={() => {
-            setIsThumbnailUploaderVisible(true)
-            setThumbnailPreloadedUrl(null)
-          }}
-          color="default">
-          Upload Manually
-        </Button>
-        {(isThumbnailUploaderVisible || thumbnailPreloadedUrl) && (
-          <ThumbnailUploader
-            assetId={id}
-            onDone={() => {
-              setIsThumbnailUploaderVisible(false)
-              setThumbnailPreloadedUrl(null)
-            }}
-            preloadFile={thumbnailPreloadFile}
-            preloadImageUrl={thumbnailPreloadedUrl}
-          />
-        )}
-      </Section>
-      <Section>
-        <Heading variant="h2" className={classes.heading}>
-          Title
-        </Heading>
-        <p>
-          Type out the title of the image/video/etc. At some point we will
-          automatically fetch this for you (work in progress).
-        </p>
-        <AssetTitleEditor assetId={id} title={title} showSimpleInput />
-      </Section>
-      {selectedContentType === ContentTypes.IMAGE && (
-        <Section>
-          <Heading variant="h2" className={classes.heading}>
-            Attachments
-          </Heading>
-          <Attachments assetId={id} selectedContentType={selectedContentType} />
-        </Section>
-      )}
-      <Section>
-        <Heading variant="h2" className={classes.heading}>
-          Related Assets
-        </Heading>
-        <p>
-          Link your content to an asset and it will be shown when people look at
-          it.
-        </p>
-        <LinkedAssetsEditor
-          assetId={assetId}
-          actionCategory={analyticsCategoryName}
-          linkedAssets={linkedAssets}
-        />
-      </Section>
-      {(onDone || switchEditorOpen) && (
-        <PageControls>
-          <Button onClick={onDone || switchEditorOpen} size="large">
-            Finish Editing
-          </Button>
-        </PageControls>
-      )}
-    </>
-  )
+
+          setPreloadImageUrl(imageUrl)
+          setNewFields(fields)
+        }}
+        onCancel={() => setSelectedContentType(null)}
+      />
+    )
+  }
+
+  if (selectedContentType === ContentTypes.TWEET) {
+    return (
+      <TweetForm
+        onFieldsPopulated={async (fields, imageUrl) => {
+          if (imageUrl) {
+            const file = await getImageUrlAsFile(imageUrl)
+            setPreloadFile(file)
+          }
+
+          setPreloadImageUrl(imageUrl)
+          setNewFields(fields)
+        }}
+        onCancel={() => setSelectedContentType(null)}
+      />
+    )
+  }
+
+  if (selectedContentType === ContentTypes.IMAGE) {
+    return (
+      <ImageForm
+        assetId={assetId}
+        onDone={() => setShowStandardForm(true)}
+        onCancel={() => setSelectedContentType(null)}
+      />
+    )
+  }
+
+  return 'Error'
 }
