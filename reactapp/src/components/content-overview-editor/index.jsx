@@ -34,6 +34,7 @@ import Heading from '../heading'
 import FormControls from '../form-controls'
 import AssetAttachmentUploader from '../asset-attachment-uploader'
 import AssetContentOutput from '../asset-content-output'
+import LinkedAssetsEditor from '../linked-assets-editor'
 
 import ContentTypeSelector from './components/content-type-selector'
 
@@ -131,6 +132,8 @@ function YouTubeVideoForm({ onFieldsPopulated, onCancel }) {
     </>
   )
 }
+
+const analyticsCategoryName = 'EditAsset'
 
 const getTweetIdFromUrl = url => url.split('/').pop()
 
@@ -258,7 +261,7 @@ function StandardForm({
 
   const onDoneClick = async () => {
     try {
-      trackAction('EditAsset', 'Click save button')
+      trackAction(analyticsCategoryName, 'Click save button')
 
       if (!assetFields[AssetFieldNames.thumbnailUrl]) {
         setIsInvalid(true)
@@ -354,6 +357,21 @@ function StandardForm({
         value={assetFields[AssetFieldNames.sourceUrl]}
         onChange={e => onFieldChange(AssetFieldNames.sourceUrl, e.target.value)}
         className={classes.input}
+      />
+      <p>
+        <strong>Attach to asset</strong>
+      </p>
+      <p>
+        Select an asset below and your content will be shown on the asset page
+        (make sure you click the Save button):
+      </p>
+      <LinkedAssetsEditor
+        assetId={assetId}
+        actionCategory={analyticsCategoryName}
+        linkedAssets={assetFields[AssetFieldNames.children]}
+        onSave={newChildren =>
+          onFieldChange(AssetFieldNames.children, newChildren)
+        }
       />
       <FormControls>
         <Button onClick={() => onDoneClick()} icon={<SaveIcon />}>

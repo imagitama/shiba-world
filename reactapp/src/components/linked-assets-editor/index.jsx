@@ -78,6 +78,7 @@ export default ({
   assetId,
   linkedAssets = [],
   actionCategory,
+  onSave = null,
   onDone = null
 }) => {
   const userId = useFirebaseUserId()
@@ -109,8 +110,15 @@ export default ({
     try {
       trackAction(actionCategory, 'Click save linked assets button', assetId)
 
+      const newChildren = convertLinkedAssetsForDoc(newLinkedAssets)
+
+      if (onSave) {
+        onSave(newChildren)
+        return
+      }
+
       await save({
-        [AssetFieldNames.children]: convertLinkedAssetsForDoc(newLinkedAssets),
+        [AssetFieldNames.children]: newChildren,
         lastModifiedAt: new Date(),
         lastModifiedBy: createRef(CollectionNames.Users, userId)
       })
