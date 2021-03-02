@@ -4,6 +4,7 @@ import ThemeProvider from '@material-ui/styles/ThemeProvider'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { Helmet } from 'react-helmet'
 import { makeStyles } from '@material-ui/core/styles'
+import { useMediaQuery } from 'react-responsive'
 
 import * as routes from './routes'
 import { darkTheme } from './themes'
@@ -31,6 +32,8 @@ import Banner from './components/banner'
 import PendingAssetAmendmentsMessage from './components/pending-asset-amendments-message'
 import DraftAssetsMessage from './components/draft-assets-message'
 import Fireworks from './components/fireworks'
+import Searchbar from './components/searchbar'
+import DesktopMenu from './components/desktop-menu'
 
 import useSearchTerm from './hooks/useSearchTerm'
 
@@ -38,7 +41,8 @@ import { scrollToTop } from './utils'
 import { searchIndexNameLabels } from './modules/app'
 import {
   mediaQueryForMobiles,
-  mediaQueryForTabletsOrBelow
+  mediaQueryForTabletsOrBelow,
+  queryForMobiles
 } from './media-queries'
 import { AssetCategories } from './hooks/useDatabaseQuery'
 import SetFavoriteSpeciesMessage from './components/set-favorite-species-message'
@@ -62,6 +66,22 @@ const useStyles = makeStyles({
     [mediaQueryForMobiles]: {
       padding: '0.5rem'
     }
+  },
+  searchbarArea: {
+    width: '50%',
+    position: 'absolute',
+    top: '3%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    transition: 'all 1000ms',
+    zIndex: 100,
+    [mediaQueryForTabletsOrBelow]: {
+      width: '93%',
+      top: '12% !important'
+    }
+  },
+  homepage: {
+    top: '68%'
   }
 })
 
@@ -429,12 +449,32 @@ const MainContent = () => {
 
 export default () => {
   const classes = useStyles()
+  const location = useLocation()
+  const isMobile = useMediaQuery({ query: queryForMobiles })
+  const searchTerm = useSearchTerm()
+
   return (
     <ErrorBoundary>
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
         <Banner />
         <PageHeader />
+        <div
+          className={`${classes.searchbarArea} ${
+            location.pathname === '/' && !searchTerm ? classes.homepage : ''
+          }`}>
+          <div className={classes.searchBar}>
+            <div className={classes.searchBarInner}>
+              <Searchbar />
+            </div>
+          </div>
+
+          {!isMobile && (
+            <div className={classes.desktopMenu}>
+              <DesktopMenu />
+            </div>
+          )}
+        </div>
         <main className="main">
           <div className={classes.mainContainer}>
             {new Date() < new Date('21 Feb 2021') && (

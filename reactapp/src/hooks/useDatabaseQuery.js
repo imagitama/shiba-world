@@ -135,7 +135,7 @@ export const AssetFieldNames = {
   sketchfabEmbedUrl: 'sketchfabEmbedUrl',
   slug: 'slug',
   clonableWorld: 'clonableWorld',
-  showContentAssets: 'showContentAssets'
+  shortDescription: 'shortDescription'
 }
 
 export const AssetAmendmentFieldNames = {

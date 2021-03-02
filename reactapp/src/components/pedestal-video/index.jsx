@@ -5,14 +5,20 @@ const useStyles = makeStyles({
   videoWrapper: {
     position: 'relative'
   },
-  video: {
+  fallbackImage: {
     position: 'relative',
+    zIndex: 100
+  },
+  video: {
+    position: 'absolute',
     zIndex: 100,
-    opacity: 0,
     transition: 'opacity 500ms'
   },
   loaded: {
     opacity: 1
+  },
+  fallbackImageDone: {
+    opacity: 0
   },
   shadowWrapper: {
     position: 'absolute',
@@ -48,6 +54,8 @@ export default ({
   const videoRef = useRef()
 
   useEffect(() => {
+    if (!videoRef.current) return
+
     videoRef.current.addEventListener('loadedmetadata', () => {
       if (videoRef.current && preloadTime) {
         videoRef.current.currentTime = preloadTime
@@ -103,14 +111,14 @@ export default ({
         }`}>
         <source src={videoUrl} type="video/webm" />
       </video>
-      {isVideoLoaded === false && fallbackImageUrl && (
-        <img
-          src={fallbackImageUrl}
-          width="100%"
-          className={classes.video}
-          alt="Fallback"
-        />
-      )}
+      <img
+        src={fallbackImageUrl}
+        width="100%"
+        className={`${classes.fallbackImage} ${
+          isVideoLoaded ? classes.fallbackImageDone : ''
+        }`}
+        alt="Fallback"
+      />
     </div>
   )
 }

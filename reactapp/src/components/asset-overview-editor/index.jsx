@@ -21,6 +21,7 @@ import ImageIcon from '@material-ui/icons/Image'
 import PanoramaIcon from '@material-ui/icons/Panorama'
 import BugReportIcon from '@material-ui/icons/BugReport'
 import AddToPhotosIcon from '@material-ui/icons/AddToPhotos'
+import StarIcon from '@material-ui/icons/Star'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -62,6 +63,7 @@ import Paper from '../paper'
 import SlugEditor from '../slug-editor'
 import ClonableWorldEditor from '../clonable-world-editor'
 import ContentOverviewEditor from '../content-overview-editor'
+import AssetShortDescriptionEditor from '../asset-short-description-editor'
 
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
@@ -696,7 +698,8 @@ export default ({ assetId, switchEditorOpen }) => {
     [AssetFieldNames.pedestalFallbackImageUrl]: pedestalFallbackImageUrl,
     [AssetFieldNames.sketchfabEmbedUrl]: sketchfabEmbedUrl,
     [AssetFieldNames.slug]: slug,
-    [AssetFieldNames.clonableWorld]: clonableWorld
+    [AssetFieldNames.clonableWorld]: clonableWorld,
+    [AssetFieldNames.shortDescription]: shortDescription
   } = result
 
   if (category === AssetCategories.content) {
@@ -1343,6 +1346,46 @@ export default ({ assetId, switchEditorOpen }) => {
               /* eslint-enable */
             )}
           />
+
+          <EditorArea label="Feature Asset" icon={StarIcon}>
+            {isAbleToEditPedestal ? (
+              <>
+                {isAdult ? (
+                  'You can not feature adult assets'
+                ) : !isApproved ? (
+                  'You can not feature unapproved assets'
+                ) : isDeleted ? (
+                  'You cannot feature deleted assets'
+                ) : (
+                  <>
+                    <FeatureAssetButton
+                      assetId={assetId}
+                      onClick={() =>
+                        trackAction(
+                          analyticsCategoryName,
+                          'Click feature asset button',
+                          assetId
+                        )
+                      }
+                    />
+                    <p>
+                      Enter a short description here that will be displayed on
+                      the homepage instead of the normal one:
+                    </p>
+                    <AssetShortDescriptionEditor
+                      assetId={assetId}
+                      shortDescription={shortDescription}
+                    />
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                You must be a Patreon supporter to feature your asset on the
+                homepage
+              </>
+            )}
+          </EditorArea>
         </div>
 
         <div className={classes.rightCol}>
@@ -1483,31 +1526,6 @@ export default ({ assetId, switchEditorOpen }) => {
                 />
               </Control>
             </>
-
-            {isAbleToEditPedestal || true ? (
-              <>
-                <Control>
-                  {isAdult ? (
-                    'You can not feature adult assets'
-                  ) : !isApproved ? (
-                    'You can not feature unapproved assets'
-                  ) : isDeleted ? (
-                    'You cannot feature deleted assets'
-                  ) : (
-                    <FeatureAssetButton
-                      assetId={assetId}
-                      onClick={() =>
-                        trackAction(
-                          analyticsCategoryName,
-                          'Click feature asset button',
-                          assetId
-                        )
-                      }
-                    />
-                  )}
-                </Control>
-              </>
-            ) : null}
           </div>
         </div>
       </div>

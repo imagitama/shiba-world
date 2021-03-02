@@ -1,7 +1,7 @@
 import React from 'react'
 import Paper from '@material-ui/core/Paper'
 import { makeStyles } from '@material-ui/core/styles'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import useDatabaseQuery, {
@@ -35,8 +35,15 @@ export default () => {
         ]
       : false
   )
+  const location = useLocation()
 
-  if (!user || !isUserStaff(user) || !results || !results.length) {
+  if (
+    !user ||
+    !isUserStaff(user) ||
+    !results ||
+    !results.length ||
+    location === '/'
+  ) {
     return null
   }
 

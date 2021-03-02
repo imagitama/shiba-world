@@ -15,7 +15,8 @@ import { ReactComponent as PatreonIcon } from '../../assets/images/icons/patreon
 import {
   queryForMobiles,
   mediaQueryForMobiles,
-  mediaQueryForDesktopsOnly
+  mediaQueryForDesktopsOnly,
+  mediaQueryForTabletsOrBelow
 } from '../../media-queries'
 import { trackAction } from '../../analytics'
 import {
@@ -24,9 +25,7 @@ import {
   PATREON_BECOME_PATRON_URL
 } from '../../config'
 
-import Searchbar from '../searchbar'
 import MobileMenu from '../mobile-menu'
-import DesktopMenu from '../desktop-menu'
 import DesktopAccountMenu from '../desktop-account-menu'
 
 // when the navigation starts obstructing the logo
@@ -36,7 +35,12 @@ const useStyles = makeStyles({
   root: {
     position: 'relative',
     padding: '1rem 1rem 0',
+    height: '125px',
+    [mediaQueryForTabletsOrBelow]: {
+      height: '200px'
+    },
     [mediaQueryForMobiles]: {
+      height: '180px',
       padding: '0.5rem 0.5rem 0'
     }
   },
@@ -147,6 +151,12 @@ const useStyles = makeStyles({
     width: '4rem',
     height: '3rem',
     fill: 'white'
+  },
+  invisible: {
+    visibility: 'hidden'
+  },
+  homepage: {
+    top: '100%'
   }
 })
 
@@ -156,6 +166,7 @@ export default () => {
   const isMobile = useMediaQuery({ query: queryForMobiles })
   const dispatchOpenMenu = () => dispatch(openMenu())
   const bannerUrl = useSelector(({ app }) => app.bannerUrl)
+  // const location = useLocation()
 
   const onToggleMobileMenuClick = () => {
     dispatchOpenMenu()
@@ -189,18 +200,6 @@ export default () => {
           </a>
         </div>
       </div>
-
-      <div className={classes.searchBar}>
-        <div className={classes.searchBarInner}>
-          <Searchbar />
-        </div>
-      </div>
-
-      {!isMobile && (
-        <div className={classes.desktopMenu}>
-          <DesktopMenu />
-        </div>
-      )}
 
       <div className={classes.floatingMenu}>
         {!isMobile && <DesktopAccountMenu />}

@@ -132,6 +132,7 @@ const AssetFieldNames = {
   pedestalFallbackImageUrl: 'pedestalFallbackImageUrl',
   sketchfabEmbedUrl: 'sketchfabEmbedUrl',
   slug: 'slug',
+  shortDescription: 'shortDescription',
 }
 module.exports.AssetFieldNames = AssetFieldNames
 

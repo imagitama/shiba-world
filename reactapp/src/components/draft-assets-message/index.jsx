@@ -44,7 +44,13 @@ export default () => {
   )
   const location = useLocation()
 
-  if (!user || !isUserStaff(user) || !results || !results.length) {
+  if (
+    !user ||
+    !isUserStaff(user) ||
+    !results ||
+    !results.length ||
+    location.pathname === '/'
+  ) {
     return null
   }
 

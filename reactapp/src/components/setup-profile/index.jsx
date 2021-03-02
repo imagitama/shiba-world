@@ -58,7 +58,7 @@ const Form = () => {
 
   // Sometimes a delay before firebase function creates their profile
   if (isLoadingUser || !user) {
-    return <LoadingIndicator message="Loading your profile..." />
+    return null
   }
 
   if (isCreating) {

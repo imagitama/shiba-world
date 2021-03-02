@@ -126,17 +126,13 @@ export const closeMenu = () => dispatch => {
   })
 }
 
-export const changeSearchTerm = searchTerm => dispatch => {
+export const changeSearchTerm = (searchTerm = '') => dispatch => {
   dispatch({
     type: CHANGE_SEARCH_TERM,
     payload: {
       searchTerm
     }
   })
-
-  if (!searchTerm) {
-    return
-  }
 }
 
 export const changeSearchIndexName = searchIndexName => dispatch => {

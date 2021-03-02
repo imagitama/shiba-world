@@ -11,18 +11,31 @@ import useDatabaseQuery, {
 import Heading from '../../../../components/heading'
 import Button from '../../../../components/button'
 import PedestalVideo from '../../../../components/pedestal-video'
-import LoadingIndicator from '../../../../components/loading-indicator'
 import * as routes from '../../../../routes'
 import { trackAction } from '../../../../analytics'
 import { trimDescription } from '../../../../utils/formatting'
+import { mediaQueryForMobiles } from '../../../../media-queries'
 
 const useStyles = makeStyles({
+  root: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    background: 'rgba(0, 0, 0, 0.1)',
+    padding: '2rem',
+    borderRadius: '0.5rem',
+    [mediaQueryForMobiles]: {
+      flexWrap: 'wrap',
+      padding: '1rem'
+    }
+  },
   thumbnailWrapper: {
     perspective: '1000px',
     textAlign: 'center',
     padding: '1rem 0'
   },
-  thumbnail: {
+  thumbnailImage: {
+    width: '100%',
     animation: '20s $spinThumbnail infinite linear',
     transition: 'all 100ms',
     '&:hover': {
@@ -31,11 +44,20 @@ const useStyles = makeStyles({
   },
   controls: {
     textAlign: 'center',
-    marginTop: '1rem'
+    marginTop: '2rem',
+    [mediaQueryForMobiles]: {
+      marginTop: '1rem'
+    }
   },
   heading: {
-    textAlign: 'center',
-    margin: '1rem 0'
+    margin: '0 0 1rem',
+    fontSize: '175%'
+  },
+  bg: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%'
   },
   '@keyframes spinThumbnail': {
     from: {
@@ -43,6 +65,27 @@ const useStyles = makeStyles({
     },
     to: {
       transform: 'rotateY(360deg)'
+    }
+  },
+  media: {
+    width: '30%',
+    marginRight: '1rem',
+    [mediaQueryForMobiles]: {
+      marginRight: 0,
+      width: '50%'
+    }
+  },
+  video: {
+    display: 'flex',
+    transform: 'scale(1.9)',
+    transition: 'all 100ms',
+    [mediaQueryForMobiles]: {
+      transform: 'scale(1)'
+    }
+  },
+  text: {
+    [mediaQueryForMobiles]: {
+      width: '100%'
     }
   }
 })
@@ -55,16 +98,13 @@ export default () => {
   const classes = useStyles()
 
   if (!result || !result.activeAsset) {
-    return (
-      <div className={classes.featuredAsset}>
-        <LoadingIndicator />
-      </div>
-    )
+    return null
   }
 
   const {
     title,
     description,
+    [AssetFieldNames.shortDescription]: shortDescription,
     thumbnailUrl,
     [AssetFieldNames.pedestalVideoUrl]: pedestalVideoUrl,
     [AssetFieldNames.pedestalFallbackImageUrl]: pedestalFallbackImageUrl
@@ -73,28 +113,31 @@ export default () => {
   const viewUrl = routes.viewAssetWithVar.replace(':assetId', id)
 
   return (
-    <div className={classes.featuredAsset}>
-      <div>
+    <div className={classes.root}>
+      <div className={classes.media}>
         <Link
           to={viewUrl}
           onClick={() => trackAction('Home', 'Click featured asset thumbnail')}>
           {pedestalVideoUrl ? (
-            <PedestalVideo
-              videoUrl={pedestalVideoUrl}
-              fallbackImageUrl={pedestalFallbackImageUrl}
-            />
+            <div className={classes.video}>
+              <PedestalVideo
+                videoUrl={pedestalVideoUrl}
+                fallbackImageUrl={pedestalFallbackImageUrl}
+                noShadow
+              />
+            </div>
           ) : (
             <div className={classes.thumbnailWrapper}>
               <img
                 src={thumbnailUrl}
-                className={classes.thumbnail}
+                className={classes.thumbnailImage}
                 alt="Pedestal fallback"
               />
             </div>
           )}
         </Link>
       </div>
-      <div>
+      <div className={classes.text}>
         <Heading variant="h1" className={classes.heading}>
           <Link
             to={viewUrl}
@@ -102,10 +145,7 @@ export default () => {
             {title}
           </Link>
         </Heading>
-        <Heading variant="h2" className={classes.heading}>
-          Featured Asset
-        </Heading>
-        {trimDescription(description)}
+        {trimDescription(shortDescription || description)}
         <div className={classes.controls}>
           <Button
             url={viewUrl}
@@ -114,7 +154,7 @@ export default () => {
             onClick={() =>
               trackAction('Home', 'Click view featured asset button')
             }>
-            View Asset
+            View Featured Asset
           </Button>
         </div>
       </div>

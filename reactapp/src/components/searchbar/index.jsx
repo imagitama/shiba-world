@@ -18,6 +18,7 @@ import { lightTheme } from '../../themes'
 import * as routes from '../../routes'
 import { convertSearchTermToUrlPath } from '../../utils'
 import { trackAction } from '../../analytics'
+import { useHistory } from 'react-router'
 
 const useStyles = makeStyles({
   root: {
@@ -92,6 +93,7 @@ export default () => {
   const classes = useStyles()
   const dropdownMenuBtnRef = useRef()
   const [isIndexDropdownOpen, setIsIndexDropdownOpen] = useState(false)
+  const { push } = useHistory()
 
   const onSearchTermInputChange = event => {
     const newTerm = event.target.value
@@ -113,6 +115,14 @@ export default () => {
     <ThemeProvider theme={lightTheme}>
       <Paper className={classes.root}>
         <InputBase
+          onKeyDown={e => {
+            if (e.keyCode === 27) {
+              e.target.value = ''
+              dispatch(changeSearchTerm(''))
+              push(routes.home)
+              trackAction('Searchbar', 'Press escape key to clear search input')
+            }
+          }}
           className={classes.input}
           placeholder={getPlaceholderForSearchIndexName(searchIndexName)}
           autoFocus={true}

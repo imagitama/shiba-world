@@ -157,6 +157,8 @@ const pickFeaturedAsset = async () => {
               selectedAssetDoc.get(AssetFieldNames.title) || null,
             [AssetFieldNames.description]:
               selectedAssetDoc.get(AssetFieldNames.description) || null,
+            [AssetFieldNames.shortDescription]:
+              selectedAssetDoc.get(AssetFieldNames.shortDescription) || null,
             [AssetFieldNames.thumbnailUrl]:
               selectedAssetDoc.get(AssetFieldNames.thumbnailUrl) || null,
             [AssetFieldNames.slug]:
