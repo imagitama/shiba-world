@@ -42,7 +42,8 @@ import { searchIndexNameLabels } from './modules/app'
 import {
   mediaQueryForMobiles,
   mediaQueryForTabletsOrBelow,
-  queryForMobiles
+  queryForMobiles,
+  mediaQueryForDesktopsOnly
 } from './media-queries'
 import { AssetCategories } from './hooks/useDatabaseQuery'
 import SetFavoriteSpeciesMessage from './components/set-favorite-species-message'
@@ -77,11 +78,16 @@ const useStyles = makeStyles({
     zIndex: 100,
     [mediaQueryForTabletsOrBelow]: {
       width: '93%',
-      top: '12% !important'
+      top: '12%'
+    },
+    [mediaQueryForMobiles]: {
+      top: '120px'
     }
   },
   homepage: {
-    top: '68%'
+    [mediaQueryForDesktopsOnly]: {
+      top: '68%'
+    }
   }
 })
 

@@ -34,6 +34,7 @@ const useStyles = makeStyles({
   mainContent: {
     [mediaQueryForMobiles]: {
       padding: '0.5rem',
+      position: 'relative',
       top: 'auto',
       transform: 'translateX(-50%)'
     },
