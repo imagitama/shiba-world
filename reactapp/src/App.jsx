@@ -43,7 +43,7 @@ import {
   mediaQueryForMobiles,
   mediaQueryForTabletsOrBelow,
   queryForMobiles,
-  mediaQueryForDesktopsOnly
+  mediaQueryForTabletsOrAbove
 } from './media-queries'
 import { AssetCategories } from './hooks/useDatabaseQuery'
 import SetFavoriteSpeciesMessage from './components/set-favorite-species-message'
@@ -77,16 +77,16 @@ const useStyles = makeStyles({
     transition: 'all 1000ms',
     zIndex: 100,
     [mediaQueryForTabletsOrBelow]: {
-      width: '93%',
-      top: '12%'
+      width: '93%'
+      // top: '12%'
     },
     [mediaQueryForMobiles]: {
       top: '120px'
     }
   },
   homepage: {
-    [mediaQueryForDesktopsOnly]: {
-      top: '68%'
+    [mediaQueryForTabletsOrAbove]: {
+      top: '37%'
     }
   }
 })

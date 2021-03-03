@@ -5,7 +5,8 @@ import useSearchTerm from '../../hooks/useSearchTerm'
 import FeaturedAsset from './components/featured-asset'
 import {
   mediaQueryForMobiles,
-  mediaQueryForTabletsOrAbove
+  mediaQueryForTabletsOrAbove,
+  mediaQueryForTabletsOrBelow
 } from '../../media-queries'
 
 const useStyles = makeStyles({
@@ -26,7 +27,7 @@ const useStyles = makeStyles({
       width: '100%',
       maxWidth: '1000px',
       position: 'absolute',
-      top: '5%',
+      top: '57%',
       left: '50%',
       transform: 'translateX(-50%)'
     }
@@ -38,10 +39,13 @@ const useStyles = makeStyles({
       top: 'auto',
       transform: 'translateX(-50%)'
     },
+    [mediaQueryForTabletsOrBelow]: {
+      top: '20%'
+    },
     width: '100%',
     maxWidth: '800px',
     position: 'absolute',
-    top: '75%',
+    top: '27%',
     left: '50%',
     transition: 'all 1000ms',
     transform: 'translate(-50%, -100px)'

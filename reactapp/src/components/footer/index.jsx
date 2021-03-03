@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 
 import * as routes from '../../routes'
@@ -31,6 +31,11 @@ const useStyles = makeStyles({
 
 function ScrollToTopBtn() {
   const classes = useStyles()
+  const { pathname } = useLocation()
+
+  if (pathname === '/') {
+    return null
+  }
 
   return (
     <div className={classes.scrollToTopBtnWrapper}>
