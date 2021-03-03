@@ -2,7 +2,7 @@ import React from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
-import Markdown from '../markdown'
+import LazyLoad from 'react-lazyload'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -13,7 +13,9 @@ import useDatabaseQuery, {
   AuthorFieldNames,
   ProfileFieldNames,
   SpeciesFieldNames,
-  options
+  options,
+  EndorsementFieldNames,
+  mapDates
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 
@@ -29,6 +31,7 @@ import Button from '../button'
 import AuthorResults from '../author-results'
 import Avatar from '../avatar'
 import Pedestal from '../pedestal'
+import Markdown from '../markdown'
 
 import * as routes from '../../routes'
 import { createRef, fixAccessingImagesUsingToken } from '../../utils'
@@ -108,7 +111,7 @@ const AssetsForUser = ({ userId }) => {
   const [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.Assets,
     whereClauses,
-    100,
+    20,
     [AssetFieldNames.createdAt, OrderDirections.DESC]
   )
 
@@ -125,6 +128,53 @@ const AssetsForUser = ({ userId }) => {
   }
 
   return <AssetResults assets={results} showCategory />
+}
+
+const EndorsementsForUser = ({ userId }) => {
+  const [, , currentUser] = useUserRecord()
+
+  const [isLoading, isErrored, results] = useDatabaseQuery(
+    CollectionNames.Endorsements,
+    [
+      [
+        EndorsementFieldNames.createdBy,
+        Operators.EQUALS,
+        createRef(CollectionNames.Users, userId)
+      ]
+    ],
+    {
+      [options.populateRefs]: true,
+      [options.limit]: 20,
+      [options.orderBy]: [EndorsementFieldNames.createdAt, OrderDirections.DESC]
+    }
+  )
+
+  if (isLoading || results === null) {
+    return <LoadingIndicator />
+  }
+
+  const assets = results
+    .filter(endorsement => {
+      if (endorsement[EndorsementFieldNames.asset][AssetFieldNames.isAdult]) {
+        if (currentUser && currentUser.enabledAdultContent === true) {
+          return true
+        } else {
+          return false
+        }
+      }
+      return true
+    })
+    .map(endorsement => mapDates(endorsement[EndorsementFieldNames.asset]))
+
+  if (isErrored) {
+    return <ErrorMessage>Failed to find their endorsements</ErrorMessage>
+  }
+
+  if (!assets.length) {
+    return <ErrorMessage>No endorsements found</ErrorMessage>
+  }
+
+  return <AssetResults assets={assets} showCategory />
 }
 
 const AuthorsForUser = ({ userId }) => {
@@ -332,7 +382,9 @@ export default ({ userId }) => {
         </>
       )}
       <Heading variant="h2">Comments</Heading>
-      <CommentList collectionName={CollectionNames.Users} parentId={userId} />
+      <LazyLoad>
+        <CommentList collectionName={CollectionNames.Users} parentId={userId} />
+      </LazyLoad>
       <AddCommentForm
         collectionName={CollectionNames.Users}
         parentId={userId}
@@ -342,9 +394,17 @@ export default ({ userId }) => {
       />
       <Heading variant="h2">Authors</Heading>
       <p>A user can have multiple authors associated with it.</p>
-      <AuthorsForUser userId={userId} />
-      <Heading variant="h2">Uploads</Heading>
-      <AssetsForUser userId={userId} />
+      <LazyLoad>
+        <AuthorsForUser userId={userId} />
+      </LazyLoad>
+      <Heading variant="h2">Most Recent Endorsements</Heading>
+      <LazyLoad>
+        <EndorsementsForUser userId={userId} />
+      </LazyLoad>
+      <Heading variant="h2">Most Recent Uploads</Heading>
+      <LazyLoad>
+        <AssetsForUser userId={userId} />
+      </LazyLoad>
     </>
   )
 }
