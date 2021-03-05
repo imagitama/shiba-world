@@ -29,6 +29,10 @@ export function getLabelForAssetSortFieldNameAndDirection(
   fieldName,
   direction
 ) {
+  if (!fieldName && !direction) {
+    return ''
+  }
+
   for (const label in assetOptions) {
     const option = assetOptions[label]
     if (option.fieldName === fieldName && option.direction === direction) {

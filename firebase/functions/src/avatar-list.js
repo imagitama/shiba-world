@@ -59,6 +59,7 @@ const convertAvatarDocToAvatarListItem = (doc) => ({
   [AssetFieldNames.species]: doc.get(AssetFieldNames.species),
   [AssetFieldNames.isAdult]: doc.get(AssetFieldNames.isAdult),
   [AssetFieldNames.tags]: doc.get(AssetFieldNames.tags),
+  [AssetFieldNames.createdAt]: doc.get(AssetFieldNames.createdAt),
 })
 
 const syncAvatarList = async () => {

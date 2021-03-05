@@ -34,7 +34,8 @@ import useDatabaseQuery, {
   AssetCategories,
   SpeciesFieldNames,
   AvatarListFieldNames,
-  UserFieldNames
+  UserFieldNames,
+  mapDates
 } from '../../hooks/useDatabaseQuery'
 import useStorage, { keys as storageKeys } from '../../hooks/useStorage'
 import { mediaQueryForMobiles } from '../../media-queries'
@@ -45,15 +46,6 @@ const useStyles = makeStyles({
   root: {
     position: 'relative'
   },
-  groupAvatarsBySpeciesBtn: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    [mediaQueryForMobiles]: {
-      position: 'relative',
-      margin: '0.5rem 0'
-    }
-  },
   headingWrapper: {
     position: 'relative'
   },
@@ -63,10 +55,14 @@ const useStyles = makeStyles({
     right: 0,
     cursor: 'pointer'
   },
-  jumpToSpeciesBtn: {
+  controls: {
     position: 'absolute',
     top: 0,
-    right: 0
+    right: 0,
+    display: 'flex'
+  },
+  control: {
+    marginLeft: '0.5rem'
   },
   noResultsMsg: {
     fontStyle: 'italic',
@@ -179,6 +175,29 @@ function Assets() {
   const headingElementsBySpeciesIdRef = useRef({})
   const autoScrollTimeoutRef = useRef()
   const [activeFilters] = useStorage(avatarsFiltersStorageKey, [])
+  const [assetsSortByFieldName] = useStorage(storageKeys.assetsSortByFieldName)
+  const [assetsSortByDirection] = useStorage(storageKeys.assetsSortByDirection)
+  const [activeSortFieldName, setActiveSortFieldName] = useState(
+    assetsSortByFieldName || null
+  )
+  const [activeSortDirection, setActiveSortDirection] = useState(
+    assetsSortByDirection || null
+  )
+  const onNewSortFieldAndDirection = (fieldName, direction) => {
+    setActiveSortFieldName(fieldName)
+    setActiveSortDirection(direction)
+    trackAction(analyticsActionCategory, 'Click sort by field and direction', {
+      categoryName,
+      fieldName,
+      direction
+    })
+  }
+
+  const resetSorting = () => {
+    setActiveSortDirection(null)
+    setActiveSortFieldName(null)
+    trackAction(analyticsActionCategory, 'Click reset sorting button')
+  }
 
   // Because the avatars page is very long and the most popular page of the site
   // track the user's scroll so they can click on avatars and return and not have
@@ -222,7 +241,7 @@ function Assets() {
     [AvatarListFieldNames.species]: species = []
   } = result
 
-  const assets = avatars
+  let assets = avatars
     .filter(avatar => {
       if (avatar[AssetFieldNames.isAdult]) {
         if (user && user[UserFieldNames.enabledAdultContent]) {
@@ -233,12 +252,14 @@ function Assets() {
       }
       return true
     })
-    .map(avatar => ({
-      ...avatar,
-      // need these to render properly
-      id: avatar.asset.id,
-      [AssetFieldNames.isApproved]: true
-    }))
+    .map(avatar =>
+      mapDates({
+        ...avatar,
+        // need these to render properly
+        id: avatar.asset.id,
+        [AssetFieldNames.isApproved]: true
+      })
+    )
 
   if (!assets.length) {
     return <NoResultsMessage />
@@ -298,91 +319,172 @@ function Assets() {
     return true
   }
 
+  if (activeSortFieldName && activeSortDirection) {
+    console.debug(`sort by ${activeSortFieldName} ${activeSortDirection}`)
+
+    assets = assets.sort((assetA, assetB) => {
+      switch (activeSortFieldName) {
+        case assetSortFields.title:
+          if (activeSortDirection === OrderDirections.ASC) {
+            return assetA[AssetFieldNames.title].localeCompare(
+              assetB[AssetFieldNames.title]
+            )
+          } else {
+            return assetB[AssetFieldNames.title].localeCompare(
+              assetA[AssetFieldNames.title]
+            )
+          }
+
+        case assetSortFields.createdAt:
+          if (activeSortDirection === OrderDirections.ASC) {
+            return (
+              assetB[AssetFieldNames.createdAt] -
+              assetA[AssetFieldNames.createdAt]
+            )
+          } else {
+            return (
+              assetA[AssetFieldNames.createdAt] -
+              assetB[AssetFieldNames.createdAt]
+            )
+          }
+
+        default:
+          throw new Error(
+            `Cannot sort assets by unknown field: ${activeSortFieldName}`
+          )
+      }
+    })
+
+    if (activeFilters.length) {
+      assets = assets.filter(filterActiveFilters)
+    }
+  }
+
   return (
     <>
-      {species && species.length && (
+      {isSpeciesSelectorOpen && (
         <>
-          {isSpeciesSelectorOpen ? (
-            <>
-              <Heading variant="h2">Jump To Species</Heading>
-              <SpeciesVsSelector
-                species={species}
-                onSpeciesClick={scrollToSpeciesId}
-              />
-            </>
-          ) : (
-            <div className={classes.jumpToSpeciesBtn}>
-              <Button
-                onClick={() => {
-                  trackAction(
-                    analyticsActionCategory,
-                    'Click jump to species button'
-                  )
-                  setIsSpeciesSelectorOpen(true)
-                }}>
-                Jump To Species...
-              </Button>
-            </div>
-          )}
+          <Heading variant="h2">Jump To Species</Heading>
+          <SpeciesVsSelector
+            species={species}
+            onSpeciesClick={scrollToSpeciesId}
+          />
         </>
       )}
 
       <Filters />
 
-      {Object.entries(assetsBySpecies)
-        .sort(([idA], [idB]) =>
-          speciesMetaById[idA][SpeciesFieldNames.singularName].localeCompare(
-            speciesMetaById[idB][SpeciesFieldNames.singularName]
-          )
-        )
-        .map(([speciesId, assetsForSpecies]) => {
-          const assetsToRender = activeFilters.length
-            ? assetsForSpecies.filter(filterActiveFilters)
-            : assetsForSpecies
+      <div className={classes.controls}>
+        <div className={classes.control}>
+          <SortDropdown
+            options={assetOptions}
+            label={getLabelForAssetSortFieldNameAndDirection(
+              activeSortFieldName,
+              activeSortDirection
+            )}
+            fieldNameKey={storageKeys.assetsSortByFieldName}
+            directionKey={storageKeys.assetsSortByDirection}
+            onNewSortFieldAndDirection={onNewSortFieldAndDirection}
+            onOpenDropdown={() =>
+              trackAction(analyticsActionCategory, 'Open sort dropdown', {
+                categoryName
+              })
+            }
+          />
+        </div>
+        {activeSortFieldName && activeSortDirection && (
+          <div className={classes.control}>
+            <Button onClick={resetSorting}>Reset</Button>
+          </div>
+        )}
+        {!isSpeciesSelectorOpen && (
+          <div className={classes.control}>
+            <Button
+              onClick={() => {
+                trackAction(
+                  analyticsActionCategory,
+                  'Click jump to species button'
+                )
+                setIsSpeciesSelectorOpen(true)
+              }}>
+              Jump To Species...
+            </Button>
+          </div>
+        )}
+      </div>
 
-          return (
-            <Fragment key={speciesId}>
-              <div className={classes.headingWrapper}>
-                <Heading
-                  variant="h2"
-                  ref={element => {
-                    headingElementsBySpeciesIdRef.current[speciesId] = element
-                  }}>
-                  <Link
-                    to={routes.viewSpeciesWithVar.replace(
-                      ':speciesIdOrSlug',
-                      speciesId
-                    )}>
-                    {speciesMetaById[speciesId][SpeciesFieldNames.singularName]}
-                  </Link>
-                </Heading>
-                <span
-                  className={classes.scrollToTopBtn}
-                  onClick={() => {
-                    trackAction(
-                      analyticsActionCategory,
-                      'Click species scroll to top',
-                      speciesId
-                    )
-                    scrollToTop()
-                  }}>
-                  Top
-                </span>
-              </div>
-              <BodyText>
-                {speciesMetaById[speciesId][SpeciesFieldNames.shortDescription]}
-              </BodyText>
+      {activeSortDirection && activeSortFieldName ? (
+        <AssetResults assets={assets} />
+      ) : (
+        <>
+          {Object.entries(assetsBySpecies)
+            .sort(([idA], [idB]) =>
+              speciesMetaById[idA][
+                SpeciesFieldNames.singularName
+              ].localeCompare(
+                speciesMetaById[idB][SpeciesFieldNames.singularName]
+              )
+            )
+            .map(([speciesId, assetsForSpecies]) => {
+              const assetsToRender = activeFilters.length
+                ? assetsForSpecies.filter(filterActiveFilters)
+                : assetsForSpecies
 
-              {assetsToRender.length ? (
-                <AssetResults assets={assetsToRender} showPinned />
-              ) : (
-                <div className={classes.noResultsMsg}>
-                  No assets matching your filter
-                </div>
-              )}
-            </Fragment>
-          )
-        })}
+              return (
+                <Fragment key={speciesId}>
+                  <div className={classes.headingWrapper}>
+                    <Heading
+                      variant="h2"
+                      ref={element => {
+                        headingElementsBySpeciesIdRef.current[
+                          speciesId
+                        ] = element
+                      }}>
+                      <Link
+                        to={routes.viewSpeciesWithVar.replace(
+                          ':speciesIdOrSlug',
+                          speciesId
+                        )}>
+                        {
+                          speciesMetaById[speciesId][
+                            SpeciesFieldNames.singularName
+                          ]
+                        }
+                      </Link>
+                    </Heading>
+                    <span
+                      className={classes.scrollToTopBtn}
+                      onClick={() => {
+                        trackAction(
+                          analyticsActionCategory,
+                          'Click species scroll to top',
+                          speciesId
+                        )
+                        scrollToTop()
+                      }}>
+                      Top
+                    </span>
+                  </div>
+                  <BodyText>
+                    {
+                      speciesMetaById[speciesId][
+                        SpeciesFieldNames.shortDescription
+                      ]
+                    }
+                  </BodyText>
+
+                  {assetsToRender.length ? (
+                    <AssetResults assets={assetsToRender} showPinned />
+                  ) : (
+                    <div className={classes.noResultsMsg}>
+                      No assets matching your filter
+                    </div>
+                  )}
+                </Fragment>
+              )
+            })}
+        </>
+      )}
     </>
   )
 }
@@ -390,29 +492,7 @@ function Assets() {
 const categoryName = AssetCategories.avatar
 
 export default () => {
-  const [assetsSortByFieldName] = useStorage(
-    storageKeys.assetsSortByFieldName,
-    assetSortFields.title
-  )
-  const [assetsSortByDirection] = useStorage(
-    storageKeys.assetsSortByDirection,
-    OrderDirections.ASC
-  )
-  const [activeSortFieldName, setActiveSortFieldName] = useState()
-  const [activeSortDirection, setActiveSortDirection] = useState()
   const classes = useStyles()
-  // const [groupAvatarsBySpecies, setGroupAvatarsBySpecies] = useState(true)
-  const groupAvatarsBySpecies = true // temporarily disabled
-
-  const onNewSortFieldAndDirection = (fieldName, direction) => {
-    setActiveSortFieldName(fieldName)
-    setActiveSortDirection(direction)
-    trackAction(analyticsActionCategory, 'Click sort by field and direction', {
-      categoryName,
-      fieldName,
-      direction
-    })
-  }
 
   return (
     <>
@@ -432,54 +512,7 @@ export default () => {
           {getDisplayNameByCategoryName(categoryName)}
         </Heading>
 
-        {/* <Button
-          className={classes.groupAvatarsBySpeciesBtn}
-          onClick={() => {
-            const newVal = !groupAvatarsBySpecies
-            setGroupAvatarsBySpecies(newVal)
-            trackAction(
-              analyticsActionCategory,
-              'Click on group avatars by species',
-              newVal
-            )
-          }}
-          color={groupAvatarsBySpecies ? 'primary' : 'default'}
-          icon={
-            groupAvatarsBySpecies ? (
-              <CheckBoxIcon />
-            ) : (
-              <CheckBoxOutlineBlankIcon />
-            )
-          }>
-          Group by species
-        </Button> */}
-
-        {groupAvatarsBySpecies ? (
-          <Assets categoryName={AssetCategories.avatar} groupAvatarsBySpecies />
-        ) : (
-          <>
-            <SortDropdown
-              options={assetOptions}
-              label={getLabelForAssetSortFieldNameAndDirection(
-                activeSortFieldName || assetsSortByFieldName,
-                activeSortDirection || assetsSortByDirection
-              )}
-              fieldNameKey={storageKeys.assetsSortByFieldName}
-              directionKey={storageKeys.assetsSortByDirection}
-              onNewSortFieldAndDirection={onNewSortFieldAndDirection}
-              onOpenDropdown={() =>
-                trackAction(analyticsActionCategory, 'Open sort dropdown', {
-                  categoryName
-                })
-              }
-            />
-            <Assets
-              categoryName={categoryName}
-              sortByFieldName={activeSortFieldName || assetsSortByFieldName}
-              sortByDirection={activeSortDirection || assetsSortByDirection}
-            />
-          </>
-        )}
+        <Assets categoryName={AssetCategories.avatar} groupAvatarsBySpecies />
       </div>
     </>
   )
