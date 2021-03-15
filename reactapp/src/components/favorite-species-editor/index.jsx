@@ -80,9 +80,10 @@ export default ({ analyticsCategoryName, saveOnSelect = false }) => {
       console.debug(`save fav species id ${speciesIdToUse}`)
 
       await save({
-        [ProfileFieldNames.favoriteSpecies]: speciesIdToUse
-          ? createRef(CollectionNames.Species, speciesIdToUse)
-          : null,
+        [ProfileFieldNames.favoriteSpecies]:
+          speciesIdToUse && speciesIdToUse !== 'none'
+            ? createRef(CollectionNames.Species, speciesIdToUse)
+            : null,
         [ProfileFieldNames.lastModifiedBy]: createRef(
           CollectionNames.Users,
           userId
@@ -137,6 +138,7 @@ export default ({ analyticsCategoryName, saveOnSelect = false }) => {
             {speciesDoc[SpeciesFieldNames.singularName]}
           </MenuItem>
         ))}
+        <MenuItem value="none">(none - skip)</MenuItem>
       </Select>
       {saveOnSelect !== true && (
         <div className={classes.controls}>

@@ -9,6 +9,7 @@ const {
   NotificationEvents,
   NotificationMethods,
 } = require('../notifications')
+const siteSettings = require('../site')
 
 const getEmailText = (title) => `Hello from VRCArena,
 
