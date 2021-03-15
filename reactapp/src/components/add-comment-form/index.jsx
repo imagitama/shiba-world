@@ -133,6 +133,19 @@ export default ({ collectionName, parentId, onAddClick = null }) => {
 
   return (
     <div className={classes.root}>
+      <span className={classes.tagHint}>
+        Start your message with @ and you can tag a user which will notify them
+        of your comment (does not support usernames with spaces)
+        <br />
+        <strong>
+          Do not tag the{' '}
+          {collectionName === CollectionNames.Users
+            ? 'user you are commenting on'
+            : 'author or creator of the asset'}{' '}
+          as they are notified of your comment (if they choose to get
+          notifications).
+        </strong>
+      </span>
       <TextField
         className={classes.input}
         label="Your comment"
@@ -142,14 +155,8 @@ export default ({ collectionName, parentId, onAddClick = null }) => {
         rows={5}
         variant="filled"
       />
-      {userSearchTerm ? (
+      {userSearchTerm && (
         <UserList searchTerm={userSearchTerm} onClickUser={onClickUser} />
-      ) : (
-        <span className={classes.tagHint}>
-          Start your message with @ and you can tag a user which will notify
-          them of your comment (does not support usernames with spaces)
-          <br />
-        </span>
       )}
       <Button className={classes.button} onClick={onAddCommentBtnClick}>
         Add Comment

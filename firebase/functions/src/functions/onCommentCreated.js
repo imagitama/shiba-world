@@ -10,10 +10,7 @@ const {
   CommentFieldNames,
   UserFieldNames,
 } = require('../firebase')
-const {
-  storeInNotifications,
-  notifyTaggedUserIfNeeded,
-} = require('../notifications')
+const { notifyTaggedUserIfNeeded } = require('../notifications')
 const {
   emitToDiscordActivity,
   getEmbedForViewAsset,
@@ -28,18 +25,8 @@ module.exports = functions.firestore
 
     const parentDoc = await docData[CommentFieldNames.parent].get()
     const parentDocData = parentDoc.data()
-    const originalAuthor = isUserDocument(parentDoc)
       ? docData[CommentFieldNames.parent]
       : parentDoc.get(AssetFieldNames.createdBy)
-
-    await storeInNotifications(
-      'Created comment',
-      docData[CommentFieldNames.parent],
-      originalAuthor,
-      {
-        author: docData[CommentFieldNames.createdBy],
-      }
-    )
 
     const commenterDoc = await docData[CommentFieldNames.createdBy].get()
 

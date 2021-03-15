@@ -196,9 +196,11 @@ export const ProfileFieldNames = {
   lastModifiedBy: 'lastModifiedBy',
   lastModifiedAt: 'lastModifiedAt',
   bio: 'bio',
-  notifyOnUnapprovedAssets: 'notifyOnUnapprovedAssets',
+  notifyOnUnapprovedAssets: 'notifyOnUnapprovedAssets', // deprecated
   notificationEmail: 'notificationEmail',
-  favoriteSpecies: 'favoriteSpecies'
+  favoriteSpecies: 'favoriteSpecies',
+  notificationPrefs: 'notificationPrefs',
+  discordUserId: 'discordUserId'
 }
 
 export const CommentFieldNames = {

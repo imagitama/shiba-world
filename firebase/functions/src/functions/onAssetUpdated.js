@@ -82,12 +82,6 @@ module.exports = functions.firestore
     )
 
     if (hasAssetJustBeenApproved(beforeDocData, docData)) {
-      await storeInNotifications(
-        'Approved asset',
-        beforeDoc.ref,
-        docData[AssetFieldNames.createdBy]
-      )
-
       if (!isAdult(docData)) {
         const createdByDoc = await docData.createdBy.get()
 

@@ -9,7 +9,6 @@ const {
   UserFieldNames,
   isAdult,
 } = require('../firebase')
-const { notifyUsersOfUnapprovedAsset } = require('../email')
 const {
   emitToDiscordEditorNotifications,
   getEmbedForViewAsset,
@@ -37,8 +36,6 @@ module.exports = functions.firestore
     )
 
     if (isNotApproved(docData)) {
-      await notifyUsersOfUnapprovedAsset(doc.id, docData)
-
       if (!isPrivate(docData)) {
         const createdByDoc = await docData[AssetFieldNames.createdBy].get()
 

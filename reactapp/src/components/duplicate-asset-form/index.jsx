@@ -9,6 +9,7 @@ import AssetResults from '../asset-results'
 import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
 import Button from '../button'
+import FormControls from '../form-controls'
 
 const useStyles = makeStyles({
   input: {
@@ -41,7 +42,12 @@ export default ({ categoryName, onDone }) => {
       {isSearching ? (
         <LoadingIndicator message="Finding if it has already been uploaded..." />
       ) : isError ? (
-        <ErrorMessage>Failed to perform search</ErrorMessage>
+        <ErrorMessage>
+          Failed to perform search
+          {searchTerm && (
+            <Button onClick={() => onDone(searchTerm)}>Continue</Button>
+          )}
+        </ErrorMessage>
       ) : searchTerm ? (
         hits && hits.length ? (
           <>

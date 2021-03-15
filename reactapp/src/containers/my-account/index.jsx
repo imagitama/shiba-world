@@ -22,6 +22,7 @@ import PedestalUploadForm from '../../components/pedestal-upload-form'
 import MyAssetAmendments from '../../components/my-asset-amendments'
 import FavoriteSpeciesEditor from '../../components/favorite-species-editor'
 import MyTransactions from '../../components/my-transactions'
+import NotificationSettings from '../../components/notification-settings'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
@@ -188,6 +189,9 @@ export default () => {
             {userId === '04D3yeAUxTMWo8MxscQImHJwtLV2' && (
               <PedestalUploadForm userId="04D3yeAUxTMWo8MxscQImHJwtLV2" />
             )}
+            <br />
+            <Heading variant="h3">Notifications</Heading>
+            <NotificationSettings />
           </TabPanel>
           <TabPanel value={activeTabIdx} index={4}>
             <Heading variant="h2">Social Media</Heading>

@@ -71,7 +71,6 @@ export default ({
           suggest adding it!
         </em>
       </p>
-      <Button onClick={() => onDone()}>Skip</Button>
       <SpeciesVsSelector
         selectedSpeciesIds={selectedSpeciesMulti.map(
           selectedSpeciesItem => selectedSpeciesItem.ref.id
@@ -89,9 +88,15 @@ export default ({
         }}
       />
       <div className={classes.doneBtn}>
-        <Button size="large" onClick={() => onDone()}>
-          Done
-        </Button>
+        {selectedSpeciesMulti.length ? (
+          <Button size="large" onClick={() => onDone()}>
+            Done
+          </Button>
+        ) : (
+          <Button onClick={() => onDone()} color="default">
+            Skip
+          </Button>
+        )}
       </div>
     </>
   )

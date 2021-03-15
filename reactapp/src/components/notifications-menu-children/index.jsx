@@ -19,6 +19,7 @@ import { createRef } from '../../utils'
 import { quickDeleteRecord } from '../../firestore'
 import { handleError } from '../../error-handling'
 import * as routes from '../../routes'
+import { NotificationEvents } from '../../notifications'
 
 import FormattedDate from '../formatted-date'
 
@@ -100,6 +101,8 @@ function Message({ parent, message, data }) {
       return `User "${
         data && data.creator ? data.creator[UserFieldNames.username] : 'Someone'
       }" amended tags for your asset ${parent[AssetFieldNames.title]}`
+    case NotificationEvents.ASSET_NEEDS_APPROVAL:
+      return `Asset needs approval`
     default:
       console.log(`Unknown message for notification: ` + message)
       return '???'

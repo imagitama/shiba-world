@@ -168,6 +168,8 @@ const ProfileFieldNames = {
   bio: 'bio',
   notifyOnUnapprovedAssets: 'notifyOnUnapprovedAssets',
   notificationEmail: 'notificationEmail',
+  notificationPrefs: 'notificationPrefs',
+  discordUserId: 'discordUserId',
 }
 module.exports.ProfileFieldNames = ProfileFieldNames
 
@@ -373,10 +375,24 @@ module.exports.isAdult = (docData) => {
   return docData[AssetFieldNames.isAdult] === true
 }
 
+module.exports.hasAssetJustBeenPublished = (beforeDocData, afterDocData) => {
+  return (
+    beforeDocData[AssetFieldNames.isPrivate] === true &&
+    afterDocData[AssetFieldNames.isPrivate] !== true
+  )
+}
+
 module.exports.hasAssetJustBeenApproved = (beforeDocData, afterDocData) => {
   return (
     beforeDocData[AssetFieldNames.isApproved] !== true &&
     afterDocData[AssetFieldNames.isApproved] === true
+  )
+}
+
+module.exports.hasAssetJustBeenDeleted = (beforeDocData, afterDocData) => {
+  return (
+    beforeDocData[AssetFieldNames.isDeleted] !== true &&
+    afterDocData[AssetFieldNames.isDeleted] === true
   )
 }
 
