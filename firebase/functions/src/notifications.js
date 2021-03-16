@@ -1,4 +1,3 @@
-const admin = require('firebase-admin')
 const {
   db,
   CollectionNames,
@@ -56,8 +55,8 @@ const sendWebNotification = (
 
 const getEmailSubjectForEventName = async (
   eventName,
-  parentRef
-  // data = null
+  parentRef,
+  data = null
 ) => {
   const parentDoc = await parentRef.get()
 
@@ -91,12 +90,6 @@ const getEmailSubjectForEventName = async (
   }
 }
 
-const appendFooterForEmailText = (text) => `${text}
-
-<em>You can unsubscribe from these types of notifications by going to My Account / Settings / Uncheck what you want to unsubscribe from.`
-const appendFooterForEmailHtml = (html) =>
-  `${html}<br /><br /><em>You can unsubscribe from these types of notifications by going to <a href="${siteSettings.VRCARENA_BASE_URL}/my-account">My Account</a> / Settings / Uncheck what you want to unsubscribe from.</em>`
-
 const sendEmailNotification = async (
   eventName,
   parentRef,
@@ -117,8 +110,8 @@ const sendEmailNotification = async (
     bcc: recipientEmail,
     message: {
       subject: await getEmailSubjectForEventName(eventName, parentRef, data),
-      text: appendFooterForEmailText(methodConfig.text),
-      html: appendFooterForEmailHtml(methodConfig.html),
+      text: methodConfig.text,
+      html: methodConfig.html,
     },
   })
 
@@ -308,7 +301,7 @@ async function sendNotification(
         await sendWebNotification(eventName, parentRef, recipientRef, data)
         break
 
-      case NotificationMethods.EMAIL: {
+      case NotificationMethods.EMAIL:
         const recipientEmail =
           recipientProfileDoc.get(ProfileFieldNames.notificationEmail) ||
           (await getUserSignupEmail(recipientRef.id))
@@ -321,7 +314,6 @@ async function sendNotification(
           methodConfig[NotificationMethods.EMAIL]
         )
         break
-      }
 
       case NotificationMethods.DISCORD:
         await sendDiscordNotification(parentRef, recipientRef, data)

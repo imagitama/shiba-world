@@ -12,6 +12,7 @@ const {
   isNotApproved,
 } = require('../firebase')
 const { deleteDocFromIndex, insertAssetDocIntoIndex } = require('../algolia')
+const { storeInNotifications } = require('../notifications')
 const { insertTweetRecordInDatabase } = require('../twitter')
 const {
   emitToDiscordActivity,

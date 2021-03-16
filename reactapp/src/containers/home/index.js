@@ -8,8 +8,6 @@ import {
   mediaQueryForTabletsOrAbove,
   mediaQueryForTabletsOrBelow
 } from '../../media-queries'
-import useUserRecord from '../../hooks/useUserRecord'
-import { UserFieldNames } from '../../hooks/useDatabaseQuery'
 
 const useStyles = makeStyles({
   root: {
@@ -63,9 +61,8 @@ const useStyles = makeStyles({
 export default () => {
   const classes = useStyles()
   const searchTerm = useSearchTerm()
-  const [, , user] = useUserRecord()
 
-  if (searchTerm || (user && !user[UserFieldNames.username])) {
+  if (searchTerm) {
     return null
   }
 

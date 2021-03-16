@@ -45,9 +45,8 @@ import {
   queryForMobiles,
   mediaQueryForTabletsOrAbove
 } from './media-queries'
-import { AssetCategories, UserFieldNames } from './hooks/useDatabaseQuery'
+import { AssetCategories } from './hooks/useDatabaseQuery'
 import SetFavoriteSpeciesMessage from './components/set-favorite-species-message'
-import useUserRecord from './hooks/useUserRecord'
 
 const catchChunkDeaths = functionToImport =>
   functionToImport().catch(err => {
@@ -459,7 +458,6 @@ export default () => {
   const location = useLocation()
   const isMobile = useMediaQuery({ query: queryForMobiles })
   const searchTerm = useSearchTerm()
-  const [, , user] = useUserRecord()
 
   return (
     <ErrorBoundary>
@@ -469,11 +467,7 @@ export default () => {
         <PageHeader />
         <div
           className={`${classes.searchbarArea} ${
-            location.pathname === '/' &&
-            !searchTerm &&
-            (!user || (user && user[UserFieldNames.username]))
-              ? classes.homepage
-              : ''
+            location.pathname === '/' && !searchTerm ? classes.homepage : ''
           }`}>
           <div className={classes.searchBar}>
             <div className={classes.searchBarInner}>

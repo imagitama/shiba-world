@@ -13,7 +13,7 @@ import Heading from '../heading'
 
 export default () => {
   const userId = useFirebaseUserId()
-  const [, , username] = useUserRecord(UserFieldNames.username)
+  const username = useUserRecord(UserFieldNames.username)
   const [, , profile] = useDatabaseQuery(
     CollectionNames.Profiles,
     userId ? userId : false
@@ -23,8 +23,6 @@ export default () => {
   if (!userId || !profile || !username) {
     return null
   }
-
-  console.log(profile)
 
   // null if they choose to skip
   if (
