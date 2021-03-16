@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
@@ -9,12 +9,29 @@ import Typography from '@material-ui/core/Typography'
 import Chip from '@material-ui/core/Chip'
 import LazyLoad from 'react-lazyload'
 import RoomIcon from '@material-ui/icons/Room'
+import {
+  CarouselProvider,
+  Slider,
+  Slide,
+  ButtonBack,
+  ButtonNext,
+  Image
+} from 'pure-react-carousel'
+import 'pure-react-carousel/dist/react-carousel.es.css'
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
+import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 
 import * as routes from '../../routes'
 import categoryMeta from '../../category-meta'
 import FormattedDate from '../formatted-date'
 import { mediaQueryForTabletsOrBelow } from '../../media-queries'
-import { AssetFieldNames } from '../../hooks/useDatabaseQuery'
+import useDatabaseQuery, {
+  AssetFieldNames,
+  CollectionNames
+} from '../../hooks/useDatabaseQuery'
+import PedestalVideo from '../pedestal-video'
+import { isUrlAnImage } from '../../utils'
+import LoadingIndicator from '../loading-indicator'
 
 const chipMargin = '0.25rem'
 
@@ -26,7 +43,8 @@ const useStyles = makeStyles(theme => ({
     [mediaQueryForTabletsOrBelow]: {
       width: '160px',
       margin: '0.25rem'
-    }
+    },
+    overflow: 'visible'
   },
   landscape: {
     width: '100%',
@@ -103,6 +121,78 @@ const useStyles = makeStyles(theme => ({
   },
   actionArea: {
     zIndex: 1
+  },
+  hoverOnEffect: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    transform: 'translate(-25%, -5%)',
+    width: '300px',
+    height: '300px',
+    background: '#000',
+    '& img': {
+      height: '100%'
+    },
+    zIndex: 100,
+    boxShadow: '1px 1px 5px #000'
+    // opacity: 0
+    // animation: '1s $fadeInHoverOnEffect',
+    // animationFillMode: 'forwards'
+  },
+  pedestal: {
+    width: '100%',
+    '& video': {
+      background: 'rgba(0,0,0,1)'
+    }
+  },
+  slideContent: {
+    position: 'absolute',
+    top: '50%',
+    left: 0,
+    zIndex: 110,
+    transform: 'translateY(-50%)'
+  },
+  slideLoadingSpinner: {
+    width: '100%',
+    position: 'absolute',
+    top: '50%',
+    left: 0,
+    zIndex: 109,
+    transform: 'translateY(-50%)'
+  },
+  carouselBtn: {
+    border: 'none', // is a "button"
+    borderRadius: '100%',
+    background: 'rgba(0,0,0,0.5)',
+    color: '#FFF',
+    position: 'absolute',
+    top: '50%',
+    width: '30px',
+    height: '30px',
+    marginTop: '-15px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    '&:disabled': {
+      opacity: '0'
+    }
+  },
+  carouselNextBtn: {
+    right: '10px'
+  },
+  carouselBackBtn: {
+    left: '10px'
+  },
+  '@keyframes fadeInHoverOnEffect': {
+    from: {
+      opacity: 0
+    },
+    to: {
+      opacity: 1
+    }
+  },
+  slide: {
+    position: 'relative'
   }
 }))
 
@@ -204,6 +294,76 @@ function HighlightResult({ _highlightResult }) {
   ))
 }
 
+function HoverOnContent({ asset }) {
+  const classes = useStyles()
+
+  const carouselItems = []
+
+  if (asset[AssetFieldNames.pedestalVideoUrl]) {
+    carouselItems.push(
+      <div className={classes.pedestal}>
+        <PedestalVideo
+          videoUrl={asset[AssetFieldNames.pedestalVideoUrl]}
+          fallbackImageUrl={asset[AssetFieldNames.pedestalFallbackImageUrl]}
+        />
+      </div>
+    )
+  }
+
+  const attachedImageUrls = asset[AssetFieldNames.fileUrls].filter(isUrlAnImage)
+
+  if (attachedImageUrls.length) {
+    attachedImageUrls.forEach(url => {
+      carouselItems.push(<Image src={url} alt="Attachment" />)
+    })
+  }
+
+  carouselItems.push(<Image src={asset[AssetFieldNames.thumbnailUrl]} />)
+
+  return (
+    <CarouselProvider
+      naturalSlideWidth={300}
+      naturalSlideHeight={300}
+      totalSlides={carouselItems.length}>
+      <Slider>
+        {carouselItems.map((item, idx) => (
+          <Slide index={idx} className={classes.slide}>
+            <Link
+              to={routes.viewAssetWithVar.replace(
+                ':assetId',
+                asset[AssetFieldNames.slug] || asset.id
+              )}>
+              <div className={classes.slideContent}>{item}</div>
+              <div className={classes.slideLoadingSpinner}>
+                <LoadingIndicator />
+              </div>
+            </Link>
+          </Slide>
+        ))}
+      </Slider>
+      <ButtonBack
+        className={`${classes.carouselBtn} ${classes.carouselBackBtn}`}>
+        <ChevronLeftIcon />
+      </ButtonBack>
+      <ButtonNext
+        className={`${classes.carouselBtn} ${classes.carouselNextBtn}`}>
+        <ChevronRightIcon />
+      </ButtonNext>
+    </CarouselProvider>
+  )
+}
+
+function HoverOnEffect({ assetId }) {
+  const classes = useStyles()
+  const [, , asset] = useDatabaseQuery(CollectionNames.Assets, assetId)
+
+  return (
+    <div className={classes.hoverOnEffect}>
+      {asset && <HoverOnContent asset={asset} />}
+    </div>
+  )
+}
+
 const getIsFree = tags =>
   tags && (tags.includes('free') || tags.includes('free model'))
 const getIsPaid = tags =>
@@ -229,16 +389,46 @@ export default function AssetItem({
   showPinned = false,
   showCost = true,
   showIsNsfw = true,
-  isLandscape = false
+  isLandscape = false,
+  hoverOnEffect = false
 }) {
   const classes = useStyles()
+  const cardRef = useRef()
+  const [isHoverOnEffectVisible, setIsHoverOnEffectVisible] = useState(false)
+
+  useEffect(() => {
+    if (!hoverOnEffect) {
+      return
+    }
+
+    const onMouseOver = () => {
+      setIsHoverOnEffectVisible(true)
+    }
+
+    const onMouseLeave = () => {
+      setIsHoverOnEffectVisible(false)
+    }
+
+    cardRef.current.addEventListener('mouseover', onMouseOver)
+
+    cardRef.current.addEventListener('mouseleave', onMouseLeave)
+
+    return () => {
+      cardRef.current.removeEventListener('mouseover', onMouseOver)
+      cardRef.current.removeEventListener('mouseleave', onMouseLeave)
+    }
+  }, [hoverOnEffect])
 
   return (
-    <Card className={`${classes.root} ${isLandscape ? classes.landscape : ''}`}>
+    <Card
+      className={`${classes.root} ${isLandscape ? classes.landscape : ''}`}
+      ref={cardRef}>
       <CardActionArea className={classes.actionArea}>
         <Link
           to={routes.viewAssetWithVar.replace(':assetId', slug || id)}
-          className={isLandscape ? classes.landscapeLink : ''}>
+          className={`${classes.link} ${
+            isLandscape ? classes.landscapeLink : ''
+          }`}>
           <ExtraChips
             isApproved={isApproved}
             isPrivate={isPrivate}
@@ -276,6 +466,9 @@ export default function AssetItem({
           </CardContent>
         </Link>
       </CardActionArea>
+      {isHoverOnEffectVisible && hoverOnEffect && (
+        <HoverOnEffect assetId={id} />
+      )}
     </Card>
   )
 }

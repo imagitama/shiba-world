@@ -10,6 +10,7 @@
     "shell": "firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
+    "deploy:notifications": " firebase deploy --only functions:notifyOnAssetAmended,functions:notifyOnAssetApproved,functions:notifyOnAssetDeleted,functions:notifyOnAssetNeedingApproval,functions:notifyOnCommentCreated",
     "logs": "firebase functions:log",
     "prettier": "prettier --write index.js",
     "load-algolia-config": "firebase functions:config:set algolia=\"$(cat .algoliaconfig.json)\"",

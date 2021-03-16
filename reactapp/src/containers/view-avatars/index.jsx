@@ -183,6 +183,7 @@ function Assets() {
   const [activeSortDirection, setActiveSortDirection] = useState(
     assetsSortByDirection || null
   )
+  const [hoverOnEffectEnabled, setHoverOnEffectEnabled] = useState(false)
   const onNewSortFieldAndDirection = (fieldName, direction) => {
     setActiveSortFieldName(fieldName)
     setActiveSortDirection(direction)
@@ -374,6 +375,14 @@ function Assets() {
 
       <Filters />
 
+      <div className={classes.filters}>
+        <Filter
+          label="Hover to show more"
+          isEnabled={hoverOnEffectEnabled}
+          onClick={() => setHoverOnEffectEnabled(currentVal => !currentVal)}
+        />
+      </div>
+
       <div className={classes.controls}>
         <div className={classes.control}>
           <SortDropdown
@@ -414,7 +423,7 @@ function Assets() {
       </div>
 
       {activeSortDirection && activeSortFieldName ? (
-        <AssetResults assets={assets} />
+        <AssetResults assets={assets} hoverOnEffect={hoverOnEffectEnabled} />
       ) : (
         <>
           {Object.entries(assetsBySpecies)
@@ -474,7 +483,11 @@ function Assets() {
                   </BodyText>
 
                   {assetsToRender.length ? (
-                    <AssetResults assets={assetsToRender} showPinned />
+                    <AssetResults
+                      assets={assetsToRender}
+                      showPinned
+                      hoverOnEffect={hoverOnEffectEnabled}
+                    />
                   ) : (
                     <div className={classes.noResultsMsg}>
                       No assets matching your filter

@@ -11,7 +11,8 @@ export default ({
   showCategory = false,
   showPinned = false,
   showCost = true,
-  showIsNsfw = true
+  showIsNsfw = true,
+  hoverOnEffect = false
 }) => {
   const classes = useStyles()
   let allAssets
@@ -48,6 +49,7 @@ export default ({
           showPinned={showPinned}
           showCost={showCost}
           showIsNsfw={showIsNsfw}
+          hoverOnEffect={hoverOnEffect}
         />
       ))}
     </div>
