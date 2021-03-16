@@ -379,7 +379,14 @@ function Assets() {
         <Filter
           label="Hover to show more"
           isEnabled={hoverOnEffectEnabled}
-          onClick={() => setHoverOnEffectEnabled(currentVal => !currentVal)}
+          onClick={() => {
+            setHoverOnEffectEnabled(currentVal => !currentVal)
+            trackAction(
+              analyticsActionCategory,
+              'Click toggle hover to show more',
+              !hoverOnEffectEnabled
+            )
+          }}
         />
       </div>
 
