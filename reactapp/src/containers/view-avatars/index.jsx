@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
+import CheckBoxIcon from '@material-ui/icons/CheckBox'
 
 import categoryMeta from '../../category-meta'
 import {
@@ -24,6 +26,7 @@ import BodyText from '../../components/body-text'
 import SortDropdown from '../../components/sort-dropdown'
 import NoResultsMessage from '../../components/no-results-message'
 import Button from '../../components/button'
+import Message from '../../components/message'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import useDatabaseQuery, {
@@ -41,6 +44,7 @@ import useStorage, { keys as storageKeys } from '../../hooks/useStorage'
 import { mediaQueryForMobiles } from '../../media-queries'
 import { scrollTo, scrollToTop, scrollToElement } from '../../utils'
 import SpeciesVsSelector from '../../components/species-vs-selector'
+import { importantTags } from '../../config'
 
 const useStyles = makeStyles({
   root: {
@@ -104,16 +108,20 @@ const allFilters = [
     tag: 'full_body_ready'
   },
   {
-    label: 'Built with SDK3',
+    label: 'VRChat SDK3',
     tag: 'sdk3'
   },
   // {
-  //   label: 'Built with SDK2',
-  //   tag: 'sdk2'
+  //   label: 'VRChat Ready',
+  //   tag: 'vrchat_ready'
   // },
   {
-    label: 'Includes Blend file',
-    tag: 'blendfile_included'
+    label: 'NeosVR Ready',
+    tag: importantTags.neosvr_compatible
+  },
+  {
+    label: 'ChilloutVR Ready',
+    tag: importantTags.chilloutvr_compatible
   }
 ]
 
@@ -193,6 +201,7 @@ function Assets() {
       direction
     })
   }
+  const [areFiltersVisible, setAreFiltersVisible] = useState(false)
 
   const resetSorting = () => {
     setActiveSortDirection(null)
@@ -373,24 +382,22 @@ function Assets() {
         </>
       )}
 
-      <Filters />
-
-      <div className={classes.filters}>
-        <Filter
-          label="Hover to show more"
-          isEnabled={hoverOnEffectEnabled}
-          onClick={() => {
-            setHoverOnEffectEnabled(currentVal => !currentVal)
-            trackAction(
-              analyticsActionCategory,
-              'Click toggle hover to show more',
-              !hoverOnEffectEnabled
-            )
-          }}
-        />
-      </div>
+      {areFiltersVisible && <Filters />}
 
       <div className={classes.controls}>
+        <div className={classes.control}>
+          <Button
+            onClick={() => setAreFiltersVisible(currentVal => !currentVal)}
+            icon={
+              areFiltersVisible ? (
+                <CheckBoxIcon />
+              ) : (
+                <CheckBoxOutlineBlankIcon />
+              )
+            }>
+            Filters
+          </Button>
+        </div>
         <div className={classes.control}>
           <SortDropdown
             options={assetOptions}
@@ -428,6 +435,13 @@ function Assets() {
           </div>
         )}
       </div>
+
+      {areFiltersVisible && (
+        <Message>
+          Please note that these filters use tags that are decided by the{' '}
+          <strong>community</strong> and might not be 100% accurate
+        </Message>
+      )}
 
       {activeSortDirection && activeSortFieldName ? (
         <AssetResults assets={assets} hoverOnEffect={hoverOnEffectEnabled} />

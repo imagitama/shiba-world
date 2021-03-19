@@ -54,3 +54,8 @@ export const ContentTypes = {
   YOUTUBE_VIDEO: 'YOUTUBE_VIDEO',
   TWEET: 'TWEET'
 }
+
+export const importantTags = {
+  neosvr_compatible: 'neosvr_compatible',
+  chilloutvr_compatible: 'chilloutvr_compatible'
+}
