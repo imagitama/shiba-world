@@ -1,4 +1,6 @@
 import React from 'react'
+import { useLocation } from 'react-router'
+
 import useDatabaseQuery, {
   CollectionNames,
   ProfileFieldNames,
@@ -10,6 +12,7 @@ import useUserRecord from '../../hooks/useUserRecord'
 import FavoriteSpeciesEditor from '../favorite-species-editor'
 import Paper from '../paper'
 import Heading from '../heading'
+import * as routes from '../../routes'
 
 export default () => {
   const userId = useFirebaseUserId()
@@ -18,6 +21,11 @@ export default () => {
     CollectionNames.Profiles,
     userId ? userId : false
   )
+  const { pathname } = useLocation()
+
+  if (pathname == routes.setupProfile) {
+    return null
+  }
 
   // if logged out OR havent setup profile yet
   if (!userId || !profile || !username) {

@@ -35,6 +35,7 @@ import {
   queryForTabletsOrBelow,
   mediaQueryForTabletsOrBelow
 } from '../../media-queries'
+import VrPlatformChooser from '../../components/vr-platform-chooser'
 
 function WelcomeMessage() {
   const [isLoading, isErrored, user] = useUserRecord()
@@ -173,6 +174,8 @@ export default () => {
             <FavoriteSpeciesEditor
               analyticsCategoryName={analyticsCategoryName}
             />
+            <Heading variant="h3">VR Games</Heading>
+            <VrPlatformChooser />
           </TabPanel>
           <TabPanel value={activeTabIdx} index={3}>
             <Heading variant="h2">Settings</Heading>

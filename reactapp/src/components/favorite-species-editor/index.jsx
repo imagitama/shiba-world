@@ -16,6 +16,7 @@ import useDatabaseSave from '../../hooks/useDatabaseSave'
 import LoadingIndicator from '../loading-indicator'
 import ErrorMessage from '../error-message'
 import Button from '../button'
+import FormControls from '../form-controls'
 
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
@@ -23,15 +24,12 @@ import { trackAction } from '../../analytics'
 
 const useStyles = makeStyles({
   dropdown: {
-    width: '100%'
-  },
-  controls: {
-    textAlign: 'center',
-    marginTop: '0.5rem'
+    width: '100%',
+    maxWidth: '500px'
   }
 })
 
-export default ({ analyticsCategoryName, saveOnSelect = false }) => {
+export default ({ analyticsCategory, onDone, saveOnSelect = false }) => {
   const classes = useStyles()
   const userId = useFirebaseUserId()
   const [isLoadingProfile, isErroredLoadingProfile, profile] = useDatabaseQuery(
@@ -70,7 +68,7 @@ export default ({ analyticsCategoryName, saveOnSelect = false }) => {
   const onSaveBtnClick = async overrideSpeciesId => {
     try {
       trackAction(
-        analyticsCategoryName,
+        analyticsCategory,
         'Click save favorite species',
         newFavoriteSpeciesId
       )
@@ -89,6 +87,10 @@ export default ({ analyticsCategoryName, saveOnSelect = false }) => {
         ),
         [ProfileFieldNames.lastModifiedAt]: new Date()
       })
+
+      if (onDone) {
+        onDone()
+      }
     } catch (err) {
       console.error('Failed to save social media fields to database', err)
       handleError(err)
@@ -97,10 +99,6 @@ export default ({ analyticsCategoryName, saveOnSelect = false }) => {
 
   if (isLoadingProfile || isLoadingSpecies || !species) {
     return <LoadingIndicator />
-  }
-
-  if (isSaving) {
-    return <LoadingIndicator message="Saving..." />
   }
 
   if (isErroredLoadingProfile) {
@@ -123,7 +121,7 @@ export default ({ analyticsCategoryName, saveOnSelect = false }) => {
           setNewFavoriteSpeciesId(newSpeciesId)
 
           trackAction(
-            analyticsCategoryName,
+            analyticsCategory,
             'Select different species',
             e.target.value
           )
@@ -139,10 +137,18 @@ export default ({ analyticsCategoryName, saveOnSelect = false }) => {
         ))}
       </Select>
       {saveOnSelect !== true && (
-        <div className={classes.controls}>
-          <Button onClick={() => onSaveBtnClick()}>Save</Button>
-          {isSaveSuccess ? ' Saved!' : isSaveErrored ? ' Error' : ''}
-        </div>
+        <FormControls>
+          <Button onClick={() => onSaveBtnClick()} isDisabled={isSaving}>
+            Save
+          </Button>
+          {isSaving
+            ? 'Saving...'
+            : isSaveSuccess
+            ? ' Saved!'
+            : isSaveErrored
+            ? ' Error'
+            : ''}
+        </FormControls>
       )}
     </>
   )

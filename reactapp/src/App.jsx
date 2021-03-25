@@ -1,5 +1,11 @@
 import React, { lazy, Suspense, useEffect } from 'react'
-import { Route, Switch, Redirect, useLocation } from 'react-router-dom'
+import {
+  Route,
+  Switch,
+  Redirect,
+  useLocation,
+  useHistory
+} from 'react-router-dom'
 import ThemeProvider from '@material-ui/styles/ThemeProvider'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { Helmet } from 'react-helmet'
@@ -22,7 +28,6 @@ import VsScreen from './containers/vs-screen'
 import PageHeader from './components/header'
 import PageFooter from './components/footer'
 import SearchResults from './components/search-results'
-import SetupProfile from './components/setup-profile'
 // import Notices from './components/notices'
 import ErrorBoundary from './components/error-boundary'
 import LoadingIndicator from './components/loading-indicator'
@@ -45,8 +50,9 @@ import {
   queryForMobiles,
   mediaQueryForTabletsOrAbove
 } from './media-queries'
-import { AssetCategories } from './hooks/useDatabaseQuery'
+import { AssetCategories, UserFieldNames } from './hooks/useDatabaseQuery'
 import SetFavoriteSpeciesMessage from './components/set-favorite-species-message'
+import useUserRecord from './hooks/useUserRecord'
 
 const catchChunkDeaths = functionToImport =>
   functionToImport().catch(err => {
@@ -204,6 +210,9 @@ const ViewTransaction = lazy(() =>
 const CreateTransaction = lazy(() =>
   catchChunkDeaths(() => import('./containers/create-transaction'))
 )
+const SetupProfile = lazy(() =>
+  catchChunkDeaths(() => import('./containers/setup-profile'))
+)
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
   return (
@@ -224,6 +233,24 @@ const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
   )
 }
 
+const SetupProfileRedirect = () => {
+  const [, , user] = useUserRecord()
+  const { push } = useHistory()
+  const location = useLocation()
+
+  useEffect(() => {
+    if (!user) {
+      return
+    }
+
+    if (!user[UserFieldNames.username]) {
+      push(routes.setupProfile)
+    }
+  }, [location.pathname, user !== null])
+
+  return null
+}
+
 const MainContent = () => {
   const searchTerm = useSearchTerm()
   const location = useLocation()
@@ -238,7 +265,7 @@ const MainContent = () => {
 
   return (
     <Suspense fallback={<LoadingIndicator />}>
-      <SetupProfile />
+      <SetupProfileRedirect />
       <SetFavoriteSpeciesMessage />
       <Switch>
         <Redirect
@@ -443,6 +470,7 @@ const MainContent = () => {
           path={routes.guessTheAvatar}
           component={GuessTheAvatarGame}
         />
+        <Route exact path={routes.setupProfile} component={SetupProfile} />
         <Route
           component={() => (
             <ErrorContainer code={404} message="Page not found" />

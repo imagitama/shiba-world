@@ -200,7 +200,9 @@ export const ProfileFieldNames = {
   notificationEmail: 'notificationEmail',
   favoriteSpecies: 'favoriteSpecies',
   notificationPrefs: 'notificationPrefs',
-  discordUserId: 'discordUserId'
+  discordUserId: 'discordUserId',
+  neosVrUsername: 'neosVrUsername',
+  chilloutVrUsername: 'chilloutVrUsername'
 }
 
 export const CommentFieldNames = {

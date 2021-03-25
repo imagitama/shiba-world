@@ -56,6 +56,7 @@ export const createProduct = '/products/create'
 export const viewTransactions = '/transactions'
 export const viewTransactionWithVar = '/transactions/:transactionId'
 export const createTransactionWithVar = '/transactions/create/:productId'
+export const setupProfile = '/setup-profile'
 
 // Outdated routes
 export const browseAssets = '/browse'
