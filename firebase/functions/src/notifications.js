@@ -294,7 +294,9 @@ async function sendNotification(
     recipientProfileDoc.get(ProfileFieldNames.notificationPrefs) ||
     defaultNotificationPrefs
 
-  if (recipientNotificationPrefs.events[eventName] !== true) {
+  // over time we will add more notifications so new ones will be "undefined"
+  // only skip if the user explicitly opts out
+  if (recipientNotificationPrefs.events[eventName] === false) {
     return
   }
 
@@ -303,7 +305,8 @@ async function sendNotification(
 
     console.debug(`Trying method ${methodName}: ${isEnabled ? 'YES' : 'NO'}`)
 
-    if (!isEnabled) {
+    // will be "undefined" if a new method is added late
+    if (isEnabled === false) {
       continue
     }
 

@@ -144,7 +144,7 @@ export default () => {
           key={eventName}
           control={
             <Checkbox
-              checked={newPrefs.events[eventName]}
+              checked={newPrefs.events[eventName] !== false}
               onChange={e => onChangeEvent(e, eventName)}
             />
           }
@@ -160,7 +160,7 @@ export default () => {
             key={methodName}
             control={
               <Checkbox
-                checked={newPrefs.methods[methodName]}
+                checked={newPrefs.methods[methodName] !== false}
                 onChange={e => onChangeMethod(e, methodName)}
               />
             }
