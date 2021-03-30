@@ -4,4 +4,5 @@ module.exports.routes = {
   viewAssetWithVar: '/assets/:assetId',
   viewRequestWithVar: '/requests/:requestId',
   viewUserWithVar: '/users/:userId',
+  admin: '/admin',
 }

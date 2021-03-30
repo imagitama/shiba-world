@@ -192,5 +192,11 @@ service cloud.firestore {
       allow read: if isCustomerOfTransaction() || isAdmin();
       allow create: if isLoggedIn() && isNotBanned();
     }
+
+    match /reports/{document=**} {
+      allow read: if (isEditor() || isAdmin());
+      allow update: if (isEditor() || isAdmin());
+      allow create: if isLoggedIn() && isNotBanned();
+    }
   }
 }

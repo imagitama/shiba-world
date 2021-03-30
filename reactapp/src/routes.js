@@ -57,6 +57,9 @@ export const viewTransactions = '/transactions'
 export const viewTransactionWithVar = '/transactions/:transactionId'
 export const createTransactionWithVar = '/transactions/create/:productId'
 export const setupProfile = '/setup-profile'
+export const createReportWithAssetVar = '/reports/create/:assetId'
+export const editReportWithVar = '/reports/edit/:reportId'
+export const viewReportWithVar = '/reports/:reportId'
 
 // Outdated routes
 export const browseAssets = '/browse'

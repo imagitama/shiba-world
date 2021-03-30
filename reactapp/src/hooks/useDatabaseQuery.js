@@ -47,7 +47,28 @@ export const CollectionNames = {
   AssetMeta: 'assetMeta',
   ViewCache: 'viewCache',
   Products: 'products',
-  Transactions: 'transactions'
+  Transactions: 'transactions',
+  Reports: 'reports'
+}
+
+export const ReportFieldNames = {
+  parent: 'parent',
+  reason: 'reason',
+  comments: 'comments',
+  isVerified: 'isVerified',
+  isDeleted: 'isDeleted',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt'
+}
+
+export const ReportReasons = {
+  OUTDATED_CONTENT: 'OUTDATED_CONTENT',
+  OFFENSIVE_CONTENT: 'OFFENSIVE_CONTENT',
+  BROKEN_SOURCE: 'BROKEN_SOURCE',
+  SPAM: 'SPAM',
+  OTHER: 'OTHER'
 }
 
 export const ViewCacheNames = {

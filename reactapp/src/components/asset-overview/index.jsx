@@ -71,7 +71,6 @@ import NotApprovedMessage from './components/not-approved-message'
 import DeletedMessage from './components/deleted-message'
 import IsPrivateMessage from './components/is-private-message'
 import FileList from './components/file-list'
-import ReportMessage from './components/report-message'
 import ChildrenAssets from './components/children-assets'
 import SpeciesOutput from './components/species-output'
 import VideoList from './components/video-list'
@@ -466,7 +465,6 @@ export default ({ assetId, switchEditorOpen }) => {
   )
   const classes = useStyles()
   const [, , user] = useUserRecord()
-  const [isReportMessageOpen, setIsReportMessageOpen] = useState(false)
   const [isSketchfabEmbedVisible, setIsSketchfabEmbedVisible] = useState(false)
   const [isTagAmendmentFormVisible, setIsTagAmendmentFormVisible] = useState(
     false
@@ -688,7 +686,6 @@ export default ({ assetId, switchEditorOpen }) => {
         <meta property="og:image" content={thumbnailUrl} />
         <meta property="og:site_name" content="VRCArena" />
       </Helmet>
-      {isReportMessageOpen && <ReportMessage assetId={id} />}
       {isApproved === false && <NotApprovedMessage />}
       {isDeleted === true && <DeletedMessage />}
       {isPrivate === true && <IsPrivateMessage />}
@@ -937,7 +934,6 @@ export default ({ assetId, switchEditorOpen }) => {
               <ReportButton
                 assetId={id}
                 analyticsCategoryName={analyticsCategoryName}
-                onClick={() => setIsReportMessageOpen(true)}
               />
             </Control>
             <Control>

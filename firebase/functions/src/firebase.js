@@ -50,8 +50,31 @@ const CollectionNames = {
   ViewCache: 'viewCache',
   Products: 'products',
   Transactions: 'transactions',
+  Reports: 'reports',
 }
 module.exports.CollectionNames = CollectionNames
+
+const ReportFieldNames = {
+  parent: 'parent',
+  reason: 'reason',
+  comments: 'comments',
+  isVerified: 'isVerified',
+  isDeleted: 'isDeleted',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  lastModifiedBy: 'lastModifiedBy',
+  lastModifiedAt: 'lastModifiedAt',
+}
+module.exports.ReportFieldNames = ReportFieldNames
+
+const ReportReasons = {
+  OUTDATED_CONTENT: 'OUTDATED_CONTENT',
+  OFFENSIVE_CONTENT: 'OFFENSIVE_CONTENT',
+  BROKEN_SOURCE: 'BROKEN_SOURCE',
+  SPAM: 'SPAM',
+  OTHER: 'OTHER',
+}
+module.exports.ReportReasons = ReportReasons
 
 const AssetMetaFieldNames = {
   // comments: 'comments',

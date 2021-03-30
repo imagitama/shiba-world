@@ -16,6 +16,7 @@ import DeletedAssets from '../../components/deleted-assets'
 import AdminAssetAmendments from '../../components/admin-asset-amendments'
 import AdminPolls from '../../components/admin-polls'
 import AdminAdvancedTools from '../../components/admin-advanced-tools'
+import AdminReports from '../../components/admin-reports'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import {
@@ -87,6 +88,7 @@ export default () => {
           <Tab label="Asset History" index={5} />
           <Tab label="Polls" index={6} />
           <Tab label="Advanced" index={7} />
+          <Tab label="Reports" index={8} />
         </Tabs>
         <div className={classes.tabPanels}>
           <TabPanel value={activeTabIdx} index={0}>
@@ -113,6 +115,9 @@ export default () => {
           </TabPanel>
           <TabPanel value={activeTabIdx} index={7}>
             <AdminAdvancedTools />
+          </TabPanel>
+          <TabPanel value={activeTabIdx} index={8}>
+            <AdminReports />
           </TabPanel>
         </div>
       </div>

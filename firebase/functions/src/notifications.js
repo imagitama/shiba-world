@@ -30,7 +30,7 @@ const getWebMessageForEvent = (eventName) => {
       console.warn(
         `Cannot get web message for event name ${eventName}: not recognized (using Unknown)`
       )
-      return 'Unknown'
+      return eventName
   }
 }
 
@@ -84,6 +84,8 @@ const getEmailSubjectForEventName = async (
       return `Someone has commented on your user profile`
     case NotificationEvents.TAGGED_IN_COMMENT:
       return `Someone has tagged you in a comment`
+    case NotificationEvents.REPORT_CREATED:
+      return 'Report created'
     default:
       throw new Error(
         `Cannot get email subject for event name ${eventName}: unknown! Using default`
@@ -145,6 +147,7 @@ const NotificationEvents = {
   COMMENT_ON_USER: 'COMMENT_ON_USER',
   TAGGED_IN_COMMENT: 'TAGGED_IN_COMMENT',
   ASSET_NEEDS_APPROVAL: 'ASSET_NEEDS_APPROVAL',
+  REPORT_CREATED: 'REPORT_CREATED',
 }
 module.exports.NotificationEvents = NotificationEvents
 
@@ -259,6 +262,7 @@ const defaultNotificationPrefs = {
     [NotificationEvents.TAGGED_IN_COMMENT]: true,
     // editors only
     [NotificationEvents.ASSET_NEEDS_APPROVAL]: true,
+    [NotificationEvents.REPORT_CREATED]: true,
   },
   methods: {
     [NotificationMethods.WEB]: true,

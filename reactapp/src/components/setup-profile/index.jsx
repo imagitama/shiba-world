@@ -103,7 +103,6 @@ export default ({ analyticsCategory, onDone }) => {
   }
 
   const nextStep = () => {
-    console.log('next step!')
     setStepIdx(currentVal => currentVal + 1)
   }
 

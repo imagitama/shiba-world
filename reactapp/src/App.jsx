@@ -213,6 +213,9 @@ const CreateTransaction = lazy(() =>
 const SetupProfile = lazy(() =>
   catchChunkDeaths(() => import('./containers/setup-profile'))
 )
+const CreateReport = lazy(() =>
+  catchChunkDeaths(() => import('./containers/create-report'))
+)
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
   return (
@@ -471,6 +474,11 @@ const MainContent = () => {
           component={GuessTheAvatarGame}
         />
         <Route exact path={routes.setupProfile} component={SetupProfile} />
+        <Route
+          exact
+          path={routes.createReportWithAssetVar}
+          component={CreateReport}
+        />
         <Route
           component={() => (
             <ErrorContainer code={404} message="Page not found" />

@@ -53,8 +53,8 @@ module.exports = functions.firestore
       },
       {
         [NotificationMethods.EMAIL]: {
-          text: getEmailText(),
-          html: getEmailHtml(),
+          text: getEmailText(assetDoc.get(AssetFieldNames.title)),
+          html: getEmailHtml(assetDoc.get(AssetFieldNames.title), assetRef.id),
         },
       }
     )

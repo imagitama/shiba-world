@@ -59,6 +59,7 @@ function Message({ parent, message, data }) {
   }
 
   switch (message) {
+    case '':
     case 'Approved asset':
       return `Your asset "${parent[AssetFieldNames.title]}" was approved`
     case 'Created comment':
@@ -103,6 +104,8 @@ function Message({ parent, message, data }) {
       }" amended tags for your asset ${parent[AssetFieldNames.title]}`
     case NotificationEvents.ASSET_NEEDS_APPROVAL:
       return `Asset needs approval`
+    case NotificationEvents.REPORT_CREATED:
+      return 'Report created'
     default:
       console.log(`Unknown message for notification: ` + message)
       return '???'
@@ -126,8 +129,13 @@ function getCollectionNameForResult(result) {
   return ''
 }
 
-function getLinkUrl(parent) {
+function getLinkUrl(parent, message) {
   const collectionName = getCollectionNameForResult(parent)
+
+  switch (message) {
+    case NotificationEvents.REPORT_CREATED:
+      return routes.admin
+  }
 
   switch (collectionName) {
     case CollectionNames.Assets:
@@ -238,7 +246,7 @@ export default ({ onClose, isMobile = false }) => {
       {results.map(({ id, parent, message, createdAt, data }) => (
         <MenuItem key={id} className={menuItemClassName}>
           <Link
-            to={getLinkUrl(parent)}
+            to={getLinkUrl(parent, message)}
             onClick={() => onClickLink(id)}
             className={classes.anchor}>
             <div className={classes.leftCol}>

@@ -43,6 +43,8 @@ const getLabelForEventName = eventName => {
       return 'Someone tags me in a comment'
     case NotificationEvents.ASSET_NEEDS_APPROVAL:
       return 'An asset needs approval (staff only)'
+    case NotificationEvents.REPORT_CREATED:
+      return 'A report has been created (staff only)'
     default:
       return `Unknown event ${eventName}`
   }
