@@ -311,9 +311,12 @@ function Assets() {
   }, {})
 
   const scrollToSpeciesId = speciesId => {
+    console.debug('scroll to species', speciesId)
+
     // this could happen if species has no assets in it
     // TODO: purge from species selector if none?
     if (!(speciesId in headingElementsBySpeciesIdRef.current)) {
+      console.debug('tried to scroll to species without a heading')
       return
     }
 
@@ -372,7 +375,7 @@ function Assets() {
 
   return (
     <>
-      {isSpeciesSelectorOpen && (
+      {!activeSortFieldName && !activeSortDirection && isSpeciesSelectorOpen && (
         <>
           <Heading variant="h2">Jump To Species</Heading>
           <SpeciesVsSelector
@@ -420,20 +423,22 @@ function Assets() {
             <Button onClick={resetSorting}>Reset</Button>
           </div>
         )}
-        {!isSpeciesSelectorOpen && (
-          <div className={classes.control}>
-            <Button
-              onClick={() => {
-                trackAction(
-                  analyticsActionCategory,
-                  'Click jump to species button'
-                )
-                setIsSpeciesSelectorOpen(true)
-              }}>
-              Jump To Species...
-            </Button>
-          </div>
-        )}
+        {!activeSortFieldName &&
+          !activeSortDirection &&
+          !isSpeciesSelectorOpen && (
+            <div className={classes.control}>
+              <Button
+                onClick={() => {
+                  trackAction(
+                    analyticsActionCategory,
+                    'Click jump to species button'
+                  )
+                  setIsSpeciesSelectorOpen(true)
+                }}>
+                Jump To Species...
+              </Button>
+            </div>
+          )}
       </div>
 
       {areFiltersVisible && (
