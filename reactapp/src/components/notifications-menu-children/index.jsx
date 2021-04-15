@@ -16,7 +16,7 @@ import useDatabaseQuery, {
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import { createRef } from '../../utils'
-import { quickDeleteRecord } from '../../firestore'
+import { quickDeleteRecord, quickDeleteRefs } from '../../firestore'
 import { handleError } from '../../error-handling'
 import * as routes from '../../routes'
 import { NotificationEvents } from '../../notifications'
@@ -225,21 +225,18 @@ export default ({ onClose, isMobile = false }) => {
     }
   }
 
-  // Temporarily removed because the Firebase permissions are all dicky so this doesnt work
-  // const onClearAllClick = async () => {
-  //   try {
-  //     await quickDeleteRecords(CollectionNames.Notifications, [
-  //       [
-  //         NotificationsFieldNames.recipient,
-  //         Operators.EQUALS,
-  //         createRef(CollectionNames.Users, userId)
-  //       ]
-  //     ])
-  //   } catch (err) {
-  //     console.error('Failed to delete all notifications for user', err)
-  //     handleError(err)
-  //   }
-  // }
+  const onClearAllClick = async () => {
+    try {
+      console.debug(`clearing all notifications for user...`, userId)
+
+      await quickDeleteRefs(
+        results.map(({ id }) => createRef(CollectionNames.Notifications, id))
+      )
+    } catch (err) {
+      console.error('Failed to delete all notifications for user', err)
+      handleError(err)
+    }
+  }
 
   return (
     <>
@@ -265,9 +262,11 @@ export default ({ onClose, isMobile = false }) => {
           </Link>
         </MenuItem>
       ))}
-      {/* <MenuItem className={menuItemClassName} onClick={onClearAllClick}>
-        Clear All
-      </MenuItem> */}
+      {results.length && (
+        <MenuItem className={menuItemClassName} onClick={onClearAllClick}>
+          Clear All
+        </MenuItem>
+      )}
     </>
   )
 }

@@ -128,7 +128,7 @@ export default [
         id: 'admin',
         label: 'Admin',
         url: routes.admin,
-        requiresAdmin: true
+        requiresEditor: true
       }
     ]
   }

@@ -19,19 +19,43 @@ export async function quickDeleteRecords(collectionName, whereClauses) {
     throw new Error('Need where clauses')
   }
 
+  console.debug('quickDeleteRecords', collectionName, whereClauses)
+
   whereClauses.forEach(([fieldName, operator, value]) => {
     if (isRef(value)) {
       value = mapRefToDoc(value)
+      console.log('map ref', value, 'to', value.id)
     }
+
+    console.debug(`where`, fieldName, operator, value)
 
     query.where(fieldName, operator, value)
   })
 
   const { docs } = await query.get()
 
-  console.log(docs)
+  const batch = firebase.firestore().batch()
 
-  return Promise.all(docs.map(doc => doc.ref.delete()))
+  for (const doc of docs) {
+    console.debug(`deleting doc ${doc.id}`)
+    batch.delete(doc.ref)
+  }
+
+  await batch.commit()
+}
+
+export async function quickDeleteRefs(refs) {
+  const batch = firebase.firestore().batch()
+
+  for (let val of refs) {
+    console.log('checking is ref', val)
+    if (isRef(val)) {
+      val = mapRefToDoc(val)
+    }
+    batch.delete(val)
+  }
+
+  await batch.commit()
 }
 
 export async function quickReadRecord(collectionName, id) {
