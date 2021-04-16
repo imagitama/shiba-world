@@ -45,6 +45,7 @@ import { mediaQueryForMobiles } from '../../media-queries'
 import { scrollTo, scrollToTop, scrollToElement } from '../../utils'
 import SpeciesVsSelector from '../../components/species-vs-selector'
 import { importantTags } from '../../config'
+import NewestAvatar from './components/newest-avatar'
 
 const useStyles = makeStyles({
   root: {
@@ -239,7 +240,7 @@ function Assets() {
   }, [result !== null])
 
   if (isLoading || !result) {
-    return <LoadingIndicator />
+    return <LoadingIndicator message="Loading avatars..." />
   }
 
   if (isErrored) {
@@ -550,6 +551,8 @@ export default () => {
         <Heading variant="h1">
           {getDisplayNameByCategoryName(categoryName)}
         </Heading>
+
+        <NewestAvatar />
 
         <Assets categoryName={AssetCategories.avatar} groupAvatarsBySpecies />
       </div>

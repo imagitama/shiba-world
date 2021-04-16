@@ -1360,6 +1360,7 @@ export default ({ assetId, switchEditorOpen }) => {
                   <>
                     <FeatureAssetButton
                       assetId={assetId}
+                      tags={tags}
                       onClick={() =>
                         trackAction(
                           analyticsCategoryName,

@@ -22,20 +22,23 @@ const useStyles = makeStyles({
     justifyContent: 'center',
     alignItems: 'center',
     background: 'rgba(0, 0, 0, 0.1)',
-    padding: '2rem',
+    // padding: '2rem',
     borderRadius: '0.5rem',
     [mediaQueryForMobiles]: {
       flexWrap: 'wrap',
       padding: '1rem'
-    }
+    },
+    position: 'relative',
+    margin: '2rem'
   },
   thumbnailWrapper: {
     perspective: '1000px',
     textAlign: 'center',
-    padding: '1rem 0'
+    padding: '1rem 0',
+    height: '100%'
   },
   thumbnailImage: {
-    width: '100%',
+    height: '100%',
     animation: '20s $spinThumbnail infinite linear',
     transition: 'all 100ms',
     '&:hover': {
@@ -68,7 +71,7 @@ const useStyles = makeStyles({
     }
   },
   media: {
-    width: '30%',
+    height: '200px',
     marginRight: '1rem',
     [mediaQueryForMobiles]: {
       marginRight: 0,
@@ -111,7 +114,7 @@ export default () => {
   )
   const classes = useStyles()
 
-  if (!result || !result.activeAsset) {
+  if (!result || !result.overrideAsset) {
     return null
   }
 
@@ -122,10 +125,8 @@ export default () => {
     thumbnailUrl,
     [AssetFieldNames.pedestalVideoUrl]: pedestalVideoUrl,
     [AssetFieldNames.pedestalFallbackImageUrl]: pedestalFallbackImageUrl
-  } = result.overrideAsset || result.activeAsset
-  const id = result.overrideAsset
-    ? result.overrideAsset.asset.id
-    : result.activeAsset.asset.id
+  } = result.overrideAsset
+  const id = result.overrideAsset.asset.id
   const viewUrl = routes.viewAssetWithVar.replace(':assetId', id)
 
   return (
@@ -134,7 +135,9 @@ export default () => {
       <div className={classes.media}>
         <Link
           to={viewUrl}
-          onClick={() => trackAction('Home', 'Click featured asset thumbnail')}>
+          onClick={() =>
+            trackAction('AssetsList', 'Click featured asset thumbnail')
+          }>
           {pedestalVideoUrl ? (
             <div className={classes.video}>
               <PedestalVideo
@@ -158,7 +161,9 @@ export default () => {
         <Heading variant="h1" className={classes.heading}>
           <Link
             to={viewUrl}
-            onClick={() => trackAction('Home', 'Click featured asset title')}>
+            onClick={() =>
+              trackAction('AssetsList', 'Click featured asset title')
+            }>
             {title}
           </Link>
         </Heading>
@@ -169,9 +174,9 @@ export default () => {
             size="large"
             icon={<ChevronRightIcon />}
             onClick={() =>
-              trackAction('Home', 'Click view featured asset button')
+              trackAction('AssetsList', 'Click view featured asset button')
             }>
-            View Featured Asset
+            View Avatar
           </Button>
         </div>
       </div>

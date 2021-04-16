@@ -12,6 +12,7 @@ const SpecialFieldNames = {
   activeAsset: 'activeAsset',
   rotation: 'rotation',
   alreadyFeaturedAssets: 'alreadyFeaturedAssets',
+  overrideAsset: 'overrideAsset',
 }
 
 const ActiveAssetFieldNames = {
@@ -38,6 +39,19 @@ module.exports.syncFeaturedAssets = async () => {
     featuredAssetsForUsersRefs.map(async (ref) => ref.get())
   )
 
+  console.debug(`found ${featuredAssetsForUsers.length} assets to feature`)
+
+  const featuredAssetsForUserWithOverride = featuredAssetsForUsers.find(
+    (featuredAssets) =>
+      featuredAssets.get(FeaturedAssetForUsersFieldNames.overrideAsset)
+  )
+
+  if (featuredAssetsForUserWithOverride) {
+    console.debug(
+      `found an asset to override with: ${featuredAssetsForUserWithOverride.id}`
+    )
+  }
+
   const allFeaturedAssetRefs = featuredAssetsForUsers.reduce(
     (result, doc) =>
       doc.get(FeaturedAssetForUsersFieldNames.assets)
@@ -54,6 +68,16 @@ module.exports.syncFeaturedAssets = async () => {
   await specialRef.set(
     {
       [SpecialFieldNames.rotation]: allFeaturedAssetRefs,
+      [SpecialFieldNames.overrideAsset]: featuredAssetsForUserWithOverride
+        ? await mapSelectedAssetToActiveAsset(
+            featuredAssetsForUserWithOverride.get(
+              FeaturedAssetForUsersFieldNames.overrideAsset
+            ),
+            await featuredAssetsForUserWithOverride
+              .get(FeaturedAssetForUsersFieldNames.overrideAsset)
+              .get()
+          )
+        : null,
     },
     {
       merge: true,
@@ -93,6 +117,37 @@ const getCreatedByName = async (authorRef, createdByRef) => {
   const createdByName = createdBy.get(UserFieldNames.username)
   return createdByName
 }
+
+const mapSelectedAssetToActiveAsset = async (
+  selectedAsset,
+  selectedAssetDoc
+) => ({
+  // NOTE: fallback to null otherwise it will be omitted from merge
+
+  // standard
+  [AssetFieldNames.title]: selectedAssetDoc.get(AssetFieldNames.title) || null,
+  [AssetFieldNames.description]:
+    selectedAssetDoc.get(AssetFieldNames.description) || null,
+  [AssetFieldNames.shortDescription]:
+    selectedAssetDoc.get(AssetFieldNames.shortDescription) || null,
+  [AssetFieldNames.thumbnailUrl]:
+    selectedAssetDoc.get(AssetFieldNames.thumbnailUrl) || null,
+  [AssetFieldNames.slug]: selectedAssetDoc.get(AssetFieldNames.slug) || null,
+  [AssetFieldNames.pedestalVideoUrl]:
+    selectedAssetDoc.get(AssetFieldNames.pedestalVideoUrl) || null,
+  [AssetFieldNames.pedestalFallbackImageUrl]:
+    selectedAssetDoc.get(AssetFieldNames.pedestalFallbackImageUrl) || null,
+
+  // special
+  asset: selectedAsset,
+  authorName:
+    (await getAuthorName(selectedAssetDoc.get(AssetFieldNames.author))) || null,
+  createdByName:
+    (await getCreatedByName(
+      selectedAssetDoc.get(AssetFieldNames.author),
+      selectedAssetDoc.get(AssetFieldNames.createdBy)
+    )) || null,
+})
 
 const pickFeaturedAsset = async () => {
   console.debug('Picking featured asset')
@@ -149,38 +204,7 @@ const pickFeaturedAsset = async () => {
     {
       [SpecialFieldNames.alreadyFeaturedAssets]: updatedAlreadyFeaturedAssets,
       [SpecialFieldNames.activeAsset]: selectedAsset
-        ? {
-            // NOTE: fallback to null otherwise it will be omitted from merge
-
-            // standard
-            [AssetFieldNames.title]:
-              selectedAssetDoc.get(AssetFieldNames.title) || null,
-            [AssetFieldNames.description]:
-              selectedAssetDoc.get(AssetFieldNames.description) || null,
-            [AssetFieldNames.shortDescription]:
-              selectedAssetDoc.get(AssetFieldNames.shortDescription) || null,
-            [AssetFieldNames.thumbnailUrl]:
-              selectedAssetDoc.get(AssetFieldNames.thumbnailUrl) || null,
-            [AssetFieldNames.slug]:
-              selectedAssetDoc.get(AssetFieldNames.slug) || null,
-            [AssetFieldNames.pedestalVideoUrl]:
-              selectedAssetDoc.get(AssetFieldNames.pedestalVideoUrl) || null,
-            [AssetFieldNames.pedestalFallbackImageUrl]:
-              selectedAssetDoc.get(AssetFieldNames.pedestalFallbackImageUrl) ||
-              null,
-
-            // special
-            asset: selectedAsset,
-            authorName:
-              (await getAuthorName(
-                selectedAssetDoc.get(AssetFieldNames.author)
-              )) || null,
-            createdByName:
-              (await getCreatedByName(
-                selectedAssetDoc.get(AssetFieldNames.author),
-                selectedAssetDoc.get(AssetFieldNames.createdBy)
-              )) || null,
-          }
+        ? await mapSelectedAssetToActiveAsset(selectedAsset, selectedAssetDoc)
         : null,
     },
     {

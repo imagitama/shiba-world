@@ -504,7 +504,11 @@ export default ({ assetId, switchEditorOpen }) => {
   }, [result ? result.title : null])
 
   if (isLoading || isLoadingMeta) {
-    return <LoadingIndicator />
+    return (
+      <LoadingIndicator
+        message={isLoading ? 'Loading asset...' : 'Loading meta...'}
+      />
+    )
   }
 
   if (isErrored || isErroredLoadingMeta || result === null) {

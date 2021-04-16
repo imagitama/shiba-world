@@ -21,7 +21,7 @@ const addToFeatured = (assetId, assetRefs) => {
   return assetRefs.concat([createRef(CollectionNames.Assets, assetId)])
 }
 
-export default ({ assetId, onClick = null }) => {
+export default ({ assetId, tags = [], onClick = null }) => {
   const userId = useFirebaseUserId()
 
   const [isLoading, isErroredLoadingFeatured, result] = useDatabaseQuery(
@@ -54,10 +54,16 @@ export default ({ assetId, onClick = null }) => {
         onClick()
       }
 
+      // a way for "new" avatars to be shown on the homepage/avatar listing to help promote them
+      const isToOverride = !isFeatured && tags.includes('new')
+
       await save({
         [FeaturedAssetForUsersFieldNames.assets]: isFeatured
           ? removeFromFeatured(assetId, result ? result.assets : [])
           : addToFeatured(assetId, result ? result.assets : []),
+        [FeaturedAssetForUsersFieldNames.overrideAsset]: isToOverride
+          ? createRef(CollectionNames.Assets, assetId)
+          : null,
         [FeaturedAssetForUsersFieldNames.lastModifiedBy]: createRef(
           CollectionNames.Users,
           userId

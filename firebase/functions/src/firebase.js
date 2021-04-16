@@ -329,6 +329,7 @@ module.exports.PollTalliesFieldNames = PollTalliesFieldNames
 
 const FeaturedAssetForUsersFieldNames = {
   assets: 'assets',
+  overrideAsset: 'overrideAsset',
   createdAt: 'createdAt',
   createdBy: 'createdBy',
   lastModifiedBy: 'lastModifiedBy',
