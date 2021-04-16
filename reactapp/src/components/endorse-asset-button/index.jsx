@@ -33,6 +33,11 @@ export default ({ assetId, endorsementCount = '???', onClick = null }) => {
             EndorsementFieldNames.createdBy,
             Operators.EQUALS,
             createRef(CollectionNames.Users, userId)
+          ],
+          [
+            EndorsementFieldNames.asset,
+            Operators.EQUALS,
+            createRef(CollectionNames.Assets, assetId)
           ]
         ]
       : false,
