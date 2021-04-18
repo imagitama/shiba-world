@@ -60,6 +60,13 @@ const getDoesAssetNeedToBeSynced = (beforeDocData, afterDocData) => {
     return true
   }
 
+  if (
+    beforeDocData[AssetFieldNames.isPrivate] !==
+    afterDocData[AssetFieldNames.isPrivate]
+  ) {
+    return true
+  }
+
   return false
 }
 

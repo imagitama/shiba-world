@@ -114,13 +114,27 @@ module.exports.updateAvatarInList = async (assetId, avatarDoc) => {
     console.debug(`found ${existingAvatars.length} existing avatars in list`)
 
     if (foundIndex !== -1) {
-      console.debug(`avatar already in list - updating`)
-      updatedAvatars[foundIndex] = convertAvatarDocToAvatarListItem(avatarDoc)
+      console.debug(`avatar already in list`)
+
+      if (avatarDoc.get(AssetFieldNames.isPrivate) === true) {
+        console.debug(`avatar is marked as private - removing...`)
+        updatedAvatars.splice(foundIndex, 1)
+        console.debug(`there are now ${updatedAvatars.length} avatars`)
+      } else {
+        console.debug('updating...')
+        updatedAvatars[foundIndex] = convertAvatarDocToAvatarListItem(avatarDoc)
+      }
     } else {
-      console.debug(`avatar NOT in list - adding`)
-      updatedAvatars = updatedAvatars.concat([
-        convertAvatarDocToAvatarListItem(avatarDoc),
-      ])
+      console.debug(`avatar NOT in list`)
+
+      if (avatarDoc.get(AssetFieldNames.isPrivate) === true) {
+        console.debug(`avatar is marked as private - not adding`)
+      } else {
+        console.debug('adding...')
+        updatedAvatars = updatedAvatars.concat([
+          convertAvatarDocToAvatarListItem(avatarDoc),
+        ])
+      }
     }
 
     await summaryDocRef.set(

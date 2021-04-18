@@ -123,6 +123,10 @@ const allFilters = [
   {
     label: 'ChilloutVR Ready',
     tag: importantTags.chilloutvr_compatible
+  },
+  {
+    label: 'Free',
+    tag: importantTags.free
   }
 ]
 

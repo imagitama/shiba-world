@@ -57,5 +57,6 @@ export const ContentTypes = {
 
 export const importantTags = {
   neosvr_compatible: 'neosvr_compatible',
-  chilloutvr_compatible: 'chilloutvr_compatible'
+  chilloutvr_compatible: 'chilloutvr_compatible',
+  free: 'free'
 }
