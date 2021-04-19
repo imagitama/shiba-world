@@ -92,7 +92,11 @@ export default ({ analyticsCategory, onDone }) => {
       await save({
         [UserFieldNames.username]: fieldValue,
         [UserFieldNames.createdBy]: createRef(CollectionNames.Users, userId),
-        [UserFieldNames.createdAt]: new Date()
+        [UserFieldNames.createdAt]: new Date(),
+        // need these otherwise permissions screw up
+        [UserFieldNames.isEditor]: false,
+        [UserFieldNames.isAdmin]: false,
+        [UserFieldNames.isBanned]: false
       })
 
       onDone()
