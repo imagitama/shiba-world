@@ -233,9 +233,14 @@ export default ({ assetId, slug, onDone, actionCategory }) => {
         <li>all lowercase</li>
         <li>letters and single dashes only</li>
         <li>cannot start or end with a dash</li>
-        <li>more than 2 characters but less than 20 characters</li>
+        <li>
+          more than 2 characters but <strong>less than 19 characters</strong>
+        </li>
         <li>cannot be the name of a species (eg. "wolf" or "fox")</li>
       </ul>
+      <strong>
+        If you do not follow these rules then your asset will break
+      </strong>
       <br />
       <br />
       <strong>Enter a new slug:</strong>
