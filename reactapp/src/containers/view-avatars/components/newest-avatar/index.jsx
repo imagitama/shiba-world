@@ -71,7 +71,7 @@ const useStyles = makeStyles({
     }
   },
   media: {
-    width: '10%',
+    width: '12%',
     marginRight: '1rem',
     [mediaQueryForMobiles]: {
       marginRight: 0,
