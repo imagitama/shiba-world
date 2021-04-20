@@ -32,8 +32,7 @@ export default ({ history: { push } }) => {
       <br />
       <Message type={types.WARNING}>
         We are aware of issues where creating your profile after your sign up
-        doesn't work. Please report this to #bugs in our Discord server and try
-        an alternative way to sign up.
+        doesn't work. Please report this to #bugs in our Discord server
       </Message>
       <br />
       <br />

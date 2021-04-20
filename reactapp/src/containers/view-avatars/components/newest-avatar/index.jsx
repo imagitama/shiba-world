@@ -29,7 +29,7 @@ const useStyles = makeStyles({
       padding: '1rem'
     },
     position: 'relative',
-    margin: '2rem'
+    margin: '2rem 2rem 4rem'
   },
   thumbnailWrapper: {
     perspective: '1000px',
@@ -71,7 +71,7 @@ const useStyles = makeStyles({
     }
   },
   media: {
-    height: '200px',
+    width: '10%',
     marginRight: '1rem',
     [mediaQueryForMobiles]: {
       marginRight: 0,
