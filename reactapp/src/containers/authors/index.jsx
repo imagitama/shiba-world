@@ -50,6 +50,13 @@ function Authors({ onlyShowOpenCommissions = false }) {
     [AuthorFieldNames.name, OrderDirections.ASC]
   )
 
+  // TODO: isDeleted was added recently and all authors need that boolean (and on create) otherwise query no work
+  const resultsWithoutDeleted =
+    results &&
+    results.filter(
+      ({ [AuthorFieldNames.isDeleted]: isDeleted }) => isDeleted !== true
+    )
+
   if (isLoading) {
     return <LoadingIndicator />
   }
@@ -58,11 +65,16 @@ function Authors({ onlyShowOpenCommissions = false }) {
     return <ErrorMessage>Failed to get authors</ErrorMessage>
   }
 
-  if (!results.length) {
+  if (!resultsWithoutDeleted.length) {
     return <NoResultsMessage />
   }
 
-  return <AuthorResults authors={results} />
+  return (
+    <>
+      {resultsWithoutDeleted.length} results
+      <AuthorResults authors={resultsWithoutDeleted} />
+    </>
+  )
 }
 
 export default () => {

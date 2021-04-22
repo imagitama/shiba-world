@@ -21,6 +21,7 @@ import DiscordServerWidget from '../../components/discord-server-widget'
 import SocialMediaList from '../../components/social-media-list'
 import OpenForCommissionMessage from '../../components/open-for-commissions-message'
 import Avatar from '../../components/avatar'
+import ToggleDeleteBtn from '../../components/toggle-delete-btn'
 
 import useUserRecord from '../../hooks/useUserRecord'
 import useDatabaseQuery, {
@@ -35,6 +36,7 @@ import useDatabaseQuery, {
 import { createRef, canEditAuthor } from '../../utils'
 import { trackAction } from '../../analytics'
 import { mediaQueryForTabletsOrBelow } from '../../media-queries'
+import Message from '../../components/message'
 
 function AssetsByAuthorId({ authorId }) {
   const [, , user] = useUserRecord()
@@ -210,7 +212,8 @@ export default ({
     [AuthorFieldNames.twitterUsername]: twitterUsername,
     [AuthorFieldNames.patreonUsername]: patreonUsername,
     [AuthorFieldNames.discordServerInviteUrl]: discordServerInviteUrl,
-    [AuthorFieldNames.inheritFields]: inheritFields
+    [AuthorFieldNames.inheritFields]: inheritFields,
+    [AuthorFieldNames.isDeleted]: isDeleted
   } = result
 
   if (inheritFields !== false && profileResult) {
@@ -227,6 +230,8 @@ export default ({
           content={`Browse all of the assets that have been uploaded for the author ${name}.`}
         />
       </Helmet>
+
+      {isDeleted && <Message>This author has been deleted</Message>}
 
       <div className={classes.cols}>
         <div className={classes.col}>
@@ -335,6 +340,11 @@ export default ({
             }>
             Edit
           </Button>{' '}
+          <ToggleDeleteBtn
+            id={authorId}
+            collectionName={CollectionNames.Authors}
+            isAlreadyDeleted={isDeleted}
+          />
           <OwnerEditor
             collectionName={CollectionNames.Authors}
             id={authorId}
