@@ -216,6 +216,9 @@ const SetupProfile = lazy(() =>
 const CreateReport = lazy(() =>
   catchChunkDeaths(() => import('./containers/create-report'))
 )
+const DmcaPolicy = lazy(() =>
+  catchChunkDeaths(() => import('./containers/dmca-policy'))
+)
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
   return (
@@ -479,6 +482,7 @@ const MainContent = () => {
           path={routes.createReportWithAssetVar}
           component={CreateReport}
         />
+        <Route exact path={routes.dmcaPolicy} component={DmcaPolicy} />
         <Route
           component={() => (
             <ErrorContainer code={404} message="Page not found" />

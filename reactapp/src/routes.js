@@ -60,6 +60,7 @@ export const setupProfile = '/setup-profile'
 export const createReportWithAssetVar = '/reports/create/:assetId'
 export const editReportWithVar = '/reports/edit/:reportId'
 export const viewReportWithVar = '/reports/:reportId'
+export const dmcaPolicy = '/dcma-policy'
 
 // Outdated routes
 export const browseAssets = '/browse'

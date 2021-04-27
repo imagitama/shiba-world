@@ -57,8 +57,8 @@ const footerLinks = [
     label: 'Privacy Policy'
   },
   {
-    url: routes.stats,
-    label: 'Stats'
+    url: routes.dmcaPolicy,
+    label: 'DMCA'
   }
 ]
 

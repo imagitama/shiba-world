@@ -8,6 +8,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import ErrorMessage from '../../components/error-message'
 import NoPermissionMessage from '../../components/no-permission-message'
 import SuccessMessage from '../../components/success-message'
+import Message, { types } from '../../components/message'
 import LoadingIndicator from '../../components/loading-indicator'
 import Button from '../../components/button'
 import Heading from '../../components/heading'
@@ -29,6 +30,7 @@ import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
 import { trackAction } from '../../analytics'
 import { DISCORD_URL } from '../../config'
+import { Link } from 'react-router-dom'
 
 const analyticsCategory = 'CreateReport'
 
@@ -176,6 +178,10 @@ export default () => {
         Use this form to create a new report for the asset "
         {asset[AssetFieldNames.title]}".
       </p>
+      <Message type={types.WARNING}>
+        Do you want to submit a DMCA copyright claim? Please read our{' '}
+        <Link to={routes.dmcaPolicy}>DMCA policy</Link>.
+      </Message>
       Reason
       <Select
         className={classes.input}
