@@ -73,7 +73,7 @@ const syncAvatarList = async () => {
 
   const avatars = avatarDocs.map(convertAvatarDocToAvatarListItem)
 
-  console.debug(`found ${avatars.length} avatars`)
+  await setAvatarsInList(avatars)
 
   const { docs: speciesDocs } = await db
     .collection(CollectionNames.Species)
@@ -81,70 +81,135 @@ const syncAvatarList = async () => {
 
   const species = speciesDocs.map(convertSpeciesDocIntoSpeciesForList)
 
-  console.debug(`found ${species.length} species`)
-
   const summaryDocRef = db
     .collection(CollectionNames.Summaries)
     .doc(specialCollectionIds.avatarList)
 
-  await summaryDocRef.set({
-    [AvatarListFieldNames.avatars]: avatars,
-    [AvatarListFieldNames.species]: species,
-    [AvatarListFieldNames.lastModifiedAt]: new Date(),
-  })
+  console.debug(`setting ${species.length} species in avatar list...`)
+
+  await summaryDocRef.set(
+    {
+      [AvatarListFieldNames.species]: species,
+      [AvatarListFieldNames.lastModifiedAt]: new Date(),
+    },
+    {
+      merge: true,
+    }
+  )
+
+  console.debug(`done setting species`)
+
+  return { count: avatars.length }
 }
 module.exports.syncAvatarList = syncAvatarList
 
-module.exports.updateAvatarInList = async (assetId, avatarDoc) => {
-  const summaryDocRef = db
+// firebase docs have a 1mb limit so guess the max per document
+const avatarsPerPage = 500
+
+const getAllAvatarsInList = async () => {
+  console.debug(`getting all avatars in summary...`)
+
+  const summaryDocRef1 = db
     .collection(CollectionNames.Summaries)
     .doc(specialCollectionIds.avatarList)
-  const summaryDoc = await summaryDocRef.get()
+  const summaryDoc1 = await summaryDocRef1.get()
+  let summaryDoc1Avatars = []
 
-  if (!summaryDoc.exists) {
-    console.debug('avatar list summary does not exist - syncing')
-    await syncAvatarList()
-  } else {
-    const existingAvatars = summaryDoc.get(AvatarListFieldNames.avatars)
-    const foundIndex = existingAvatars.findIndex(
-      (existingAvatar) => existingAvatar.asset.id === assetId
-    )
-    let updatedAvatars = [...existingAvatars]
-
-    console.debug(`found ${existingAvatars.length} existing avatars in list`)
-
-    if (foundIndex !== -1) {
-      console.debug(`avatar already in list`)
-
-      if (avatarDoc.get(AssetFieldNames.isPrivate) === true) {
-        console.debug(`avatar is marked as private - removing...`)
-        updatedAvatars.splice(foundIndex, 1)
-        console.debug(`there are now ${updatedAvatars.length} avatars`)
-      } else {
-        console.debug('updating...')
-        updatedAvatars[foundIndex] = convertAvatarDocToAvatarListItem(avatarDoc)
-      }
-    } else {
-      console.debug(`avatar NOT in list`)
-
-      if (avatarDoc.get(AssetFieldNames.isPrivate) === true) {
-        console.debug(`avatar is marked as private - not adding`)
-      } else {
-        console.debug('adding...')
-        updatedAvatars = updatedAvatars.concat([
-          convertAvatarDocToAvatarListItem(avatarDoc),
-        ])
-      }
-    }
-
-    await summaryDocRef.set(
-      {
-        [AvatarListFieldNames.avatars]: updatedAvatars,
-        [AvatarListFieldNames.lastModifiedAt]: new Date(),
-      },
-      {
-        merge: true,
-      }
-    )
+  if (summaryDoc1.exists) {
+    summaryDoc1Avatars = summaryDoc1.get(AvatarListFieldNames.avatars)
   }
+
+  const summaryDocRef2 = db
+    .collection(CollectionNames.Summaries)
+    .doc(specialCollectionIds.avatarList1)
+  const summaryDoc2 = await summaryDocRef2.get()
+  let summaryDoc2Avatars = []
+
+  if (summaryDoc2.exists) {
+    summaryDoc2Avatars = summaryDoc2.get(AvatarListFieldNames.avatars)
+  }
+
+  const allAvatars = summaryDoc1Avatars.concat(summaryDoc2Avatars)
+
+  console.debug(`found ${allAvatars.length} avatars in summary`)
+
+  return allAvatars
+}
+
+const setAvatarsInList = async (newAvatarList) => {
+  console.debug(`setting ${newAvatarList.length} avatars in summary...`)
+
+  const avatarsForPage1 = newAvatarList.slice(0, avatarsPerPage - 1)
+
+  console.debug(`setting ${avatarsForPage1.length} avatars for page 1`)
+
+  const summaryDocRef1 = db
+    .collection(CollectionNames.Summaries)
+    .doc(specialCollectionIds.avatarList)
+  await summaryDocRef1.set(
+    {
+      [AvatarListFieldNames.avatars]: avatarsForPage1,
+      [AvatarListFieldNames.lastModifiedAt]: new Date(),
+    },
+    {
+      merge: true,
+    }
+  )
+
+  const avatarsForPage2 = newAvatarList.slice(
+    avatarsPerPage,
+    avatarsPerPage * 2 - 1
+  )
+
+  console.debug(`setting ${avatarsForPage2.length} avatars for page 2`)
+
+  const summaryDocRef2 = db
+    .collection(CollectionNames.Summaries)
+    .doc(specialCollectionIds.avatarList1)
+  await summaryDocRef2.set(
+    {
+      [AvatarListFieldNames.avatars]: avatarsForPage2,
+      [AvatarListFieldNames.lastModifiedAt]: new Date(),
+    },
+    {
+      merge: true,
+    }
+  )
+
+  console.debug('done setting avatars in summary')
+}
+
+module.exports.updateAvatarInList = async (assetId, avatarDoc) => {
+  const existingAvatars = await getAllAvatarsInList()
+
+  const foundIndex = existingAvatars.findIndex(
+    (existingAvatar) => existingAvatar.asset.id === assetId
+  )
+  let updatedAvatars = [...existingAvatars]
+
+  if (foundIndex !== -1) {
+    console.debug(`avatar already in list`)
+
+    if (avatarDoc.get(AssetFieldNames.isPrivate) === true) {
+      console.debug(`avatar is marked as private - removing...`)
+      updatedAvatars.splice(foundIndex, 1)
+      console.debug(`there are now ${updatedAvatars.length} avatars`)
+    } else {
+      console.debug('updating...')
+      updatedAvatars[foundIndex] = convertAvatarDocToAvatarListItem(avatarDoc)
+    }
+  } else {
+    console.debug(`avatar NOT in list`)
+
+    if (avatarDoc.get(AssetFieldNames.isPrivate) === true) {
+      console.debug(`avatar is marked as private - not adding`)
+    } else {
+      console.debug('adding...')
+      updatedAvatars = updatedAvatars.concat([
+        convertAvatarDocToAvatarListItem(avatarDoc),
+      ])
+    }
+  }
+
+  await setAvatarsInList(updatedAvatars)
 }

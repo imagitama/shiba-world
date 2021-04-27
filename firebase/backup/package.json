@@ -9,7 +9,9 @@
     "backup:auth": "firebase auth:export \"backups/$(date '+%d-%m-%Y')/auth.json\"",
     "backup": "NODE_OPTIONS=--max_old_space_size=8000 npm run backup:db && npm run backup:auth",
     "import:db": "GOOGLE_APPLICATION_CREDENTIALS=credentials.json firestore-import -b \"backups/$(date '+%d-%m-%Y')/db.json\"",
-    "backup:storage": "npm run prebackup && gsutil -m cp -R gs://shiba-world.appspot.com \"backups/$(date '+%d-%m-%Y')/storage\""
+    "backup:storage": "npm run prebackup && gsutil -m cp -R gs://shiba-world.appspot.com \"backups/$(date '+%d-%m-%Y')/storage\"",
+    "prebackupdb": "mkdir -p \"backups/$(date '+%d-%m-%Y')/db\"",
+    "backup:db-backup": "npm run prebackupdb && gsutil -m cp -R gs://shiba-world-backups \"backups/$(date '+%d-%m-%Y')/db\""
   },
   "author": "",
   "license": "ISC",

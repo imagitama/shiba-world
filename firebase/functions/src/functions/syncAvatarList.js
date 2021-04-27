@@ -3,8 +3,8 @@ const { syncAvatarList } = require('../avatar-list')
 
 module.exports = functions.https.onRequest(async (req, res) => {
   try {
-    await syncAvatarList()
-    res.status(200).send('Avatar list has been synced')
+    const { count } = await syncAvatarList()
+    res.status(200).send({ message: 'Avatar list has been synced', count })
   } catch (err) {
     console.error(err)
     throw new functions.https.HttpsError('unknown', err.message)

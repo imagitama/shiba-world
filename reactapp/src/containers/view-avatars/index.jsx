@@ -179,9 +179,13 @@ function Filters() {
 
 function Assets() {
   const [, , user] = useUserRecord()
-  const [isLoading, isErrored, result] = useDatabaseQuery(
+  const [isLoadingPage1, isErroredPage1, resultPage1] = useDatabaseQuery(
     CollectionNames.Summaries,
     specialCollectionIds.avatarList
+  )
+  const [isLoadingPage2, isErroredPage2, resultPage2] = useDatabaseQuery(
+    CollectionNames.Summaries,
+    specialCollectionIds.avatarList1
   )
   const [isSpeciesSelectorOpen, setIsSpeciesSelectorOpen] = useState(false)
   const classes = useStyles()
@@ -218,7 +222,7 @@ function Assets() {
   // track the user's scroll so they can click on avatars and return and not have
   // to scroll again
   useEffect(() => {
-    if (!result) {
+    if (!resultPage1 || !resultPage2) {
       return
     }
 
@@ -241,20 +245,21 @@ function Assets() {
       clearTimeout(autoScrollTimeoutRef.current)
       window.removeEventListener('scroll', onScroll)
     }
-  }, [result !== null])
+  }, [resultPage1 !== null, resultPage2 !== null])
 
-  if (isLoading || !result) {
+  if (isLoadingPage1 || isLoadingPage2 || !resultPage1 || !resultPage2) {
     return <LoadingIndicator message="Loading avatars..." />
   }
 
-  if (isErrored) {
+  if (isErroredPage1 || isErroredPage2) {
     return <ErrorMessage>Failed to get avatars</ErrorMessage>
   }
 
-  const {
-    [AvatarListFieldNames.avatars]: avatars,
-    [AvatarListFieldNames.species]: species = []
-  } = result
+  const species = resultPage1[AvatarListFieldNames.species]
+
+  const avatars = (resultPage1[AvatarListFieldNames.avatars] || []).concat(
+    resultPage2[AvatarListFieldNames.avatars] || []
+  )
 
   let assets = avatars
     .filter(avatar => {
@@ -275,6 +280,10 @@ function Assets() {
         [AssetFieldNames.isApproved]: true
       })
     )
+
+  console.debug(
+    `found ${avatars.length} avatars (${assets.length} after filter)`
+  )
 
   if (!assets.length) {
     return <NoResultsMessage />
