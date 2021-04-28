@@ -4,7 +4,10 @@ import { makeStyles } from '@material-ui/core/styles'
 import TextInput from '../text-input'
 import Button from '../button'
 
-import { CollectionNames, AssetFieldNames } from '../../hooks/useDatabaseQuery'
+import useDatabaseQuery, {
+  CollectionNames,
+  AssetFieldNames
+} from '../../hooks/useDatabaseQuery'
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import useAlgoliaSearch from '../../hooks/useAlgoliaSearch'
@@ -13,6 +16,7 @@ import { handleError } from '../../error-handling'
 import { trackAction } from '../../analytics'
 import { createRef } from '../../utils'
 import AssetResultsItem from '../asset-results-item'
+import { inDevelopment } from '../../environment'
 
 const useStyles = makeStyles({
   textInput: {
@@ -38,10 +42,9 @@ function LinkedAsset({ asset, onRemove }) {
 }
 
 function SearchForm({ searchTerm, onSelectIdWithDetails }) {
-  const [isSearching, isErrored, results] = useAlgoliaSearch(
-    searchIndexNames.ASSETS,
-    searchTerm
-  )
+  const [isSearching, isErrored, results] = inDevelopment()
+    ? useDatabaseQuery(CollectionNames.Assets)
+    : useAlgoliaSearch(searchIndexNames.ASSETS, searchTerm)
 
   if (isSearching) {
     return 'Searching...'
@@ -148,8 +151,6 @@ export default ({
       currentVal.filter(asset => asset.id !== id)
     )
   }
-
-  console.log('newLinkedAssets', newLinkedAssets)
 
   return (
     <>

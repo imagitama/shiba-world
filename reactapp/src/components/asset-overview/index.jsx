@@ -549,6 +549,7 @@ export default ({ assetId, switchEditorOpen }) => {
     [AssetMetaFieldNames.authorName]: authorName,
     [AssetMetaFieldNames.speciesNames]: speciesNames,
     [AssetMetaFieldNames.linkedAssets]: linkedAssets,
+    [AssetMetaFieldNames.incomingLinkedAssets]: incomingLinkedAssets,
     [AssetMetaFieldNames.discordServer]: discordServer,
     [AssetMetaFieldNames.product]: product,
     [AssetMetaFieldNames.contentAssets]: contentAssets
@@ -827,6 +828,15 @@ export default ({ assetId, switchEditorOpen }) => {
             <>
               <Heading variant="h2">Linked Assets</Heading>
               <ChildrenAssets assetChildren={linkedAssets.map(mapDates)} />
+            </>
+          ) : null}
+
+          {incomingLinkedAssets && incomingLinkedAssets.length ? (
+            <>
+              <Heading variant="h2">Links To This Asset</Heading>
+              <ChildrenAssets
+                assetChildren={incomingLinkedAssets.map(mapDates)}
+              />
             </>
           ) : null}
 

@@ -83,6 +83,7 @@ const AssetMetaFieldNames = {
   // createdByName: 'createdByName',
   // lastModifiedByName: 'lastModifiedByName',
   linkedAssets: 'linkedAssets',
+  incomingLinkedAssets: 'incomingLinkedAssets',
   discordServer: 'discordServer',
   endorsementCount: 'endorsementCount',
   lastModifiedAt: 'lastModifiedAt',

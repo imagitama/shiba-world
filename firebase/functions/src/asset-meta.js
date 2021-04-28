@@ -12,7 +12,7 @@ const {
   Operators,
 } = require('./firebase')
 
-async function saveAsset(id, fields) {
+async function saveAssetMeta(id, fields) {
   const docRef = db.collection(CollectionNames.AssetMeta).doc(id)
 
   const doc = await docRef.get()
@@ -240,6 +240,160 @@ const getUpdatedFieldsForFieldNames = async (fieldNames, docData) => {
   return fields
 }
 
+const operations = {
+  hydrate: 0,
+  insert: 1,
+  delete: 2,
+}
+
+const operateOnIncomingLinkedAssetsForParent = async (
+  parentRef,
+  doc,
+  operation
+) => {
+  const parentDoc = await db
+    .collection(CollectionNames.AssetMeta)
+    .doc(parentRef.id)
+    .get()
+  const existingItems =
+    parentDoc.get(AssetMetaFieldNames.incomingLinkedAssets) || []
+  const newItems = [...existingItems]
+  const convertedItem = convertLinkedAssetToItem(doc)
+  let idx
+
+  console.debug(
+    `operating on incoming linked assets for parent ${parentRef.id}`
+  )
+  console.debug(`found ${existingItems.length} existing incoming linked assets`)
+
+  switch (operation) {
+    case operations.hydrate:
+      console.debug('hydrating...')
+
+      idx = existingItems.findIndex(({ id }) => id === doc.id)
+
+      if (idx === -1) {
+        throw new Error(
+          `Told to hydrate incoming linked asset (${parentRef.id}) but could not find it!`
+        )
+      }
+
+      newItems[idx] = convertedItem
+      break
+
+    case operations.insert:
+      console.debug('inserting...')
+      newItems.push(convertedItem)
+      break
+
+    case operations.delete:
+      console.debug('deleting...')
+      idx = existingItems.findIndex(({ id }) => id === doc.id)
+
+      if (idx === -1) {
+        throw new Error(
+          `Told to delete incoming linked asset (${parentRef.id}) but could not find it!`
+        )
+      }
+
+      newItems.splice(idx, 1)
+      break
+
+    default:
+      throw new Error(`Unknown operation: ${operation}`)
+  }
+
+  console.debug(`now there are ${newItems.length} incoming linked assets`)
+
+  await saveAssetMeta(parentRef.id, {
+    [AssetMetaFieldNames.incomingLinkedAssets]: newItems,
+  })
+}
+
+const hydrateParentAssets = async (
+  beforeParentRefs,
+  afterParentRefs,
+  afterDoc
+) => {
+  console.debug(`hydrating parent assets...`)
+
+  let operationComplete = false
+
+  for (const beforeParentRef of beforeParentRefs) {
+    const foundInAfter = afterParentRefs.find(
+      ({ id }) => id === beforeParentRef.id
+    )
+
+    // asset content has changed so lets hydrate the parent
+    if (foundInAfter) {
+      console.debug(`asset has the same links before and after - hydrating...`)
+      await operateOnIncomingLinkedAssetsForParent(
+        beforeParentRef,
+        afterDoc,
+        operations.hydrate
+      )
+      operationComplete = true
+    } else {
+      console.debug(`asset had a parent but now lost it - deleting...`)
+      await operateOnIncomingLinkedAssetsForParent(
+        beforeParentRef,
+        afterDoc,
+        operations.delete
+      )
+      operationComplete = true
+    }
+  }
+
+  if (!operationComplete) {
+    for (const afterParentRef of afterParentRefs) {
+      const foundInBefore = beforeParentRefs.find(
+        ({ id }) => id === afterParentRef.id
+      )
+
+      if (!foundInBefore) {
+        console.debug(`asset has a new link - inserting...`)
+        await operateOnIncomingLinkedAssetsForParent(
+          afterParentRef,
+          afterDoc,
+          operations.insert
+        )
+        operationComplete = true
+      }
+    }
+  }
+
+  console.debug(`hydration of parent assets is complete`)
+}
+
+const doesIncomingLinkedAssetsNeedToBeHydrated = (
+  beforeDocData,
+  afterDocData
+) => {
+  if (!beforeDocData) {
+    return true
+  }
+
+  if (
+    beforeDocData[AssetFieldNames.title] !== afterDocData[AssetFieldNames.title]
+  ) {
+    return true
+  }
+  if (
+    beforeDocData[AssetFieldNames.description] !==
+    afterDocData[AssetFieldNames.description]
+  ) {
+    return true
+  }
+  if (
+    beforeDocData[AssetFieldNames.thumbnailUrl] !==
+    afterDocData[AssetFieldNames.thumbnailUrl]
+  ) {
+    return true
+  }
+
+  return false
+}
+
 async function hydrateAsset(beforeDoc, afterDoc) {
   const fieldNamesThatChanged = getFieldNamesThatChanged(
     beforeDoc ? beforeDoc.data() : false, // support onCreate
@@ -247,9 +401,32 @@ async function hydrateAsset(beforeDoc, afterDoc) {
   )
 
   if (!fieldNamesThatChanged.length) {
+    if (
+      doesIncomingLinkedAssetsNeedToBeHydrated(
+        beforeDoc ? beforeDoc.data() : false,
+        afterDoc.data()
+      )
+    ) {
+      console.debug(
+        `no meta fields have changed but normal fields have so hydrating parents...`
+      )
+      await hydrateParentAssets(
+        beforeDoc ? beforeDoc.get(AssetFieldNames.children) : [],
+        afterDoc.get(AssetFieldNames.children),
+        afterDoc
+      )
+      return
+    }
+
     console.debug('no fields have changed so skipping hydrate')
     return
   }
+
+  await hydrateParentAssets(
+    beforeDoc ? beforeDoc.get(AssetFieldNames.children) : [],
+    afterDoc.get(AssetFieldNames.children),
+    afterDoc
+  )
 
   const fields = await getUpdatedFieldsForFieldNames(
     fieldNamesThatChanged,
@@ -260,7 +437,7 @@ async function hydrateAsset(beforeDoc, afterDoc) {
     `hydrating asset with ${fieldNamesThatChanged.length} fields...`
   )
 
-  return saveAsset(afterDoc.id, fields)
+  return saveAssetMeta(afterDoc.id, fields)
 }
 module.exports.hydrateAsset = hydrateAsset
 
@@ -277,6 +454,7 @@ async function getProductForAssetRef(assetRef) {
   return null
 }
 
+// TODO: Update to support incomingLinkedAssets
 module.exports.syncAllAssetMeta = async () => {
   const { docs: assetDocs } = await db.collection(CollectionNames.Assets).get()
   const { docs: endorsementDocs } = await db

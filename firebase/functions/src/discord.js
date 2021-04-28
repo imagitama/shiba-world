@@ -8,7 +8,10 @@ const {
   DiscordMessageStatuses,
 } = require('./firebase')
 
-const IS_DISCORD_ENABLED = config.global.isDiscordEnabled !== 'false'
+const IS_DISCORD_ENABLED =
+  process.env.NODE_ENV === 'development'
+    ? false
+    : config.global.isDiscordEnabled !== 'false'
 const DISCORD_ACTIVITY_WEBHOOK_URL = config.discord.activity_webhook_url
 const DISCORD_EDITOR_NOTIFICATIONS_WEBHOOK_URL =
   config.discord.editor_notifications_webhook_url
