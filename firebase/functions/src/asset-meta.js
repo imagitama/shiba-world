@@ -411,8 +411,10 @@ async function hydrateAsset(beforeDoc, afterDoc) {
         `no meta fields have changed but normal fields have so hydrating parents...`
       )
       await hydrateParentAssets(
-        beforeDoc ? beforeDoc.get(AssetFieldNames.children) : [],
-        afterDoc.get(AssetFieldNames.children),
+        beforeDoc && beforeDoc.get(AssetFieldNames.children)
+          ? beforeDoc.get(AssetFieldNames.children)
+          : [],
+        afterDoc.get(AssetFieldNames.children) || [],
         afterDoc
       )
       return
@@ -423,8 +425,10 @@ async function hydrateAsset(beforeDoc, afterDoc) {
   }
 
   await hydrateParentAssets(
-    beforeDoc ? beforeDoc.get(AssetFieldNames.children) : [],
-    afterDoc.get(AssetFieldNames.children),
+    beforeDoc && beforeDoc.get(AssetFieldNames.children)
+      ? beforeDoc.get(AssetFieldNames.children)
+      : [],
+    afterDoc.get(AssetFieldNames.children) || [],
     afterDoc
   )
 
