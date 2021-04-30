@@ -24,6 +24,8 @@ import {
   mediaQueryForTabletsOrBelow
 } from '../../media-queries'
 
+import PrivateAssets from './components/private-assets'
+
 const TabPanel = ({ value, index, children }) =>
   value === index ? (
     <LazyLoad placeholder={<LoadingIndicator />}>{children}</LazyLoad>
@@ -89,6 +91,7 @@ export default () => {
           <Tab label="Polls" index={6} />
           <Tab label="Advanced" index={7} />
           <Tab label="Reports" index={8} />
+          <Tab label="Private Assets" index={9} />
         </Tabs>
         <div className={classes.tabPanels}>
           <TabPanel value={activeTabIdx} index={0}>
@@ -118,6 +121,9 @@ export default () => {
           </TabPanel>
           <TabPanel value={activeTabIdx} index={8}>
             <AdminReports />
+          </TabPanel>
+          <TabPanel value={activeTabIdx} index={9}>
+            <PrivateAssets />
           </TabPanel>
         </div>
       </div>
