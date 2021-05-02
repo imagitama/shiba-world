@@ -1,11 +1,12 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Link } from 'react-router-dom'
+import { Helmet } from 'react-helmet'
+
 import Heading from '../../../../components/heading'
 import Button from '../../../../components/button'
 import * as routes from '../../../../routes'
 import { AssetCategories } from '../../../../hooks/useDatabaseQuery'
-import { pageNames } from '../../config'
 
 const useStyles = makeStyles({
   headings: {
@@ -17,6 +18,13 @@ export default () => {
   const classes = useStyles()
   return (
     <div>
+      <Helmet>
+        <title>Picking your VRChat avatar base model | VRCArena</title>
+        <meta
+          name="description"
+          content="How to select a base model for your next VRChat avatar."
+        />
+      </Helmet>
       <div className={classes.headings}>
         <Heading variant="h2">Pick your avatar</Heading>
       </div>
@@ -48,7 +56,8 @@ export default () => {
         <li>a .unitypackage that contains the 3D model OR</li>
         <li>a .fbx file that contains the 3D model</li>
         <li>a Substance Painter file OR</li>
-        <li>the exported textures</li>
+        <li>a Photoshop file OR</li>
+        <li>multiple individual .png files (named albedo, normal, etc.)</li>
         <li>alternate versions (such as a Quest version)</li>
       </ul>
       <Heading variant="h3">An example avatar</Heading>

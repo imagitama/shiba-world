@@ -1,9 +1,7 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Link } from 'react-router-dom'
+import { Helmet } from 'react-helmet'
 import Heading from '../../../../components/heading'
-import * as routes from '../../../../routes'
-import { pageNames } from '../../config'
 
 const useStyles = makeStyles({
   headings: {
@@ -15,6 +13,13 @@ export default () => {
   const classes = useStyles()
   return (
     <div>
+      <Helmet>
+        <title>Introduction to uploading avatars for VRChat | VRCArena</title>
+        <meta
+          name="description"
+          content="An introduction into the process of uploading your avatar into VRChat."
+        />
+      </Helmet>
       <div className={classes.headings}>
         <Heading variant="h2">Introduction</Heading>
       </div>
@@ -69,6 +74,14 @@ export default () => {
         A popular 3D modelling tool. You will not be using it in this tutorial
         (covered in the "Advanced" section).
       </p>
+      <Heading variant="h4">Bone</Heading>
+      <p>
+        The 3D models that avatars use have a "skeleton" (or "armature") with
+        "bones" that tell Unity how to move the polygons when the player's arm
+        and legs move.
+      </p>
+      <Heading variant="h4">Rigging</Heading>
+      <p>The act of adding bones to a 3D model.</p>
     </div>
   )
 }

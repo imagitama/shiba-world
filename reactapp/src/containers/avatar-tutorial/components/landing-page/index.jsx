@@ -1,6 +1,8 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Link } from 'react-router-dom'
+import { Helmet } from 'react-helmet'
+
 import Heading from '../../../../components/heading'
 import * as routes from '../../../../routes'
 import { pageNames } from '../../config'
@@ -15,6 +17,13 @@ export default () => {
   const classes = useStyles()
   return (
     <div>
+      <Helmet>
+        <title>Avatar Tutorial | VRCArena</title>
+        <meta
+          name="description"
+          content="A tutorial for how to create and upload your first VRChat avatar using a pre-made base model."
+        />
+      </Helmet>
       <div className={classes.headings}>
         <Heading variant="h2">Table of Contents</Heading>
       </div>
@@ -61,33 +70,6 @@ export default () => {
             pageNames.upload
           )}>
           5. Upload
-        </Link>
-      </Heading>
-      <Heading variant="h3">
-        <Link
-          to={routes.avatarTutorialWithVar.replace(
-            ':pageName',
-            pageNames.advanced
-          )}>
-          6. Advanced
-        </Link>
-      </Heading>
-      <Heading variant="h4">
-        <Link
-          to={routes.avatarTutorialWithVar.replace(
-            ':pageName',
-            pageNames.quest
-          )}>
-          6.1 Quest compatibility
-        </Link>
-      </Heading>
-      <Heading variant="h4">
-        <Link
-          to={routes.avatarTutorialWithVar.replace(
-            ':pageName',
-            pageNames.customAnimations
-          )}>
-          6.2 Custom gestures and emotes
         </Link>
       </Heading>
     </div>

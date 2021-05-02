@@ -13,9 +13,8 @@ import PickYourAvatarPage from './components/pick-your-avatar-page'
 import RetexturePage from './components/retexture-page'
 import ImportIntoUnityPage from './components/import-into-unity-page'
 import UploadPage from './components/upload-page'
-import AdvancedPage from './components/advanced-page'
-import QuestPage from './components/quest-page'
-import CustomAnimationsPage from './components/custom-animations-page'
+import TutorialCompletePage from './components/tutorial-complete-page'
+
 import { pageNames } from './config'
 
 const useStyles = makeStyles({
@@ -28,12 +27,20 @@ const useStyles = makeStyles({
   },
   pageControls: {
     display: 'flex',
+    alignItems: 'center',
     marginTop: '2rem',
     paddingTop: '2rem',
     borderTop: '1px solid rgba(255, 255, 255, 0.5)'
   },
-  nextPageControl: {
-    marginLeft: 'auto'
+  control: {
+    width: '33.3%',
+    '&:last-child': {
+      textAlign: 'right'
+    }
+  },
+  tableOfContentsBtn: {
+    margin: '0 auto',
+    textAlign: 'center'
   }
 })
 
@@ -51,12 +58,8 @@ const Page = () => {
       return <ImportIntoUnityPage />
     case pageNames.upload:
       return <UploadPage />
-    case pageNames.advanced:
-      return <AdvancedPage />
-    case pageNames.quest:
-      return <QuestPage />
-    case pageNames.customAnimations:
-      return <CustomAnimationsPage />
+    case pageNames.tutorialComplete:
+      return <TutorialCompletePage />
     default:
       return <LandingPage />
   }
@@ -82,30 +85,32 @@ const PageControls = () => {
 
   return (
     <div className={classes.pageControls}>
-      {prevPageName && (
-        <div className={classes.control}>
+      <div className={classes.control}>
+        {prevPageName && (
           <Button
             url={routes.avatarTutorialWithVar.replace(
               ':pageName',
               prevPageName
-            )}
-            size="large">
+            )}>
             Back
           </Button>
-        </div>
-      )}
-      {nextPageName && (
-        <div className={`${classes.control} ${classes.nextPageControl}`}>
+        )}
+      </div>
+
+      <div className={`${classes.control} ${classes.tableOfContentsBtn}`}>
+        <Button url={routes.avatarTutorial}>Table of Contents</Button>
+      </div>
+      <div className={classes.control}>
+        {nextPageName && (
           <Button
             url={routes.avatarTutorialWithVar.replace(
               ':pageName',
               nextPageName
-            )}
-            size="large">
+            )}>
             Next
           </Button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }

@@ -1,14 +1,13 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Link } from 'react-router-dom'
-import WarningIcon from '@material-ui/icons/Warning'
-import InfoIcon from '@material-ui/icons/Info'
-import LazyLoad from 'react-lazyload'
+import { Helmet } from 'react-helmet'
 
 import Heading from '../../../../components/heading'
 import Button from '../../../../components/button'
-import * as routes from '../../../../routes'
-import { pageNames } from '../../config'
+
+import WarningMessage from '../warning-message'
+import InfoMessage from '../info-message'
+import Image from '../image'
 
 import defaultViewScreenshotUrl from './assets/images/default-view-screenshot.png'
 import mainMenuUrl from './assets/images/main-menu.png'
@@ -27,65 +26,25 @@ import appliedBodyAlbedoUrl from './assets/images/toastacuga/applied-body-albedo
 import selectNormalMapUrl from './assets/images/toastacuga/select-normal-map.png'
 import withNormalUrl from './assets/images/toastacuga/with-normal.png'
 import helloUrl from './assets/images/toastacuga/hello.png'
+import exportUrl from './assets/images/toastacuga/export.png'
 
 const useStyles = makeStyles({
   headings: {
     textAlign: 'center'
-  },
-  message: {
-    padding: '0.5rem',
-    border: '1px solid rgba(255, 255, 255, 0.5)',
-    borderRadius: '3px',
-    display: 'flex',
-    alignItems: 'center',
-    '& svg': {
-      marginRight: '0.5rem'
-    }
-  },
-  image: {
-    '& img': {
-      maxWidth: '100%',
-      maxHeight: '400px'
-    }
-  },
-  blurb: {}
+  }
 })
-
-const Image = ({ blurb, ...props }) => {
-  const classes = useStyles()
-  return (
-    <div className={classes.image}>
-      <LazyLoad>
-        <img {...props} className={classes.img} />
-      </LazyLoad>
-      {blurb && <div className={classes.blurb}>{blurb}</div>}
-    </div>
-  )
-}
-
-const Message = ({ children }) => {
-  const classes = useStyles()
-  return <p className={classes.message}>{children}</p>
-}
-
-const InfoMessage = ({ message }) => (
-  <Message>
-    <InfoIcon />
-    {message}
-  </Message>
-)
-
-const WarningMessage = ({ message }) => (
-  <Message>
-    <WarningIcon />
-    {message}
-  </Message>
-)
 
 export default () => {
   const classes = useStyles()
   return (
     <div>
+      <Helmet>
+        <title>How to retexture a base model | VRCArena</title>
+        <meta
+          name="description"
+          content="How to use Substance Painter to retexture the base model for your VRChat avatar."
+        />
+      </Helmet>
       <div className={classes.headings}>
         <Heading variant="h2">Retexturing your avatar</Heading>
       </div>
@@ -314,6 +273,18 @@ export default () => {
           find which one styles a particular body part
         </li>
       </ul>
+      <Heading variant="h2">Export</Heading>
+      <p>Finally in order to use the textures you must export them.</p>
+      <ol>
+        <li>click "File" then "Export textures..."</li>
+        <li>for "Output directory" select anywhere (remember it for later)</li>
+        <li>click "Export"</li>
+        <li>
+          a list of .png files should be shown in green which indicates it was
+          successful
+        </li>
+      </ol>
+      <Image src={exportUrl} alt="Exported Toastacuga pop-up" />
     </div>
   )
 }
