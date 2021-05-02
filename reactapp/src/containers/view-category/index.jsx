@@ -24,10 +24,13 @@ import useDatabaseQuery, {
   OrderDirections,
   AssetFieldNames,
   UserFieldNames,
-  mapDates
+  mapDates,
+  AssetCategories
 } from '../../hooks/useDatabaseQuery'
 import useStorage, { keys as storageKeys } from '../../hooks/useStorage'
 import { mediaQueryForMobiles } from '../../media-queries'
+
+import AvatarTutorialSection from './components/avatar-tutorial-section'
 
 const useStyles = makeStyles({
   root: {
@@ -210,6 +213,7 @@ export default ({
             })
           }
         />
+        {/* {categoryName === AssetCategories.tutorial && <AvatarTutorialSection />} */}
         <Assets
           categoryName={categoryName}
           sortByFieldName={activeSortFieldName || assetsSortByFieldName}
