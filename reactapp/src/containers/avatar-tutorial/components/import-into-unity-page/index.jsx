@@ -1,6 +1,7 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Helmet } from 'react-helmet'
+import LaunchIcon from '@material-ui/icons/Launch'
 
 import Heading from '../../../../components/heading'
 import Button from '../../../../components/button'
@@ -50,7 +51,9 @@ export default () => {
       </div>
       <Heading variant="h3">Install Unity</Heading>
       <p>Download and install Unity 2018.4.20f1 using Unity Hub.</p>
-      <Button url="https://unity3d.com/get-unity/download">
+      <Button
+        url="https://unity3d.com/get-unity/download"
+        icon={<LaunchIcon />}>
         Download from website
       </Button>
       <Heading variant="h3">Create project</Heading>
@@ -131,7 +134,9 @@ export default () => {
         You must install the VRChat SDK before you start working with avatars.
       </p>
       <WarningMessage message="Select SDK3 - Avatars" />
-      <Button url="https://vrchat.com/home/download">Download the SDK</Button>
+      <Button url="https://vrchat.com/home/download" icon={<LaunchIcon />}>
+        Download the SDK
+      </Button>
       <p>
         Once you have downloaded it (it should be a .unityproject) double-click
         the file to tell Unity to import the SDK. Click "Import".
@@ -143,7 +148,9 @@ export default () => {
         store, no avatar should include it.
       </p>
       <InfoMessage message="This is optional but highly recommended so that your avatar looks better." />
-      <Button url="https://assetstore.unity.com/packages/tools/animation/dynamic-bone-16743">
+      <Button
+        url="https://assetstore.unity.com/packages/tools/animation/dynamic-bone-16743"
+        icon={<LaunchIcon />}>
         Buy Dynamic Bones
       </Button>
       <Heading variant="h3">Import the avatar</Heading>

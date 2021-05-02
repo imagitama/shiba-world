@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Helmet } from 'react-helmet'
+import LaunchIcon from '@material-ui/icons/Launch'
 
 import Heading from '../../../../components/heading'
 import Button from '../../../../components/button'
@@ -36,6 +37,10 @@ const useStyles = makeStyles({
 
 export default () => {
   const classes = useStyles()
+  const [myAvatarComesWithSubstance, setMyAvatarComesWithSubstance] = useState(
+    false
+  )
+
   return (
     <div>
       <Helmet>
@@ -66,7 +71,9 @@ export default () => {
         versions of the software but can <strong>never</strong> be opened in
         older versions.
       </p>
-      <Button url="https://www.substance3d.com/products/substance-painter">
+      <Button
+        url="https://www.substance3d.com/products/substance-painter"
+        icon={<LaunchIcon />}>
         Visit the website
       </Button>
       <Heading variant="h3">How does Substance Painter work?</Heading>
@@ -115,112 +122,121 @@ export default () => {
         The shelf is where you can select from all materials and brushes
         provided by Substance Painter or any you have imported yourself.
       </p>
-      <Heading variant="h3">Importing your model</Heading>
-      <InfoMessage message="If your avatar comes with a Substance Painter project file (.spp) you can skip all of these steps and open the project now." />
-      <ol>
-        <li>go to "File" (in the Main Menu) and click "New..."</li>
-        <li>in the pop-up next to "File" click "Select..."</li>
-        <li>navigate to the .fbx file of the avatar and select it</li>
-        <li>in the pop-up click "OK"</li>
-      </ol>
-      <p>
-        We imported the Toastacuga avatar from the previous page and it looked
-        like this:
-      </p>
-      <Image
-        src={toastacugaAfterImportUrl}
-        alt="Toastacuga imported screenshot"
-      />
-      <Heading variant="h3">Textures</Heading>
-      <p>
-        The Toastacuga avatar comes with .psd files so we used Sketchbook to
-        open the .psd and export the textures into files that Substance Painter
-        understands.
-      </p>
 
-      <Heading variant="h4">Albedo maps</Heading>
-      <p>
-        The colored part of your texture is called an "albedo map". It is a 2D
-        image that when applied to all of the polygons (triangles) of your 3D
-        model it will give it color.
-      </p>
-      <p>
-        For the Toastacuga avatar we had to turn off all layers except
-        "AlbedoTransparency_Body" and export it as a PNG:
-      </p>
-      <Image
-        src={sketchbookAlbedoUrl}
-        alt="Toastacuga Sketchbook albedo layer"
-      />
-      <Heading variant="h4">Normal maps</Heading>
-      <p>
-        A normal map is a way to "fake" lighting for a 3D model without needing
-        extra polygons (so it is better for performance). For example it lets
-        you define muscles of a human. It is almost always a purple color.
-      </p>
-      <p>
-        For the Toastacuga avatar we had to toggle off all layers except
-        "Normalmap_Body" then export it as a PNG:
-      </p>
-      <Image
-        src={sketchbookNormalUrl}
-        alt="Toastacuga Sketchbook normal layer"
-      />
-      <Heading variant="h3">Import and use textures</Heading>
-      <Heading variant="h4">Albedo</Heading>
-      <ol>
-        <li>go to "File" then "Import resources..."</li>
-        <li>click "Add resources" at the top right</li>
-        <li>find the .png file of the albedo texture and select it</li>
-        <li>
-          on the right of your file click "undefined" then select "texture"
-        </li>
-        <li>for "Import your resources to" select "project 'name'"</li>
-        <li>click "Import"</li>
-      </ol>
-      <p>For the Toastacuga it then appears in our Shelf:</p>
-      <Image
-        src={importedAlbedoUrl}
-        alt="Toastacuga imported albedo in shelf"
-      />
-      <p>
-        Now that you have you have imported it, apply the texture using a Fill
-        Layer:
-      </p>
-      <Image src={addFillLayerUrl} alt="Add a fill layer" />
-      <ol>
-        <li>
-          click the "Add Fill Layer" icon (paint bucket) to add a new fill layer
-          (highlighted in yellow)
-        </li>
-        <li>
-          drag the texture from the Shelf to the "Base Color" square in the
-          Properties panel (highlighted in green)
-        </li>
-      </ol>
-      <p>It should now look like this:</p>
-      <Image src={appliedBodyAlbedoUrl} alt="Applied body albedo" />
-      <p>
-        Note that the eyes and fur are still not colored. You need to export a
-        .png for each of these parts and import them just like you did the body
-        by following the same steps but select the different Texture Set.
-      </p>
-      <Heading variant="h4">Normal</Heading>
-      <p>For the normal map you have to do something different:</p>
-      <Image src={selectNormalMapUrl} alt="Select normal map" />
-      <ol>
-        <li>import just like you did the albedo</li>
-        <li>
-          on the far right click the first icon called "Texture Set Settings"
-          (highlighted in yellow)
-        </li>
-        <li>
-          under "Mesh Maps" click "Select normal map" (highlighted in green)
-        </li>
-        <li>select your imported normal map</li>
-      </ol>
-      <p>Your 3D model should now look a lot more defined:</p>
-      <Image src={withNormalUrl} alt="With normal map applied" />
+      {myAvatarComesWithSubstance === false && (
+        <>
+          <Heading variant="h3">Importing your model</Heading>
+          <InfoMessage message="If your avatar comes with a Substance Painter project file (.spp) you can skip all of these steps and open the project now." />
+          <Button onClick={() => setMyAvatarComesWithSubstance(true)}>
+            My avatar comes with a Substance Painter file
+          </Button>
+          <ol>
+            <li>go to "File" (in the Main Menu) and click "New..."</li>
+            <li>in the pop-up next to "File" click "Select..."</li>
+            <li>navigate to the .fbx file of the avatar and select it</li>
+            <li>in the pop-up click "OK"</li>
+          </ol>
+          <p>
+            We imported the Toastacuga avatar from the previous page and it
+            looked like this:
+          </p>
+          <Image
+            src={toastacugaAfterImportUrl}
+            alt="Toastacuga imported screenshot"
+          />
+          <Heading variant="h3">Textures</Heading>
+          <p>
+            The Toastacuga avatar comes with .psd files so we used Sketchbook to
+            open the .psd and export the textures into files that Substance
+            Painter understands.
+          </p>
+          <Heading variant="h4">Albedo maps</Heading>
+          <p>
+            The colored part of your texture is called an "albedo map". It is a
+            2D image that when applied to all of the polygons (triangles) of
+            your 3D model it will give it color.
+          </p>
+          <p>
+            For the Toastacuga avatar we had to turn off all layers except
+            "AlbedoTransparency_Body" and export it as a PNG:
+          </p>
+          <Image
+            src={sketchbookAlbedoUrl}
+            alt="Toastacuga Sketchbook albedo layer"
+          />
+          <Heading variant="h4">Normal maps</Heading>
+          <p>
+            A normal map is a way to "fake" lighting for a 3D model without
+            needing extra polygons (so it is better for performance). For
+            example it lets you define muscles of a human. It is almost always a
+            purple color.
+          </p>
+          <p>
+            For the Toastacuga avatar we had to toggle off all layers except
+            "Normalmap_Body" then export it as a PNG:
+          </p>
+          <Image
+            src={sketchbookNormalUrl}
+            alt="Toastacuga Sketchbook normal layer"
+          />
+          <Heading variant="h3">Import and use textures</Heading>
+          <Heading variant="h4">Albedo</Heading>
+          <ol>
+            <li>go to "File" then "Import resources..."</li>
+            <li>click "Add resources" at the top right</li>
+            <li>find the .png file of the albedo texture and select it</li>
+            <li>
+              on the right of your file click "undefined" then select "texture"
+            </li>
+            <li>for "Import your resources to" select "project 'name'"</li>
+            <li>click "Import"</li>
+          </ol>
+          <p>For the Toastacuga it then appears in our Shelf:</p>
+          <Image
+            src={importedAlbedoUrl}
+            alt="Toastacuga imported albedo in shelf"
+          />
+          <p>
+            Now that you have you have imported it, apply the texture using a
+            Fill Layer:
+          </p>
+          <Image src={addFillLayerUrl} alt="Add a fill layer" />
+          <ol>
+            <li>
+              click the "Add Fill Layer" icon (paint bucket) to add a new fill
+              layer (highlighted in yellow)
+            </li>
+            <li>
+              drag the texture from the Shelf to the "Base Color" square in the
+              Properties panel (highlighted in green)
+            </li>
+          </ol>
+          <p>It should now look like this:</p>
+          <Image src={appliedBodyAlbedoUrl} alt="Applied body albedo" />
+          <p>
+            Note that the eyes and fur are still not colored. You need to export
+            a .png for each of these parts and import them just like you did the
+            body by following the same steps but select the different Texture
+            Set.
+          </p>
+          <Heading variant="h4">Normal</Heading>
+          <p>For the normal map you have to do something different:</p>
+          <Image src={selectNormalMapUrl} alt="Select normal map" />
+          <ol>
+            <li>import just like you did the albedo</li>
+            <li>
+              on the far right click the first icon called "Texture Set
+              Settings" (highlighted in yellow)
+            </li>
+            <li>
+              under "Mesh Maps" click "Select normal map" (highlighted in green)
+            </li>
+            <li>select your imported normal map</li>
+          </ol>
+          <p>Your 3D model should now look a lot more defined:</p>
+          <Image src={withNormalUrl} alt="With normal map applied" />
+        </>
+      )}
       <Heading variant="h2">Painting on your model</Heading>
       <Heading variant="h3">How to paint</Heading>
       <p>

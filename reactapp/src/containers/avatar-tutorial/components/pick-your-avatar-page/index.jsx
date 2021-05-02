@@ -1,7 +1,7 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
+import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 
 import Heading from '../../../../components/heading'
 import Button from '../../../../components/button'
@@ -44,7 +44,8 @@ export default () => {
         url={routes.viewCategoryWithVar.replace(
           ':categoryName',
           AssetCategories.avatar
-        )}>
+        )}
+        icon={<ChevronRightIcon />}>
         Browse avatars
       </Button>
       <Heading variant="h3">What an avatar comes with</Heading>
@@ -71,8 +72,9 @@ export default () => {
         url={routes.viewAssetWithVar.replace(
           ':assetId',
           'ZszLGtc5sBnfI37nbes1'
-        )}>
-        View avatar
+        )}
+        icon={<ChevronRightIcon />}>
+        View Toastacuga
       </Button>
       <p>
         This avatar (~200mb) includes a .unitypackage file, an .fbx file and

@@ -2,14 +2,22 @@ import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
+import TocIcon from '@material-ui/icons/Toc'
 
 import Heading from '../../../../components/heading'
 import * as routes from '../../../../routes'
 import { pageNames } from '../../config'
 
 const useStyles = makeStyles({
-  headings: {
-    textAlign: 'center'
+  heading: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  icon: {
+    display: 'flex',
+    alignItems: 'center',
+    marginRight: '0.5rem'
   }
 })
 
@@ -25,7 +33,12 @@ export default () => {
         />
       </Helmet>
       <div className={classes.headings}>
-        <Heading variant="h2">Table of Contents</Heading>
+        <Heading variant="h2" className={classes.heading}>
+          <span className={classes.icon}>
+            <TocIcon />
+          </span>{' '}
+          Table of Contents
+        </Heading>
       </div>
       <Heading variant="h3">
         <Link

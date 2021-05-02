@@ -2,6 +2,9 @@ import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { useParams } from 'react-router'
 import { Link } from 'react-router-dom'
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
+import ChevronRightIcon from '@material-ui/icons/ChevronRight'
+import TocIcon from '@material-ui/icons/Toc'
 
 import Heading from '../../components/heading'
 import Button from '../../components/button'
@@ -91,14 +94,23 @@ const PageControls = () => {
             url={routes.avatarTutorialWithVar.replace(
               ':pageName',
               prevPageName
-            )}>
+            )}
+            icon={<ChevronLeftIcon style={{ marginLeft: '-5px' }} />}
+            size="small"
+            switchIconSide>
             Back
           </Button>
         )}
       </div>
 
       <div className={`${classes.control} ${classes.tableOfContentsBtn}`}>
-        <Button url={routes.avatarTutorial}>Table of Contents</Button>
+        <Button
+          url={routes.avatarTutorial}
+          icon={<TocIcon />}
+          size="small"
+          switchIconSide>
+          Table of Contents
+        </Button>
       </div>
       <div className={classes.control}>
         {nextPageName && (
@@ -106,7 +118,9 @@ const PageControls = () => {
             url={routes.avatarTutorialWithVar.replace(
               ':pageName',
               nextPageName
-            )}>
+            )}
+            icon={<ChevronRightIcon style={{ marginRight: '-5px' }} />}
+            size="small">
             Next
           </Button>
         )}

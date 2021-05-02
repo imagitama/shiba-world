@@ -16,6 +16,16 @@ const useStyles = makeStyles(theme => ({
       height: '1em'
     }
   },
+  small: {
+    marginLeft: '0.25rem'
+  },
+  switchIconSide: {
+    marginLeft: 0,
+    marginRight: '0.5rem',
+    '&$small': {
+      marginRight: '0.25rem'
+    }
+  },
   tertiary: {
     color: '#FFF',
     backgroundColor: theme.palette.tertiary.main,
@@ -33,6 +43,7 @@ export default ({
   isDisabled,
   className = '',
   openInNewTab = true,
+  switchIconSide = false,
   ...props
 }) => {
   const classes = useStyles()
@@ -47,7 +58,16 @@ export default ({
         props.color === 'tertiary' ? classes.tertiary : ''
       }`}
       {...props}>
-      {children} {icon && <span className={classes.icon}>{icon}</span>}
+      {!switchIconSide && children}{' '}
+      {icon && (
+        <span
+          className={`${classes.icon} ${
+            props.size === 'small' ? classes.small : ''
+          } ${switchIconSide ? classes.switchIconSide : ''}`}>
+          {icon}
+        </span>
+      )}
+      {switchIconSide && children}
     </Button>
   )
 
