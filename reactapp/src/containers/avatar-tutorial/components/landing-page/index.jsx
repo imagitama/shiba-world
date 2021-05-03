@@ -85,6 +85,51 @@ export default () => {
           5. Upload
         </Link>
       </Heading>
+      <Heading variant="h3">
+        <Link
+          to={routes.avatarTutorialWithVar.replace(
+            ':pageName',
+            pageNames.advanced
+          )}>
+          6. Advanced
+        </Link>
+      </Heading>
+      <Heading variant="h4">
+        <Link
+          to={routes.avatarTutorialWithVar.replace(
+            ':pageName',
+            pageNames.quest
+          )}>
+          6.1 Quest compatibility
+        </Link>
+      </Heading>
+      <Heading variant="h4">
+        <Link
+          to={routes.avatarTutorialWithVar.replace(
+            ':pageName',
+            pageNames.customGestures
+          )}>
+          6.2 Custom gestures
+        </Link>
+      </Heading>
+      <Heading variant="h4">
+        <Link
+          to={routes.avatarTutorialWithVar.replace(
+            ':pageName',
+            pageNames.customExpressions
+          )}>
+          6.3 Custom expressions
+        </Link>
+      </Heading>
+      <Heading variant="h4">
+        <Link
+          to={routes.avatarTutorialWithVar.replace(
+            ':pageName',
+            pageNames.shaders
+          )}>
+          6.4 Shaders
+        </Link>
+      </Heading>
     </div>
   )
 }

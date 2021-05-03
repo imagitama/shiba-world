@@ -18,6 +18,12 @@ import ImportIntoUnityPage from './components/import-into-unity-page'
 import UploadPage from './components/upload-page'
 import TutorialCompletePage from './components/tutorial-complete-page'
 
+import AdvancedPage from './components/advanced-page'
+import QuestPage from './components/quest-page'
+import CustomGesturesPage from './components/custom-gestures-page'
+import CustomExpressionsPage from './components/custom-expressions-page'
+import ShadersPage from './components/shaders-page'
+
 import { pageNames } from './config'
 
 const useStyles = makeStyles({
@@ -63,6 +69,16 @@ const Page = () => {
       return <UploadPage />
     case pageNames.tutorialComplete:
       return <TutorialCompletePage />
+    case pageNames.advanced:
+      return <AdvancedPage />
+    case pageNames.quest:
+      return <QuestPage />
+    case pageNames.customGestures:
+      return <CustomGesturesPage />
+    case pageNames.customExpressions:
+      return <CustomExpressionsPage />
+    case pageNames.shaders:
+      return <ShadersPage />
     default:
       return <LandingPage />
   }

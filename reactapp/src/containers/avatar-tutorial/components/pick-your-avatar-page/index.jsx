@@ -77,8 +77,8 @@ export default () => {
         View Toastacuga
       </Button>
       <p>
-        This avatar (~200mb) includes a .unitypackage file, an .fbx file and
-        .psd files for the textures.
+        This avatar (~200mb) includes a .unitypackage file, a .fbx file and .psd
+        files for the textures.
       </p>
     </div>
   )
