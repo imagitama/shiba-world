@@ -6,6 +6,7 @@ import { Helmet } from 'react-helmet'
 import EditIcon from '@material-ui/icons/Edit'
 import LoyaltyIcon from '@material-ui/icons/Loyalty'
 import ControlCameraIcon from '@material-ui/icons/ControlCamera'
+import BuildIcon from '@material-ui/icons/Build'
 import { useDispatch } from 'react-redux'
 import LazyLoad from 'react-lazyload'
 
@@ -943,6 +944,16 @@ export default ({ assetId, switchEditorOpen }) => {
             ) : null}
             {!pedestalVideoUrl && (
               <DiscordServerInfo discordServer={discordServer} />
+            )}{' '}
+            {category === AssetCategories.avatar && (
+              <Control>
+                <Button
+                  url={routes.avatarTutorial}
+                  color="default"
+                  icon={<BuildIcon />}>
+                  Avatar Tutorial
+                </Button>
+              </Control>
             )}
             <Control>
               <ReportButton
@@ -981,7 +992,6 @@ export default ({ assetId, switchEditorOpen }) => {
                 </Button>
               </Control>
             )}
-
             <div className={classes.meta}>
               <div>
                 Uploaded <FormattedDate date={createdAt} />
@@ -997,7 +1007,6 @@ export default ({ assetId, switchEditorOpen }) => {
                 </div>
               )}
             </div>
-
             {isOwnerOrEditor ? (
               <>
                 <Heading variant="h4">Owner Actions</Heading>
@@ -1019,7 +1028,6 @@ export default ({ assetId, switchEditorOpen }) => {
                 </Control>
               </>
             ) : null}
-
             {isApprover ? (
               <>
                 {' '}

@@ -33,8 +33,11 @@ export default () => {
         />
       </Helmet>
       <div className={classes.headings}>
-        <Heading variant="h2" className={classes.heading} />
+        <Heading variant="h2" className={classes.heading}>
+          Advanced
+        </Heading>
       </div>
+      <p>These topics are not recommended for first-time avatar uploaders.</p>
       <Heading variant="h3">
         <Link
           to={routes.avatarTutorialWithVar.replace(

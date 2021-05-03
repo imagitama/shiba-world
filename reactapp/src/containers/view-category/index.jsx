@@ -213,7 +213,7 @@ export default ({
             })
           }
         />
-        {/* {categoryName === AssetCategories.tutorial && <AvatarTutorialSection />} */}
+        {categoryName === AssetCategories.tutorial && <AvatarTutorialSection />}
         <Assets
           categoryName={categoryName}
           sortByFieldName={activeSortFieldName || assetsSortByFieldName}

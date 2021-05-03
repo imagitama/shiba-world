@@ -8,6 +8,7 @@ import TocIcon from '@material-ui/icons/Toc'
 
 import Heading from '../../components/heading'
 import Button from '../../components/button'
+import Message, { types } from '../../components/message'
 import * as routes from '../../routes'
 
 import IntroPage from './components/intro-page'
@@ -149,6 +150,11 @@ export default () => {
   const classes = useStyles()
   return (
     <div className={classes.root}>
+      <Message type={types.WARNING}>
+        This tutorial is a work in progress. For suggestions and feedback please
+        message in the #feedback channel of our Discord server.
+      </Message>
+
       <div className={classes.headings}>
         <Heading variant="h1">How to create a VRChat avatar</Heading>
         <p>
