@@ -52,7 +52,8 @@ const initialState = {
   searchIndexName: getInitialSearchIndexName(),
   darkModeEnabled: true,
   bannerUrl: '',
-  bannerFallbackUrl: ''
+  bannerFallbackUrl: '',
+  searchFilters: []
 }
 
 const OPEN_MENU = 'OPEN_MENU'
@@ -62,6 +63,10 @@ const TOGGLE_DARK_MODE = 'TOGGLE_DARK_MODE'
 const SET_DARK_MODE_ENABLED = 'SET_DARK_MODE_ENABLED'
 const CHANGE_SEARCH_INDEX_NAME = 'CHANGE_SEARCH_INDEX_NAME'
 const SET_BANNER_URLS = 'SET_BANNER_URLS'
+const OVERRIDE_SEARCH_FILTER = 'OVERRIDE_SEARCH_FILTER'
+const ADD_SEARCH_FILTER = 'ADD_SEARCH_FILTER'
+const REMOVE_SEARCH_FILTER = 'REMOVE_SEARCH_FILTER'
+const CLEAR_SEARCH_FILTERS = 'CLEAR_SEARCH_FILTERS'
 
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -105,6 +110,32 @@ export default (state = initialState, action) => {
       return {
         ...state,
         bannerUrl: action.payload.url
+      }
+
+    case OVERRIDE_SEARCH_FILTER:
+      return {
+        ...state,
+        searchFilters: [action.payload.searchFilter]
+      }
+
+    case ADD_SEARCH_FILTER:
+      return {
+        ...state,
+        searchFilters: state.searchFilters.concat([action.payload.searchFilter])
+      }
+
+    case REMOVE_SEARCH_FILTER:
+      return {
+        ...state,
+        searchFilters: state.searchFilters.filter(
+          id => id !== action.payload.searchFilter
+        )
+      }
+
+    case CLEAR_SEARCH_FILTERS:
+      return {
+        ...state,
+        searchFilters: []
       }
 
     default:
@@ -165,5 +196,38 @@ export const setBannerUrls = newValue => dispatch => {
     payload: {
       ...newValue
     }
+  })
+}
+
+export const overrideSearchFilter = searchFilter => dispatch => {
+  dispatch({
+    type: OVERRIDE_SEARCH_FILTER,
+    payload: {
+      searchFilter
+    }
+  })
+}
+
+export const addSearchFilter = searchFilter => dispatch => {
+  dispatch({
+    type: ADD_SEARCH_FILTER,
+    payload: {
+      searchFilter
+    }
+  })
+}
+
+export const removeSearchFilter = searchFilter => dispatch => {
+  dispatch({
+    type: REMOVE_SEARCH_FILTER,
+    payload: {
+      searchFilter
+    }
+  })
+}
+
+export const clearSearchFilters = () => dispatch => {
+  dispatch({
+    type: CLEAR_SEARCH_FILTERS
   })
 }

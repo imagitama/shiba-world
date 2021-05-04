@@ -40,6 +40,10 @@ function ViewAllAuthorsBtn() {
 }
 
 function Results({ isLoading, isErrored, searchIndexName, hits }) {
+  const { searchFilters } = useSelector(({ app: { searchFilters } }) => ({
+    searchFilters
+  }))
+
   if (isLoading || !hits) {
     return <LoadingIndicator message="Searching..." />
   }
@@ -48,11 +52,18 @@ function Results({ isLoading, isErrored, searchIndexName, hits }) {
     return <ErrorMessage>Failed to perform search</ErrorMessage>
   }
 
+  console.debug(searchFilters)
+
   if (!hits.length) {
     return (
       <>
         <NoResultsMessage>
           Nothing found matching your search term
+          {searchFilters.length
+            ? ` (${searchFilters.length} filter${
+                searchFilters.length > 1 ? 's' : ''
+              } applied)`
+            : ''}
         </NoResultsMessage>
         {searchIndexName === searchIndexNames.AUTHORS && <ViewAllAuthorsBtn />}
       </>
@@ -106,73 +117,43 @@ function Results({ isLoading, isErrored, searchIndexName, hits }) {
   }
 }
 
+const filterNameTags = 'field:tags'
+
+// tags are a special boolean
+const mapSearchFiltersForAlgolia = searchFiltersWithColon =>
+  searchFiltersWithColon.filter(id => id !== filterNameTags)
+
 export default () => {
-  const { searchTerm, searchIndexName } = useSelector(
-    ({ app: { searchTerm, searchIndexName } }) => ({
+  const { searchTerm, searchIndexName, searchFilters } = useSelector(
+    ({ app: { searchTerm, searchIndexName, searchFilters } }) => ({
       searchTerm,
-      searchIndexName
+      searchIndexName,
+      searchFilters
     })
   )
   const [, , user] = useUserRecord()
   const [isAlreadyOver18] = useStorage(alreadyOver18Key)
-  const [activeFilterNames, setActiveFilterNames] = useStorage(
-    activeSearchFilterNamesKey
-  )
-  const isFilterByTags =
-    activeFilterNames && activeFilterNames.includes(searchFilterNames.tags)
-
   const [isLoading, isErrored, hits] = useAlgoliaSearch(
     searchIndexName,
     searchTerm,
-    (user && user.enabledAdultContent) || isAlreadyOver18
-      ? undefined
-      : 'isAdult != 1',
-    isFilterByTags
+    [
+      (user && user.enabledAdultContent) || isAlreadyOver18
+        ? undefined
+        : 'isAdult != 1',
+      ...mapSearchFiltersForAlgolia(searchFilters)
+    ],
+    searchFilters.includes(filterNameTags)
   )
 
   return (
     <>
-      <SearchFilters
-        activeFilterNames={activeFilterNames}
-        onChangeActiveFilterNames={setActiveFilterNames}
-        numberOfResults={hits ? hits.length : '0'}
-      />
+      <SearchFilters />
       <Results
         isLoading={isLoading}
         isErrored={isErrored}
         searchIndexName={searchIndexName}
         hits={hits || []}
       />
-      <PageControls>
-        <p>Can't find what you're looking for?</p>
-        {isFilterByTags ? (
-          <Button
-            onClick={() => {
-              setActiveFilterNames([])
-              trackAction(
-                'SearchResults',
-                'Click search everything instead button'
-              )
-            }}>
-            Search everything instead
-          </Button>
-        ) : (
-          <Button
-            onClick={() => {
-              setActiveFilterNames([searchFilterNames.tags])
-              trackAction(
-                'SearchResults',
-                'Click search by tags instead button'
-              )
-            }}>
-            Search by tags instead
-          </Button>
-        )}
-        <p>
-          Or you can join our Discord and request an avatar in the #feedback
-          channel
-        </p>
-      </PageControls>
     </>
   )
 }

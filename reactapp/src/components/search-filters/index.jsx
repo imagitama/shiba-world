@@ -1,66 +1,101 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles'
+import Chip from '@material-ui/core/Chip'
 import Checkbox from '@material-ui/core/Checkbox'
+import CheckIcon from '@material-ui/icons/Check'
+import CloseIcon from '@material-ui/icons/Close'
+import FilterListIcon from '@material-ui/icons/FilterList'
+
 import Button from '../button'
 import { trackAction } from '../../analytics'
 import { searchFilters } from '../../config'
+import { AssetCategories } from '../../hooks/useDatabaseQuery'
+import {
+  removeSearchFilter,
+  addSearchFilter,
+  clearSearchFilters
+} from '../../modules/app'
+import categoryMeta from '../../category-meta'
 
 const useStyles = makeStyles({
-  root: {
-    display: 'flex'
+  availableFilters: {
+    marginTop: '0.5rem',
+    display: 'flex',
+    flexWrap: 'wrap'
   },
-  items: {
-    flex: 1,
-    display: 'flex'
-  },
-  item: {
-    marginRight: '1rem'
-  },
-  numberOfResults: {
-    fontStyle: 'italic'
+  availableFilter: {
+    margin: '0 0.5rem 0.5rem 0'
   }
 })
 
-export default ({
-  activeFilterNames = searchFilters.map(filter => filter.name),
-  onChangeActiveFilterNames,
-  numberOfResults
-}) => {
+const availableFilters = [
+  ...Object.values(AssetCategories).map(categoryName => ({
+    id: `category:${categoryName}`,
+    label: `Category - ${categoryMeta[categoryName].name}`
+  })),
+  {
+    id: 'field:tags',
+    label: 'Search tags only'
+  }
+]
+
+const AvailableFilters = () => {
+  const { searchFilters } = useSelector(({ app: { searchFilters } }) => ({
+    searchFilters
+  }))
+  const dispatch = useDispatch()
+  const addFilter = id => dispatch(addSearchFilter(id))
+  const removeFilter = id => dispatch(removeSearchFilter(id))
+  const clearAllFilters = () => dispatch(clearSearchFilters())
   const classes = useStyles()
+
+  return (
+    <div className={classes.availableFilters}>
+      {availableFilters.map(({ id, label }) => {
+        const isSelected = searchFilters.includes(id)
+        return (
+          <Button
+            key={id}
+            size="small"
+            onClick={() => (isSelected ? removeFilter(id) : addFilter(id))}
+            className={classes.availableFilter}
+            icon={isSelected ? <CheckIcon /> : null}
+            color="default">
+            {label}
+          </Button>
+        )
+      })}
+      <Button
+        onClick={() => clearAllFilters()}
+        size="small"
+        className={classes.availableFilter}
+        icon={<CloseIcon />}>
+        Clear All
+      </Button>
+    </div>
+  )
+}
+
+export default () => {
+  const classes = useStyles()
+  const [areFiltersVisible, setAreFiltersVisible] = useState(false)
+  const { searchFilters } = useSelector(({ app: { searchFilters } }) => ({
+    searchFilters
+  }))
+
   return (
     <div className={classes.root}>
-      <div className={classes.items}>
-        {searchFilters.map(({ name, label }) => {
-          const isActive = activeFilterNames.includes(name)
-          return (
-            <div key={name} className={classes.item}>
-              <Checkbox
-                checked={isActive}
-                onClick={() => {
-                  onChangeActiveFilterNames(
-                    isActive
-                      ? activeFilterNames.filter(item => item !== name)
-                      : activeFilterNames.concat([name])
-                  )
-                  trackAction('SearchResults', 'Click filter checkbox', name)
-                }}
-              />
-              {label}
-            </div>
-          )
-        })}
-        <div className={classes.item}>
-          <Button
-            color="default"
-            onClick={() => {
-              onChangeActiveFilterNames([])
-              trackAction('SearchResults', 'Click clear filters button')
-            }}>
-            Clear Filters
-          </Button>
-        </div>
-      </div>
-      <div className={classes.numberOfResults}>{numberOfResults} results</div>
+      <Button
+        icon={<FilterListIcon />}
+        onClick={() => setAreFiltersVisible(currentVal => !currentVal)}>
+        Filters{searchFilters.length ? ` (${searchFilters.length})` : ''}
+      </Button>
+      {areFiltersVisible ? (
+        <>
+          <AvailableFilters />
+        </>
+      ) : null}
     </div>
   )
 }

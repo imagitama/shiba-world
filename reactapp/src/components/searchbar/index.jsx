@@ -12,13 +12,14 @@ import {
   changeSearchTerm,
   changeSearchIndexName,
   searchIndexNames,
-  searchIndexNameLabels
+  searchIndexNameLabels,
+  overrideSearchFilter
 } from '../../modules/app'
 import { lightTheme } from '../../themes'
 import * as routes from '../../routes'
 import { convertSearchTermToUrlPath } from '../../utils'
 import { trackAction } from '../../analytics'
-import { useHistory } from 'react-router'
+import { useHistory, matchPath, useLocation } from 'react-router'
 
 const useStyles = makeStyles({
   root: {
@@ -94,6 +95,7 @@ export default () => {
   const dropdownMenuBtnRef = useRef()
   const [isIndexDropdownOpen, setIsIndexDropdownOpen] = useState(false)
   const { push } = useHistory()
+  const location = useLocation()
 
   const onSearchTermInputChange = event => {
     const newTerm = event.target.value
@@ -106,6 +108,16 @@ export default () => {
   useEffect(() => {
     if (!searchTerm) {
       return
+    }
+
+    const matchResult = matchPath(location.pathname, {
+      path: routes.viewCategoryWithVar,
+      exact: true
+    })
+
+    if (matchResult) {
+      const categoryName = matchResult.params.categoryName
+      dispatch(overrideSearchFilter(`category:${categoryName}`))
     }
 
     updateUrlWithSearchData(searchIndexName, searchTerm)
