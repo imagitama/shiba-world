@@ -29,8 +29,13 @@ export default (
   const indexRef = useRef()
   const activeIndexNameRef = useRef()
 
+  // filter out "undefined"
   const filtersStr =
-    typeof filters === 'string' ? filters : filters ? filters.join(' AND ') : ''
+    typeof filters === 'string'
+      ? filters
+      : filters
+      ? filters.filter(item => item).join(' AND ')
+      : ''
 
   useEffect(() => {
     if (!client) {
