@@ -18,6 +18,8 @@ import {
 } from '../../modules/app'
 import categoryMeta from '../../category-meta'
 
+const analyticsCategoryName = 'SearchResults'
+
 const useStyles = makeStyles({
   availableFilters: {
     marginTop: '0.5rem',
@@ -40,7 +42,7 @@ const availableFilters = [
   }
 ]
 
-const AvailableFilters = () => {
+const AvailableFilters = ({ hideFilters }) => {
   const { searchFilters } = useSelector(({ app: { searchFilters } }) => ({
     searchFilters
   }))
@@ -58,7 +60,19 @@ const AvailableFilters = () => {
           <Button
             key={id}
             size="small"
-            onClick={() => (isSelected ? removeFilter(id) : addFilter(id))}
+            onClick={() => {
+              trackAction(
+                analyticsCategoryName,
+                'Click apply search filter button',
+                id
+              )
+              if (isSelected) {
+                removeFilter(id)
+              } else {
+                addFilter(id)
+              }
+              hideFilters()
+            }}
             className={classes.availableFilter}
             icon={isSelected ? <CheckIcon /> : null}
             color="default">
@@ -67,7 +81,14 @@ const AvailableFilters = () => {
         )
       })}
       <Button
-        onClick={() => clearAllFilters()}
+        onClick={() => {
+          clearAllFilters()
+          trackAction(
+            analyticsCategoryName,
+            'Click clear all search filters button'
+          )
+          hideFilters()
+        }}
         size="small"
         className={classes.availableFilter}
         icon={<CloseIcon />}>
@@ -88,12 +109,15 @@ export default () => {
     <div className={classes.root}>
       <Button
         icon={<FilterListIcon />}
-        onClick={() => setAreFiltersVisible(currentVal => !currentVal)}>
+        onClick={() => {
+          setAreFiltersVisible(currentVal => !currentVal)
+          trackAction(analyticsCategoryName, 'Click toggle filters button')
+        }}>
         Filters{searchFilters.length ? ` (${searchFilters.length})` : ''}
       </Button>
       {areFiltersVisible ? (
         <>
-          <AvailableFilters />
+          <AvailableFilters hideFilters={() => setAreFiltersVisible(false)} />
         </>
       ) : null}
     </div>
