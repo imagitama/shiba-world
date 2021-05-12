@@ -20,8 +20,8 @@ export default ({
         <TableHead>
           <TableRow>
             {showAssetDetails && <TableCell>Asset</TableCell>}
-            <TableCell>Reporter</TableCell>
             <TableCell>Reason</TableCell>
+            <TableCell>Reporter</TableCell>
             <TableCell>Status</TableCell>
             {showControls && <TableCell />}
           </TableRow>
