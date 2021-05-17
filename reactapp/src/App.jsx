@@ -532,13 +532,13 @@ export default () => {
         </div>
         <main className="main">
           <div className={classes.mainContainer}>
-            {new Date() < new Date('21 Feb 2021') && (
+            {new Date() < new Date('01 June 2021') && (
               <Fireworks
-                eventName="1000users"
+                eventName="1_year_anniversary"
                 message={
-                  <span style={{ fontSize: '200%' }}>
-                    We just reached 1000 signed up users!
-                  </span>
+                  <div style={{ fontSize: '200%', textAlign: 'center' }}>
+                    Celebrating our 1 Year Anniversary!
+                  </div>
                 }
               />
             )}

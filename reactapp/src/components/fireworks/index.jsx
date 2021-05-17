@@ -1,15 +1,29 @@
 import React from 'react'
+import { makeStyles } from '@material-ui/core/styles'
+
 import useStorage, { keys } from '../../hooks/useStorage'
 import { trackAction } from '../../analytics'
 import Message from '../message'
 import Button from '../button'
 import './fireworks.css'
 
+const useStyles = makeStyles({
+  message: {
+    position: 'relative'
+  },
+  hideBtn: {
+    position: 'absolute',
+    top: 0,
+    right: 0
+  }
+})
+
 export default ({ eventName = '', message = '' }) => {
   const [hiddenSpecialEventNames, setHiddenSpecialEventNames] = useStorage(
     keys.hiddenSpecialEventNames,
     []
   )
+  const classes = useStyles()
 
   if (eventName && hiddenSpecialEventNames.includes(eventName)) {
     return null
@@ -24,12 +38,12 @@ export default ({ eventName = '', message = '' }) => {
     <>
       {message && (
         <Message style={{ width: '100%' }}>
-          <span style={{ width: '100%' }}>
+          <div className={classes.message}>
             {message}
-            <br />
-            <br />
-            <Button onClick={onBtnClick}>OK please hide these fireworks</Button>
-          </span>
+            <div className={classes.hideBtn}>
+              <Button onClick={onBtnClick}>Hide Fireworks</Button>
+            </div>
+          </div>
         </Message>
       )}
       <div className="fireworks">
