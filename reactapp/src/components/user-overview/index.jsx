@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import LazyLoad from 'react-lazyload'
+import EmojiEventsIcon from '@material-ui/icons/EmojiEvents'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -60,7 +61,8 @@ const useStyles = makeStyles({
     height: '100%'
   },
   username: {
-    marginTop: '1rem'
+    marginTop: '1rem',
+    display: 'flex'
   },
   bio: {
     '& img': {
@@ -82,6 +84,17 @@ const useStyles = makeStyles({
   },
   favoriteSpeciesHeading: {
     flex: 1
+  },
+  awards: {
+    display: 'flex',
+    marginLeft: '0.5rem'
+  },
+  award: {
+    marginRight: '0.5rem',
+    color: '#ffdd00',
+    '& svg': {
+      fontSize: '2rem'
+    }
   }
 })
 
@@ -175,6 +188,39 @@ const EndorsementsForUser = ({ userId }) => {
   }
 
   return <AssetResults assets={assets} showCategory />
+}
+
+const Awards = ({ userId }) => {
+  const [isLoading, isErrored, result] = useDatabaseQuery(
+    CollectionNames.AwardsForUsers,
+    userId
+  )
+  const classes = useStyles()
+
+  if (isLoading || result === null) {
+    return <LoadingIndicator />
+  }
+
+  if (isErrored) {
+    return <ErrorMessage>Failed to load awards</ErrorMessage>
+  }
+
+  if (!result) {
+    return null
+  }
+
+  return (
+    <div className={classes.awards}>
+      {result.awards.map(awardId => (
+        <div
+          key={awardId}
+          className={classes.award}
+          title="1 Year Anniversary Award">
+          <EmojiEventsIcon />
+        </div>
+      ))}
+    </div>
+  )
 }
 
 const AuthorsForUser = ({ userId }) => {
@@ -340,7 +386,8 @@ export default ({ userId }) => {
         className={`${classes.username} ${isBanned ? classes.isBanned : ''}`}>
         <Link to={routes.viewUserWithVar.replace(':userId', userId)}>
           {username}
-        </Link>
+        </Link>{' '}
+        <Awards userId={userId} />
       </Heading>
       {canEditUsers(currentUser) && (
         <Button url={routes.editUserWithVar.replace(':userId', userId)}>

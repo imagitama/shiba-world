@@ -48,7 +48,8 @@ export const CollectionNames = {
   ViewCache: 'viewCache',
   Products: 'products',
   Transactions: 'transactions',
-  Reports: 'reports'
+  Reports: 'reports',
+  AwardsForUsers: 'awardsForUsers'
 }
 
 export const ReportFieldNames = {

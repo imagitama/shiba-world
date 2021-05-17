@@ -173,6 +173,10 @@ service cloud.firestore {
     match /userMeta/{document=**} {
       allow read;
     }
+
+    match /awardsForUsers/{document=**} {
+      allow read;
+    }
     
     match /assetMeta/{document=**} {
       allow read;
