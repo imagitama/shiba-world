@@ -1,3 +1,4 @@
+const admin = require('firebase-admin')
 const {
   db,
   CollectionNames,
@@ -119,37 +120,50 @@ const getAwardIdsToGiveForAssetCount = (assetCount) => {
   let awardIdsToGive = []
 
   if (assetCount >= 1) {
-    console.debug(`1 asset!`)
     awardIdsToGive.push(allAwardIds['1_asset_approved'])
   }
 
   if (assetCount >= 2) {
-    console.debug(`5 assets!`)
     awardIdsToGive.push(allAwardIds['5_assets_approved'])
   }
 
   if (assetCount >= 20) {
-    console.debug(`20 assets!`)
     awardIdsToGive.push(allAwardIds['20_assets_approved'])
   }
 
   if (assetCount >= 100) {
-    console.debug(`100 assets!`)
     awardIdsToGive.push(allAwardIds['100_assets_approved'])
+  }
+
+  // hacky solution to getAwardIdsForUserId() not working
+  if (awardIdsToGive.length) {
+    awardIdsToGive.push(allAwardIds['1_year_anniversary'])
   }
 
   return awardIdsToGive
 }
 module.exports.getAwardIdsToGiveForAssetCount = getAwardIdsToGiveForAssetCount
 
-const syncAwards = async () => {
-  // get all assets
-  // loop through each one
-  // get creator
-  // tally up
-  // re-use code from other func to decide if to give award
-  // add to batch and commit
+async function getSignupDateById(userId) {
+  const user = await admin.auth().getUser(userId)
+  return user.metadata.creationTime
+}
 
+const dateTimeForAnniversary = '2021-05-01T00:00:00.000+08:00'
+
+// this takes AGES and doesn't work so assuming they are all anniversary members for now
+const getAwardIdsForUserId = async (userId) => {
+  const signupDate = await getSignupDateById(userId)
+
+  if (signupDate < new Date(dateTimeForAnniversary)) {
+    return [allAwardIds['1_year_anniversary']]
+  }
+
+  return []
+}
+module.exports.getAwardIdsForUserId = getAwardIdsForUserId
+
+const syncAwards = async () => {
   console.debug('syncing awards...')
 
   const { docs: approvedAssetDocs } = await db
@@ -170,14 +184,26 @@ const syncAwards = async () => {
   const batch = db.batch()
   let count = 0
 
-  for (const creatorId in tallyByCreatorId) {
-    const total = tallyByCreatorId[creatorId]
+  const { docs: allUserDocs } = await db.collection(CollectionNames.Users).get()
 
-    const awardIdsToGive = getAwardIdsToGiveForAssetCount(total)
+  console.debug(`found ${allUserDocs.length} users to check`)
+
+  for (const userDoc of allUserDocs) {
+    const userId = userDoc.id
+    const total = userId in tallyByCreatorId ? tallyByCreatorId[userId] : 0
+
+    let awardIdsToGive = []
+
+    awardIdsToGive = awardIdsToGive.concat(
+      getAwardIdsToGiveForAssetCount(total)
+    )
+
+    // awardIdsToGive = awardIdsToGive.concat(await getAwardIdsForUserId(userId))
 
     if (awardIdsToGive.length) {
       count++
-      batch.set(db.collection(CollectionNames.AwardsForUsers).doc(creatorId), {
+
+      batch.set(db.collection(CollectionNames.AwardsForUsers).doc(userId), {
         [AwardsForUsersFieldNames.awards]: awardIdsToGive,
         [AwardsForUsersFieldNames.lastModifiedAt]: new Date(),
       })
