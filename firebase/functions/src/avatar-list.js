@@ -104,7 +104,8 @@ const syncAvatarList = async () => {
 module.exports.syncAvatarList = syncAvatarList
 
 // firebase docs have a 1mb limit so guess the max per document
-const avatarsPerPage = 500
+// 500 is too big
+const avatarsPerPage = 450
 
 const getAllAvatarsInList = async () => {
   console.debug(`getting all avatars in summary...`)
@@ -129,7 +130,19 @@ const getAllAvatarsInList = async () => {
     summaryDoc2Avatars = summaryDoc2.get(AvatarListFieldNames.avatars)
   }
 
-  const allAvatars = summaryDoc1Avatars.concat(summaryDoc2Avatars)
+  const summaryDocRef3 = db
+    .collection(CollectionNames.Summaries)
+    .doc(specialCollectionIds.avatarList2)
+  const summaryDoc3 = await summaryDocRef3.get()
+  let summaryDoc3Avatars = []
+
+  if (summaryDoc3.exists) {
+    summaryDoc3Avatars = summaryDoc3.get(AvatarListFieldNames.avatars)
+  }
+
+  const allAvatars = summaryDoc1Avatars
+    .concat(summaryDoc2Avatars)
+    .concat(summaryDoc3Avatars)
 
   console.debug(`found ${allAvatars.length} avatars in summary`)
 
@@ -169,6 +182,26 @@ const setAvatarsInList = async (newAvatarList) => {
   await summaryDocRef2.set(
     {
       [AvatarListFieldNames.avatars]: avatarsForPage2,
+      [AvatarListFieldNames.lastModifiedAt]: new Date(),
+    },
+    {
+      merge: true,
+    }
+  )
+
+  const avatarsForPage3 = newAvatarList.slice(
+    avatarsPerPage * 2,
+    avatarsPerPage * 3 - 1
+  )
+
+  console.debug(`setting ${avatarsForPage3.length} avatars for page 3`)
+
+  const summaryDocRef3 = db
+    .collection(CollectionNames.Summaries)
+    .doc(specialCollectionIds.avatarList2)
+  await summaryDocRef3.set(
+    {
+      [AvatarListFieldNames.avatars]: avatarsForPage3,
       [AvatarListFieldNames.lastModifiedAt]: new Date(),
     },
     {

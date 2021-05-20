@@ -351,6 +351,7 @@ const specialCollectionIds = {
   homepage: 'homepage',
   avatarList: 'avatarList',
   avatarList1: 'avatarList1', // docs have a 1mb limit and we've hit that so a temporary workaround
+  avatarList2: 'avatarList2', // docs have a 1mb limit and we've hit that so a temporary workaround
 }
 module.exports.specialCollectionIds = specialCollectionIds
 
