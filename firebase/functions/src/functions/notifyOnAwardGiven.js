@@ -31,13 +31,17 @@ module.exports = functions.firestore
     for (const newAwardId of newAwardIds) {
       const emailText = `Congratulations! You have just received the award "${getNameForAwardId(
         newAwardId
-      )}"! View your profile (${siteSettings.routes.viewUserWithVar.replace(
+      )}"! View your profile (${
+        siteSettings.VRCARENA_BASE_URL
+      }${siteSettings.routes.viewUserWithVar.replace(
         ':userId',
         userId
       )}) to view all of your awards.`
       const emailHtml = `Congratulations! You have just received the award "${getNameForAwardId(
         newAwardId
-      )}"! View <a href="${siteSettings.routes.viewUserWithVar.replace(
+      )}"! View <a href="${
+        siteSettings.VRCARENA_BASE_URL
+      }${siteSettings.routes.viewUserWithVar.replace(
         ':userId',
         userId
       )}}">your profile</a> to view all of your awards.`

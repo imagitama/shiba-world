@@ -591,7 +591,22 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "createdBy ",
+          "fieldPath": "createdBy",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "CUSTOM_PAGE_NAME": "Reports",
+      "collectionGroup": "reports",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "isDeleted",
           "order": "ASCENDING"
         },
         {
