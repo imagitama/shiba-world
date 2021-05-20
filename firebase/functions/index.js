@@ -60,6 +60,8 @@ exports.hydateAssetMetaOnProductCreate = require('./src/functions/hydateAssetMet
 exports.hydrateAssetMetaOnContentUpdate = require('./src/functions/hydrateAssetMetaOnContentUpdate')
 exports.getYouTubeVideoMeta = require('./src/functions/getYouTubeVideoMeta')
 exports.getTweetMeta = require('./src/functions/getTweetMeta')
+exports.awardOnAssetsApproved = require('./src/functions/awardOnAssetsApproved')
+exports.syncAwards = require('./src/functions/syncAwards')
 
 // notifications
 exports.notifyOnAssetAmended = require('./src/functions/notifyOnAssetAmended')
@@ -68,3 +70,4 @@ exports.notifyOnAssetDeleted = require('./src/functions/notifyOnAssetDeleted')
 exports.notifyOnAssetNeedingApproval = require('./src/functions/notifyOnAssetNeedingApproval')
 exports.notifyOnCommentCreated = require('./src/functions/notifyOnCommentCreated')
 exports.notifyOnReportCreated = require('./src/functions/notifyOnReportCreated')
+exports.notifyOnAwardGiven = require('./src/functions/notifyOnAwardGiven')

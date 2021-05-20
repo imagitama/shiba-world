@@ -51,8 +51,15 @@ const CollectionNames = {
   Products: 'products',
   Transactions: 'transactions',
   Reports: 'reports',
+  AwardsForUsers: 'awardsForUsers',
 }
 module.exports.CollectionNames = CollectionNames
+
+const AwardsForUsersFieldNames = {
+  awards: 'awards',
+  lastModifiedAt: 'lastModifiedAt',
+}
+module.exports.AwardsForUsersFieldNames = AwardsForUsersFieldNames
 
 const ReportFieldNames = {
   parent: 'parent',

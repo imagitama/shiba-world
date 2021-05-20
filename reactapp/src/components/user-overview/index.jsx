@@ -38,6 +38,7 @@ import * as routes from '../../routes'
 import { createRef, fixAccessingImagesUsingToken } from '../../utils'
 import { trackAction } from '../../analytics'
 import { canEditUsers } from '../../permissions'
+import { getNameForAwardId } from '../../awards'
 
 const useStyles = makeStyles({
   socialMediaItem: {
@@ -90,12 +91,24 @@ const useStyles = makeStyles({
     marginLeft: '0.5rem'
   },
   award: {
+    width: '90px',
     marginRight: '0.5rem',
     color: '#ffdd00',
+    fontSize: '10px',
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    cursor: 'default',
+    '& $icon': {
+      width: '100%',
+      textAlign: 'center',
+      marginBottom: '-10px'
+    },
     '& svg': {
       fontSize: '2rem'
     }
-  }
+  },
+  icon: {}
 })
 
 const AssetsForUser = ({ userId }) => {
@@ -211,14 +224,17 @@ const Awards = ({ userId }) => {
 
   return (
     <div className={classes.awards}>
-      {result.awards.map(awardId => (
-        <div
-          key={awardId}
-          className={classes.award}
-          title="1 Year Anniversary Award">
-          <EmojiEventsIcon />
-        </div>
-      ))}
+      {result.awards.map(awardId => {
+        const awardName = getNameForAwardId(awardId)
+        return (
+          <div key={awardId} className={classes.award} title={awardName}>
+            <span className={classes.icon}>
+              <EmojiEventsIcon />
+            </span>
+            {awardName}
+          </div>
+        )
+      })}
     </div>
   )
 }

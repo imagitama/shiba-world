@@ -8,6 +8,10 @@ import Button from '../button'
 import './fireworks.css'
 
 const useStyles = makeStyles({
+  root: {
+    position: 'relative',
+    zIndex: 1
+  },
   message: {
     position: 'relative'
   },
@@ -37,7 +41,7 @@ export default ({ eventName = '', message = '' }) => {
   return (
     <>
       {message && (
-        <Message style={{ width: '100%' }}>
+        <Message className={classes.root}>
           <div className={classes.message}>
             {message}
             <div className={classes.hideBtn}>

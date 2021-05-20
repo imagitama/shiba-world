@@ -20,6 +20,7 @@ import { quickDeleteRecord, quickDeleteRefs } from '../../firestore'
 import { handleError } from '../../error-handling'
 import * as routes from '../../routes'
 import { NotificationEvents } from '../../notifications'
+import { getNameForAwardId } from '../../awards'
 
 import FormattedDate from '../formatted-date'
 
@@ -106,6 +107,10 @@ function Message({ parent, message, data }) {
       return `Asset needs approval`
     case NotificationEvents.REPORT_CREATED:
       return 'Report created'
+    case NotificationEvents.AWARD_GIVEN:
+      return `You have been given the award "${getNameForAwardId(
+        data.awardId
+      )}"!`
     default:
       console.log(`Unknown message for notification: ` + message)
       return '???'
@@ -129,12 +134,14 @@ function getCollectionNameForResult(result) {
   return ''
 }
 
-function getLinkUrl(parent, message) {
+function getLinkUrl(parent, message, userId) {
   const collectionName = getCollectionNameForResult(parent)
 
   switch (message) {
     case NotificationEvents.REPORT_CREATED:
       return routes.admin
+    case NotificationEvents.AWARD_GIVEN:
+      return routes.viewUserWithVar.replace(':userId', userId)
   }
 
   switch (collectionName) {
@@ -243,7 +250,7 @@ export default ({ onClose, isMobile = false }) => {
       {results.map(({ id, parent, message, createdAt, data }) => (
         <MenuItem key={id} className={menuItemClassName}>
           <Link
-            to={getLinkUrl(parent, message)}
+            to={getLinkUrl(parent, message, userId)}
             onClick={() => onClickLink(id)}
             className={classes.anchor}>
             <div className={classes.leftCol}>
