@@ -4,6 +4,7 @@ import { useParams } from 'react-router'
 import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
 import { makeStyles } from '@material-ui/core/styles'
+import { Link } from 'react-router-dom'
 
 import ErrorMessage from '../../components/error-message'
 import NoPermissionMessage from '../../components/no-permission-message'
@@ -30,7 +31,6 @@ import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
 import { trackAction } from '../../analytics'
 import { DISCORD_URL } from '../../config'
-import { Link } from 'react-router-dom'
 
 const analyticsCategory = 'CreateReport'
 
@@ -40,12 +40,18 @@ const useStyles = makeStyles({
 
 const reasons = [
   {
+    value: ReportReasons.CLAIM_OWNERSHIP,
+    label:
+      'I am the creator of this asset and want to claim ownership to make changes to it'
+  },
+  {
     value: ReportReasons.BROKEN_SOURCE,
     label: 'Broken or invalid source'
   },
   {
     value: ReportReasons.OUTDATED_CONTENT,
-    label: 'Outdated content (eg. thumbnail, attachments, etc.)'
+    label:
+      'Outdated content (eg. thumbnail, attachments, etc.). Please provide a link to the correct content'
   },
   {
     value: ReportReasons.OFFENSIVE_CONTENT,
