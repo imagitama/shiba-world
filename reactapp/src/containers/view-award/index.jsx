@@ -1,13 +1,15 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { Helmet } from 'react-helmet'
 import { makeStyles } from '@material-ui/core/styles'
+import firebase from 'firebase/app'
 
 import ErrorMessage from '../../components/error-message'
 import Award from '../../components/award'
 import Heading from '../../components/heading'
 import LoadingIndicator from '../../components/loading-indicator'
-// import UserList from '../../components/user-list'
+import UserList from '../../components/user-list'
+import Button from '../../components/button'
 
 import { getNameForAwardId, allAwardIds } from '../../awards'
 import useDatabaseQuery, {
@@ -24,6 +26,47 @@ const useStyles = makeStyles({
   }
 })
 
+function Users({ ids }) {
+  const [results, setResults] = useState([])
+
+  useEffect(() => {
+    if (!ids.length) {
+      return
+    }
+
+    async function main() {
+      try {
+        const docs = await Promise.all(
+          ids.map(async id =>
+            firebase
+              .firestore()
+              .collection(CollectionNames.Users)
+              .doc(id)
+              .get()
+          )
+        )
+        const docDatas = docs.map(doc => doc.data())
+        console.log('datas', docDatas)
+        setResults(docDatas)
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
+    main()
+  }, [ids.join(',')])
+
+  if (!results.length) {
+    return <LoadingIndicator />
+  }
+
+  return (
+    <>
+      <UserList users={results} />
+    </>
+  )
+}
+
 function UsersWithAward({ awardId }) {
   const isOneYearAnniversaryAwardId =
     awardId === allAwardIds['1_year_anniversary']
@@ -34,6 +77,11 @@ function UsersWithAward({ awardId }) {
       ? false
       : [[AwardsForUsersFieldNames.awards, Operators.ARRAY_CONTAINS, awardId]]
   )
+  const [shouldLoadUsers, setShouldLoadUsers] = useState(false)
+
+  useEffect(() => {
+    setShouldLoadUsers(false)
+  }, [awardId])
 
   if (isLoading) {
     return <LoadingIndicator message="Finding users with that award..." />
@@ -47,9 +95,16 @@ function UsersWithAward({ awardId }) {
     return <>Over 2000 users have this award!</>
   }
 
-  return <>{usersWithAward && usersWithAward.length} users have that award</>
-
-  //return <UserList users={usersWithAward} />
+  return (
+    <>
+      {usersWithAward && usersWithAward.length} users have that award{' '}
+      {!shouldLoadUsers ? (
+        <Button onClick={() => setShouldLoadUsers(true)}>View</Button>
+      ) : (
+        <Users ids={usersWithAward.map(({ id }) => id)} />
+      )}
+    </>
+  )
 }
 
 export default () => {
