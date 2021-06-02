@@ -222,12 +222,16 @@ function ExtraChips({ isApproved, isPrivate, isPinned }) {
 
 const CategoryChip = ({ categoryName }) => {
   const classes = useStyles()
+
+  // handle weird edge case when category has been deleted
+  const label =
+    categoryName in categoryMeta
+      ? categoryMeta[categoryName].nameSingular
+      : categoryName
+
   return (
     <div className={classes.categoryChip}>
-      <Chip
-        label={categoryMeta[categoryName].nameSingular}
-        className={classes.categoryChipWithMargin}
-      />
+      <Chip label={label} className={classes.categoryChipWithMargin} />
     </div>
   )
 }
