@@ -3,7 +3,6 @@ import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import LazyLoad from 'react-lazyload'
-import EmojiEventsIcon from '@material-ui/icons/EmojiEvents'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -33,12 +32,12 @@ import AuthorResults from '../author-results'
 import Avatar from '../avatar'
 import Pedestal from '../pedestal'
 import Markdown from '../markdown'
+import Award from '../award'
 
 import * as routes from '../../routes'
 import { createRef, fixAccessingImagesUsingToken } from '../../utils'
 import { trackAction } from '../../analytics'
 import { canEditUsers } from '../../permissions'
-import { getNameForAwardId } from '../../awards'
 
 const useStyles = makeStyles({
   socialMediaItem: {
@@ -89,26 +88,7 @@ const useStyles = makeStyles({
   awards: {
     display: 'flex',
     marginLeft: '0.5rem'
-  },
-  award: {
-    width: '90px',
-    marginRight: '0.5rem',
-    color: '#ffdd00',
-    fontSize: '10px',
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    cursor: 'default',
-    '& $icon': {
-      width: '100%',
-      textAlign: 'center',
-      marginBottom: '-10px'
-    },
-    '& svg': {
-      fontSize: '2rem'
-    }
-  },
-  icon: {}
+  }
 })
 
 const AssetsForUser = ({ userId }) => {
@@ -224,17 +204,9 @@ const Awards = ({ userId }) => {
 
   return (
     <div className={classes.awards}>
-      {result.awards.map(awardId => {
-        const awardName = getNameForAwardId(awardId)
-        return (
-          <div key={awardId} className={classes.award} title={awardName}>
-            <span className={classes.icon}>
-              <EmojiEventsIcon />
-            </span>
-            {awardName}
-          </div>
-        )
-      })}
+      {result.awards.map(awardId => (
+        <Award key={awardId} awardId={awardId} />
+      ))}
     </div>
   )
 }

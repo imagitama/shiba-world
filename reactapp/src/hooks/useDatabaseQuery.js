@@ -52,6 +52,10 @@ export const CollectionNames = {
   AwardsForUsers: 'awardsForUsers'
 }
 
+export const AwardsForUsersFieldNames = {
+  awards: 'awards'
+}
+
 export const ReportFieldNames = {
   parent: 'parent',
   reason: 'reason',

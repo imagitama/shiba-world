@@ -63,6 +63,7 @@ export const viewReportWithVar = '/reports/:reportId'
 export const dmcaPolicy = '/dcma-policy'
 export const avatarTutorial = '/avatar-tutorial'
 export const avatarTutorialWithVar = '/avatar-tutorial/:pageName'
+export const viewAwardWithVar = '/awards/:awardId'
 
 // Outdated routes
 export const browseAssets = '/browse'
