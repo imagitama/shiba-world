@@ -33,6 +33,8 @@ const getLabelForEventName = eventName => {
       return 'My assets are amended with new tags'
     case NotificationEvents.ASSET_APPROVED:
       return 'My assets are approved'
+    case NotificationEvents.ASSET_UNAPPROVED:
+      return 'My assets are not approved'
     case NotificationEvents.ASSET_DELETED:
       return 'My assets are rejected or deleted'
     case NotificationEvents.COMMENT_ON_ASSET:
