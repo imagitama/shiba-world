@@ -51,10 +51,15 @@ module.exports.hydrateAvatarListWithSpeciesDoc = async (speciesDoc) => {
   )
 }
 
+const descriptionMaxLength = 100
+const trimDescription = (desc) => desc.substr(0, descriptionMaxLength)
+
 const convertAvatarDocToAvatarListItem = (doc) => ({
   asset: doc.ref,
   [AssetFieldNames.title]: doc.get(AssetFieldNames.title),
-  [AssetFieldNames.description]: doc.get(AssetFieldNames.description),
+  [AssetFieldNames.description]: trimDescription(
+    doc.get(AssetFieldNames.description)
+  ),
   [AssetFieldNames.thumbnailUrl]: doc.get(AssetFieldNames.thumbnailUrl),
   [AssetFieldNames.species]: doc.get(AssetFieldNames.species),
   [AssetFieldNames.isAdult]: doc.get(AssetFieldNames.isAdult),
@@ -104,8 +109,7 @@ const syncAvatarList = async () => {
 module.exports.syncAvatarList = syncAvatarList
 
 // firebase docs have a 1mb limit so guess the max per document
-// 500 is too big
-const avatarsPerPage = 450
+const avatarsPerPage = 500
 
 const getAllAvatarsInList = async () => {
   console.debug(`getting all avatars in summary...`)
