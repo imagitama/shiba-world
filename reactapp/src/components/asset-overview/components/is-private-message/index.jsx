@@ -22,6 +22,10 @@ export default () => {
           the uploader)
         </li>
       </ul>
+      <strong>
+        You must click the Edit button and click Publish so that a staff member
+        can review it
+      </strong>
     </Paper>
   )
 }

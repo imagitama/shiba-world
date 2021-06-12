@@ -65,6 +65,10 @@ const getEmailSubjectForEventName = async (
       return `Your asset "${parentDoc.get(
         AssetFieldNames.title
       )}" has been approved`
+    case NotificationEvents.ASSET_UNAPPROVED:
+      return `Your asset "${parentDoc.get(
+        AssetFieldNames.title
+      )}" has not been approved`
     case NotificationEvents.ASSET_DELETED:
       return `Your asset "${parentDoc.get(
         AssetFieldNames.title
@@ -140,6 +144,7 @@ const getTaggedNotificationRecipientByUsername = (username) => {
 
 const NotificationEvents = {
   ASSET_APPROVED: 'ASSET_APPROVED',
+  ASSET_UNAPPROVED: 'ASSET_UNAPPROVED',
   ASSET_DELETED: 'ASSET_DELETED',
   ASSET_AMENDED: 'ASSET_AMENDED',
   COMMENT_ON_ASSET: 'COMMENT_ON_ASSET',

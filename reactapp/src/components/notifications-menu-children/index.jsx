@@ -105,6 +105,8 @@ function Message({ parent, message, data }) {
       }" amended tags for your asset ${parent[AssetFieldNames.title]}`
     case NotificationEvents.ASSET_NEEDS_APPROVAL:
       return `Asset needs approval`
+    case NotificationEvents.ASSET_UNAPPROVED:
+      return `Asset has not been approved (and is marked as unpublished) and it may require your input`
     case NotificationEvents.REPORT_CREATED:
       return 'Report created'
     case NotificationEvents.AWARD_GIVEN:

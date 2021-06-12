@@ -1,5 +1,6 @@
 export const NotificationEvents = {
   ASSET_APPROVED: 'ASSET_APPROVED',
+  ASSET_UNAPPROVED: 'ASSET_UNAPPROVED',
   ASSET_DELETED: 'ASSET_DELETED',
   ASSET_AMENDED: 'ASSET_AMENDED',
   COMMENT_ON_ASSET: 'COMMENT_ON_ASSET',
@@ -19,6 +20,7 @@ export const NotificationMethods = {
 export const defaultNotificationPrefs = {
   events: {
     [NotificationEvents.ASSET_APPROVED]: true,
+    [NotificationEvents.ASSET_UNAPPROVED]: true,
     [NotificationEvents.ASSET_DELETED]: true,
     [NotificationEvents.ASSET_AMENDED]: true,
     [NotificationEvents.COMMENT_ON_ASSET]: true,

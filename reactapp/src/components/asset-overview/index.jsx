@@ -543,7 +543,8 @@ export default ({ assetId, switchEditorOpen }) => {
     [AssetFieldNames.pedestalFallbackImageUrl]: pedestalFallbackImageUrl,
     [AssetFieldNames.sketchfabEmbedUrl]: sketchfabEmbedUrl,
     [AssetFieldNames.slug]: slug,
-    [AssetFieldNames.clonableWorld]: clonableWorld
+    [AssetFieldNames.clonableWorld]: clonableWorld,
+    [AssetFieldNames.unapprovedReason]: unapprovedReason
   } = result
 
   const {
@@ -692,7 +693,7 @@ export default ({ assetId, switchEditorOpen }) => {
         <meta property="og:image" content={thumbnailUrl} />
         <meta property="og:site_name" content="VRCArena" />
       </Helmet>
-      {isApproved === false && <NotApprovedMessage />}
+      {isApproved === false && <NotApprovedMessage reason={unapprovedReason} />}
       {isDeleted === true && <DeletedMessage />}
       {isPrivate === true && <IsPrivateMessage />}
       {tags && tags.includes('wip') && (

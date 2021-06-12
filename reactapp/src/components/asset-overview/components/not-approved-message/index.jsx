@@ -9,7 +9,7 @@ const useStyles = makeStyles({
   }
 })
 
-export default () => {
+export default ({ reason = null }) => {
   const classes = useStyles()
   return (
     <Paper className={classes.root}>
@@ -17,7 +17,9 @@ export default () => {
       <ul>
         <li>does not show up in any results anywhere</li>
         <li>is only accessible by direct link</li>
+        <li>may be under review by a staff member</li>
       </ul>
+      {reason ? <strong>Reason: {reason}</strong> : null}
     </Paper>
   )
 }

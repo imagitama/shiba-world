@@ -423,6 +423,13 @@ module.exports.hasAssetJustBeenApproved = (beforeDocData, afterDocData) => {
   )
 }
 
+module.exports.hasAssetJustBeenUnapproved = (beforeDocData, afterDocData) => {
+  return (
+    beforeDocData[AssetFieldNames.isApproved] !== false &&
+    afterDocData[AssetFieldNames.isApproved] === false
+  )
+}
+
 module.exports.hasAssetJustBeenDeleted = (beforeDocData, afterDocData) => {
   return (
     beforeDocData[AssetFieldNames.isDeleted] !== true &&

@@ -66,6 +66,7 @@ exports.syncAwards = require('./src/functions/syncAwards')
 // notifications
 exports.notifyOnAssetAmended = require('./src/functions/notifyOnAssetAmended')
 exports.notifyOnAssetApproved = require('./src/functions/notifyOnAssetApproved')
+exports.notifyOnAssetUnapproved = require('./src/functions/notifyOnAssetUnapproved')
 exports.notifyOnAssetDeleted = require('./src/functions/notifyOnAssetDeleted')
 exports.notifyOnAssetNeedingApproval = require('./src/functions/notifyOnAssetNeedingApproval')
 exports.notifyOnCommentCreated = require('./src/functions/notifyOnCommentCreated')

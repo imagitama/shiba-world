@@ -139,6 +139,7 @@ export const AssetFieldNames = {
   title: 'title',
   isAdult: 'isAdult',
   isApproved: 'isApproved',
+  unapprovedReason: 'unapprovedReason',
   tags: 'tags',
   createdBy: 'createdBy',
   createdAt: 'createdAt',
