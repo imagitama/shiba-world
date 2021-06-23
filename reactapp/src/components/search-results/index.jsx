@@ -1,5 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 import useAlgoliaSearch from '../../hooks/useAlgoliaSearch'
 import useUserRecord from '../../hooks/useUserRecord'
@@ -10,6 +11,7 @@ import ErrorMessage from '../error-message'
 import AssetResults from '../asset-results'
 import AuthorResults from '../author-results'
 import NoResultsMessage from '../no-results-message'
+import Message from '../message'
 import Button from '../button'
 import PageControls from '../page-controls'
 import UserList from '../user-list'
@@ -119,6 +121,20 @@ function Results({ isLoading, isErrored, searchIndexName, hits }) {
 
 const filterNameTags = 'field:tags'
 
+const adultSearchTerms = ['nsfw', 'penis', 'vagina', 'sex', 'genitals', 'pussy', 'dick', 'cock']
+
+const isSearchTermAdult = searchTerm => {
+  for (const adultSearchTerm of adultSearchTerms) {
+    if (searchTerm.includes(adultSearchTerm)) {
+      return true
+    }
+  }
+
+  return false
+}
+
+const AdultContentMessage = () => <Message>It looks like you have searched for adult content but you do not have it enabled. Adult content is filtered out by default. <Link to={routes.signUp}>Sign up</Link> and enable it in your settings</Message>
+
 // tags are a special boolean
 const mapSearchFiltersForAlgolia = searchFiltersWithColon =>
   searchFiltersWithColon.filter(id => id !== filterNameTags)
@@ -133,11 +149,12 @@ export default () => {
   )
   const [, , user] = useUserRecord()
   const [isAlreadyOver18] = useStorage(alreadyOver18Key)
+  const isAdultContentEnabled = (user && user.enabledAdultContent) || isAlreadyOver18
   const [isLoading, isErrored, hits] = useAlgoliaSearch(
     searchIndexName,
     searchTerm,
     [
-      (user && user.enabledAdultContent) || isAlreadyOver18
+      isAdultContentEnabled
         ? undefined
         : 'isAdult != 1',
       ...mapSearchFiltersForAlgolia(searchFilters)
@@ -147,6 +164,7 @@ export default () => {
 
   return (
     <>
+      {isSearchTermAdult(searchTerm) && !isAdultContentEnabled ? <AdultContentMessage /> : null}
       <SearchFilters />
       <Results
         isLoading={isLoading}
