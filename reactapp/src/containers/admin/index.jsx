@@ -25,6 +25,7 @@ import {
 } from '../../media-queries'
 
 import PrivateAssets from './components/private-assets'
+import BulkEditTags from './components/bulk-edit-tags'
 
 const TabPanel = ({ value, index, children }) =>
   value === index ? (
@@ -92,6 +93,7 @@ export default () => {
           <Tab label="Advanced" index={7} />
           <Tab label="Reports" index={8} />
           <Tab label="Private Assets" index={9} />
+          <Tab label="Bulk Edit Tags" index={10} />
         </Tabs>
         <div className={classes.tabPanels}>
           <TabPanel value={activeTabIdx} index={0}>
@@ -124,6 +126,9 @@ export default () => {
           </TabPanel>
           <TabPanel value={activeTabIdx} index={9}>
             <PrivateAssets />
+          </TabPanel>
+          <TabPanel value={activeTabIdx} index={10}>
+            <BulkEditTags />
           </TabPanel>
         </div>
       </div>

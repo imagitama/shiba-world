@@ -10,3 +10,4 @@ node_modules/
 credentials.json
 .firebaserc
 emulator-data/
+.json:Zone.Identifier
