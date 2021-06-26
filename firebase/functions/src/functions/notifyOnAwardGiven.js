@@ -11,8 +11,8 @@ const { getNewAwardIds, getNameForAwardId } = require('../awards')
 module.exports = functions.firestore
   .document(`${CollectionNames.AwardsForUsers}/{id}`)
   .onWrite(async ({ before: beforeDoc, after: afterDoc }) => {
-    const beforeDocData = beforeDoc.data()
-    const afterDocData = afterDoc.data()
+    const beforeDocData = beforeDoc.data() || {}
+    const afterDocData = afterDoc.data() || {}
     const userId = afterDoc.id
     const newAwardIds = getNewAwardIds(
       beforeDocData[AwardsForUsersFieldNames.awards] || [],

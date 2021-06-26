@@ -12,7 +12,7 @@ const {
 const siteSettings = require('../site')
 
 const getEmail = (convoId) => {
-    const conversationUrl = siteSettings.routes.viewConversationWithVar.replace(':conversationId', convoId)
+    const conversationUrl = `${siteSettings.VRCARENA_BASE_URL}${siteSettings.routes.viewConversationWithVar.replace(':conversationId', convoId)}`
 
     const text = `Hello from VRCArena,
       
