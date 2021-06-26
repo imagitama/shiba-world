@@ -52,8 +52,27 @@ const CollectionNames = {
   Transactions: 'transactions',
   Reports: 'reports',
   AwardsForUsers: 'awardsForUsers',
+  PrivateMessages: 'privateMessages',
+  Conversations: 'conversations'
 }
 module.exports.CollectionNames = CollectionNames
+
+const ConversationFieldNames = {
+  members: 'members',
+  relatedEntity: 'relatedEntity',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy'
+}
+module.exports.ConversationFieldNames = ConversationFieldNames
+
+const PrivateMessageFieldNames = {
+  conversation: 'conversation',
+  recipient: 'recipient',
+  message: 'message',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy'
+}
+module.exports.PrivateMessageFieldNames = PrivateMessageFieldNames
 
 const AwardsForUsersFieldNames = {
   awards: 'awards',

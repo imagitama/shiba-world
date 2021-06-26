@@ -64,6 +64,8 @@ export const dmcaPolicy = '/dcma-policy'
 export const avatarTutorial = '/avatar-tutorial'
 export const avatarTutorialWithVar = '/avatar-tutorial/:pageName'
 export const viewAwardWithVar = '/awards/:awardId'
+export const viewConversationWithVar = '/conversation/:conversationId'
+export const viewConversationWithoutVar = '/conversation'
 
 // Outdated routes
 export const browseAssets = '/browse'

@@ -8,7 +8,8 @@ export const NotificationEvents = {
   TAGGED_IN_COMMENT: 'TAGGED_IN_COMMENT',
   ASSET_NEEDS_APPROVAL: 'ASSET_NEEDS_APPROVAL',
   REPORT_CREATED: 'REPORT_CREATED',
-  AWARD_GIVEN: 'AWARD_GIVEN'
+  AWARD_GIVEN: 'AWARD_GIVEN',
+  PRIVATE_MESSAGE_RECEIVED: 'PRIVATE_MESSAGE_RECEIVED'
 }
 
 export const NotificationMethods = {
@@ -27,6 +28,7 @@ export const defaultNotificationPrefs = {
     [NotificationEvents.COMMENT_ON_USER]: true,
     [NotificationEvents.TAGGED_IN_COMMENT]: true,
     [NotificationEvents.AWARD_GIVEN]: true,
+    [NotificationEvents.PRIVATE_MESSAGE_RECEIVED]: true,
     // editors only
     [NotificationEvents.ASSET_NEEDS_APPROVAL]: true,
     [NotificationEvents.REPORT_CREATED]: true

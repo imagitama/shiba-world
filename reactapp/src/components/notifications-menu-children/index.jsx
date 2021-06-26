@@ -113,6 +113,8 @@ function Message({ parent, message, data }) {
       return `You have been given the award "${getNameForAwardId(
         data.awardId
       )}"!`
+    case NotificationEvents.PRIVATE_MESSAGE_RECEIVED:
+      return `Somebody has sent a message in a conversation you are a part of`
     default:
       console.log(`Unknown message for notification: ` + message)
       return '???'
@@ -144,6 +146,11 @@ function getLinkUrl(parent, message, userId) {
       return routes.admin
     case NotificationEvents.AWARD_GIVEN:
       return routes.viewUserWithVar.replace(':userId', userId)
+    case NotificationEvents.PRIVATE_MESSAGE_RECEIVED:
+      return routes.viewConversationWithVar.replace(
+        ':conversationId',
+        parent.id
+      )
   }
 
   switch (collectionName) {

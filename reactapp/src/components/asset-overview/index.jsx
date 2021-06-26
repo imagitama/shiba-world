@@ -9,6 +9,7 @@ import ControlCameraIcon from '@material-ui/icons/ControlCamera'
 import BuildIcon from '@material-ui/icons/Build'
 import { useDispatch } from 'react-redux'
 import LazyLoad from 'react-lazyload'
+import ChatIcon from '@material-ui/icons/Chat'
 
 import useDatabaseQuery, {
   CollectionNames,
@@ -75,6 +76,7 @@ import FileList from './components/file-list'
 import ChildrenAssets from './components/children-assets'
 import SpeciesOutput from './components/species-output'
 import VideoList from './components/video-list'
+import AssetPrivateMessages from './components/private-messages'
 
 const useStyles = makeStyles({
   root: {
@@ -1027,6 +1029,15 @@ export default ({ assetId, switchEditorOpen }) => {
                     Edit Asset
                   </Button>
                 </Control>
+                <Control>
+                  <Button
+                    icon={<ChatIcon />}
+                    url={`${
+                      routes.viewConversationWithoutVar
+                    }?assetId=${assetId}`}>
+                    Messages
+                  </Button>
+                </Control>
               </>
             ) : null}
             {isApprover ? (
@@ -1091,6 +1102,13 @@ export default ({ assetId, switchEditorOpen }) => {
           }
         />
       </LazyLoad>
+
+      {isOwnerOrEditor && (
+        <LazyLoad>
+          <Heading variant="h2">Messages from staff</Heading>
+          <AssetPrivateMessages assetId={assetId} createdBy={createdBy} />
+        </LazyLoad>
+      )}
 
       {isOwnerOrEditor && (
         <LazyLoad>

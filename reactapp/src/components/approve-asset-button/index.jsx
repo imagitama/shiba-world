@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import CheckIcon from '@material-ui/icons/Check'
 import ClearIcon from '@material-ui/icons/Clear'
+import { makeStyles } from '@material-ui/core/styles'
 
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useDatabaseQuery, {
@@ -11,10 +12,24 @@ import useDatabaseQuery, {
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 
 import Button from '../button'
-import TextInput from '../text-input'
 
 import { handleError } from '../../error-handling'
 import { createRef } from '../../utils'
+
+const useStyles = makeStyles({
+  control: {
+    marginTop: '0.25rem'
+  },
+  status: {
+    textAlign: 'center'
+  },
+  approved: {
+    color: 'green'
+  },
+  unapproved: {
+    color: 'red'
+  }
+})
 
 // pass isAlreadyApproved to save on database query
 export default ({ assetId, isAlreadyApproved = null, onClick = null }) => {
@@ -31,19 +46,7 @@ export default ({ assetId, isAlreadyApproved = null, onClick = null }) => {
     CollectionNames.Assets,
     assetId
   )
-  const [unapprovedReason, setUnapprovedReason] = useState(
-    asset ? asset[AssetFieldNames.unapprovedReason] : ''
-  )
-  const [isUnapprovedReasonVisible, setIsUnapprovedReasonVisible] = useState(
-    false
-  )
-
-  useEffect(() => {
-    if (!asset || !asset[AssetFieldNames.unapprovedReason]) {
-      return
-    }
-    setUnapprovedReason(asset[AssetFieldNames.unapprovedReason])
-  }, [asset !== null])
+  const classes = useStyles()
 
   if (!userId || isLoadingAsset) {
     return <>Loading...</>
@@ -74,15 +77,12 @@ export default ({ assetId, isAlreadyApproved = null, onClick = null }) => {
       await save({
         [AssetFieldNames.isApproved]: false,
         [AssetFieldNames.isPrivate]: true,
-        [AssetFieldNames.unapprovedReason]: unapprovedReason,
         [AssetFieldNames.lastModifiedBy]: createRef(
           CollectionNames.Users,
           userId
         ),
         [AssetFieldNames.lastModifiedAt]: new Date()
       })
-
-      setIsUnapprovedReasonVisible(false)
     } catch (err) {
       console.error('Failed to unapprove asset', err)
       handleError(err)
@@ -111,52 +111,24 @@ export default ({ assetId, isAlreadyApproved = null, onClick = null }) => {
     }
   }
 
-  if (isUnapprovedReasonVisible) {
-    return (
-      <>
-        Reason:
-        <br />
-        <TextInput
-          multiline
-          rows={5}
-          value={unapprovedReason}
-          onChange={e => setUnapprovedReason(e.target.value)}
-        />
-        <br />
-        <Button color="primary" onClick={unapprove} icon={<CheckIcon />}>
-          Done
-        </Button>{' '}
-        (user is notified and marks as unpublished)
-        <br />
-        <Button
-          color="default"
-          onClick={() => setIsUnapprovedReasonVisible(false)}>
-          Cancel
-        </Button>
-      </>
-    )
-  }
-
   return (
     <>
-      Status: <strong>{isApproved ? 'Approved' : 'Unapproved'}</strong>
-      <br />
-      {asset && asset[AssetFieldNames.unapprovedReason] && !isApproved ? (
-        <>
-          Reason: {asset[AssetFieldNames.unapprovedReason]}
-          <br />
-        </>
-      ) : null}
-      <Button color="default" onClick={approve} icon={<CheckIcon />}>
-        Approve
-      </Button>
-      <br />
-      <Button
-        color="default"
-        onClick={() => setIsUnapprovedReasonVisible(true)}
-        icon={<ClearIcon />}>
-        Unapprove...
-      </Button>
+      <div
+        className={`${classes.status} ${
+          isApproved ? classes.approved : classes.unapproved
+        }`}>
+        Status: <strong>{isApproved ? 'Approved' : 'Unapproved'}</strong>
+      </div>
+      <div className={classes.control}>
+        <Button color="default" onClick={approve} icon={<CheckIcon />}>
+          Approve
+        </Button>
+      </div>
+      <div className={classes.control}>
+        <Button color="default" onClick={unapprove} icon={<ClearIcon />}>
+          Unapprove
+        </Button>
+      </div>
     </>
   )
 }

@@ -27,6 +27,7 @@ exports.syncFeaturedAssets = require('./src/functions/syncFeaturedAssets')
 exports.onFeaturedAssetsForUsersCreated = require('./src/functions/onFeaturedAssetsForUsersCreated')
 exports.onFeaturedAssetsForUsersUpdated = require('./src/functions/onFeaturedAssetsForUsersUpdated')
 exports.bulkEditTags = require('./src/functions/bulkEditTags')
+exports.addMemberToConversationOnPrivateMessage = require('./src/functions/addMemberToConversationOnPrivateMessage')
 
 const IS_BACKUP_ENABLED = config.global.isBackupEnabled !== 'false'
 
@@ -73,3 +74,4 @@ exports.notifyOnAssetNeedingApproval = require('./src/functions/notifyOnAssetNee
 exports.notifyOnCommentCreated = require('./src/functions/notifyOnCommentCreated')
 exports.notifyOnReportCreated = require('./src/functions/notifyOnReportCreated')
 exports.notifyOnAwardGiven = require('./src/functions/notifyOnAwardGiven')
+exports.notifyOnPrivateMessage = require('./src/functions/notifyOnPrivateMessage')

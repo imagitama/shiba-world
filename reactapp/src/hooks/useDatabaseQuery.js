@@ -49,7 +49,9 @@ export const CollectionNames = {
   Products: 'products',
   Transactions: 'transactions',
   Reports: 'reports',
-  AwardsForUsers: 'awardsForUsers'
+  AwardsForUsers: 'awardsForUsers',
+  PrivateMessages: 'privateMessages',
+  Conversations: 'conversations'
 }
 
 export const AwardsForUsersFieldNames = {
@@ -95,6 +97,21 @@ export const AssetMetaFieldNames = {
   lastModifiedAt: 'lastModifiedAt',
   product: 'product',
   contentAssets: 'contentAssets'
+}
+
+export const ConversationFieldNames = {
+  members: 'members',
+  relatedEntity: 'relatedEntity',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy'
+}
+
+export const PrivateMessageFieldNames = {
+  conversation: 'conversation',
+  recipient: 'recipient',
+  message: 'message',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy'
 }
 
 export const UserMetaFieldNames = {
@@ -684,6 +701,11 @@ export default (
 
   async function doIt() {
     try {
+      // weird edge case with conversations and different routes to load them
+      if (!collectionName) {
+        return
+      }
+
       if (inDevelopment()) {
         console.debug(
           'useDatabaseQuery',

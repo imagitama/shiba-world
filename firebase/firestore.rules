@@ -202,5 +202,15 @@ service cloud.firestore {
       allow update: if (isEditor() || isAdmin());
       allow create: if isLoggedIn() && isNotBanned();
     }
+
+    match /privateMessages/{document=**} {
+      allow read;
+      allow create: if isLoggedIn();
+    }
+
+    match /conversations/{document=**} {
+      allow read;
+      allow create: if isLoggedIn();
+    }
   }
 }

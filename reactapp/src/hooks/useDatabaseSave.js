@@ -57,6 +57,13 @@ export default (collectionName, documentId = null) => {
 
       const collection = firebase.firestore().collection(collectionName)
 
+      console.debug(
+        'useDatabaseSave',
+        collectionName,
+        documentId,
+        fieldsWithDocs
+      )
+
       if (documentId) {
         await collection.doc(documentId).set(fieldsWithDocs, { merge: true })
       } else {

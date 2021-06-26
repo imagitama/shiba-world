@@ -1,6 +1,10 @@
 import { useEffect, useState, useRef } from 'react'
 import createAlgoliaSearchClient from 'algoliasearch'
+import firebase from 'firebase/app'
+import 'firebase/firestore'
 import { handleError } from '../error-handling'
+import { searchIndexNames } from '../modules/app'
+import { CollectionNames, UserFieldNames } from './useDatabaseQuery'
 
 let client
 
@@ -14,6 +18,26 @@ const getTagsFilter = keywords => {
   )
   //return `tags:"${tagsToSearch.join(' ')}"`
   return `(${tagsToSearch.map(tag => `tags:"${tag}"`).join(' AND ')})`
+}
+
+const getCollectionNameForIndexName = indexName => {
+  switch (indexName) {
+    case searchIndexNames.USERS:
+      return CollectionNames.Users
+  }
+}
+
+const performDevelopmentSearch = async (indexName, searchTerm) => {
+  const query = firebase
+    .firestore()
+    .collection(getCollectionNameForIndexName(indexName))
+
+  switch (indexName) {
+    case searchIndexNames.USERS:
+      // query.where('username', '==', searchTerm)
+      const { docs } = await query.get()
+      return docs.map(doc => ({ id: doc.id, ...doc.data() }))
+  }
 }
 
 export default (
@@ -58,6 +82,14 @@ export default (
         console.debug(
           `search "${indexName}" with "${keywords}" filter "${filtersStr}"`
         )
+
+        if (process.env.NODE_ENV === 'development') {
+          const hitsWithId = await performDevelopmentSearch(indexName, keywords)
+          setResults(hitsWithId)
+          setIsLoading(false)
+          setIsErrored(false)
+          return
+        }
 
         let hits = []
 

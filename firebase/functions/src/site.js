@@ -5,4 +5,5 @@ module.exports.routes = {
   viewRequestWithVar: '/requests/:requestId',
   viewUserWithVar: '/users/:userId',
   admin: '/admin',
+  viewConversationWithVar: '/conversation/:conversationId'
 }
