@@ -614,6 +614,21 @@
           "order": "DESCENDING"
         }
       ]
+    },
+    {
+      "CUSTOM_PAGE_NAME": "ViewConversation",
+      "collectionGroup": "privateMessages",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "conversation",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "ASCENDING"
+        }
+      ]
     }
   ],
   "fieldOverrides": []

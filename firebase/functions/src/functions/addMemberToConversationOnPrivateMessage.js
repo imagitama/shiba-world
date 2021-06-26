@@ -1,6 +1,5 @@
 const functions = require('firebase-functions')
 const {
-    db,
   CollectionNames,
   ConversationFieldNames,
   PrivateMessageFieldNames
@@ -9,10 +8,6 @@ const {
 module.exports = functions.firestore
   .document(`${CollectionNames.PrivateMessages}/{id}`)
   .onCreate(async (doc) => {
-    // read conversation
-    // if not a member
-    // add
-    
     const docData = doc.data()
     const convoRef = docData[PrivateMessageFieldNames.conversation]
     const convoDoc = await convoRef.get()
