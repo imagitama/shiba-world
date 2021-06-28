@@ -29,6 +29,10 @@ const useStyles = makeStyles({
   species: {
     position: 'relative'
   },
+  unexpanded: {
+    height: '100px',
+    overflow: 'hidden'
+  },
   overlay: {
     height: '100%',
     width: '100%',
@@ -91,7 +95,8 @@ function Species() {
     .map(({ id }) => id)
 
   return (
-    <div className={classes.species}>
+    <div
+      className={`${classes.species} ${isExpanded ? '' : classes.unexpanded}`}>
       <SpeciesVsSelector
         species={speciesWithPageNumbers}
         onSpeciesClick={onSpeciesClickWithId}
@@ -140,7 +145,7 @@ function Page() {
     `page${currentPageNumber}`
   )
 
-  const { avatarsBySpeciesId } = page || { avatarsBySpeciesId: {} }
+  const { avatars } = page || { avatars: {} }
 
   if (isLoading) {
     return <LoadingIndicator message="Loading avatars..." />
@@ -154,9 +159,19 @@ function Page() {
     )
   }
 
-  if (!page || !Object.keys(avatarsBySpeciesId).length) {
+  if (!page || !avatars.length) {
     return <NoResultsMessage />
   }
+
+  const avatarsBySpeciesId = avatars.reduce((result, avatar) => {
+    return {
+      ...result,
+      [avatar.speciesId]:
+        avatar.speciesId in result
+          ? result[avatar.speciesId].concat([avatar])
+          : [avatar]
+    }
+  }, {})
 
   return (
     <div>

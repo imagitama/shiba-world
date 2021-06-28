@@ -4,7 +4,19 @@ import Button from '../button'
 
 const useStyles = makeStyles({
   root: {
-    display: 'flex'
+    marginTop: '1rem',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  control: {
+    marginRight: '0.25rem'
+  },
+  button: {
+    minWidth: '40px'
+  },
+  selected: {
+    fontWeight: 'bold'
   }
 })
 
@@ -14,11 +26,20 @@ export default ({ pageCount, currentPageNumber, onClickWithPageNumber }) => {
     <div className={classes.root}>
       {[...Array(pageCount)].map((item, idx) => {
         const pageNumber = idx + 1
+        const isSelected =
+          pageNumber === currentPageNumber ? 'primary' : 'default'
+        console.log('is?!', currentPageNumber, pageNumber)
         return (
-          <div key={idx}>
+          <div
+            className={`${classes.control} ${
+              isSelected ? classes.selected : ''
+            }`}
+            key={idx}>
             <Button
-              color={pageNumber === currentPageNumber ? 'primary' : 'default'}
-              onClick={() => onClickWithPageNumber(pageNumber)}>
+              color={isSelected ? 'primary' : 'default'}
+              onClick={() => onClickWithPageNumber(pageNumber)}
+              size="small"
+              className={classes.button}>
               {pageNumber}
             </Button>
           </div>

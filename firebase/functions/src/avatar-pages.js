@@ -10,30 +10,31 @@ const {
 const descriptionMaxLength = 100
 const trimDescription = (desc) => desc.substr(0, descriptionMaxLength)
 
-const slimSpecies = (doc) => ({
-    id: doc.id,
-    species: doc.ref,
-    pageNumber: doc.pageNumber, // assuming this is already set
-    [SpeciesFieldNames.singularName]: doc.get(SpeciesFieldNames.singularName),
-    [SpeciesFieldNames.pluralName]: doc.get(SpeciesFieldNames.pluralName),
-    [SpeciesFieldNames.shortDescription]: doc.get(
+const slimSpecies = (docData) => ({
+    id: docData.id,
+    species: docData.ref,
+    pageNumber: docData.pageNumber, // assuming this is already set
+    [SpeciesFieldNames.singularName]: docData[SpeciesFieldNames.singularName],
+    [SpeciesFieldNames.pluralName]: docData[SpeciesFieldNames.pluralName],
+    [SpeciesFieldNames.shortDescription]: docData[
       SpeciesFieldNames.shortDescription
-    ),
-    [SpeciesFieldNames.thumbnailUrl]: doc.get(SpeciesFieldNames.thumbnailUrl),
+    ],
+    [SpeciesFieldNames.thumbnailUrl]: docData[SpeciesFieldNames.thumbnailUrl],
   })
 
-  const slimAvatar = (doc) => ({
-    id: doc.id,
-    asset: doc.ref,
-    [AssetFieldNames.title]: doc.get(AssetFieldNames.title),
+  const slimAvatar = (docData) => ({
+    id: docData.id,
+    asset: docData.ref,
+    speciesId: docData.speciesId,
+    [AssetFieldNames.title]: docData[AssetFieldNames.title],
     [AssetFieldNames.description]: trimDescription(
-      doc.get(AssetFieldNames.description)
-    ),
-    [AssetFieldNames.thumbnailUrl]: doc.get(AssetFieldNames.thumbnailUrl),
-    [AssetFieldNames.species]: doc.get(AssetFieldNames.species),
-    [AssetFieldNames.isAdult]: doc.get(AssetFieldNames.isAdult),
-    [AssetFieldNames.tags]: doc.get(AssetFieldNames.tags),
-    [AssetFieldNames.createdAt]: doc.get(AssetFieldNames.createdAt),
+      docData[AssetFieldNames.description]
+  ),
+    [AssetFieldNames.thumbnailUrl]: docData[AssetFieldNames.thumbnailUrl],
+    // [AssetFieldNames.species]: docData[AssetFieldNames.species],
+    [AssetFieldNames.isAdult]: docData[AssetFieldNames.isAdult],
+    [AssetFieldNames.tags]: docData[AssetFieldNames.tags],
+    [AssetFieldNames.createdAt]: docData[AssetFieldNames.createdAt],
   })
 
 // NOTE: This returns all NSFW avatars too
@@ -46,19 +47,27 @@ const getAllPublicAvatars = async () => {
         .where(AssetFieldNames.isDeleted, Operators.EQUALS, false)
         .get()
 
-    return docs
+    return docs.map(doc => ({
+      id: doc.id,
+      ref: doc.ref,
+      ...doc.data()
+    }))
 }
 
 const getAllSpecies = async () => {
     const { docs } = await db.collection(CollectionNames.Species).get()
-    return docs
+    return docs.map(doc => ({
+      id: doc.id,
+      ref: doc.ref,
+      ...doc.data()
+    }))
 }
 
 const sortAvatarsInSpeciesIds = (avatars) => {
     const results = {}
 
     for (const avatarDoc of avatars) {
-        const speciesForAvatar = avatarDoc.get(AssetFieldNames.species) || []
+        const speciesForAvatar = avatarDoc[AssetFieldNames.species] || []
 
         for (const speciesItem of speciesForAvatar) {
             if (speciesItem.id in results) {
@@ -75,19 +84,19 @@ const sortAvatarsInSpeciesIds = (avatars) => {
 // it's weird splitting a species across multiple pages
 // so /probably/ better to have X species per page and pray each species
 // is not 100s of avatars!
-const limitOfSpeciesPerPage = 10
+const limitPerPage = 10
 
-const splitAvatarsBySpeciesIdIntoPages = (avatarsBySpeciesId) => {
+const splitAvatarsIntoPages = (avatars) => {
     let count = 0
     let currentPageNumber = 1
-    const resultsByPageNumber = { [currentPageNumber]: {} }
+    const resultsByPageNumber = { [currentPageNumber]: [] }
 
-    for (const [speciesId, avatarDocs] of Object.entries(avatarsBySpeciesId)) {
+    for (const avatarDoc of avatars) {
         count++
 
-        resultsByPageNumber[currentPageNumber][speciesId] = avatarDocs
+        resultsByPageNumber[currentPageNumber].push(avatarDoc)
 
-        if (count === limitOfSpeciesPerPage) {
+        if (count === limitPerPage) {
             count = 0
             currentPageNumber++
             resultsByPageNumber[currentPageNumber] = {}
@@ -97,21 +106,25 @@ const splitAvatarsBySpeciesIdIntoPages = (avatarsBySpeciesId) => {
     return resultsByPageNumber
 }
 
-const getSpeciesWithPageNumbers = (species, pages) => {
+const getSpeciesWithPageNumbers = (species, avatarsByPageNumber) => {
     return species.map(item => {
-        for (const [pageNumber, avatarsBySpeciesId] of Object.entries(pages)) {
-            if (item.id in avatarsBySpeciesId) {
-                item.pageNumber = pageNumber
+        for (const [pageNumber, avatars] of Object.entries(avatarsByPageNumber)) {
+          for (const avatarDoc of avatars) {
+            // uses a special prop we cheeky added earlier
+            if (avatarDoc.speciesId === item.id) {
+              item.pageNumber = pageNumber
+              return item
             }
+          }
         }
         return item
     })
 }
 
-const writePages = async (species, pages) => {
-    const pageCount = Object.keys(pages).length
+const writePages = async (species, avatarsByPageNumber) => {
+    const pageCount = Object.keys(avatarsByPageNumber).length
 
-    const speciesWithPageNumbers = getSpeciesWithPageNumbers(species, pages)
+    const speciesWithPageNumbers = getSpeciesWithPageNumbers(species, avatarsByPageNumber)
 
     const slimmedSpecies = speciesWithPageNumbers.map(slimSpecies)
 
@@ -120,19 +133,49 @@ const writePages = async (species, pages) => {
         pageCount
     })
 
-    for (const [pageNumber, avatarsBySpecies] of Object.entries(pages)) {
-        const slimmedAvatarsBySpecies = {}
-
-        for (const [speciesId, avatars] of Object.entries(avatarsBySpecies)) {
-            const slimmedAvatars = avatars.map(slimAvatar)
-
-            slimmedAvatarsBySpecies[speciesId] = slimmedAvatars
-        }
+    for (const [pageNumber, avatars] of Object.entries(avatarsByPageNumber)) {
+        const slimmedAvatars = avatars.map(slimAvatar)
 
         await db.collection('avatarPages').doc(`page${pageNumber}`).set({
-            avatarsBySpeciesId: slimmedAvatarsBySpecies
+            avatars: slimmedAvatars
         })
     }
+}
+
+const getSpeciesNameForId = (speciesId, species) => species.find(({ id }) => id === speciesId)[SpeciesFieldNames.pluralName]
+
+const sortAvatarsBySpeciesName = (avatars, species) => {
+  return avatars.sort((avatarA, avatarB) => {
+    if (!avatarA.speciesId) {
+      return -1
+    }
+    if (!avatarB.speciesId) {
+      return -1
+    }
+
+      const avatarASpeciesName = getSpeciesNameForId(avatarA.speciesId, species)
+      const avatarBSpeciesName = getSpeciesNameForId(avatarB.speciesId, species)
+  
+    return avatarASpeciesName.localeCompare(avatarBSpeciesName)
+    })
+}
+
+const dupeAvatarsForEachSpecies = avatars => {
+    const newAvatars = []
+
+    for (const avatarDoc of avatars) {
+        for (const speciesRef of avatarDoc[AssetFieldNames.species]) {
+            // firebase doesnt let us clone doc snapshots
+            // so just add a new cheeky prop on here
+            // probably should use .data() on this and do it instead but nah
+            const newDoc = { ...avatarDoc }
+            newDoc.speciesId = speciesRef.id
+
+            newAvatars.push(newDoc)
+        }
+    }
+
+    return newAvatars
 }
 
 const syncAvatarPages = async () => {
@@ -146,15 +189,17 @@ const syncAvatarPages = async () => {
     
     console.debug(`found ${species.length} species`)
 
-    const publicAvatarsBySpeciesId = sortAvatarsInSpeciesIds(publicAvatars)
+    const avatarsWithSpeciesDupes = dupeAvatarsForEachSpecies(publicAvatars)
 
-    const pagesByPageNumberThenBySpeciesId = splitAvatarsBySpeciesIdIntoPages(publicAvatarsBySpeciesId)
+    const sortedAssets = sortAvatarsBySpeciesName(avatarsWithSpeciesDupes, species)
 
-    const pageCount = Object.keys(pagesByPageNumberThenBySpeciesId).length
+    const assetsByPageNumber = splitAvatarsIntoPages(sortedAssets)
 
-    console.debug(`split into ${pageCount} pages (${limitOfSpeciesPerPage} per page)`)
+    const pageCount = Object.keys(assetsByPageNumber).length
 
-    await writePages(species, pagesByPageNumberThenBySpeciesId)
+    console.debug(`split into ${pageCount} pages (${limitPerPage} per page)`)
+
+    await writePages(species, assetsByPageNumber)
 
     return {
         speciesCount,
