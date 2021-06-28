@@ -67,6 +67,9 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  unselected: {
+    opacity: '0.5'
   }
 })
 
@@ -75,7 +78,8 @@ const Species = ({
   title,
   optimizedThumbnailUrl,
   onClick,
-  isSelected = false
+  isSelected = false,
+  showUnselected = false
 }) => {
   const classes = useStyles()
 
@@ -87,7 +91,7 @@ const Species = ({
         alt={`Thumbnail for species ${title}`}
         className={classes.thumbnail}
       />
-      {isSelected && (
+      {!showUnselected && isSelected && (
         <div className={classes.selectedIcon}>
           <CheckIcon />
         </div>
@@ -97,14 +101,20 @@ const Species = ({
 
   if (onClick) {
     return (
-      <div className={classes.item} onClick={() => onClick(id)}>
+      <div
+        className={`${classes.item} ${
+          showUnselected && !isSelected ? classes.unselected : ''
+        }`}
+        onClick={() => onClick(id)}>
         <ChildToRender />
       </div>
     )
   } else {
     return (
       <Link
-        className={classes.item}
+        className={`${classes.item}  ${
+          showUnselected && !isSelected ? classes.unselected : ''
+        }`}
         to={routes.viewSpeciesWithVar.replace(':speciesIdOrSlug', id)}>
         <ChildToRender />
       </Link>
@@ -119,6 +129,7 @@ function sortSpeciesByAlpha([speciesNameA], [speciesNameB]) {
 export default ({
   species = null,
   selectedSpeciesIds = [],
+  showUnselected = false,
   onSpeciesClick = null
 }) => {
   const [isLoading, isError, results] = useDatabaseQuery(
@@ -173,6 +184,7 @@ export default ({
                 backupThumbnailUrl={backupThumbnailUrl}
                 onClick={onSpeciesClick}
                 isSelected={selectedSpeciesIds.includes(id)}
+                showUnselected={showUnselected}
               />
             )
           )}

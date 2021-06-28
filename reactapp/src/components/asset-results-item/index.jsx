@@ -193,6 +193,9 @@ const useStyles = makeStyles(theme => ({
   },
   slide: {
     position: 'relative'
+  },
+  unselected: {
+    opacity: '0.5'
   }
 }))
 
@@ -394,7 +397,8 @@ export default function AssetItem({
   showCost = true,
   showIsNsfw = true,
   isLandscape = false,
-  hoverOnEffect = false
+  hoverOnEffect = false,
+  isUnselected = false
 }) {
   const classes = useStyles()
   const cardRef = useRef()
@@ -425,7 +429,9 @@ export default function AssetItem({
 
   return (
     <Card
-      className={`${classes.root} ${isLandscape ? classes.landscape : ''}`}
+      className={`${classes.root} ${isLandscape ? classes.landscape : ''} ${
+        isUnselected ? classes.unselected : ''
+      }`}
       ref={cardRef}>
       <CardActionArea className={classes.actionArea}>
         <Link

@@ -67,6 +67,9 @@ exports.syncAwards = require('./src/functions/syncAwards')
 
 // avatars page pagination
 exports.syncAvatarPages = require('./src/functions/syncAvatarPages')
+exports.hydrateAvatarPagesOnAssetUpdate = require('./src/functions/hydrateAvatarPagesOnAssetUpdate')
+exports.hydrateAvatarPagesOnSpeciesCreate = require('./src/functions/hydrateAvatarPagesOnSpeciesCreate')
+exports.hydrateAvatarPagesOnSpeciesUpdate = require('./src/functions/hydrateAvatarPagesOnSpeciesUpdate')
 
 // notifications
 exports.notifyOnAssetAmended = require('./src/functions/notifyOnAssetAmended')

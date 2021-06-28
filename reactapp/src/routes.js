@@ -16,7 +16,8 @@ export const viewSpeciesWithVar = '/species/:speciesIdOrSlug'
 export const viewSpeciesCategoryWithVar =
   '/species/:speciesIdOrSlug/:categoryName'
 export const viewCategoryWithVar = '/category/:categoryName'
-export const viewCategoryWithVarAndPageVar = '/category1/:categoryName/:pageNumber?' // for avatars pagination
+export const viewCategoryWithVarAndPageVar =
+  '/category1/:categoryName/:pageNumber?' // for avatars pagination
 export const news = '/news'
 export const viewTagWithVar = '/tags/:tagName'
 export const searchWithVarOld = '/search/:searchTerm'

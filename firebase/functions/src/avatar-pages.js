@@ -15,6 +15,7 @@ const slimSpecies = (doc) => ({
     species: doc.ref,
     pageNumber: doc.pageNumber, // assuming this is already set
     [SpeciesFieldNames.singularName]: doc.get(SpeciesFieldNames.singularName),
+    [SpeciesFieldNames.pluralName]: doc.get(SpeciesFieldNames.pluralName),
     [SpeciesFieldNames.shortDescription]: doc.get(
       SpeciesFieldNames.shortDescription
     ),
@@ -22,6 +23,7 @@ const slimSpecies = (doc) => ({
   })
 
   const slimAvatar = (doc) => ({
+    id: doc.id,
     asset: doc.ref,
     [AssetFieldNames.title]: doc.get(AssetFieldNames.title),
     [AssetFieldNames.description]: trimDescription(

@@ -12,7 +12,9 @@ export default ({
   showPinned = false,
   showCost = true,
   showIsNsfw = true,
-  hoverOnEffect = false
+  hoverOnEffect = false,
+  selectedAssetIds = [],
+  showUnselected = false
 }) => {
   const classes = useStyles()
   let allAssets
@@ -50,6 +52,7 @@ export default ({
           showCost={showCost}
           showIsNsfw={showIsNsfw}
           hoverOnEffect={hoverOnEffect}
+          isUnselected={showUnselected && !selectedAssetIds.includes(asset.id)}
         />
       ))}
     </div>
