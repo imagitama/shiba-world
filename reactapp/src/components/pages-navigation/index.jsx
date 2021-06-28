@@ -26,8 +26,7 @@ export default ({ pageCount, currentPageNumber, onClickWithPageNumber }) => {
     <div className={classes.root}>
       {[...Array(pageCount)].map((item, idx) => {
         const pageNumber = idx + 1
-        const isSelected =
-          pageNumber === currentPageNumber ? 'primary' : 'default'
+        const isSelected = pageNumber === currentPageNumber
         console.log('is?!', currentPageNumber, pageNumber)
         return (
           <div
@@ -36,7 +35,7 @@ export default ({ pageCount, currentPageNumber, onClickWithPageNumber }) => {
             }`}
             key={idx}>
             <Button
-              color={isSelected ? 'primary' : 'default'}
+              color={isSelected ? 'default' : 'primary'}
               onClick={() => onClickWithPageNumber(pageNumber)}
               size="small"
               className={classes.button}>

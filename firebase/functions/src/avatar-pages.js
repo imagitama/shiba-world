@@ -63,28 +63,7 @@ const getAllSpecies = async () => {
     }))
 }
 
-const sortAvatarsInSpeciesIds = (avatars) => {
-    const results = {}
-
-    for (const avatarDoc of avatars) {
-        const speciesForAvatar = avatarDoc[AssetFieldNames.species] || []
-
-        for (const speciesItem of speciesForAvatar) {
-            if (speciesItem.id in results) {
-                results[speciesItem.id].push(avatarDoc) 
-            } else {
-                results[speciesItem.id] = [avatarDoc]
-            }
-        }
-    }
-
-    return results
-}
-
-// it's weird splitting a species across multiple pages
-// so /probably/ better to have X species per page and pray each species
-// is not 100s of avatars!
-const limitPerPage = 10
+const limitPerPage = 100
 
 const splitAvatarsIntoPages = (avatars) => {
     let count = 0
@@ -99,7 +78,7 @@ const splitAvatarsIntoPages = (avatars) => {
         if (count === limitPerPage) {
             count = 0
             currentPageNumber++
-            resultsByPageNumber[currentPageNumber] = {}
+            resultsByPageNumber[currentPageNumber] = []
         }
     }
 
