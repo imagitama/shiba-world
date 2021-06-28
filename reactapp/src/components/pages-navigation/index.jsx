@@ -27,7 +27,6 @@ export default ({ pageCount, currentPageNumber, onClickWithPageNumber }) => {
       {[...Array(pageCount)].map((item, idx) => {
         const pageNumber = idx + 1
         const isSelected = pageNumber === currentPageNumber
-        console.log('is?!', currentPageNumber, pageNumber)
         return (
           <div
             className={`${classes.control} ${

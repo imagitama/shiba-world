@@ -249,7 +249,6 @@ export default () => {
           <Button onClick={() => resetGame()}>Play Again</Button>
           <ul>
             {Object.entries(guessesByAvatarId).map(([avatarId, guesses]) => {
-              console.log(avatarId, results.avatars)
               const asset = results.avatars.find(
                 avatar => avatar.asset.id === avatarId
               )

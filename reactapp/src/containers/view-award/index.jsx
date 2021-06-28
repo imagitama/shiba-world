@@ -46,7 +46,7 @@ function Users({ ids }) {
           )
         )
         const docDatas = docs.map(doc => doc.data())
-        console.log('datas', docDatas)
+
         setResults(docDatas)
       } catch (err) {
         console.error(err)

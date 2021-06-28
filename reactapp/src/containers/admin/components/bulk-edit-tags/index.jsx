@@ -136,8 +136,6 @@ export default () => {
     }
   }
 
-  console.log('render', stepIdx, assetIds, operationName, tagToSearch)
-
   switch (stepIdx) {
     case Steps.Search:
       return (

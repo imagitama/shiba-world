@@ -28,8 +28,6 @@ export default () => {
     ]
   )
 
-  console.log(assets)
-
   if (isLoading) {
     return <LoadingIndicator />
   }

@@ -41,7 +41,8 @@ const useStyles = makeStyles({
       '& span': {
         opacity: 1
       }
-    }
+    },
+    opacity: 1
   },
   title: {
     width: '100%',

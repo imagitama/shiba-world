@@ -44,7 +44,7 @@ export default ({ code, onSuccess, onFail }) => {
         try {
           await loggedInUser.updateEmail(user.email)
         } catch (err) {
-          console.log(err)
+          console.error(err)
         }
 
         isAlreadyAuthenticated = true
