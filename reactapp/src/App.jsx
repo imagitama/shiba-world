@@ -22,6 +22,7 @@ import ViewSpecies from './containers/view-species'
 import ViewSpeciesCategory from './containers/view-species-category'
 import ViewCategory from './containers/view-category'
 import ViewAvatars from './containers/view-avatars'
+import ViewAvatarsOld from './containers/view-avatars-old'
 import ViewAllSpecies from './containers/view-all-species'
 import VsScreen from './containers/vs-screen'
 
@@ -403,6 +404,14 @@ const MainContent = () => {
         <Route
           exact
           path={routes.viewCategoryWithVar.replace(
+            ':categoryName',
+            AssetCategories.avatar
+          )}
+          component={ViewAvatarsOld}
+        />
+        <Route
+          exact
+          path={routes.viewCategoryWithVarAndPageVar.replace(
             ':categoryName',
             AssetCategories.avatar
           )}

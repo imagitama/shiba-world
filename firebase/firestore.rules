@@ -212,5 +212,9 @@ service cloud.firestore {
       allow read;
       allow create: if isLoggedIn();
     }
+
+    match /avatarPages/{document=**} {
+      allow read;
+    }
   }
 }

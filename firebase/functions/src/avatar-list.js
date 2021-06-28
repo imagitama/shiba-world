@@ -9,6 +9,16 @@ const {
   AssetCategories,
 } = require('./firebase')
 
+/**
+ * The "avatars" category page is massive (over 1000 entries) and by far 
+ * the most popular page on the site.
+ * This file and the functions that use it is an attempt to "cache" the entries
+ * into a couple of entries to minimize DB usage and costs.
+ * 
+ * This system is DEPRECATED and instead we are going to a more generic pagination
+ * system.
+ */
+
 const convertSpeciesDocIntoSpeciesForList = (doc) => ({
   id: doc.id,
   species: doc.ref,

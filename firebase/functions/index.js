@@ -65,6 +65,9 @@ exports.getTweetMeta = require('./src/functions/getTweetMeta')
 exports.awardOnAssetsApproved = require('./src/functions/awardOnAssetsApproved')
 exports.syncAwards = require('./src/functions/syncAwards')
 
+// avatars page pagination
+exports.syncAvatarPages = require('./src/functions/syncAvatarPages')
+
 // notifications
 exports.notifyOnAssetAmended = require('./src/functions/notifyOnAssetAmended')
 exports.notifyOnAssetApproved = require('./src/functions/notifyOnAssetApproved')
