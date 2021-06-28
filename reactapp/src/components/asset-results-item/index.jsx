@@ -195,7 +195,7 @@ const useStyles = makeStyles(theme => ({
     position: 'relative'
   },
   unselected: {
-    opacity: '0.5'
+    opacity: '0.3'
   }
 }))
 

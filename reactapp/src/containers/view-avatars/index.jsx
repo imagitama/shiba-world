@@ -1,9 +1,9 @@
 import React, { useState, createContext, useContext } from 'react'
 import { useParams, useHistory } from 'react-router'
 import { makeStyles } from '@material-ui/core/styles'
-import CheckBoxIcon from '@material-ui/icons/CheckBox'
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
 import { Link } from 'react-router-dom'
+import { Helmet } from 'react-helmet'
+import CategoryIcon from '@material-ui/icons/Category'
 
 import * as routes from '../../routes'
 import useStorage from '../../hooks/useStorage'
@@ -42,7 +42,7 @@ const useStyles = makeStyles({
     background: 'linear-gradient(rgba(0, 0, 0, 0) 0%, #282828 100%)',
     cursor: 'pointer',
     '& span': {
-      textShadow: '1px 1px 1px',
+      textShadow: '1px 1px 1px #000',
       position: 'absolute',
       top: '50%',
       left: '0',
@@ -242,6 +242,16 @@ export default () => {
     <AvatarPageContext.Provider
       value={{ currentPageNumber, speciesWithPageNumbers }}>
       <div>
+        <Helmet>
+          <title>
+            Browse 100s of avatars for VRChat, NeosVR, ChilloutVR and more |
+            VRCArena
+          </title>
+          <meta
+            name="description"
+            content="Browse the huge collection of avatars for the various VR games such as VRChat, NeosVR and Chillout VR."
+          />
+        </Helmet>
         <Heading variant="h1">Avatars</Heading>
         <Species />
         <div className={classes.page}>
@@ -251,14 +261,9 @@ export default () => {
             <div className={classes.control}>
               <Button
                 onClick={() => setAreFiltersVisible(currentVal => !currentVal)}
-                icon={
-                  activeFilters.length ? (
-                    <CheckBoxIcon />
-                  ) : (
-                    <CheckBoxOutlineBlankIcon />
-                  )
-                }>
+                icon={<CategoryIcon />}>
                 Filters
+                {activeFilters.length ? ` (${activeFilters.length})` : ''}
               </Button>
             </div>
           </div>
