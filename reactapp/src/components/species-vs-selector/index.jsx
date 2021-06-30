@@ -70,7 +70,10 @@ const useStyles = makeStyles({
     justifyContent: 'center'
   },
   unselected: {
-    opacity: '0.3'
+    opacity: '0.4',
+    '&:hover': {
+      opacity: 1
+    }
   }
 })
 
