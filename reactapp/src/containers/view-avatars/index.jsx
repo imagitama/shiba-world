@@ -183,9 +183,11 @@ function Page() {
     }
   }, {})
 
+  const entries = Object.entries(avatarsBySpeciesId)
+
   return (
     <div>
-      {Object.entries(avatarsBySpeciesId).map(([speciesId, avatars]) => {
+      {entries.map(([speciesId, avatars], idx) => {
         const matchingSpecies = species.find(({ id }) => id === speciesId)
 
         if (!matchingSpecies) {
@@ -206,7 +208,8 @@ function Page() {
               </Link>
             </Heading>
             <Avatars avatars={avatars} />
-            {avatars.length !== matchingSpecies.avatarCount ? (
+            {idx === entries.length - 1 &&
+            avatars.length !== matchingSpecies.avatarCount ? (
               <MoreAvatarsOnNextPage
                 remainingCount={matchingSpecies.avatarCount - avatars.length}
               />
