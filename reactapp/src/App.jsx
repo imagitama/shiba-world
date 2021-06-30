@@ -403,19 +403,16 @@ const MainContent = () => {
         />
         <Route
           exact
+          path={routes.viewAvatarsWithPageVar}
+          component={ViewAvatars}
+        />
+        <Route
+          exact
           path={routes.viewCategoryWithVar.replace(
             ':categoryName',
             AssetCategories.avatar
           )}
           component={ViewAvatarsOld}
-        />
-        <Route
-          exact
-          path={routes.viewCategoryWithVarAndPageVar.replace(
-            ':categoryName',
-            AssetCategories.avatar
-          )}
-          component={ViewAvatars}
         />
         <Route
           exact

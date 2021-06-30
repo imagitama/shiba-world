@@ -65,9 +65,7 @@ const AvatarPageContext = createContext({ currentPageNumber: null })
 const useAvatarPage = () => useContext(AvatarPageContext)
 
 const getUrlForPageNumber = pageNumber =>
-  routes.viewCategoryWithVarAndPageVar
-    .replace(':categoryName', AssetCategories.avatar)
-    .replace(':pageNumber', pageNumber)
+  routes.viewAvatarsWithPageVar.replace(':pageNumber', pageNumber)
 
 const getPageNumberForSpeciesId = (speciesWithPageNumbers, speciesId) => {
   const match = speciesWithPageNumbers.find(({ id }) => id === speciesId)
