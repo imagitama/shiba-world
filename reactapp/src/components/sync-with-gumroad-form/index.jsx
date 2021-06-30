@@ -49,6 +49,14 @@ const getCodeFromGumroadUrl = url => {
     .pop()
 }
 
+const getAuthorSubdomainFromGumroadUrl = url => {
+  if (!url) {
+    return ''
+  }
+  const urlObj = new URL(url)
+  return urlObj.hostname.split('.gumroad')[0]
+}
+
 const getFieldsToSave = (fields, whichFieldsAreEnabled) => {
   const fieldsToSave = {}
 
@@ -177,7 +185,15 @@ export default ({ assetId, gumroadUrl, onDone }) => {
       const code = getCodeFromGumroadUrl(gumroadUrl)
 
       if (!code) {
-        throw new Error(`Invalid Gumroad URL: ${gumroadUrl}`)
+        throw new Error(`Failed to get code from gumroad URL: ${gumroadUrl}`)
+      }
+
+      const authorSubdomain = getAuthorSubdomainFromGumroadUrl(gumroadUrl)
+
+      if (!authorSubdomain) {
+        throw new Error(
+          `Failed to get author subdomain from gumroad URL: ${gumroadUrl}`
+        )
       }
 
       const {
@@ -185,7 +201,8 @@ export default ({ assetId, gumroadUrl, onDone }) => {
       } = await callFunction(
         'fetchGumroadInfo',
         {
-          code
+          code,
+          authorSubdomain
         },
         {
           data: {

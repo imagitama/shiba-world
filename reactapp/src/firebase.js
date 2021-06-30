@@ -73,6 +73,8 @@ auth.onAuthStateChanged(user => {
 })
 
 export const callFunction = (name, data, inDevResult) => {
+  console.debug(`callFunction`, name, data)
+
   if (inDevelopment() && inDevResult) {
     return Promise.resolve(inDevResult)
   }

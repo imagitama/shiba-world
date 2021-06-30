@@ -25,6 +25,11 @@ const getCodeFromUrl = (url) => {
   return url.split('/').pop()
 }
 
+const getAuthorSubdomainFromUrl = url => {
+  const urlObj = new URL(url)
+  return urlObj.hostname.split('.gumroad')[0]
+}
+
 // source: https://github.com/node-fetch/node-fetch/issues/375#issuecomment-599715645
 async function downloadImageToFs(url) {
   console.debug(`Downloading image to filesystem: ${url}`)
@@ -67,8 +72,12 @@ const getOurPreviewUrl = async (sourceUrl) => {
   return downloadUrl
 }
 
-const getProductInfoByCode = async (code) => {
-  const resp = await fetch(`https://gumroad.com/l/${code}.json`, {
+const getProductInfoByAuthorSubdomainAndCode = async (authorSubdomain, code) => {
+  console.debug('getting product info', authorSubdomain, code)
+
+  // in July 2021 gumroad changed all gumroad URLs to include author subdomain
+  // supposedly letters and numbers only
+  const resp = await fetch(`https://${authorSubdomain}.gumroad.com/l/${code}.json`, {
     redirect: 'manual',
     headers: {
       'Content-Type': 'application/json',
@@ -77,7 +86,8 @@ const getProductInfoByCode = async (code) => {
 
   // custom permalink
   if (resp.status === 302) {
-    return getProductInfoByCode(getCodeFromUrl(resp.headers.get('location')))
+    console.debug(`author has set up a custom permalink for their asset, following...`)
+    return getProductInfoByAuthorSubdomainAndCode(getAuthorSubdomainFromUrl(resp.headers.get('location')), getCodeFromUrl(resp.headers.get('location')))
   }
 
   if (!resp.ok) {
@@ -88,10 +98,12 @@ const getProductInfoByCode = async (code) => {
 
   const result = await resp.json()
 
+  console.debug(`got product info!`)
+
   return {
     ...result,
     ourPreviewUrl: await getOurPreviewUrl(result.preview_url),
     descriptionMarkdown: getMarkdownFromHtml(result.description),
   }
 }
-module.exports.getProductInfoByCode = getProductInfoByCode
+module.exports.getProductInfoByAuthorSubdomainAndCode = getProductInfoByAuthorSubdomainAndCode

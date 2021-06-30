@@ -1,5 +1,5 @@
 const functions = require('firebase-functions')
-const { getProductInfoByCode } = require('../gumroad')
+const { getProductInfoByAuthorSubdomainAndCode } = require('../gumroad')
 
 module.exports = functions.https.onCall(async (data) => {
   try {
@@ -9,7 +9,13 @@ module.exports = functions.https.onCall(async (data) => {
       throw new Error('Need to pass code')
     }
 
-    return getProductInfoByCode(code)
+    const authorSubdomain = data.authorSubdomain
+
+    if (!authorSubdomain) {
+      throw new Error('Need to pass author subdomain')
+    }
+
+    return getProductInfoByAuthorSubdomainAndCode(code)
   } catch (err) {
     console.error(err)
     throw new functions.https.HttpsError(
