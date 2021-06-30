@@ -15,7 +15,7 @@ module.exports = functions.https.onCall(async (data) => {
       throw new Error('Need to pass author subdomain')
     }
 
-    return getProductInfoByAuthorSubdomainAndCode(code)
+    return getProductInfoByAuthorSubdomainAndCode(authorSubdomain, code)
   } catch (err) {
     console.error(err)
     throw new functions.https.HttpsError(
