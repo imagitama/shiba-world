@@ -9,7 +9,8 @@ import useDatabaseQuery, {
   options,
   OrderDirections,
   PrivateMessageFieldNames,
-  UserFieldNames
+  UserFieldNames,
+  mapDates
 } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import { canApproveAsset, createRef } from '../../utils'
@@ -45,7 +46,14 @@ const useStyles = makeStyles({
     display: 'flex'
   },
   member: {
-    marginRight: '0.5rem'
+    marginRight: '0.5rem',
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'column'
+  },
+  username: {
+    fontSize: '75%',
+    marginTop: '0.25rem'
   }
 })
 
@@ -74,7 +82,7 @@ function RelatedEntity({ relatedEntity }) {
     case CollectionNames.Assets:
       return (
         <div className={classes.asset}>
-          <AssetResultsItem asset={relatedEntity} isLandscape />
+          <AssetResultsItem asset={mapDates(relatedEntity)} isLandscape />
         </div>
       )
 
@@ -223,7 +231,9 @@ function ConversationInfo({
                   url={member[UserFieldNames.avatarUrl]}
                   size={sizes.TINY}
                 />
-                {member[UserFieldNames.username] || '(no name)'}
+                <div className={classes.username}>
+                  {member[UserFieldNames.username] || '(no name)'}
+                </div>
               </div>
             ))
           : 'No participants!'}
