@@ -90,8 +90,24 @@ function getRelatedEntityCreatorRef(relatedEntity) {
     return null
   }
 
-  // assuming every doc has this field (we could use a switch for this but lazy)
-  return createRef(CollectionNames.Users, relatedEntity.createdBy.id)
+  const collectionName = getCollectionNameForRelatedEntity(relatedEntity)
+
+  switch (collectionName) {
+    case CollectionNames.Assets:
+      if (relatedEntity[AssetFieldNames.ownedBy]) {
+        return createRef(
+          CollectionNames.Users,
+          relatedEntity[AssetFieldNames.sownedBy].id
+        )
+      } else {
+        return createRef(
+          CollectionNames.Users,
+          relatedEntity[AssetFieldNames.createdBy].id
+        )
+      }
+  }
+
+  return null
 }
 
 function CreateConversationForm({ relatedEntity, onCreateWithId }) {

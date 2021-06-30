@@ -115,6 +115,8 @@ function Message({ parent, message, data }) {
       )}"!`
     case NotificationEvents.PRIVATE_MESSAGE_RECEIVED:
       return `Somebody has sent a message in a conversation you are a part of`
+    case NotificationEvents.ASSET_OWNERSHIP_CHANGED:
+      return `You are now the owner of "${parent[AssetFieldNames.title]}"`
     default:
       console.log(`Unknown message for notification: ` + message)
       return '???'

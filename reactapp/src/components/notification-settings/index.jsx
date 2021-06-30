@@ -49,6 +49,8 @@ const getLabelForEventName = eventName => {
       return 'An asset needs approval (staff only)'
     case NotificationEvents.REPORT_CREATED:
       return 'A report has been created (staff only)'
+    case NotificationEvents.ASSET_OWNERSHIP_CHANGED:
+      return 'You are given ownership of an asset'
     default:
       return `Unknown event ${eventName}`
   }

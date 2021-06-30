@@ -91,6 +91,8 @@ const getEmailSubjectForEventName = async (
       return 'You have been given an award'
     case NotificationEvents.PRIVATE_MESSAGE_RECEIVED:
       return 'Someone has sent a message in a conversation'
+    case NotificationEvents.ASSET_OWNERSHIP_CHANGED:
+      return 'Asset ownership changed'
     default:
       throw new Error(
         `Cannot get email subject for event name ${eventName}: unknown! Using default`
@@ -155,7 +157,8 @@ const NotificationEvents = {
   ASSET_NEEDS_APPROVAL: 'ASSET_NEEDS_APPROVAL',
   REPORT_CREATED: 'REPORT_CREATED',
   AWARD_GIVEN: 'AWARD_GIVEN',
-  PRIVATE_MESSAGE_RECEIVED: 'PRIVATE_MESSAGE_RECEIVED'
+  PRIVATE_MESSAGE_RECEIVED: 'PRIVATE_MESSAGE_RECEIVED',
+  ASSET_OWNERSHIP_CHANGED: 'ASSET_OWNERSHIP_CHANGED'
 }
 module.exports.NotificationEvents = NotificationEvents
 

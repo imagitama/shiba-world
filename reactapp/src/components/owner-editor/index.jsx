@@ -19,38 +19,14 @@ import { searchIndexNames } from '../../modules/app'
 
 export default ({ collectionName, id, actionCategory }) => {
   const userId = useFirebaseUserId()
-  const [isLoading, isError, result] = useDatabaseQuery(collectionName, id)
   const [isSaving, isSuccess, isFailed, save] = useDatabaseSave(
     collectionName,
     id
   )
   const [isEditorOpen, setIsEditorOpen] = useState(false)
-  const [ownerUserIdValue, setOwnerUserIdValue] = useState(null)
-
-  useEffect(() => {
-    if (!result) {
-      return
-    }
-
-    const { ownedBy } = result
-
-    if (!ownedBy) {
-      return
-    }
-
-    setOwnerUserIdValue(ownedBy.id)
-  }, [result === null])
 
   if (!userId) {
     return 'You are not logged in'
-  }
-
-  if (isLoading) {
-    return 'Loading...'
-  }
-
-  if (isError) {
-    return 'Error loading resource'
   }
 
   if (isSaving) {
@@ -65,16 +41,18 @@ export default ({ collectionName, id, actionCategory }) => {
     return 'Error saving new owner'
   }
 
-  const onSaveBtnClick = async () => {
+  const onSave = async (newOwnerId = null) => {
     try {
-      trackAction(actionCategory, 'Click save new owner button', id)
-
-      const newValue = ownerUserIdValue
-        ? createRef(CollectionNames.Users, ownerUserIdValue)
-        : null
+      if (newOwnerId) {
+        trackAction(actionCategory, 'Click save new owner button', newOwnerId)
+      } else {
+        trackAction(actionCategory, 'Click clear owner button')
+      }
 
       await save({
-        ownedBy: newValue,
+        ownedBy: newOwnerId
+          ? createRef(CollectionNames.Users, newOwnerId)
+          : null,
         lastModifiedAt: new Date(),
         lastModifiedBy: createRef(CollectionNames.Users, userId)
       })
@@ -97,14 +75,14 @@ export default ({ collectionName, id, actionCategory }) => {
 
   return (
     <>
+      <p>Enter a username to search for a new owner:</p>
       <SearchForIdForm
         indexName={searchIndexNames.USERS}
         fieldAsLabel={UserFieldNames.username}
-        onDone={(id, searchResult) => {
-          setOwnerUserIdValue(id)
-        }}
+        onDone={id => onSave(id)}
       />
-      <Button onClick={onSaveBtnClick}>Save</Button>
+      <hr />
+      <Button onClick={() => onSave(null)}>Clear Existing Owner</Button>
     </>
   )
 }

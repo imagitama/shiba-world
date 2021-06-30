@@ -81,3 +81,4 @@ exports.notifyOnCommentCreated = require('./src/functions/notifyOnCommentCreated
 exports.notifyOnReportCreated = require('./src/functions/notifyOnReportCreated')
 exports.notifyOnAwardGiven = require('./src/functions/notifyOnAwardGiven')
 exports.notifyOnPrivateMessage = require('./src/functions/notifyOnPrivateMessage')
+exports.notifyOnAssetOwnership = require('./src/functions/notifyOnAssetOwnership')

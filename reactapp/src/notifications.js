@@ -9,7 +9,8 @@ export const NotificationEvents = {
   ASSET_NEEDS_APPROVAL: 'ASSET_NEEDS_APPROVAL',
   REPORT_CREATED: 'REPORT_CREATED',
   AWARD_GIVEN: 'AWARD_GIVEN',
-  PRIVATE_MESSAGE_RECEIVED: 'PRIVATE_MESSAGE_RECEIVED'
+  PRIVATE_MESSAGE_RECEIVED: 'PRIVATE_MESSAGE_RECEIVED',
+  ASSET_OWNERSHIP_CHANGED: 'ASSET_OWNERSHIP_CHANGED'
 }
 
 export const NotificationMethods = {
@@ -29,6 +30,7 @@ export const defaultNotificationPrefs = {
     [NotificationEvents.TAGGED_IN_COMMENT]: true,
     [NotificationEvents.AWARD_GIVEN]: true,
     [NotificationEvents.PRIVATE_MESSAGE_RECEIVED]: true,
+    [NotificationEvents.ASSET_OWNERSHIP_CHANGED]: true,
     // editors only
     [NotificationEvents.ASSET_NEEDS_APPROVAL]: true,
     [NotificationEvents.REPORT_CREATED]: true
