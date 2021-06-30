@@ -56,7 +56,7 @@
     "sanitize.css": "7.0.3",
     "serve": "10.1.2",
     "shortid": "^2.2.15",
-    "three": "^0.117.1"
+    "three": "^0.125.0"
   },
   "browserslist": [
     ">0.2%",
