@@ -97,7 +97,7 @@ function getRelatedEntityCreatorRef(relatedEntity) {
       if (relatedEntity[AssetFieldNames.ownedBy]) {
         return createRef(
           CollectionNames.Users,
-          relatedEntity[AssetFieldNames.sownedBy].id
+          relatedEntity[AssetFieldNames.ownedBy].id
         )
       } else {
         return createRef(
