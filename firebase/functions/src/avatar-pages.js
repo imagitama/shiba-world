@@ -13,7 +13,8 @@ const trimDescription = (desc) => desc.substr(0, descriptionMaxLength)
 const slimSpecies = (docData) => ({
     id: docData.id,
     species: docData.ref,
-    pageNumber: docData.pageNumber, // assuming this is already set
+    pageNumber: docData.pageNumber,
+    avatarCount: docData.avatarCount,
     [SpeciesFieldNames.singularName]: docData[SpeciesFieldNames.singularName],
     [SpeciesFieldNames.pluralName]: docData[SpeciesFieldNames.pluralName],
     [SpeciesFieldNames.shortDescription]: docData[
@@ -85,8 +86,24 @@ const splitAvatarsIntoPages = (avatars) => {
     return resultsByPageNumber
 }
 
-const getSpeciesWithPageNumbers = (species, avatarsByPageNumber) => {
+const tallyAvatarsForSpecies = (species, avatarsByPageNumber) => {
+  let tally = {}
+
+  for (const [, avatars] of Object.entries(avatarsByPageNumber)) {
+    for (const avatarDoc of avatars) {
+      tally[avatarDoc.speciesId] = avatarDoc.speciesId in tally ? tally[avatarDoc.speciesId] + 1 : 1
+    }
+  }
+
+  return tally
+}
+
+const addExtraSpeciesFields = (species, avatarsByPageNumber) => {
+    const tallyBySpeciesId = tallyAvatarsForSpecies(species, avatarsByPageNumber)
+
     return species.map(item => {
+        item.avatarCount = tallyBySpeciesId[item.id]
+
         for (const [pageNumber, avatars] of Object.entries(avatarsByPageNumber)) {
           for (const avatarDoc of avatars) {
             // uses a special prop we cheeky added earlier
@@ -103,12 +120,12 @@ const getSpeciesWithPageNumbers = (species, avatarsByPageNumber) => {
 const writePages = async (species, avatarsByPageNumber) => {
     const pageCount = Object.keys(avatarsByPageNumber).length
 
-    const speciesWithPageNumbers = getSpeciesWithPageNumbers(species, avatarsByPageNumber)
+    const speciesWithExtra = addExtraSpeciesFields(species, avatarsByPageNumber)
 
-    const slimmedSpecies = speciesWithPageNumbers.map(slimSpecies)
+    const slimmedSpecies = speciesWithExtra.map(slimSpecies)
 
     await db.collection('avatarPages').doc('summary').set({
-        speciesWithPageNumbers: slimmedSpecies, 
+        species: slimmedSpecies, 
         pageCount
     })
 

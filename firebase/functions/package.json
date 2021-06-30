@@ -12,6 +12,7 @@
     "deploy": "firebase deploy --only functions",
     "deploy:notifications": "firebase deploy --only functions:notifyOnAssetAmended,functions:notifyOnAssetApproved,functions:notifyOnAssetDeleted,functions:notifyOnAssetNeedingApproval,functions:notifyOnCommentCreated",
     "deploy:avatar-list": "firebase deploy --only functions:addAvatarToList,functions:hydrateAvatarListOnSpeciesCreate,functions:hydrateAvatarListOnSpeciesUpdate,functions:syncAvatarList",
+    "deploy:avatar-pages": "firebase deploy --only functions:syncAvatarPages,functions:hydrateAvatarPagesOnAssetUpdate,functions:hydrateAvatarPagesOnSpeciesCreate,functions:hydrateAvatarPagesOnSpeciesUpdate",
     "logs": "firebase functions:log",
     "prettier": "prettier --write index.js",
     "load-algolia-config": "firebase functions:config:set algolia=\"$(cat .algoliaconfig.json)\"",

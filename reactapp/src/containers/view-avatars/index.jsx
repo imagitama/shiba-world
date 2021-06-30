@@ -58,6 +58,12 @@ const useStyles = makeStyles({
     position: 'absolute',
     top: 0,
     right: 0
+  },
+  moreAvatarsOnNextPageMessage: {
+    textAlign: 'center',
+    textShadow: '1px 1px 1px #000',
+    fontWeight: 'bold',
+    padding: '1rem 0'
   }
 })
 
@@ -67,28 +73,25 @@ const useAvatarPage = () => useContext(AvatarPageContext)
 const getUrlForPageNumber = pageNumber =>
   routes.viewAvatarsWithPageVar.replace(':pageNumber', pageNumber)
 
-const getPageNumberForSpeciesId = (speciesWithPageNumbers, speciesId) => {
-  const match = speciesWithPageNumbers.find(({ id }) => id === speciesId)
+const getPageNumberForSpeciesId = (species, speciesId) => {
+  const match = species.find(({ id }) => id === speciesId)
   return match.pageNumber
 }
 
 function Species() {
-  const { speciesWithPageNumbers, currentPageNumber } = useAvatarPage()
+  const { species, currentPageNumber } = useAvatarPage()
   const { push } = useHistory()
   const [isExpanded, setIsExpanded] = useState(false)
   const classes = useStyles()
 
   const onSpeciesClickWithId = speciesId => {
-    const pageNumber = getPageNumberForSpeciesId(
-      speciesWithPageNumbers,
-      speciesId
-    )
+    const pageNumber = getPageNumberForSpeciesId(species, speciesId)
 
     setIsExpanded(false)
     push(getUrlForPageNumber(pageNumber))
   }
 
-  const selectedSpeciesIds = speciesWithPageNumbers
+  const selectedSpeciesIds = species
     .filter(item => parseInt(item.pageNumber) === currentPageNumber)
     .map(({ id }) => id)
 
@@ -96,7 +99,7 @@ function Species() {
     <div
       className={`${classes.species} ${isExpanded ? '' : classes.unexpanded}`}>
       <SpeciesVsSelector
-        species={speciesWithPageNumbers}
+        species={species}
         onSpeciesClick={onSpeciesClickWithId}
         selectedSpeciesIds={selectedSpeciesIds}
         showUnselected
@@ -136,8 +139,17 @@ function Avatars({ avatars }) {
 
 const avatarsFiltersStorageKey = 'avatar-filters'
 
+function MoreAvatarsOnNextPage({ remainingCount }) {
+  const classes = useStyles()
+  return (
+    <div className={classes.moreAvatarsOnNextPageMessage}>
+      There are {remainingCount} avatars on the next page for this species
+    </div>
+  )
+}
+
 function Page() {
-  const { currentPageNumber, speciesWithPageNumbers } = useAvatarPage()
+  const { currentPageNumber, species } = useAvatarPage()
   const [isLoading, isError, page] = useDatabaseQuery(
     'avatarPages',
     `page${currentPageNumber}`
@@ -174,9 +186,7 @@ function Page() {
   return (
     <div>
       {Object.entries(avatarsBySpeciesId).map(([speciesId, avatars]) => {
-        const matchingSpecies = speciesWithPageNumbers.find(
-          ({ id }) => id === speciesId
-        )
+        const matchingSpecies = species.find(({ id }) => id === speciesId)
 
         if (!matchingSpecies) {
           throw new Error(
@@ -196,6 +206,11 @@ function Page() {
               </Link>
             </Heading>
             <Avatars avatars={avatars} />
+            {avatars.length !== matchingSpecies.avatarCount ? (
+              <MoreAvatarsOnNextPage
+                remainingCount={matchingSpecies.avatarCount - avatars.length}
+              />
+            ) : null}
           </div>
         )
       })}
@@ -216,8 +231,8 @@ export default () => {
 
   const currentPageNumber = parseInt(pageNumberFromUrl)
 
-  const { speciesWithPageNumbers, pageCount } = summary || {
-    speciesWithPageNumbers: [],
+  const { species, pageCount } = summary || {
+    species: [],
     pageCount: 0
   }
 
@@ -225,7 +240,7 @@ export default () => {
     return <LoadingIndicator message="Loading avatars..." />
   }
 
-  const isInvalid = !summary || !pageCount || !speciesWithPageNumbers.length
+  const isInvalid = !summary || !pageCount || !species.length
 
   if (isErrorLoadingSummary || isInvalid) {
     return (
@@ -237,8 +252,7 @@ export default () => {
   }
 
   return (
-    <AvatarPageContext.Provider
-      value={{ currentPageNumber, speciesWithPageNumbers }}>
+    <AvatarPageContext.Provider value={{ currentPageNumber, species }}>
       <div>
         <Helmet>
           <title>
