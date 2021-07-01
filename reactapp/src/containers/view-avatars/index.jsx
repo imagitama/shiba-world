@@ -201,8 +201,8 @@ function Page() {
             <Heading variant="h2">
               <Link
                 to={routes.viewSpeciesWithVar.replace(
-                  ':speciesId',
-                  matchingSpecies.id
+                  ':speciesIdOrSlug',
+                  matchingSpecies[SpeciesFieldNames.slug] || matchingSpecies.id
                 )}>
                 {matchingSpecies[SpeciesFieldNames.pluralName]}
               </Link>
