@@ -31,6 +31,11 @@ function shouldDeleteAssetFromCategoryCache(doc) {
 }
 
 async function hydrate(categoryName, doc) {
+  // avatar page has its own caching mechanism
+  if (categoryName === AssetCategories.avatar) {
+    return Promise.resolve()
+  }
+
   const existingCacheRef = db
     .collection(CollectionNames.ViewCache)
     .doc(`category-${categoryName}`)
