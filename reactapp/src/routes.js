@@ -68,6 +68,7 @@ export const avatarTutorialWithVar = '/avatar-tutorial/:pageName'
 export const viewAwardWithVar = '/awards/:awardId'
 export const viewConversationWithVar = '/conversation/:conversationId'
 export const viewConversationWithoutVar = '/conversation'
+export const rules = '/guidelines'
 
 // Outdated routes
 export const browseAssets = '/browse'

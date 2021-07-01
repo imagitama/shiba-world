@@ -229,6 +229,7 @@ const ViewAward = lazy(() =>
 const Conversation = lazy(() =>
   catchChunkDeaths(() => import('./containers/conversation'))
 )
+const Rules = lazy(() => catchChunkDeaths(() => import('./containers/rules')))
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
   return (
@@ -515,6 +516,7 @@ const MainContent = () => {
           path={routes.viewConversationWithoutVar}
           component={Conversation}
         />
+        <Route exact path={routes.rules} component={Rules} />
         <Route
           component={() => (
             <ErrorContainer code={404} message="Page not found" />
