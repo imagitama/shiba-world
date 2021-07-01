@@ -24,14 +24,19 @@ import NoPermissionMessage from '../../components/no-permission-message'
 import Button from '../../components/button'
 import Avatar, { sizes } from '../../components/avatar'
 import FormControls from '../../components/form-controls'
+import ReportResultsItem from '../../components/report-results-item'
+
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import { handleError } from '../../error-handling'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import { useEffect } from 'react'
 
 const useStyles = makeStyles({
-  asset: {
-    marginBottom: '2rem'
+  relatedEntity: {
+    marginBottom: '2rem',
+    '& > table': {
+      width: '100%'
+    }
   },
   info: {
     display: 'flex',
@@ -75,15 +80,29 @@ const getCollectionNameForRelatedEntity = relatedEntity => {
 
 function RelatedEntity({ relatedEntity }) {
   const classes = useStyles()
+  return (
+    <div className={classes.relatedEntity}>
+      <RelatedEntityContent relatedEntity={relatedEntity} />
+    </div>
+  )
+}
 
+function RelatedEntityContent({ relatedEntity }) {
   const collectionName = getCollectionNameForRelatedEntity(relatedEntity)
 
   switch (collectionName) {
     case CollectionNames.Assets:
       return (
-        <div className={classes.asset}>
+        <div>
           <AssetResultsItem asset={mapDates(relatedEntity)} isLandscape />
         </div>
+      )
+
+    case CollectionNames.Reports:
+      return (
+        <table>
+          <ReportResultsItem report={mapDates(relatedEntity)} />
+        </table>
       )
 
     default:
@@ -318,11 +337,14 @@ function Conversation({
   )
 }
 
-const getAssetIdFromQueryParams = () => {
+const getQueryParam = name => {
   // eslint-disable-next-line
   const url = new URL(location.href)
-  return url.searchParams.get('assetId')
+  return url.searchParams.get(name)
 }
+
+const getAssetIdFromQueryParams = () => getQueryParam('assetId')
+const getReportIdFromQueryParams = () => getQueryParam('reportId')
 
 export default () => {
   const { conversationId } = useParams()
@@ -336,10 +358,18 @@ export default () => {
     const assetId = getAssetIdFromQueryParams()
 
     if (!assetId) {
+      // need way more future proof way of doing this!
+      const reportId = getReportIdFromQueryParams()
+
+      if (!reportId) {
+        return <ErrorMessage>Need either a valid ID</ErrorMessage>
+      }
+
       return (
-        <ErrorMessage>
-          Need either a conversation ID or an asset ID
-        </ErrorMessage>
+        <Conversation
+          relatedEntityCollectionName={CollectionNames.Reports}
+          relatedEntityId={reportId}
+        />
       )
     }
 

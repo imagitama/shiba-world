@@ -4,6 +4,7 @@ import TableCell from '@material-ui/core/TableCell'
 import TableRow from '@material-ui/core/TableRow'
 import CloseIcon from '@material-ui/icons/Close'
 import CheckIcon from '@material-ui/icons/Check'
+import ChatIcon from '@material-ui/icons/Chat'
 
 import {
   CollectionNames,
@@ -142,6 +143,10 @@ export default ({
                   : ''}
               </>
             )}
+            <Button
+              icon={<ChatIcon />}
+              url={`${routes.viewConversationWithoutVar}?reportId=${reportId}`}
+            />
           </TableCell>
         ) : null}
       </TableRow>
