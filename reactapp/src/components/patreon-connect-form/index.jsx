@@ -102,13 +102,19 @@ export default () => {
         oauthCode = queryParams.code
 
         const {
-          data: { isOneDollarTierPatron }
+          data: { rewardIds }
         } = await getPatreonUserInfoWithCode(oauthCode)
+
+        if (!rewardIds) {
+          throw new Error(
+            'Function failed to get patreon user info with code (maybe 401?)'
+          )
+        }
 
         setIsLoading(false)
         setIsErrored(false)
 
-        setResult(isOneDollarTierPatron)
+        setResult(true)
       } catch (err) {
         console.error(err)
         setIsLoading(false)

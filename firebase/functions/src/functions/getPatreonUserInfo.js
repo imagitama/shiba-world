@@ -20,6 +20,10 @@ module.exports = functions.https.onCall(async (data, context) => {
 
     const rewardIds = await fetchRewardsAndStore(userId, code)
 
+    if (!rewardIds) {
+      return { rewardIds: null }
+    }
+
     await await queueDiscordMessage(
       channelNames.activity,
       `User ${userId} just connected their VRCArena account with Patreon`

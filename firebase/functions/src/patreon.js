@@ -31,6 +31,11 @@ redirect_uri=${REDIRECT_URI}`
   if (!resp.ok) {
     const body = await resp.text()
 
+    // 401 should mean user has not given us a valid code
+    if (resp.status === 401) {
+      return null
+    }
+
     throw new Error(
       `Failed to get access token with code "${code}": ${resp.status} ${resp.statusText} ${body}`
     )
@@ -163,6 +168,10 @@ const getPatreonUserIdAndRewardIds = async (accessToken) => {
 module.exports.fetchRewardsAndStore = async (userId, oauthCode) => {
   // TODO: Do this and cache it in memory for future calls? Will need to check expiry!
   const accessToken = await getAccessTokenWithCode(oauthCode)
+
+  if (!accessToken) {
+    return null
+  }
 
   const { patreonUserId, rewardIds } = await getPatreonUserIdAndRewardIds(
     accessToken

@@ -38,17 +38,25 @@ export default ({ userId, discordUser, onDone }) => {
         setIsError(false)
         setIsLoading(true)
 
-        const {
-          data: { optimizedImageUrl }
-        } = await callFunction('downloadAndOptimizeDiscordAvatar', {
-          userId: discordUser.id,
-          avatarHash: discordUser.avatar
-        })
+        let optimizedImageUrl
+
+        // if user has no avatar set
+        if (discordUser.avatar) {
+          const { data } = await callFunction(
+            'downloadAndOptimizeDiscordAvatar',
+            {
+              userId: discordUser.id,
+              avatarHash: discordUser.avatar
+            }
+          )
+
+          optimizedImageUrl = data.optimizedImageUrl
+        }
 
         await create({
           [UserFieldNames.username]:
             discordUser[DiscordUserFieldNames.username],
-          [UserFieldNames.avatarUrl]: optimizedImageUrl,
+          [UserFieldNames.avatarUrl]: optimizedImageUrl || null,
           // need these otherwise permissions screw up
           [UserFieldNames.isEditor]: false,
           [UserFieldNames.isAdmin]: false,
