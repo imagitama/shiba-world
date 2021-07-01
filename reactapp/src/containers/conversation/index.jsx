@@ -132,9 +132,11 @@ function getRelatedEntityCreatorRef(relatedEntity) {
           relatedEntity[AssetFieldNames.createdBy].id
         )
       }
-  }
 
-  return null
+    default:
+      // assume this field is on there
+      return createRef(CollectionNames.Users, relatedEntity.createdBy.id)
+  }
 }
 
 function CreateConversationForm({ relatedEntity, onCreateWithId }) {
