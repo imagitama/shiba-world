@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import CategoryIcon from '@material-ui/icons/Category'
+import TodayIcon from '@material-ui/icons/Today'
 
 import * as routes from '../../routes'
 import useStorage from '../../hooks/useStorage'
@@ -57,7 +58,11 @@ const useStyles = makeStyles({
   controls: {
     position: 'absolute',
     top: 0,
-    right: 0
+    right: 0,
+    display: 'flex'
+  },
+  control: {
+    marginLeft: '0.25rem'
   },
   moreAvatarsOnNextPageMessage: {
     textAlign: 'center',
@@ -221,6 +226,12 @@ function Page() {
   )
 }
 
+function NewAvatars() {
+  const { newAvatars } = useAvatarPage()
+
+  return <AssetResults assets={newAvatars.map(mapDates)} />
+}
+
 export default () => {
   const [isLoadingSummary, isErrorLoadingSummary, summary] = useDatabaseQuery(
     'avatarPages',
@@ -231,12 +242,14 @@ export default () => {
   const [areFiltersVisible, setAreFiltersVisible] = useState(false)
   const classes = useStyles()
   const [activeFilters] = useStorage(avatarsFiltersStorageKey, [])
+  const [showNewAvatars, setShowNewAvatars] = useState(false)
 
   const currentPageNumber = parseInt(pageNumberFromUrl)
 
-  const { species, pageCount } = summary || {
+  const { species, pageCount, newAvatars } = summary || {
     species: [],
-    pageCount: 0
+    pageCount: 0,
+    newAvatars: []
   }
 
   if (isLoadingSummary) {
@@ -255,7 +268,8 @@ export default () => {
   }
 
   return (
-    <AvatarPageContext.Provider value={{ currentPageNumber, species }}>
+    <AvatarPageContext.Provider
+      value={{ currentPageNumber, species, newAvatars }}>
       <div>
         <Helmet>
           <title>
@@ -275,6 +289,13 @@ export default () => {
           <div className={classes.controls}>
             <div className={classes.control}>
               <Button
+                onClick={() => setShowNewAvatars(currentVal => !currentVal)}
+                icon={<TodayIcon />}>
+                Toggle New Avatars
+              </Button>
+            </div>
+            <div className={classes.control}>
+              <Button
                 onClick={() => setAreFiltersVisible(currentVal => !currentVal)}
                 icon={<CategoryIcon />}>
                 Filters
@@ -282,7 +303,7 @@ export default () => {
               </Button>
             </div>
           </div>
-          <Page />
+          {showNewAvatars ? <NewAvatars /> : <Page />}
         </div>
         <PagesNavigation
           pageCount={pageCount}

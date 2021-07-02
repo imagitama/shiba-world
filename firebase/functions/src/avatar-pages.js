@@ -4,7 +4,8 @@ const {
     AssetFieldNames,
     Operators,
     AssetCategories,
-    SpeciesFieldNames
+    SpeciesFieldNames,
+    OrderDirections
 } = require('./firebase')
 
 const descriptionMaxLength = 100
@@ -117,7 +118,7 @@ const addExtraSpeciesFields = (species, avatarsByPageNumber) => {
     })
 }
 
-const writePages = async (species, avatarsByPageNumber) => {
+const writePages = async (species, avatarsByPageNumber, newAvatars) => {
     const pageCount = Object.keys(avatarsByPageNumber).length
 
     const speciesWithExtra = addExtraSpeciesFields(species, avatarsByPageNumber)
@@ -125,6 +126,7 @@ const writePages = async (species, avatarsByPageNumber) => {
     const slimmedSpecies = speciesWithExtra.map(slimSpecies)
 
     await db.collection('avatarPages').doc('summary').set({
+        newAvatars: newAvatars.map(doc => doc.data()).map(slimAvatar),
         species: slimmedSpecies, 
         pageCount
     })
@@ -174,6 +176,19 @@ const dupeAvatarsForEachSpecies = avatars => {
     return newAvatars
 }
 
+const getNewAvatars = async () => {
+  const { docs } = await db.collection(CollectionNames.Assets)
+  .where(AssetFieldNames.category, Operators.EQUALS, AssetCategories.avatar)
+  .where(AssetFieldNames.isApproved, Operators.EQUALS, true)
+  .where(AssetFieldNames.isPrivate, Operators.EQUALS, false)
+  .where(AssetFieldNames.isDeleted, Operators.EQUALS, false)
+  .orderBy(AssetFieldNames.createdAt, OrderDirections.DESC)
+  .limit(limitPerPage)
+  .get()
+
+  return docs
+}
+
 const syncAvatarPages = async () => {
     const publicAvatars = await getAllPublicAvatars()
     const avatarCount = publicAvatars.length
@@ -195,7 +210,11 @@ const syncAvatarPages = async () => {
 
     console.debug(`split into ${pageCount} pages (${limitPerPage} per page)`)
 
-    await writePages(species, assetsByPageNumber)
+  const newAvatars = await getNewAvatars()
+
+  console.debug(`found ${newAvatars.length} new avatars`)
+
+    await writePages(species, assetsByPageNumber, newAvatars)
 
     return {
         speciesCount,
