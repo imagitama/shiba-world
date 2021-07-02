@@ -229,7 +229,12 @@ function Page() {
 function NewAvatars() {
   const { newAvatars } = useAvatarPage()
 
-  return <AssetResults assets={newAvatars.map(mapDates)} />
+  return (
+    <>
+      <Heading variant="h2">Most Recent (100)</Heading>
+      <AssetResults assets={newAvatars.map(mapDates)} />
+    </>
+  )
 }
 
 export default () => {
@@ -282,7 +287,7 @@ export default () => {
           />
         </Helmet>
         <Heading variant="h1">Avatars</Heading>
-        <Species />
+        {!showNewAvatars && <Species />}
         <div className={classes.page}>
           {areFiltersVisible && <Filters />}
 
@@ -305,13 +310,15 @@ export default () => {
           </div>
           {showNewAvatars ? <NewAvatars /> : <Page />}
         </div>
-        <PagesNavigation
-          pageCount={pageCount}
-          currentPageNumber={currentPageNumber}
-          onClickWithPageNumber={pageNumber =>
-            push(getUrlForPageNumber(pageNumber))
-          }
-        />
+        {!showNewAvatars && (
+          <PagesNavigation
+            pageCount={pageCount}
+            currentPageNumber={currentPageNumber}
+            onClickWithPageNumber={pageNumber =>
+              push(getUrlForPageNumber(pageNumber))
+            }
+          />
+        )}
       </div>
     </AvatarPageContext.Provider>
   )
