@@ -230,6 +230,9 @@ const Conversation = lazy(() =>
   catchChunkDeaths(() => import('./containers/conversation'))
 )
 const Rules = lazy(() => catchChunkDeaths(() => import('./containers/rules')))
+const ViewAvatarsCache = lazy(() =>
+  catchChunkDeaths(() => import('./containers/view-avatars-cache'))
+)
 
 const RouteWithMeta = ({ meta, component: Component, ...routeProps }) => {
   return (
@@ -517,6 +520,7 @@ const MainContent = () => {
           component={Conversation}
         />
         <Route exact path={routes.rules} component={Rules} />
+        <Route exact path={'/avatars-cache'} component={ViewAvatarsCache} />
         <Route
           component={() => (
             <ErrorContainer code={404} message="Page not found" />

@@ -1,4 +1,5 @@
 const config = require('./src/config')
+const { cacheViews, rebuildAllViewCaches } = require('./src/view-cache')
 
 exports.onAssetCreated = require('./src/functions/onAssetCreated')
 exports.onAssetUpdated = require('./src/functions/onAssetUpdated')
@@ -49,9 +50,9 @@ exports.hydrateAssetMetaOnAssetUpdate = require('./src/functions/hydrateAssetMet
 // exports.hydrateAvatarListOnSpeciesCreate = require('./src/functions/hydrateAvatarListOnSpeciesCreate')
 // exports.hydrateAvatarListOnSpeciesUpdate = require('./src/functions/hydrateAvatarListOnSpeciesUpdate')
 exports.hydrateViewCacheOnAssetUpdate = require('./src/functions/hydrateViewCacheOnAssetUpdate')
-exports.syncViewCache = require('./src/functions/syncViewCache')
-exports.hydrateViewCacheOnSpeciesCreate = require('./src/functions/hydrateViewCacheOnSpeciesCreate')
-exports.hydrateViewCacheOnSpeciesUpdate = require('./src/functions/hydrateViewCacheOnSpeciesUpdate')
+// exports.syncViewCache = require('./src/functions/syncViewCache')
+// exports.hydrateViewCacheOnSpeciesCreate = require('./src/functions/hydrateViewCacheOnSpeciesCreate')
+// exports.hydrateViewCacheOnSpeciesUpdate = require('./src/functions/hydrateViewCacheOnSpeciesUpdate')
 exports.repickFeaturedAsset = require('./src/functions/repickFeaturedAsset')
 exports.getPaymentToken = require('./src/functions/getPaymentToken')
 exports.createTransaction = require('./src/functions/createTransaction')
@@ -82,3 +83,7 @@ exports.notifyOnReportCreated = require('./src/functions/notifyOnReportCreated')
 exports.notifyOnAwardGiven = require('./src/functions/notifyOnAwardGiven')
 exports.notifyOnPrivateMessage = require('./src/functions/notifyOnPrivateMessage')
 exports.notifyOnAssetOwnership = require('./src/functions/notifyOnAssetOwnership')
+
+// view cache
+cacheViews(exports)
+exports.rebuildAllViewCaches = rebuildAllViewCaches
