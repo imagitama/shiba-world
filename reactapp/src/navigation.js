@@ -87,11 +87,12 @@ export default [
         url: routes.streams,
         label: 'Streams'
       },
-      {
-        id: 'requests',
-        label: 'Requests',
-        url: routes.requests
-      },
+      // TODO: Remove? Keep? Never used
+      // {
+      //   id: 'requests',
+      //   label: 'Requests',
+      //   url: routes.requests
+      // },
       {
         id: 'discord-servers',
         label: 'Discord Servers',
@@ -118,12 +119,12 @@ export default [
         label: 'NSFW Content',
         requiresAdultContentEnabled: true
       },
-      {
-        id: 'products',
-        url: routes.viewProducts,
-        label: 'Products',
-        requiresAdmin: true
-      },
+      // {
+      //   id: 'products',
+      //   url: routes.viewProducts,
+      //   label: 'Products',
+      //   requiresAdmin: true
+      // },
       {
         id: 'admin',
         label: 'Admin',

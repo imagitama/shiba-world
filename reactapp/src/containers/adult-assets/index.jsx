@@ -5,51 +5,41 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import * as routes from '../../routes'
 
-import LoadingIndicator from '../../components/loading-indicator'
 import AssetResults from '../../components/asset-results'
-import ErrorMessage from '../../components/error-message'
 import Heading from '../../components/heading'
-import NoResultsMessage from '../../components/no-results-message'
 import Paper from '../../components/paper'
 import Button from '../../components/button'
+import CachedView from '../../components/cached-view'
 
 import { alreadyOver18Key } from '../../config'
-import useDatabaseQuery, {
-  Operators,
-  CollectionNames,
-  AssetFieldNames,
-  UserFieldNames
-} from '../../hooks/useDatabaseQuery'
+import { AssetFieldNames, UserFieldNames } from '../../hooks/useDatabaseQuery'
 import useUserRecord from '../../hooks/useUserRecord'
 import useStorage from '../../hooks/useStorage'
 import { trackAction } from '../../analytics'
 
-function Assets() {
-  let whereClauses = [
-    [AssetFieldNames.isApproved, Operators.EQUALS, true],
-    [AssetFieldNames.isAdult, Operators.EQUALS, true],
-    [AssetFieldNames.isDeleted, Operators.EQUALS, false],
-    [AssetFieldNames.isPrivate, Operators.EQUALS, false]
-  ]
+const Renderer = ({ items }) => (
+  <AssetResults assets={items} showPinned showIsNsfw={false} />
+)
 
-  const [isLoading, isErrored, results] = useDatabaseQuery(
-    CollectionNames.Assets,
-    whereClauses
+const Assets = () => {
+  return (
+    <CachedView
+      viewName="view-adult-assets"
+      sortKey="view-adult-assets"
+      sortOptions={[
+        {
+          label: 'Submission date',
+          fieldName: AssetFieldNames.createdAt
+        },
+        {
+          label: 'Title',
+          fieldName: AssetFieldNames.title
+        }
+      ]}
+      defaultFieldName={AssetFieldNames.title}>
+      <Renderer />
+    </CachedView>
   )
-
-  if (isLoading) {
-    return <LoadingIndicator message="Loading assets..." />
-  }
-
-  if (isErrored) {
-    return <ErrorMessage>Failed to get assets</ErrorMessage>
-  }
-
-  if (!results.length) {
-    return <NoResultsMessage />
-  }
-
-  return <AssetResults assets={results} showPinned showIsNsfw={false} />
 }
 
 const useStyles = makeStyles({

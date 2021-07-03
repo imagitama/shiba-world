@@ -15,7 +15,7 @@ const useStyles = makeStyles({
 
 export default ({
   options,
-  label,
+  label = '',
   fieldNameKey,
   directionKey,
   onNewSortFieldAndDirection,
@@ -26,15 +26,19 @@ export default ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
   const onMainBtnClick = () => {
-    if (!isDropdownOpen) {
+    if (!isDropdownOpen && onOpenDropdown) {
       onOpenDropdown()
     }
     setIsDropdownOpen(!isDropdownOpen)
   }
 
   const onClickItem = (fieldName, direction) => {
-    writeStorage(fieldNameKey, fieldName)
-    writeStorage(directionKey, direction)
+    if (fieldNameKey) {
+      writeStorage(fieldNameKey, fieldName)
+    }
+    if (directionKey) {
+      writeStorage(directionKey, direction)
+    }
     onNewSortFieldAndDirection(fieldName, direction)
     onClose()
   }

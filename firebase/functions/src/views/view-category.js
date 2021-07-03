@@ -1,123 +1,94 @@
 const {
-  db,
   CollectionNames,
-  AssetCategories,
-  AssetFieldNames,
   Operators,
+  OrderDirections,
+  AssetFieldNames,
+  AssetCategories,
 } = require('../firebase')
+const { map, test } = require('./mappers/asset-results-item')
 
-const { ViewCacheStandardFieldNames } = require('../view-cache')
-
-const CacheFieldNames = {
-  assets: 'assets',
-}
-
-const convertAssetDocIntoCategoryItem = (doc) => ({
-  asset: doc.ref,
-  [AssetFieldNames.title]: doc.get(AssetFieldNames.title),
-  [AssetFieldNames.description]: doc.get(AssetFieldNames.description),
-  [AssetFieldNames.thumbnailUrl]: doc.get(AssetFieldNames.thumbnailUrl),
-  [AssetFieldNames.isAdult]: doc.get(AssetFieldNames.isAdult), // for NSFW toggle
-  [AssetFieldNames.createdAt]: doc.get(AssetFieldNames.createdAt), // for sorting
-  [AssetFieldNames.tags]: doc.get(AssetFieldNames.tags), // for paid/free chip
+const getDefinition = ({ category, isAdult, fieldName, direction }) => ({
+  sources: [
+    {
+      collectionName: CollectionNames.Assets,
+      where: [
+        [AssetFieldNames.category, Operators.EQUALS, category],
+        [AssetFieldNames.isApproved, Operators.EQUALS, true],
+        [AssetFieldNames.isDeleted, Operators.EQUALS, false],
+        [AssetFieldNames.isPrivate, Operators.EQUALS, false],
+      ].concat(
+        isAdult === false
+          ? [[AssetFieldNames.isAdult, Operators.EQUALS, false]]
+          : []
+      ),
+      order: [fieldName, direction],
+      map,
+      test,
+    },
+  ],
 })
 
-function shouldDeleteAssetFromCategoryCache(doc) {
-  return (
-    doc.get(AssetFieldNames.isApproved) === false ||
-    doc.get(AssetFieldNames.isDeleted) === true ||
-    doc.get(AssetFieldNames.isPrivate) === true
-  )
-}
-
-async function hydrate(categoryName, doc) {
-  // avatar page has its own caching mechanism
-  if (categoryName === AssetCategories.avatar) {
-    return Promise.resolve()
+for (const category of Object.values(AssetCategories)) {
+  if (
+    category === AssetCategories.avatar ||
+    category === AssetCategories.article
+  ) {
+    continue
   }
-
-  const existingCacheRef = db
-    .collection(CollectionNames.ViewCache)
-    .doc(`category-${categoryName}`)
-  const existingCacheDoc = await existingCacheRef.get()
-
-  const existingItems = existingCacheDoc.get(CacheFieldNames.assets) || []
-  let newItems = [...existingItems]
-
-  console.debug(`found ${existingItems.length} items already in cache`)
-
-  console.debug(`deciding if to insert, update or delete ${doc.id}`)
-
-  if (shouldDeleteAssetFromCategoryCache(doc)) {
-    console.debug('should be deleted - deleting...')
-    newItems = newItems.filter((item) => item.asset.id !== doc.id)
-  } else {
-    const foundIndex = existingItems.findIndex(
-      (item) => item.asset.id === doc.id
-    )
-    const assetToInsert = convertAssetDocIntoCategoryItem(doc)
-
-    if (foundIndex !== -1) {
-      console.debug(`found item - updating...`)
-      newItems[foundIndex] = assetToInsert
-    } else {
-      console.debug(`did not find item - inserting...`)
-      newItems = newItems.concat([assetToInsert])
-    }
-  }
-
-  return existingCacheRef.set(
+  module.exports[`view-category-${category}_nsfw_title_asc`] = getDefinition({
+    category,
+    isAdult: true,
+    fieldName: AssetFieldNames.title,
+    direction: OrderDirections.ASC,
+  })
+  module.exports[`view-category-${category}_nsfw_title_desc`] = getDefinition({
+    category,
+    isAdult: true,
+    fieldName: AssetFieldNames.title,
+    direction: OrderDirections.DESC,
+  })
+  module.exports[`view-category-${category}_sfw_title_asc`] = getDefinition({
+    category,
+    isAdult: false,
+    fieldName: AssetFieldNames.title,
+    direction: OrderDirections.ASC,
+  })
+  module.exports[`view-category-${category}_sfw_title_desc`] = getDefinition({
+    category,
+    isAdult: false,
+    fieldName: AssetFieldNames.title,
+    direction: OrderDirections.DESC,
+  })
+  module.exports[
+    `view-category-${category}_nsfw_createdAt_asc`
+  ] = getDefinition({
+    category,
+    isAdult: true,
+    fieldName: AssetFieldNames.createdAt,
+    direction: OrderDirections.ASC,
+  })
+  module.exports[
+    `view-category-${category}_nsfw_createdAt_desc`
+  ] = getDefinition({
+    category,
+    isAdult: true,
+    fieldName: AssetFieldNames.createdAt,
+    direction: OrderDirections.DESC,
+  })
+  module.exports[`view-category-${category}_sfw_createdAt_asc`] = getDefinition(
     {
-      [CacheFieldNames.assets]: newItems,
-      [ViewCacheStandardFieldNames.lastModifiedAt]: new Date(),
-    },
-    {
-      merge: true,
-    }
-  )
-}
-module.exports.hydrate = hydrate
-
-async function syncCategoryCache(categoryName) {
-  const existingCacheRef = db
-    .collection(CollectionNames.ViewCache)
-    .doc(`category-${categoryName}`)
-  const existingCacheDoc = await existingCacheRef.get()
-  const existingAssets = existingCacheDoc.get(CacheFieldNames.assets) || []
-
-  console.debug(
-    `found ${existingAssets.length} items already in cache "${categoryName}"`
-  )
-
-  const { docs: assetDocs } = await db
-    .collection(CollectionNames.Assets)
-    .where(AssetFieldNames.category, Operators.EQUALS, categoryName)
-    .where(AssetFieldNames.isPrivate, Operators.EQUALS, false)
-    .where(AssetFieldNames.isApproved, Operators.EQUALS, true)
-    .where(AssetFieldNames.isDeleted, Operators.EQUALS, false)
-    .get()
-
-  console.debug(`${assetDocs.length} items to insert into cache`)
-
-  const newAssets = assetDocs.map(convertAssetDocIntoCategoryItem)
-
-  return existingCacheRef.set(
-    {
-      [CacheFieldNames.assets]: newAssets,
-      [ViewCacheStandardFieldNames.lastModifiedAt]: new Date(),
-    },
-    {
-      merge: true,
+      category,
+      isAdult: false,
+      fieldName: AssetFieldNames.createdAt,
+      direction: OrderDirections.ASC,
     }
   )
+  module.exports[
+    `view-category-${category}_sfw_createdAt_desc`
+  ] = getDefinition({
+    category,
+    isAdult: false,
+    fieldName: AssetFieldNames.createdAt,
+    direction: OrderDirections.DESC,
+  })
 }
-
-async function sync() {
-  const categoryNames = Object.values(AssetCategories)
-
-  for (const categoryName of categoryNames) {
-    console.debug(`syncing category cache "${categoryName}"`)
-    await syncCategoryCache(categoryName)
-  }
-}
-module.exports.sync = sync

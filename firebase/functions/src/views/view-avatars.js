@@ -91,16 +91,7 @@ const getView = (includeAdult, bySpecies, orderDir) => ({
         ) {
           return false
         }
-        if (bySpecies) {
-          // assume length is always 0 or 1 before we perform map above
-          if (
-            itemBefore[AssetFieldNames.species].length &&
-            itemBefore[AssetFieldNames.species].id !==
-              itemAfter[AssetFieldNames.species].id
-          ) {
-            return false
-          }
-        } else if (
+        if (
           getHasArrayOfReferencesChanged(
             itemBefore[AssetFieldNames.species],
             itemAfter[AssetFieldNames.species]

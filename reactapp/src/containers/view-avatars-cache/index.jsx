@@ -216,14 +216,13 @@ function Page() {
     return (
       <div>
         {entries.map(([speciesId, avatars], idx) => {
-          const matchingSpecies = species
+          let matchingSpecies = species
             .concat([unknownSpecies])
             .find(({ id }) => id === speciesId)
 
+          // if user changes species from A to B this could happen because race condition
           if (!matchingSpecies) {
-            throw new Error(
-              `Could not find species with id "${speciesId}" (code 203)`
-            )
+            matchingSpecies = unknownSpecies
           }
 
           return (

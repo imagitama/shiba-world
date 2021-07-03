@@ -8,6 +8,7 @@ module.exports.db = db
 
 const Operators = {
   EQUALS: '==',
+  NOT_EQUALS: '!=',
   GREATER_THAN: '>',
   ARRAY_CONTAINS: 'array-contains',
 }
@@ -53,15 +54,20 @@ const CollectionNames = {
   Reports: 'reports',
   AwardsForUsers: 'awardsForUsers',
   PrivateMessages: 'privateMessages',
-  Conversations: 'conversations'
+  Conversations: 'conversations',
 }
 module.exports.CollectionNames = CollectionNames
+
+const HistoryFieldNames = {
+  createdAt: 'createdAt',
+}
+module.exports.HistoryFieldNames = HistoryFieldNames
 
 const ConversationFieldNames = {
   members: 'members',
   relatedEntity: 'relatedEntity',
   createdAt: 'createdAt',
-  createdBy: 'createdBy'
+  createdBy: 'createdBy',
 }
 module.exports.ConversationFieldNames = ConversationFieldNames
 
@@ -70,7 +76,7 @@ const PrivateMessageFieldNames = {
   recipient: 'recipient',
   message: 'message',
   createdAt: 'createdAt',
-  createdBy: 'createdBy'
+  createdBy: 'createdBy',
 }
 module.exports.PrivateMessageFieldNames = PrivateMessageFieldNames
 
@@ -289,6 +295,8 @@ const AuthorFieldNames = {
   createdBy: 'createdBy',
   lastModifiedBy: 'lastModifiedBy',
   lastModifiedAt: 'lastModifiedAt',
+  isDeleted: 'isDeleted',
+  isOpenForCommission: 'isOpenForCommission',
 }
 module.exports.AuthorFieldNames = AuthorFieldNames
 
@@ -305,6 +313,8 @@ const DiscordServerFieldNames = {
   lastModifiedAt: 'lastModifiedAt',
   createdAt: 'createdAt',
   createdBy: 'createdBy',
+  isApproved: 'isApproved',
+  isDeleted: 'isDeleted',
 }
 module.exports.DiscordServerFieldNames = DiscordServerFieldNames
 

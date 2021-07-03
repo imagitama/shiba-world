@@ -1,4 +1,5 @@
 const functions = require('firebase-functions')
+const { performance } = require('perf_hooks')
 const { db, Operators } = require('./firebase')
 const viewCacheDefinitions = require('./views')
 
@@ -7,6 +8,7 @@ const viewCacheDefinitions = require('./views')
  *   collectionName: string,
  *   where?: Array<[fieldName, operator, value]>,
  *   order?: [fieldName, dir],
+ *   limit?: number,
  *   map?: (item, index, { addUnmappedItem: item => void }) => item,
  *   test?: (itemBefore, itemAfter) => boolean,
  *   fieldName?: string // summary only
@@ -20,19 +22,24 @@ const viewCacheDefinitions = require('./views')
  * }
  */
 
-const doesDocMatchWhereCondition = (doc, where) => {
+const doesDocMatchWhereCondition = (doc, where = []) => {
   for (const [field, operator, value] of where) {
     switch (operator) {
       case Operators.EQUALS:
+        if (doc.get(field) !== value) {
+          return false
+        }
+        break
+      case Operators.NOT_EQUALS:
         if (doc.get(field) === value) {
-          return true
+          return false
         }
         break
       default:
         throw new Error(`Operator ${operator} not supported at this time`)
     }
   }
-  return false
+  return true
 }
 
 const limitPerPage = 100
@@ -58,7 +65,15 @@ const reduceItemsIntoPages = (items) => {
 }
 
 const getSourceItems = async (source, pages = {}) => {
-  const { collectionName, where = [], order = undefined, filter, map } = source
+  const {
+    collectionName,
+    where = [],
+    order = undefined,
+    filter,
+    map,
+    limit,
+    join,
+  } = source
 
   // console.debug(`get source items`, collectionName, where, order)
 
@@ -70,6 +85,10 @@ const getSourceItems = async (source, pages = {}) => {
 
   if (order) {
     query = query.orderBy(order[0], order[1])
+  }
+
+  if (limit) {
+    query = query.limit(limit)
   }
 
   const { docs } = await query.get()
@@ -94,10 +113,24 @@ const getSourceItems = async (source, pages = {}) => {
         ref: item.ref,
         ...map(item, i, {
           pages,
-          addUnmappedItem: (item) => mappedItems.push(item),
+          addUnmappedItem: (newItem) => {
+            mappedItems.push(newItem)
+          },
         }),
       }
     }
+  }
+
+  if (join) {
+    const joinedItems = await getSourceItems(join)
+
+    const getJoinedItemById = (id) =>
+      joinedItems.find((item) => item.id === id) || {}
+
+    mappedItems = mappedItems.map((item) => ({
+      ...item,
+      ...getJoinedItemById(item.id),
+    }))
   }
 
   return mappedItems
@@ -108,9 +141,14 @@ const storePages = async (viewName, itemsByPageNumber) => {
     await db
       .collection(collectionName)
       .doc(`${viewName}_page${pageNumber}`)
-      .set({
-        [pageFieldNames.items]: items,
-      })
+      .set(
+        {
+          [pageFieldNames.items]: items,
+        },
+        {
+          merge: false,
+        }
+      )
   }
 }
 
@@ -118,10 +156,15 @@ const storeSummary = async (viewName, pageCount, summaryEntries = {}) => {
   await db
     .collection(collectionName)
     .doc(`${viewName}_summary`)
-    .set({
-      [summaryFieldNames.pageCount]: pageCount,
-      ...summaryEntries,
-    })
+    .set(
+      {
+        [summaryFieldNames.pageCount]: pageCount,
+        ...summaryEntries,
+      },
+      {
+        merge: false,
+      }
+    )
 }
 
 const getSummaryEntriesForViewName = async (viewName, pages) => {
@@ -181,10 +224,17 @@ module.exports.rebuildAllViewCaches = functions
   })
   .https.onRequest(async (req, res) => {
     try {
+      const timeStart = performance.now()
+
       const result = await rebuildAllViewCaches()
-      res
-        .status(200)
-        .send({ message: 'All view caches have been rebuilt', result })
+
+      const timeEnd = performance.now()
+
+      res.status(200).send({
+        message: 'All view caches have been rebuilt',
+        count: result.viewNames.length,
+        time: ((timeEnd - timeStart) / 1000).toFixed(2),
+      })
     } catch (err) {
       console.error(err)
       res.status(500).send({ message: err.message })
@@ -253,6 +303,8 @@ const updateDocInViewCache = async (doc, viewName) => {
 }
 
 const checkSource = async (collectionName, viewName, source, before, after) => {
+  // console.debug('CHECK SOURCE', collectionName, 'vs', source.collectionName)
+
   if (source.collectionName !== collectionName) {
     return
   }
@@ -262,21 +314,27 @@ const checkSource = async (collectionName, viewName, source, before, after) => {
     !doesDocMatchWhereCondition(before, source.where) &&
     !doesDocMatchWhereCondition(after, source.where)
   ) {
+    // console.debug(`item is still invalid, ignoring...`)
     return
   }
 
   // handle edits to a document that should be added/edited/removed from the cache
   if (getIsDocToBeRemoved(before, after, source.where)) {
+    // console.debug(`item is to be removed`)
     await removeDocFromViewCache(after, viewName)
   } else if (getIsDocToBeAdded(before, after, source.where)) {
+    // console.debug(`item is to be added`)
     await addDocToViewCache(after, viewName)
   } else if (doesDocNeedToBeUpdated(before, after, source.test)) {
+    // console.debug(`item is to be updated`)
     await updateDocInViewCache(after, viewName)
+  } else {
+    // console.debug('item is not removed or added or updated! odd!')
   }
 }
 
 const onUpdate = async (collectionName, before, after) => {
-  for (const [viewName, { source, summary }] of Object.entries(
+  for (const [viewName, { sources, summary }] of Object.entries(
     viewCacheDefinitions
   )) {
     if (summary && summary.sources) {
@@ -291,7 +349,9 @@ const onUpdate = async (collectionName, before, after) => {
       }
     }
 
-    await checkSource(collectionName, viewName, source, before, after)
+    const primarySource = sources[0]
+
+    await checkSource(collectionName, viewName, primarySource, before, after)
   }
 }
 

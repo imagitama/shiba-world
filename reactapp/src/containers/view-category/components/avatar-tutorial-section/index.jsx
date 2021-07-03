@@ -8,6 +8,9 @@ import { makeStyles } from '@material-ui/core'
 import * as routes from '../../../../routes'
 
 const useStyles = makeStyles({
+  root: {
+    margin: '1rem 0'
+  },
   link: {
     padding: '1rem',
     fontSize: '200%',
@@ -19,7 +22,7 @@ const useStyles = makeStyles({
 export default () => {
   const classes = useStyles()
   return (
-    <Card>
+    <Card className={classes.root}>
       <CardActionArea>
         <Link to={routes.avatarTutorial}>
           <div className={classes.link}>

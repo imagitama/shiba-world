@@ -6,11 +6,13 @@ import { Helmet } from 'react-helmet'
 
 import patreonLogoUrl from '../../assets/images/patreon-logo.png'
 import Heading from '../../components/heading'
-import PatreonList from '../../components/patreon-list'
+import CachedView from '../../components/cached-view'
+import UserList from '../../components/user-list'
 import Button from '../../components/button'
 import * as routes from '../../routes'
 import { trackAction } from '../../analytics'
 import { PATREON_BECOME_PATRON_URL } from '../../config'
+import { UserFieldNames } from '../../hooks/useDatabaseQuery'
 
 const useStyles = makeStyles({
   logo: {
@@ -20,6 +22,8 @@ const useStyles = makeStyles({
     }
   }
 })
+
+const Renderer = ({ items }) => <UserList users={items} />
 
 export default () => {
   const classes = useStyles()
@@ -63,7 +67,11 @@ export default () => {
           and click the Patreon tab for instructions.
         </p>
         <Heading variant="h2">Patrons on VRCArena</Heading>
-        <PatreonList />
+        <CachedView
+          viewName="patreon"
+          defaultFieldName={UserFieldNames.username}>
+          <Renderer />
+        </CachedView>
       </Container>
     </>
   )

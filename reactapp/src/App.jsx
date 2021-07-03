@@ -437,7 +437,7 @@ const MainContent = () => {
         <Route exact path={routes.editUserWithVar} component={EditUser} />
         <Route exact path={routes.viewUserWithVar} component={ViewUser} />
         <Route exact path={routes.stats} component={Stats} />
-        <Route exact path={routes.users} component={Users} />
+        <Route exact path={routes.viewUsersWithPageVar} component={Users} />
         <Route exact path={routes.activity} component={Activity} />
         <Route exact path={routes.requests} component={Requests} />
         <Route exact path={routes.createRequest} component={CreateRequest} />

@@ -8,12 +8,10 @@ import Paper from '@material-ui/core/Paper'
 import { Helmet } from 'react-helmet'
 
 import FormattedDate from '../../components/formatted-date'
-import ErrorMessage from '../../components/error-message'
-import LoadingIndicator from '../../components/loading-indicator'
 import Heading from '../../components/heading'
-import NoResultsMessage from '../../components/no-results-message'
+import CachedView from '../../components/cached-view'
 
-import useDatabaseQuery, {
+import {
   CollectionNames,
   HistoryFieldNames,
   OrderDirections,
@@ -322,32 +320,21 @@ function ResultsTable({ results }) {
   )
 }
 
-export default () => {
-  const [isLoading, isErrored, results] = useDatabaseQuery(
-    CollectionNames.History,
-    undefined,
-    100,
-    [HistoryFieldNames.createdAt, OrderDirections.DESC]
-  )
-
-  if (isLoading) {
-    return <LoadingIndicator />
-  }
-
-  if (isErrored) {
-    return <ErrorMessage>Failed to retrieve history</ErrorMessage>
-  }
-
-  if (!results.length) {
-    return <NoResultsMessage>No history found</NoResultsMessage>
-  }
-
-  const resultsWithoutUnwantedResult = results.filter(({ parent }) =>
+const Renderer = ({ items }) => {
+  const resultsWithoutUnwantedResult = items.filter(({ parent }) =>
     filterUnwantedResults(parent)
   )
 
   const compressedResults = compressResults(resultsWithoutUnwantedResult)
 
+  return (
+    <Paper>
+      <ResultsTable results={compressedResults} />
+    </Paper>
+  )
+}
+
+export default () => {
   return (
     <>
       <Helmet>
@@ -358,9 +345,12 @@ export default () => {
         />
       </Helmet>
       <Heading variant="h1">Recent Activity</Heading>
-      <Paper>
-        <ResultsTable results={compressedResults} />
-      </Paper>
+      <CachedView
+        viewName="activity"
+        sortKey="activity"
+        defaultFieldName={HistoryFieldNames.createdAt}>
+        <Renderer />
+      </CachedView>
     </>
   )
 }

@@ -1,47 +1,34 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-
-import useDatabaseQuery, {
-  CollectionNames,
-  ProfileFieldNames,
-  Operators
-} from '../../hooks/useDatabaseQuery'
-
-import LoadingIndicator from '../loading-indicator'
-import ErrorMessage from '../error-message'
-import NoResultsMessage from '../no-results-message'
 import StreamsListItem from '../streams-list-item'
+import {
+  mediaQueryForMobiles,
+  mediaQueryForTabletsOrBelow
+} from '../../media-queries'
 
 const useStyles = makeStyles({
-  root: {
+  items: {
     display: 'flex',
-    marginTop: '2rem'
+    marginTop: '2rem',
+    flexWrap: 'wrap',
+    '& > *': {
+      width: '33.3%',
+      [mediaQueryForTabletsOrBelow]: {
+        width: '50%'
+      },
+      [mediaQueryForMobiles]: {
+        width: '100%'
+      }
+    }
   }
 })
 
-export default () => {
-  const [isLoading, isErrored, results] = useDatabaseQuery(
-    CollectionNames.Profiles,
-    [[ProfileFieldNames.twitchUsername, Operators.GREATER_THAN, '']]
-  )
+export default ({ profilesWithUsers }) => {
   const classes = useStyles()
-
-  if (isLoading) {
-    return <LoadingIndicator />
-  }
-
-  if (isErrored) {
-    return <ErrorMessage>Failed to find profiles</ErrorMessage>
-  }
-
-  if (!results.length) {
-    return <NoResultsMessage />
-  }
-
   return (
-    <div className={classes.root}>
-      {results.map(({ id, twitchUsername }) => (
-        <StreamsListItem key={id} twitchUsername={twitchUsername} />
+    <div className={classes.items}>
+      {profilesWithUsers.map(item => (
+        <StreamsListItem key={item.id} {...item} />
       ))}
     </div>
   )

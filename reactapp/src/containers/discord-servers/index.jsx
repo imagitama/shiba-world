@@ -1,87 +1,43 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
+import DeleteIcon from '@material-ui/icons/Delete'
+import GavelIcon from '@material-ui/icons/Gavel'
+import { makeStyles } from '@material-ui/core/styles'
+import AddIcon from '@material-ui/icons/Add'
 
-import ErrorMessage from '../../components/error-message'
-import LoadingIndicator from '../../components/loading-indicator'
 import Heading from '../../components/heading'
 import BodyText from '../../components/body-text'
-import DiscordServerResults from '../../components/discord-server-results'
-import NoResultsMessage from '../../components/no-results-message'
 import Button from '../../components/button'
+import CachedView from '../../components/cached-view'
+import CachedViewControls from '../../components/cached-view-controls'
+import DiscordServerResults from '../../components/discord-server-results'
 
-import useDatabaseQuery, {
-  CollectionNames,
-  OrderDirections,
-  DiscordServerFieldNames
-} from '../../hooks/useDatabaseQuery'
 import * as routes from '../../routes'
-import { canCreateDiscordServer, canEditDiscordServer } from '../../permissions'
-import useUserRecord from '../../hooks/useUserRecord'
+import useIsEditor from '../../hooks/useIsEditor'
+import { DiscordServerFieldNames } from '../../hooks/useDatabaseQuery'
 
-function DiscordServers() {
-  const [, , user] = useUserRecord()
-  const [isLoading, isErrored, results] = useDatabaseQuery(
-    CollectionNames.DiscordServers,
-    undefined,
-    undefined,
-    [DiscordServerFieldNames.name, OrderDirections.ASC]
-  )
-
-  if (isLoading) {
-    return <LoadingIndicator />
+const useStyles = makeStyles({
+  root: {
+    position: 'relative'
   }
+})
 
-  if (isErrored) {
-    return <ErrorMessage>Failed to get authors</ErrorMessage>
-  }
+const Renderer = ({ items }) => <DiscordServerResults discordServers={items} />
 
-  if (!results || !results.length) {
-    return <NoResultsMessage />
-  }
-
-  const { publicRecords, privateRecords } = results.reduce(
-    (obj, discordServer) => {
-      const isPublic =
-        discordServer[DiscordServerFieldNames.isApproved] !== false &&
-        discordServer[DiscordServerFieldNames.isDeleted] !== true
-
-      return {
-        publicRecords: isPublic
-          ? obj.publicRecords.concat([discordServer])
-          : obj.publicRecords,
-        privateRecords: !isPublic
-          ? obj.privateRecords.concat([discordServer])
-          : obj.privateRecords
-      }
-    },
-    {
-      publicRecords: [],
-      privateRecords: []
-    }
-  )
-
-  return (
-    <>
-      <DiscordServerResults discordServers={publicRecords} />
-      {canEditDiscordServer(user) && (
-        <>
-          <Heading variant="h2">Deleted or unapproved servers</Heading>
-          {privateRecords.length ? (
-            <DiscordServerResults discordServers={privateRecords} />
-          ) : (
-            'None'
-          )}
-        </>
-      )}
-    </>
-  )
+const subViews = {
+  PUBLIC: 0,
+  DELETED: 1,
+  UNAPPROVED: 2
 }
 
 export default () => {
-  const [, , user] = useUserRecord()
+  const isEditor = useIsEditor()
+  const [selectedSubView, setSelectedSubView] = useState(subViews.PUBLIC)
+  const classes = useStyles()
+
   return (
-    <>
+    <div className={classes.root}>
       <Helmet>
         <title>View all Discord servers | VRCArena</title>
         <meta
@@ -93,13 +49,48 @@ export default () => {
         <Link to={routes.discordServers}>Discord Servers</Link>
       </Heading>
       <BodyText>A list of Discord servers.</BodyText>
-      {canCreateDiscordServer(user) && (
-        <>
-          <br />
-          <Button url={routes.createDiscordServer}>Create</Button>
-        </>
+      {selectedSubView === subViews.UNAPPROVED && (
+        <Heading variant="h2">Unapproved</Heading>
       )}
-      <DiscordServers />
-    </>
+      {selectedSubView === subViews.DELETED && (
+        <Heading variant="h2">Deleted</Heading>
+      )}
+      {isEditor && (
+        <CachedViewControls>
+          <Button
+            onClick={() => setSelectedSubView(subViews.PUBLIC)}
+            color="default">
+            Reset
+          </Button>
+          <Button
+            onClick={() => setSelectedSubView(subViews.DELETED)}
+            icon={<DeleteIcon />}
+            color="default">
+            Show Deleted
+          </Button>
+          <Button
+            onClick={() => setSelectedSubView(subViews.UNAPPROVED)}
+            icon={<GavelIcon />}
+            color="default">
+            Show Unapproved
+          </Button>
+          <Button icon={<AddIcon />} url={routes.createDiscordServer}>
+            Create
+          </Button>
+        </CachedViewControls>
+      )}
+      <CachedView
+        viewName={`view-discord-servers${
+          selectedSubView === subViews.DELETED
+            ? '_isDeleted'
+            : selectedSubView === subViews.UNAPPROVED
+            ? '_isUnapproved'
+            : ''
+        }`}
+        sortKey="discord-servers"
+        defaultFieldName={DiscordServerFieldNames.name}>
+        <Renderer />
+      </CachedView>
+    </div>
   )
 }

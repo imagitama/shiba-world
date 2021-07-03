@@ -141,5 +141,10 @@ export default [
     default: '',
     hint:
       'Explain what you offer, your prices, links to work you have done. You can use Markdown so you can embed images and links.'
+  },
+  {
+    name: AuthorFieldNames.isDeleted,
+    type: fieldTypes.hidden,
+    default: false
   }
 ]
