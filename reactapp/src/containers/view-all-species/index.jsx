@@ -67,7 +67,10 @@ const Renderer = ({ items }) => {
               item[SpeciesFieldNames.slug] || item.id
             )}>
             <img
-              src={item[SpeciesFieldNames.thumbnailUrl]}
+              src={
+                item[SpeciesFieldNames.fallbackThumbnailUrl] ||
+                item[SpeciesFieldNames.thumbnailUrl]
+              }
               alt="Species thumbnail"
               className={classes.thumb}
             />

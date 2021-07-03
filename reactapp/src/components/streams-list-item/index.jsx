@@ -9,9 +9,11 @@ import { trackAction } from '../../analytics'
 
 const useStyles = makeStyles({
   root: {
-    border: '1px solid rgba(255, 255, 255, 0.5)',
-    borderRadius: '3px',
     padding: '1rem'
+  },
+  inner: {
+    border: '1px solid rgba(255, 255, 255, 0.5)',
+    borderRadius: '3px'
   },
   twitchUsername: {
     fontSize: '150%'
@@ -40,44 +42,46 @@ export default ({ id: userId, twitchUsername, username }) => {
 
   return (
     <div className={classes.root}>
-      <div className={classes.twitchUsername}>
-        <a href={`https://twitch.tv/${twitchUsername}`}>{twitchUsername}</a> (
-        <Link to={routes.viewUserWithVar.replace(':userId', userId)}>
-          {username}
-        </Link>
-        )
-      </div>
+      <div className={classes.inner}>
+        <div className={classes.twitchUsername}>
+          <a href={`https://twitch.tv/${twitchUsername}`}>{twitchUsername}</a> (
+          <Link to={routes.viewUserWithVar.replace(':userId', userId)}>
+            {username}
+          </Link>
+          )
+        </div>
 
-      <div className={classes.videoArea}>
-        {isStreamEnabled ? (
-          <div>
-            <ReactTwitchEmbedVideo
-              channel={twitchUsername}
-              targetId={`twitch-embed-${twitchUsername}`}
-              width="100%"
-              layout="video"
-              onPlay={() =>
-                trackAction(
-                  'Streams',
-                  'Click play stream button',
-                  twitchUsername
-                )
-              }
-            />
+        <div className={classes.videoArea}>
+          {isStreamEnabled ? (
+            <div>
+              <ReactTwitchEmbedVideo
+                channel={twitchUsername}
+                targetId={`twitch-embed-${twitchUsername}`}
+                width="100%"
+                layout="video"
+                onPlay={() =>
+                  trackAction(
+                    'Streams',
+                    'Click play stream button',
+                    twitchUsername
+                  )
+                }
+              />
+              <Button
+                size="small"
+                className={classes.stopWatchingBtn}
+                onClick={() => setIsStreamEnabled(false)}>
+                Stop Watching
+              </Button>
+            </div>
+          ) : (
             <Button
-              size="small"
-              className={classes.stopWatchingBtn}
-              onClick={() => setIsStreamEnabled(false)}>
-              Stop Watching
+              className={classes.watchBtn}
+              onClick={() => setIsStreamEnabled(true)}>
+              Watch
             </Button>
-          </div>
-        ) : (
-          <Button
-            className={classes.watchBtn}
-            onClick={() => setIsStreamEnabled(true)}>
-            Watch
-          </Button>
-        )}
+          )}
+        </div>
       </div>
     </div>
   )

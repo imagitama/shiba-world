@@ -7,6 +7,9 @@ module.exports['view-all-species_pluralName_desc'] = {
       collectionName: CollectionNames.Species,
       map: (item) => ({
         [SpeciesFieldNames.thumbnailUrl]: item[SpeciesFieldNames.thumbnailUrl],
+        // some old species still use this - investigate how to deprecate this field
+        [SpeciesFieldNames.fallbackThumbnailUrl]:
+          item[SpeciesFieldNames.fallbackThumbnailUrl],
         [SpeciesFieldNames.pluralName]: item[SpeciesFieldNames.pluralName],
         [SpeciesFieldNames.singularName]: item[SpeciesFieldNames.singularName],
         [SpeciesFieldNames.shortDescription]:
