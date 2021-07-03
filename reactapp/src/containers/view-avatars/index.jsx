@@ -229,6 +229,8 @@ function Page() {
 function NewAvatars() {
   const { newAvatars } = useAvatarPage()
 
+  console.log('new ones!', newAvatars)
+
   return (
     <>
       <Heading variant="h2">Most Recent (100)</Heading>
