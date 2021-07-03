@@ -104,6 +104,7 @@ function CreateForm({ onDoneWithIdAndName, actionCategory }) {
 
       const [documentId] = await save({
         [AuthorFieldNames.name]: authorName,
+        [AuthorFieldNames.isDeleted]: false,
         createdAt: new Date(),
         createdBy: createRef(CollectionNames.Users, userId)
       })
