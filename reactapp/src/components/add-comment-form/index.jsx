@@ -3,7 +3,10 @@ import { makeStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 
 import useDatabaseSave from '../../hooks/useDatabaseSave'
-import { CollectionNames } from '../../hooks/useDatabaseQuery'
+import {
+  CollectionNames,
+  CommentFieldNames
+} from '../../hooks/useDatabaseQuery'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import useAlgoliaSearch from '../../hooks/useAlgoliaSearch'
 
@@ -114,10 +117,11 @@ export default ({ collectionName, parentId, onAddClick = null }) => {
       }
 
       await save({
-        parent: createRef(collectionName, parentId),
-        comment: textFieldValue,
-        createdBy: createRef(CollectionNames.Users, userId),
-        createdAt: new Date()
+        [CommentFieldNames.parent]: createRef(collectionName, parentId),
+        [CommentFieldNames.comment]: textFieldValue,
+        [CommentFieldNames.isDeleted]: false,
+        [CommentFieldNames.createdBy]: createRef(CollectionNames.Users, userId),
+        [CommentFieldNames.createdAt]: new Date()
       })
     } catch (err) {
       console.error('Failed to add comment', err)
