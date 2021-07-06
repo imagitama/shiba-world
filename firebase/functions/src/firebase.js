@@ -208,7 +208,11 @@ module.exports.AssetCategories = AssetCategories
 const CommentFieldNames = {
   comment: 'comment',
   parent: 'parent',
+  createdAt: 'createdAt',
   createdBy: 'createdBy',
+  isDeleted: 'isDeleted',
+  lastModifiedAt: 'lastModifiedAt',
+  lastModifiedBy: 'lastModifiedBy',
 }
 module.exports.CommentFieldNames = CommentFieldNames
 

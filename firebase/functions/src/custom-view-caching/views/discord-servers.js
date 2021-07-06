@@ -3,8 +3,7 @@ const {
   OrderDirections,
   DiscordServerFieldNames,
   Operators,
-} = require('../firebase')
-const { basicTest } = require('./mappers')
+} = require('../../firebase')
 
 const getDefinition = ({
   direction,
@@ -28,7 +27,7 @@ const getDefinition = ({
         [DiscordServerFieldNames.iconUrl]:
           item[DiscordServerFieldNames.iconUrl],
       }),
-      test: basicTest,
+      test: 'basic',
     },
   ],
 })

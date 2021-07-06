@@ -6,7 +6,7 @@ const {
   SpeciesFieldNames,
   AssetCategories,
   getHasArrayOfReferencesChanged,
-} = require('../firebase')
+} = require('../../firebase')
 
 const getView = (includeAdult, bySpecies, orderDir) => ({
   sources: [

@@ -1,6 +1,7 @@
 const {
   getHasArrayOfReferencesChanged,
   AssetFieldNames,
+  Operators,
 } = require('../../firebase')
 
 module.exports.map = (item) => ({
@@ -15,6 +16,13 @@ module.exports.map = (item) => ({
   [AssetFieldNames.createdAt]: item[AssetFieldNames.createdAt],
   [AssetFieldNames.species]: item[AssetFieldNames.species],
 })
+
+module.exports.wherePublicSfw = [
+  [AssetFieldNames.isApproved, Operators.EQUALS, true],
+  [AssetFieldNames.isDeleted, Operators.EQUALS, false],
+  [AssetFieldNames.isPrivate, Operators.EQUALS, false],
+  [AssetFieldNames.isAdult, Operators.EQUALS, false],
+]
 
 module.exports.test = (itemBefore, itemAfter) => {
   if (itemBefore[AssetFieldNames.title] !== itemAfter[AssetFieldNames.title]) {

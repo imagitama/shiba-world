@@ -4,8 +4,7 @@ const {
   Operators,
   UserFieldNames,
   OrderDirections,
-} = require('../firebase')
-const { basicTest } = require('./mappers')
+} = require('../../firebase')
 
 module.exports['patreon_username_desc'] = {
   sources: [
@@ -15,14 +14,14 @@ module.exports['patreon_username_desc'] = {
       map: (item) => ({
         [UserMetaFieldNames.isPatron]: item[UserMetaFieldNames.isPatron],
       }),
-      test: basicTest,
+      test: 'basic',
       join: {
         collectionName: CollectionNames.Users,
         map: (item) => ({
           [UserFieldNames.username]: item[UserFieldNames.username],
           [UserFieldNames.avatarUrl]: item[UserFieldNames.avatarUrl],
         }),
-        test: basicTest,
+        test: 'basic',
         order: [UserFieldNames.username, OrderDirections.DESC],
       },
     },

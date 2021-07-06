@@ -339,9 +339,9 @@ function isStaffMember(user) {
 
 export default ({ userId }) => {
   const [, , currentUser] = useUserRecord()
-  const [isLoadingUser, isErroredLoadingUser, user] = useDatabaseQuery(
-    CollectionNames.Users,
-    userId
+  const [isLoadingUser, isErroredLoadingUser, cacheResult] = useDatabaseQuery(
+    'viewCache',
+    `view-user_${userId}`
   )
   const classes = useStyles()
 
@@ -349,26 +349,39 @@ export default ({ userId }) => {
     return <LoadingIndicator />
   }
 
+  const user = cacheResult
+
+  console.log('result!', cacheResult)
+
   // Profiles are optional and do not exist until they "set it up" so null check here
   if (isErroredLoadingUser || !user) {
-    return (
-      <ErrorMessage>Failed to load their account or user profile</ErrorMessage>
-    )
+    return <ErrorMessage>Failed to load their profile</ErrorMessage>
   }
 
   const {
     [UserFieldNames.username]: username = '',
+    [UserFieldNames.avatarUrl]: avatarUrl,
     [UserFieldNames.isBanned]: isBanned,
-    [AssetFieldNames.pedestalVideoUrl]: pedestalVideoUrl,
-    [AssetFieldNames.pedestalFallbackImageUrl]: pedestalFallbackImageUrl
-  } = user
+    [UserFieldNames.isEditor]: isEditor,
+    [UserFieldNames.isAdmin]: isAdmin,
+    [ProfileFieldNames.twitchUsername]: twitchUsername,
+    comments = []
+  } = cacheResult
 
   if (!username) {
     return <ErrorMessage>User does not appear to exist</ErrorMessage>
   }
 
-  const PedestalContents = () => (
+  return (
     <>
+      <Helmet>
+        <title>View the assets uploaded by {username} | VRCArena</title>
+        <meta
+          name="description"
+          content={`Browse all of the accessories, animations, avatars, news articles, tutorials and more uploaded by ${username}`}
+        />
+      </Helmet>
+      <Avatar username={user.username} url={avatarUrl} />
       <Heading
         variant="h1"
         className={`${classes.username} ${isBanned ? classes.isBanned : ''}`}>
@@ -385,41 +398,8 @@ export default ({ userId }) => {
       {isStaffMember(user) && <StaffMemberMessage />}
       {}
       <Profile userId={userId} />
-    </>
-  )
-
-  return (
-    <>
-      <Helmet>
-        <title>View the assets uploaded by {username} | VRCArena</title>
-        <meta
-          name="description"
-          content={`Browse all of the accessories, animations, avatars, news articles, tutorials and more uploaded by ${username}`}
-        />
-      </Helmet>
-      {pedestalVideoUrl ? (
-        <Pedestal
-          videoUrl={pedestalVideoUrl}
-          fallbackImageUrl={pedestalFallbackImageUrl}>
-          <PedestalContents />
-        </Pedestal>
-      ) : (
-        <>
-          <Avatar
-            username={user.username}
-            url={
-              user && user[UserFieldNames.avatarUrl]
-                ? user[UserFieldNames.avatarUrl]
-                : null
-            }
-          />
-          <PedestalContents />
-        </>
-      )}
       <Heading variant="h2">Comments</Heading>
-      <LazyLoad>
-        <CommentList collectionName={CollectionNames.Users} parentId={userId} />
-      </LazyLoad>
+      <CommentList comments={comments} />
       <AddCommentForm
         collectionName={CollectionNames.Users}
         parentId={userId}

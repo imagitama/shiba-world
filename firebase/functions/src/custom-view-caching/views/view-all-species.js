@@ -1,5 +1,4 @@
-const { CollectionNames, SpeciesFieldNames } = require('../firebase')
-const { basicTest } = require('./mappers')
+const { CollectionNames, SpeciesFieldNames } = require('../../firebase')
 
 module.exports['view-all-species_pluralName_desc'] = {
   sources: [
@@ -15,7 +14,7 @@ module.exports['view-all-species_pluralName_desc'] = {
         [SpeciesFieldNames.shortDescription]:
           item[SpeciesFieldNames.shortDescription],
       }),
-      test: basicTest,
+      test: 'basic',
     },
   ],
 }

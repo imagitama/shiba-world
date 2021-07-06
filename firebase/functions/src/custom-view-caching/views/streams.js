@@ -4,8 +4,7 @@ const {
   UserFieldNames,
   Operators,
   ProfileFieldNames,
-} = require('../firebase')
-const { basicTest } = require('./mappers')
+} = require('../../firebase')
 
 const getDefinition = (direction) => ({
   sources: [
@@ -16,15 +15,16 @@ const getDefinition = (direction) => ({
         [ProfileFieldNames.twitchUsername]:
           item[ProfileFieldNames.twitchUsername],
       }),
-      test: basicTest,
+      test: 'basic',
       join: {
         collectionName: CollectionNames.Users,
         map: (item) => ({
           [UserFieldNames.username]: item[UserFieldNames.username],
           [UserFieldNames.avatarUrl]: item[UserFieldNames.avatarUrl],
         }),
-        test: basicTest,
-        order: [UserFieldNames.username, direction],
+        test: 'basic',
+        // TODO: Order parent query using the join data!
+        // order: [UserFieldNames.username, direction],
       },
     },
   ],

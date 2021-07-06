@@ -3,8 +3,7 @@ const {
   OrderDirections,
   CollectionNames,
   Operators,
-} = require('../firebase')
-const { basicTest } = require('./mappers')
+} = require('../../firebase')
 
 const getDefinition = ({
   fieldName,
@@ -31,7 +30,7 @@ const getDefinition = ({
         [AuthorFieldNames.isOpenForCommission]:
           item[AuthorFieldNames.isOpenForCommission],
       }),
-      test: basicTest,
+      test: 'basic',
     },
   ],
 })

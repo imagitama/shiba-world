@@ -15,23 +15,18 @@ import useDatabaseQuery, {
 
 import { createRef } from '../../utils'
 
-export default ({ collectionName, parentId }) => {
-  if (!collectionName) {
-    throw new Error('Cannot render comment list: no collection name!')
-  }
-  if (!parentId) {
-    throw new Error('Cannot render comment list: no parent ID')
-  }
-
+export default ({ comments = null, collectionName, parentId }) => {
   const [isLoading, isErrored, results] = useDatabaseQuery(
     CollectionNames.Comments,
-    [
-      [
-        CommentFieldNames.parent,
-        Operators.EQUALS,
-        createRef(collectionName, parentId)
-      ]
-    ],
+    comments
+      ? false
+      : [
+          [
+            CommentFieldNames.parent,
+            Operators.EQUALS,
+            createRef(collectionName, parentId)
+          ]
+        ],
     {
       [options.limit]: 100,
       [options.orderBy]: [CommentFieldNames.createdAt, OrderDirections.DESC],
@@ -49,13 +44,13 @@ export default ({ collectionName, parentId }) => {
     return <ErrorMessage>Failed to load comments</ErrorMessage>
   }
 
-  if (!results.length) {
+  if ((results && !results.length) || (comments && !comments.length)) {
     return <NoResultsMessage>No comments found</NoResultsMessage>
   }
 
   return (
     <>
-      {results.map(result => (
+      {(comments || results).map(result => (
         <Comment key={result.id} comment={result} />
       ))}
     </>

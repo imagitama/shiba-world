@@ -2,7 +2,7 @@ const {
   CollectionNames,
   OrderDirections,
   UserFieldNames,
-} = require('../firebase')
+} = require('../../firebase')
 
 const getView = (orderDir) => ({
   sources: [

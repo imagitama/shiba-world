@@ -1,5 +1,8 @@
 const config = require('./src/config')
-const { cacheViews, rebuildAllViewCaches } = require('./src/view-cache')
+const {
+  cacheViews,
+  getRebuildAllViewCachesFunction,
+} = require('./src/view-caching')
 
 exports.onAssetCreated = require('./src/functions/onAssetCreated')
 exports.onAssetUpdated = require('./src/functions/onAssetUpdated')
@@ -49,7 +52,7 @@ exports.hydrateAssetMetaOnAssetCreate = require('./src/functions/hydrateAssetMet
 exports.hydrateAssetMetaOnAssetUpdate = require('./src/functions/hydrateAssetMetaOnAssetUpdate')
 // exports.hydrateAvatarListOnSpeciesCreate = require('./src/functions/hydrateAvatarListOnSpeciesCreate')
 // exports.hydrateAvatarListOnSpeciesUpdate = require('./src/functions/hydrateAvatarListOnSpeciesUpdate')
-exports.hydrateViewCacheOnAssetUpdate = require('./src/functions/hydrateViewCacheOnAssetUpdate')
+// exports.hydrateViewCacheOnAssetUpdate = require('./src/functions/hydrateViewCacheOnAssetUpdate')
 // exports.syncViewCache = require('./src/functions/syncViewCache')
 // exports.hydrateViewCacheOnSpeciesCreate = require('./src/functions/hydrateViewCacheOnSpeciesCreate')
 // exports.hydrateViewCacheOnSpeciesUpdate = require('./src/functions/hydrateViewCacheOnSpeciesUpdate')
@@ -67,10 +70,10 @@ exports.awardOnAssetsApproved = require('./src/functions/awardOnAssetsApproved')
 exports.syncAwards = require('./src/functions/syncAwards')
 
 // avatars page pagination
-exports.syncAvatarPages = require('./src/functions/syncAvatarPages')
-exports.hydrateAvatarPagesOnAssetUpdate = require('./src/functions/hydrateAvatarPagesOnAssetUpdate')
-exports.hydrateAvatarPagesOnSpeciesCreate = require('./src/functions/hydrateAvatarPagesOnSpeciesCreate')
-exports.hydrateAvatarPagesOnSpeciesUpdate = require('./src/functions/hydrateAvatarPagesOnSpeciesUpdate')
+// exports.syncAvatarPages = require('./src/functions/syncAvatarPages')
+// exports.hydrateAvatarPagesOnAssetUpdate = require('./src/functions/hydrateAvatarPagesOnAssetUpdate')
+// exports.hydrateAvatarPagesOnSpeciesCreate = require('./src/functions/hydrateAvatarPagesOnSpeciesCreate')
+// exports.hydrateAvatarPagesOnSpeciesUpdate = require('./src/functions/hydrateAvatarPagesOnSpeciesUpdate')
 
 // notifications
 exports.notifyOnAssetAmended = require('./src/functions/notifyOnAssetAmended')
@@ -85,5 +88,6 @@ exports.notifyOnPrivateMessage = require('./src/functions/notifyOnPrivateMessage
 exports.notifyOnAssetOwnership = require('./src/functions/notifyOnAssetOwnership')
 
 // view cache
-cacheViews(exports)
-exports.rebuildAllViewCaches = rebuildAllViewCaches
+const views = require('./src/custom-view-caching')
+cacheViews(exports, views)
+exports.rebuildAllViewCaches = getRebuildAllViewCachesFunction(views)

@@ -3,8 +3,8 @@ const {
   OrderDirections,
   CollectionNames,
   Operators,
-} = require('../firebase')
-const { map, test } = require('./mappers/asset-results-item')
+} = require('../../firebase')
+const { map, test } = require('../entities/asset-results-item')
 
 const getDefinition = ({ fieldName, direction }) => ({
   sources: [

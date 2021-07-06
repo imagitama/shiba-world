@@ -255,6 +255,7 @@ export const ProfileFieldNames = {
 }
 
 export const CommentFieldNames = {
+  comment: 'comment',
   parent: 'parent',
   createdAt: 'createdAt',
   createdBy: 'createdBy',

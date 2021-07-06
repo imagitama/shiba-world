@@ -1,4 +1,4 @@
-const { HistoryFieldNames, OrderDirections } = require('../firebase')
+const { HistoryFieldNames, OrderDirections } = require('../../firebase')
 
 module.exports['activity_createdAt_desc'] = {
   sources: [

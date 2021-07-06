@@ -4,8 +4,8 @@ const {
   AssetCategories,
   OrderDirections,
   Operators,
-} = require('../firebase')
-const { map, test } = require('./mappers/asset-results-item')
+} = require('../../firebase')
+const { map, test } = require('../entities/asset-results-item')
 
 const getDefinition = ({ isAdult, direction }) => ({
   sources: [
