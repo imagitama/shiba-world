@@ -292,15 +292,29 @@ module.exports.RequestsFieldNames = RequestsFieldNames
 const AuthorFieldNames = {
   name: 'name',
   description: 'description',
+  websiteUrl: 'websiteUrl',
+  email: 'email',
   twitterUsername: 'twitterUsername',
   gumroadUsername: 'gumroadUsername',
+  discordUsername: 'discordUsername',
+  discordServerInviteUrl: 'discordServerInviteUrl',
+  patreonUsername: 'patreonUsername',
   categories: 'categories',
   createdAt: 'createdAt',
   createdBy: 'createdBy',
   lastModifiedBy: 'lastModifiedBy',
   lastModifiedAt: 'lastModifiedAt',
-  isDeleted: 'isDeleted',
+  ownedBy: 'ownedBy',
+  discordServerId: 'discordServerId',
   isOpenForCommission: 'isOpenForCommission',
+  commissionInfo: 'commissionInfo',
+  showCommissionStatusForAssets: 'showCommissionStatusForAssets',
+  avatarUrl: 'avatarUrl',
+  // fallbackAvatarUrl: 'fallbackAvatarUrl', REMOVED
+  bannerUrl: 'bannerUrl',
+  fallbackBannerUrl: 'fallbackBannerUrl',
+  inheritFields: 'inheritFields',
+  isDeleted: 'isDeleted',
 }
 module.exports.AuthorFieldNames = AuthorFieldNames
 

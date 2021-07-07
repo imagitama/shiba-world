@@ -17,6 +17,12 @@ module.exports.map = (item) => ({
   [AssetFieldNames.species]: item[AssetFieldNames.species],
 })
 
+module.exports.wherePublic = [
+  [AssetFieldNames.isApproved, Operators.EQUALS, true],
+  [AssetFieldNames.isDeleted, Operators.EQUALS, false],
+  [AssetFieldNames.isPrivate, Operators.EQUALS, false],
+]
+
 module.exports.wherePublicSfw = [
   [AssetFieldNames.isApproved, Operators.EQUALS, true],
   [AssetFieldNames.isDeleted, Operators.EQUALS, false],

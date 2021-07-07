@@ -66,8 +66,20 @@ const doesDocMatchWhereCondition = (doc, where = [], isDebug = false) => {
             console.debug(
               `field`,
               field,
-              'fails the test!',
+              'fails the doc ref test!',
               currentValue.path,
+              '!=',
+              value ? value.path : '(none)'
+            )
+            return false
+          }
+        } else if (value instanceof admin.firestore.DocumentReference) {
+          if (!value.isEqual(currentValue)) {
+            console.debug(
+              `field`,
+              field,
+              'fails the doc ref test!',
+              currentValue ? currentValue.path : '(none)',
               '!=',
               value.path
             )

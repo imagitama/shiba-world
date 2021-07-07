@@ -24,6 +24,14 @@ const getCollectionNameForIndexName = indexName => {
   switch (indexName) {
     case searchIndexNames.USERS:
       return CollectionNames.Users
+    case searchIndexNames.AUTHORS:
+      return CollectionNames.Authors
+    case searchIndexNames.ASSETS:
+      return CollectionNames.Assets
+    default:
+      throw new Error(
+        `Cannot perform development search: index ${indexName} not configured`
+      )
   }
 }
 
@@ -34,9 +42,14 @@ const performDevelopmentSearch = async (indexName, searchTerm) => {
 
   switch (indexName) {
     case searchIndexNames.USERS:
-      // query.where('username', '==', searchTerm)
+    case searchIndexNames.AUTHORS:
+    case searchIndexNames.ASSETS:
       const { docs } = await query.get()
       return docs.map(doc => ({ id: doc.id, ...doc.data() }))
+    default:
+      throw new Error(
+        `Cannot perform development search: index ${indexName} not configured`
+      )
   }
 }
 

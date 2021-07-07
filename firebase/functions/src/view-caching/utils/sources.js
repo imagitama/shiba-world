@@ -1,3 +1,4 @@
+const admin = require('firebase-admin')
 const { db, Operators } = require('../../firebase')
 
 // module.exports.getChildSourceDefinition = (sourceOrFunc, props = {}) => {
@@ -20,11 +21,12 @@ const { db, Operators } = require('../../firebase')
 //   return false
 // }
 
-const getSourceItems = async (source, pages = {}, id = null) => {
+const getSourceItems = async (source, pages = {}) => {
   const {
     debug = false,
     collectionName,
     where = [],
+    id = null,
     order = undefined,
     filter,
     map,
@@ -38,6 +40,7 @@ const getSourceItems = async (source, pages = {}, id = null) => {
   let query = db.collection(collectionName)
 
   if (id) {
+    if (debug) console.debug('id', id)
     query = query.doc(id)
   }
 
@@ -46,6 +49,10 @@ const getSourceItems = async (source, pages = {}, id = null) => {
     if (operator === Operators.EQUALS && Array.isArray(value)) {
       if (debug) console.debug('where ref', value[0], value[1])
       value = db.collection(value[0]).doc(value[1])
+    }
+
+    if (value instanceof admin.firestore.DocumentReference) {
+      if (debug) console.debug('where ref', value.path)
     }
 
     query = query.where(fieldName, operator, value)
@@ -62,6 +69,12 @@ const getSourceItems = async (source, pages = {}, id = null) => {
   const result = await query.get()
 
   const docs = id ? [result] : result.docs
+
+  if (debug)
+    console.log(
+      'found docs',
+      docs.map((doc) => doc.data())
+    )
 
   let mappedItems = docs.map((doc) => ({
     id: doc.id,
@@ -92,13 +105,13 @@ const getSourceItems = async (source, pages = {}, id = null) => {
   }
 
   if (join) {
-    // const getJoinedItemById = (id) =>
-    //   joinedItems.find((item) => item.id === id) || {}
-
     mappedItems = await Promise.all(
       mappedItems.map(async (item) => {
-        console.log('joining', collectionName, item)
-        const joinedItem = await getSourceItems({ ...join, debug }, {}, item.id)
+        // console.log('joining', collectionName, item)
+        const joinSource =
+          typeof join === 'function' ? join({ item }) : { ...join, id: item.id }
+
+        const joinedItem = await getSourceItems({ ...joinSource, debug }, {})
         return {
           ...item,
           ...joinedItem,

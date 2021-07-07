@@ -78,7 +78,7 @@ module.exports.storeItems = async (viewName, items) => {
   for (const item of items) {
     count++
 
-    const docId = `${viewName}_${item.id}`
+    const docId = viewName.replace('{id}', item.id)
 
     const ref = db.collection(viewCacheCollectionName).doc(docId)
 

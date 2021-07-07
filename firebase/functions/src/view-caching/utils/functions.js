@@ -100,9 +100,12 @@ const defineFunctionsForSource = (
   )
 
   if (source.join) {
+    const joinSource =
+      typeof source.join === 'function' ? source.join({}) : source.join
+
     defineFunctionsForSource(
       existingFunctions,
-      source.join.collectionName,
+      joinSource.collectionName,
       viewCacheDefinitions
     )
   }

@@ -6,14 +6,18 @@ const {
   Operators,
   CommentFieldNames,
   OrderDirections,
+  EndorsementFieldNames,
+  AuthorFieldNames,
+  AwardsForUsersFieldNames,
 } = require('../../firebase')
 const {
   map: mapAssetResultsItem,
-  wherePublicSfw,
+  wherePublic,
 } = require('../entities/asset-results-item')
+const { map: mapAuthorResultsItem } = require('../entities/author-results-item')
 const { map: mapCommenter } = require('../entities/comment')
 
-module.exports['view-user'] = {
+const getDefinition = (isAdult) => ({
   usePrimarySourceAsId: true,
   sources: [
     {
@@ -33,6 +37,26 @@ module.exports['view-user'] = {
         test: 'basic',
       },
       add: {
+        awardIds: ({ ref }) => ({
+          collectionName: CollectionNames.AwardsForUsers,
+          id: ref.id,
+          map: (item) => ({
+            [AwardsForUsersFieldNames.awards]:
+              item[AwardsForUsersFieldNames.awards],
+          }),
+        }),
+        authors: ({ ref }) => ({
+          collectionName: CollectionNames.Authors,
+          where: [
+            [
+              AuthorFieldNames.ownedBy,
+              Operators.EQUALS,
+              [CollectionNames.Users, ref.id],
+            ],
+            [AuthorFieldNames.isDeleted, Operators.EQUALS, false],
+          ],
+          map: mapAuthorResultsItem,
+        }),
         comments: ({ ref, doc }) => ({
           collectionName: CollectionNames.Comments,
           where: [
@@ -57,15 +81,39 @@ module.exports['view-user'] = {
             map: mapCommenter,
           }),
         }),
-        mostRecentUploads: ({ ref }) => ({
+        mostRecentEndorsements: ({ ref }) => ({
+          collectionName: CollectionNames.Endorsements,
+          where: [
+            [
+              EndorsementFieldNames.createdBy,
+              Operators.EQUALS,
+              [CollectionNames.Users, ref.id],
+            ],
+          ],
+          limit: 10,
+          join: ({ item }) => ({
+            collectionName: CollectionNames.Assets,
+            id: item ? item[EndorsementFieldNames.asset].id : null,
+            map: mapAssetResultsItem,
+          }),
+        }),
+        mostRecentAssets: ({ ref }) => ({
           collectionName: CollectionNames.Assets,
-          where: [[AssetFieldNames.createdBy, Operators.EQUALS, ref]].concat(
-            wherePublicSfw
-          ),
+          where: [
+            [
+              AssetFieldNames.createdBy,
+              Operators.EQUALS,
+              [CollectionNames.Users, ref.id],
+            ],
+            [AssetFieldNames.isAdult, Operators.EQUALS, isAdult],
+          ].concat(wherePublic),
           limit: 10,
           map: mapAssetResultsItem,
         }),
       },
     },
   ],
-}
+})
+
+module.exports['view-user_{id}_sfw'] = getDefinition(false)
+module.exports['view-user_{id}_nsfw'] = getDefinition(true)
