@@ -1,6 +1,7 @@
 import React from 'react'
 import Markdown from '../../components/markdown'
-import { BUSINESS_NAME, EMAIL } from '../../config'
+import { EMAIL } from '../../config'
+import * as routes from '../../routes'
 
 const rules = `# Takedown Policy
 
@@ -19,7 +20,9 @@ Copyrighted material such as thumbnails, screenshots and videos of your asset ar
 
 The only way to truly remove an asset from this site is you can **prove you are the original creator of the asset** and you either:
 
-1. Submit a valid and legal DMCA claim ([do it here](https://www.vrcarena.com/dmca))
+1. Submit a valid and legal DMCA claim ([do it here](https://www.vrcarena.com${
+  routes.dmcaPolicy
+}))
 2. Can prove the source of your asset has been removed from public access (such as the Gumroad store page has been removed or a direct link should not be accessible)
 
 In the case of point 2 please use the standard "Report" button available on every asset and select the "Takedown" option.
