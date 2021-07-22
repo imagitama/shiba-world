@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import TextField from '@material-ui/core/TextField'
 import { useHistory } from 'react-router'
+import { Link } from 'react-router-dom'
 
 import useDatabaseSave from '../../hooks/useDatabaseSave'
 import {
@@ -20,6 +21,7 @@ import SyncWithGumroadForm from '../../components/sync-with-gumroad-form'
 import PageControls from '../../components/page-controls'
 import LoadingIndicator from '../../components/loading-indicator'
 import DuplicateAssetForm from '../../components/duplicate-asset-form'
+import Message, { types } from '../../components/message'
 
 import { scrollToTop, isRef } from '../../utils'
 import * as routes from '../../routes'
@@ -135,22 +137,6 @@ export default () => {
   // navigate away
   if (categoryValue === AssetCategories.content) {
     return <LoadingIndicator />
-    // if (!newDocumentId) {
-    //   return <LoadingIndicator />
-    // }
-
-    // return (
-    //   <>
-    //     <ContentOverviewEditor
-    //       asset={{
-    //         id: newDocumentId
-    //       }}
-    //       onDone={() =>
-
-    //       }
-    //     />
-    //   </>
-    // )
   }
 
   if (!hasDuplicateCheckBeenPerformed) {
@@ -159,6 +145,13 @@ export default () => {
         <Heading variant="h1">
           Upload {categoryDetails ? categoryDetails.nameSingular : 'Asset'}
         </Heading>
+
+        <Message type={types.WARNING}>
+          By submitting this form you accept our{' '}
+          <Link to={routes.rules}>acceptable asset guidelines</Link>. If your
+          asset does not conform to these guidelines it will not be approved.
+        </Message>
+
         <Heading variant="h2">Title</Heading>
         <DuplicateAssetForm
           categoryName={categoryValue}

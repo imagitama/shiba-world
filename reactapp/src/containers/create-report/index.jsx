@@ -64,6 +64,11 @@ const reasons = [
   {
     value: ReportReasons.OTHER,
     label: 'Other/custom reason (use comments field)'
+  },
+  {
+    value: ReportReasons.TAKEDOWN,
+    label:
+      'I am the creator of this asset and I have read the takedown policy and want it to be taken down'
   }
 ]
 
@@ -112,17 +117,6 @@ export default () => {
         for more help.
         <br />
         <br />
-        {/* <Button
-          url={routes.viewReportWithVar.replace(':reportId', createdDocId)}
-          onClick={() =>
-            trackAction(
-              analyticsCategory,
-              'Click view created report button',
-              createdDocId
-            )
-          }>
-          View Report
-        </Button>{' '} */}
         <Button
           url={routes.viewAssetWithVar.replace(':assetId', assetId)}
           onClick={() =>
@@ -200,6 +194,13 @@ export default () => {
           </MenuItem>
         ))}
       </Select>
+      {fieldData[ReportFieldNames.reason] === ReportReasons.TAKEDOWN && (
+        <Message type={types.WARNING}>
+          Before submitting a takedown request please read our{' '}
+          <Link to={routes.takedownPolicy}>takedown policy</Link> and ensure you
+          can prove your are the creator of this asset.
+        </Message>
+      )}
       Comments
       <TextInput
         className={classes.input}

@@ -16,8 +16,7 @@ export const viewSpeciesWithVar = '/species/:speciesIdOrSlug'
 export const viewSpeciesCategoryWithVar =
   '/species/:speciesIdOrSlug/:categoryName'
 export const viewCategoryWithVar = '/category/:categoryName'
-export const viewAvatarsWithPageVar =
-  '/category/avatar/:pageNumber?'
+export const viewAvatarsWithPageVar = '/category/avatar/:pageNumber?'
 export const news = '/news'
 export const viewTagWithVar = '/tags/:tagName'
 export const searchWithVarOld = '/search/:searchTerm'
@@ -69,6 +68,7 @@ export const viewAwardWithVar = '/awards/:awardId'
 export const viewConversationWithVar = '/conversation/:conversationId'
 export const viewConversationWithoutVar = '/conversation'
 export const rules = '/guidelines'
+export const takedownPolicy = '/takedown-policy'
 
 // Outdated routes
 export const browseAssets = '/browse'

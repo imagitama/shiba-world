@@ -10,7 +10,8 @@ import {
   CollectionNames,
   AssetFieldNames,
   UserFieldNames,
-  ReportFieldNames
+  ReportFieldNames,
+  ReportReasons
 } from '../../hooks/useDatabaseQuery'
 import { createRef } from '../../utils'
 import * as routes from '../../routes'
@@ -18,6 +19,7 @@ import useDatabaseSave from '../../hooks/useDatabaseSave'
 import useFirebaseUserId from '../../hooks/useFirebaseUserId'
 import { handleError } from '../../error-handling'
 import { trackAction } from '../../analytics'
+import Message, { types } from '../../components/message'
 
 import LoadingIndicator from '../loading-indicator'
 import FormattedDate from '../formatted-date'
@@ -105,6 +107,12 @@ export default ({
         )}
         <TableCell>
           {reason}
+          {reason === ReportReasons.TAKEDOWN && (
+            <Message type={types.WARNING}>
+              Please ensure this report aligns with our{' '}
+              <Link to={routes.takedownPolicy}>takedown policy</Link>.
+            </Message>
+          )}
           <br />
           <Button
             onClick={() => setIsCommentsVisible(currentVal => !currentVal)}
@@ -119,7 +127,7 @@ export default ({
           </Link>
         </TableCell>
         <TableCell>
-          {isDeleted ? 'Deleted' : isVerified ? 'Verified' : 'Pending'}
+          {isDeleted ? 'Resolved' : isVerified ? 'Verified' : 'Pending'}
         </TableCell>
         {showControls ? (
           <TableCell>

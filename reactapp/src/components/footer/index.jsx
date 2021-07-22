@@ -53,6 +53,14 @@ function ScrollToTopBtn() {
 
 const footerLinks = [
   {
+    url: routes.rules,
+    label: 'Guidelines'
+  },
+  {
+    url: routes.takedownPolicy,
+    label: 'Takedowns'
+  },
+  {
     url: routes.privacyPolicy,
     label: 'Privacy Policy'
   },

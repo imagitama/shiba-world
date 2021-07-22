@@ -61,7 +61,7 @@ export default () => {
               }
             />
           }
-          label="Show deleted reports"
+          label="Show resolved reports"
         />
       </FormControl>
       <Reports areDeletedReportsVisible={areDeletedReportsVisible} />

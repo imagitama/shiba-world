@@ -76,7 +76,8 @@ export const ReportReasons = {
   BROKEN_SOURCE: 'BROKEN_SOURCE',
   SPAM: 'SPAM',
   OTHER: 'OTHER',
-  CLAIM_OWNERSHIP: 'CLAIM_OWNERSHIP'
+  CLAIM_OWNERSHIP: 'CLAIM_OWNERSHIP',
+  TAKEDOWN: 'TAKEDOWN'
 }
 
 export const ViewCacheNames = {
